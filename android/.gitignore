@@ -1,0 +1,59 @@
+# Windows 파일 시스템 관련
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Android Studio 관련
+.gradle/
+.local.properties
+.idea/
+/build
+/captures/
+/externalNativeBuild
+.cxx
+/navigation/
+/out/
+
+# 임시 파일
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# 빌드 결과물
+*.apk
+*.ap_
+*.aab
+
+# 로그 및 데이터 파일
+*.log
+*.hprof
+
+# IntelliJ/Android Studio 설정 파일
+*.iws
+*.iml
+
+# Gradle 파일
+gradle.properties
+/gradle/
+/gradlew
+/gradlew.bat
+
+# ProGuard 설정 파일 및 폴더
+proguard/
+proguard-project.txt
+proguard-rules.pro
+
+# Jetpack Compose
+compose-desktop/*.jar
+compose-desktop/log.txt
+
+# Kotlin/KAPT 생성 파일
+*.kotlin_metadata
+*.kotlin_builtins
+
+# 버전 관리에서 제외할 기타 파일
+vcs.xml
+session.xml
+workspace.xml
