@@ -1,14 +1,26 @@
 server:
   port: 9000
 
-#spring:
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: auth
-#          uri: http://localhost:8081
-#          predicates:
-#            - Path=/auth/**
+spring:
+  application:
+    name: apigateway-service
+  cloud:
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+      routes:
+        - id: auth
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**
+          filters:
+            - CustomFilter
+#            - AddRequestHeader=auth-request, auth-request-header
+#            - AddResponseHeader=auth-response, auth-response-header
 #        - id: mountain
 #          uri: http://localhost:8082
 #          predicates:
@@ -29,3 +41,10 @@ server:
 #          uri: http://localhost:8086
 #          predicates:
 #            - Path=/community/**
+logging:
+  level:
+    root: info
+    org.hibernate:
+      sql: debug
+      type.type.descriptor.sql: trace
+    com.santeut.gateway: debug
