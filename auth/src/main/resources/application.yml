@@ -1,0 +1,14 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: auth
+  config:
+    import:
+      optional:
+        configserver: http://e201:Ekrvnf11@localhost:8888
