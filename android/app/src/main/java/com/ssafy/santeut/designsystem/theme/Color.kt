@@ -1,4 +1,4 @@
-package com.ssafy.santeut.ui.theme
+package com.ssafy.santeut.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

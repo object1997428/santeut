@@ -1,4 +1,4 @@
-package com.ssafy.santeut.ui.theme
+package com.ssafy.santeut.designsystem.theme
 
 import android.app.Activity
 import android.os.Build
