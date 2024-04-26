@@ -54,7 +54,6 @@ public class AuthServiceImpl implements AuthService {
         String userLoginId = dto.getUserLoginId();
         String userPassword = dto.getUserPassword();
 
-        log.debug("1");
         UserEntity userEntity = userRepository.findByUserLoginId(userLoginId)
                 .orElseThrow(() -> new CustomException(ResponseCode.NOT_EXISTS_USER));
 

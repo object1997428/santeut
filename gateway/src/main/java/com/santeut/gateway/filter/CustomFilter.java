@@ -3,6 +3,7 @@ package com.santeut.gateway.filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -18,23 +19,23 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
     }
     @Override
     public GatewayFilter apply(Config config) {
-//
+
 //        // Custom PreFilter
-//        log.debug("Custom Filter 진입");
-        return (exchange, chain) -> {
+        return (exchange, chain)  -> {
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
 
-            log.info("Custom PRE Filter");
-
+            log.info("Custom Pre Filter");
+            log.debug("Custom Filter - Request: {}", request.getPath());
+            log.debug("Custom Filter - Headers: {}", request.getHeaders());
 
             // Custom PostFilter
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 log.info("Custom POST Filter");
+
             }));
         };
     }
-
 
     public static class Config{
 

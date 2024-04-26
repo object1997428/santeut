@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 17650
 
 spring:
   application:
@@ -8,29 +8,46 @@ spring:
     gateway:
       default-filters:
         - name: GlobalFilter
-          args:
-            baseMessage: Spring Cloud Gateway Global Filter
-            preLogger: true
-            postLogger: true
       routes:
         - id: auth
-          uri: http://localhost:8081
+          uri: http://localhost:52711/
           predicates:
             - Path=/api/auth/**
           filters:
             - CustomFilter
-
-#logging:
-#  level:
-#    root: info
-#    org.springframework.cloud.gateway: debug
-#    com.santeut.gateway: debug
-
+        - id: mountain
+          uri: http://localhost:52712/
+          predicates:
+            - Path=/api/mountain/**
+          filters:
+            - CustomFilter
+        - id: guild
+          uri: http://localhost:52713/
+          predicates:
+            - Path=/api/guild/**
+          filters:
+            - CustomFilter
+        - id: party
+          uri: http://localhost:52714/
+          predicates:
+            - Path=/api/party/**
+          filters:
+            - CustomFilter
+        - id: hiking
+          uri: http://localhost:52715/
+          predicates:
+            - Path=/api/hiking/**
+          filters:
+            - CustomFilter
+        - id: community
+          uri: http://localhost:52716/
+          predicates:
+            - Path=/api/community/**
+          filters:
+            - CustomFilter
 
 logging:
   level:
     root: info
-    org.hibernate:
-      sql: debug
-      type.type.descriptor.sql: trace
+    org.springframework.cloud.gateway: debug
     com.santeut.gateway: debug
