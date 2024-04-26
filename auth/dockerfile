@@ -1,4 +1,4 @@
-# Auth Server
+# Auth Server Dockerfile
 
 # build
 FROM gradle:8.5-jdk17 AS builder
