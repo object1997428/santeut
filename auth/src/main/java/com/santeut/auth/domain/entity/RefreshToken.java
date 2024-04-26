@@ -1,4 +1,4 @@
-package com.santeut.auth.Auth.entity;
+package com.santeut.auth.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

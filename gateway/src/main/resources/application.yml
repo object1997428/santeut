@@ -16,31 +16,17 @@ spring:
         - id: auth
           uri: http://localhost:8081
           predicates:
-            - Path=/auth/**
+            - Path=/api/auth/**
           filters:
             - CustomFilter
-#            - AddRequestHeader=auth-request, auth-request-header
-#            - AddResponseHeader=auth-response, auth-response-header
-#        - id: mountain
-#          uri: http://localhost:8082
-#          predicates:
-#            - Path=/mountain/**
-#        - id: guild
-#          uri: http://localhost:8083
-#          predicates:
-#            - Path=/guild/**
-#        - id: party
-#          uri: http://localhost:8084
-#          predicates:
-#            - Path=/party/**
-#        - id: hiking
-#          uri: http://localhost:8085
-#          predicates:
-#            - Path=/hiking/**
-#        - id: community
-#          uri: http://localhost:8086
-#          predicates:
-#            - Path=/community/**
+
+#logging:
+#  level:
+#    root: info
+#    org.springframework.cloud.gateway: debug
+#    com.santeut.gateway: debug
+
+
 logging:
   level:
     root: info

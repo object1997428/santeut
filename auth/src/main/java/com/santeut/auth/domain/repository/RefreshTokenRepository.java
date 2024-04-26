@@ -1,6 +1,6 @@
-package com.santeut.auth.Auth.repository;
+package com.santeut.auth.domain.repository;
 
-import com.santeut.auth.Auth.entity.RefreshToken;
+import com.santeut.auth.domain.entity.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

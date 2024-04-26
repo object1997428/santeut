@@ -1,6 +1,6 @@
-package com.santeut.auth.Auth.repository;
+package com.santeut.auth.domain.repository;
 
-import com.santeut.auth.Auth.entity.UserEntity;
+import com.santeut.auth.domain.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

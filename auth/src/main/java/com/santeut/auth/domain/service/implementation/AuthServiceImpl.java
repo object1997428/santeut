@@ -1,15 +1,15 @@
-package com.santeut.auth.Auth.service.implementation;
+package com.santeut.auth.domain.service.implementation;
 
-import com.santeut.auth.Auth.dto.requestDto.SignInRequestDto;
-import com.santeut.auth.Auth.dto.requestDto.SignUpRequestDto;
-import com.santeut.auth.Auth.dto.responseDto.JwtTokenResponseDto;
-import com.santeut.auth.Auth.entity.RefreshToken;
-import com.santeut.auth.Auth.entity.UserEntity;
-import com.santeut.auth.Auth.repository.RefreshTokenRepository;
-import com.santeut.auth.Auth.repository.UserRepository;
-import com.santeut.auth.Auth.service.AuthService;
-import com.santeut.auth.common.JWT.JwtTokenProvider;
+import com.santeut.auth.domain.dto.requestDto.SignInRequestDto;
+import com.santeut.auth.domain.dto.requestDto.SignUpRequestDto;
+import com.santeut.auth.domain.dto.responseDto.JwtTokenResponseDto;
+import com.santeut.auth.domain.entity.RefreshToken;
+import com.santeut.auth.domain.entity.UserEntity;
+import com.santeut.auth.domain.repository.RefreshTokenRepository;
+import com.santeut.auth.domain.repository.UserRepository;
+import com.santeut.auth.domain.service.AuthService;
 import com.santeut.auth.common.exception.CustomException;
+import com.santeut.auth.common.jwt.JwtTokenProvider;
 import com.santeut.auth.common.response.ResponseCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
         String userLoginId = dto.getUserLoginId();
         String userPassword = dto.getUserPassword();
 
+        log.debug("1");
         UserEntity userEntity = userRepository.findByUserLoginId(userLoginId)
                 .orElseThrow(() -> new CustomException(ResponseCode.NOT_EXISTS_USER));
 

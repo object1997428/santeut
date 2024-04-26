@@ -1,9 +1,9 @@
-package com.santeut.auth.Auth.service;
+package com.santeut.auth.domain.service;
 
 
-import com.santeut.auth.Auth.dto.requestDto.SignInRequestDto;
-import com.santeut.auth.Auth.dto.requestDto.SignUpRequestDto;
-import com.santeut.auth.Auth.dto.responseDto.JwtTokenResponseDto;
+import com.santeut.auth.domain.dto.requestDto.SignInRequestDto;
+import com.santeut.auth.domain.dto.requestDto.SignUpRequestDto;
+import com.santeut.auth.domain.dto.responseDto.JwtTokenResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface AuthService {

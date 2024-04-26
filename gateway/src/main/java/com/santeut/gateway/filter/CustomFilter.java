@@ -1,4 +1,4 @@
-package com.santeut.gateway.Filter;
+package com.santeut.gateway.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -16,21 +16,21 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
     public CustomFilter(){
         super(Config.class);
     }
-
     @Override
     public GatewayFilter apply(Config config) {
-
-        // Custom PreFilter
+//
+//        // Custom PreFilter
+//        log.debug("Custom Filter 진입");
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
 
-            log.info("Custom PRE Filter: Request id -> {}", request.getId());
-            System.out.println("444");
+            log.info("Custom PRE Filter");
+
 
             // Custom PostFilter
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                log.info("Custom POST Filter: Request id -> {}", response.getStatusCode());
+                log.info("Custom POST Filter");
             }));
         };
     }

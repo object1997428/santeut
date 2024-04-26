@@ -1,8 +1,8 @@
-package com.santeut.auth.common.JWT;
+package com.santeut.auth.common.jwt;
 
-import com.santeut.auth.Auth.dto.responseDto.JwtTokenResponseDto;
-import com.santeut.auth.Auth.entity.RefreshToken;
-import com.santeut.auth.Auth.repository.RefreshTokenRepository;
+import com.santeut.auth.domain.dto.responseDto.JwtTokenResponseDto;
+import com.santeut.auth.domain.entity.RefreshToken;
+import com.santeut.auth.domain.repository.RefreshTokenRepository;
 import com.santeut.auth.common.exception.CustomException;
 import com.santeut.auth.common.response.ResponseCode;
 import io.jsonwebtoken.Claims;

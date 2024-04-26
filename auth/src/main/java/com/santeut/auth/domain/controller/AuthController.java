@@ -1,16 +1,14 @@
-package com.santeut.auth.Auth.controller;
+package com.santeut.auth.domain.controller;
 
-import com.santeut.auth.Auth.dto.requestDto.SignInRequestDto;
-import com.santeut.auth.Auth.dto.requestDto.SignUpRequestDto;
-import com.santeut.auth.Auth.service.AuthService;
+
+import com.santeut.auth.domain.dto.requestDto.SignInRequestDto;
+import com.santeut.auth.domain.dto.requestDto.SignUpRequestDto;
+import com.santeut.auth.domain.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -19,6 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+
+    @GetMapping("welcome")
+    public String welcome(){
+        return "WELCOME";
+    }
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto dto){

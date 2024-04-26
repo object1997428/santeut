@@ -1,22 +1,27 @@
 package com.santeut.gateway.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
+@Slf4j
 @Configuration
 public class FilterConfig {
 
   @Bean
   public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
 
+    log.debug("라우러");
+
     return builder.routes()
-        .route("auth", r -> r.path("/auth/**")
+        .route("auth", r -> r.path("/api/auth/**")
                 .filters(f ->  f.addRequestHeader("auth-request", "auth-request-header")
                                .addResponseHeader("auth-response", "auth-response-header"))
             .uri("http://localhost:8081"))
+        .build();
 //        .route("mountain", r -> r.path("/mountain/**")
 //            .uri("http://localhost:8082"))
 //        .route("guild", r -> r.path("/guild/**")
@@ -28,7 +33,6 @@ public class FilterConfig {
 //        .route("community", r -> r.path("/community/**")
 //            .uri("http://localhost:8086"))
 
-        .build();
   }
 
 }

@@ -1,6 +1,6 @@
-package com.santeut.auth.Auth.entity;
+package com.santeut.auth.domain.entity;
 
-import com.santeut.auth.Auth.dto.requestDto.SignUpRequestDto;
+import com.santeut.auth.domain.dto.requestDto.SignUpRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

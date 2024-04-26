@@ -1,4 +1,4 @@
-package com.santeut.auth.common.JWT;
+package com.santeut.auth.common.jwt;
 
 import com.santeut.auth.common.userDetail.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
