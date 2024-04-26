@@ -1,0 +1,31 @@
+server:
+  port: 9000
+
+#spring:
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: auth
+#          uri: http://localhost:8081
+#          predicates:
+#            - Path=/auth/**
+#        - id: mountain
+#          uri: http://localhost:8082
+#          predicates:
+#            - Path=/mountain/**
+#        - id: guild
+#          uri: http://localhost:8083
+#          predicates:
+#            - Path=/guild/**
+#        - id: party
+#          uri: http://localhost:8084
+#          predicates:
+#            - Path=/party/**
+#        - id: hiking
+#          uri: http://localhost:8085
+#          predicates:
+#            - Path=/hiking/**
+#        - id: community
+#          uri: http://localhost:8086
+#          predicates:
+#            - Path=/community/**
