@@ -8,13 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun LandingScreen(
     onNavigateLogin: () -> Unit,
     onNavigateHome: () -> Unit,
-    viewModel: UserViewModel = viewModel()
+    viewModel: UserViewModel = hiltViewModel()
 ) {
 
     val state = viewModel.state

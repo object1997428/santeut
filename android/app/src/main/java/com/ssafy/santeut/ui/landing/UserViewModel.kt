@@ -22,15 +22,15 @@ class UserViewModel @Inject constructor(
 
     fun checkAuth() {
         viewModelScope.launch {
-//            _state = _state.copy(token = "")
-            userUseCase.getToken()
-                .catch { e ->
-                    _state = _state.copy(token = "")
-                    Log.d("CheckAuth", "Error: ${e.message}")
-                }
-                .collectLatest { data ->
-                    _state = _state.copy(token = data)
-                }
+            _state = _state.copy(token = "123")
+//            userUseCase.getToken()
+//                .catch { e ->
+//                    _state = _state.copy(token = "")
+//                    Log.d("CheckAuth", "Error: ${e.message}")
+//                }
+//                .collectLatest { data ->
+//                    _state = _state.copy(token = data)
+//                }
         }
     }
 }
