@@ -1,7 +1,5 @@
 package com.santeut.community.entity;
 
-import com.santeut.community.common.BaseEntity;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -11,15 +9,16 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Post extends BaseEntity {
+@Table(name = "post")
+public class PostEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "user_id")
     @NotNull
-    private int userId;
+    private Integer userId;
 
     @Column(name = "post_title")
     @NotNull
@@ -29,11 +28,12 @@ public class Post extends BaseEntity {
     @NotNull
     private String postContent;
 
-    @Column(name = "post_type")
+    @Column(name = "post_type", length = 1)
     @NotNull
-    private int postType;
+    private Character postType;
 
     @Column(name = "user_party_id")
     @NotNull
-    private int userPartyId;
+    private Integer userPartyId;
 }
+
