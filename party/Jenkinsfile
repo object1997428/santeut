@@ -10,7 +10,7 @@ pipeline {
         stage('Build Service') {
             steps {
                 echo 'Building Service'
-                dir('auth') {
+                dir('party') {
                     sh 'docker build -t party-service .'
                 }
             }
