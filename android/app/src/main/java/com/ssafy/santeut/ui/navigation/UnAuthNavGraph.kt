@@ -32,9 +32,7 @@ fun NavGraphBuilder.UnAuthNavGraph(
         composable("login") {
             LoginScreen(
                 onNavigateSignUp = {
-                    navController.navigate(route = "signup") {
-                        popUpTo(0) { inclusive = true }
-                    }
+                    navController.navigate(route = "signup")
                 },
                 onNavigateHome = {
                     navController.navigate(route = "home") {
@@ -44,11 +42,13 @@ fun NavGraphBuilder.UnAuthNavGraph(
             )
         }
         composable("signup") {
-            SignUpScreen {
-                navController.navigate(route = "login") {
-                    popUpTo(0) { inclusive = true }
+            SignUpScreen(
+                onNavigateLogin = {
+                    navController.navigate(route = "login") {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-            }
+            )
         }
     }
 }
