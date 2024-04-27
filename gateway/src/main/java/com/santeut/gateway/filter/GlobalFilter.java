@@ -5,11 +5,14 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 @Component
 @Slf4j
@@ -17,7 +20,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
 
     private final AuthorizationToken authorizationToken;
 
-    public GlobalFilter(AuthorizationToken authenticateToken){
+    public GlobalFilter(AuthorizationToken authenticateToken) {
         super(Config.class);
         this.authorizationToken = authenticateToken;
     }
@@ -27,7 +30,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
 
         // Global PreFilter
         return ((exchange, chain) -> {
-        log.debug("Global PreFilter");
+            log.debug("Global PreFilter");
 
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
@@ -36,45 +39,48 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             log.debug("Global Filter - Headers: {}", request.getHeaders());
             String path = String.valueOf(request.getPath());
 
-            String accessToken = request.getHeaders().getFirst("Authorization");
+            String accessToken;
 
-            if(accessToken == null){
+            // Header에 Token있는지 확인
+            if (request.getHeaders().containsKey("Authorization")) {
+                accessToken = request.getHeaders().getFirst("Authorization").substring(7);
+                log.debug("accessToken: " + accessToken);
 
+                // 인가 (Token 검증)
+                boolean validateToken = authorizationToken.validateToken(accessToken);
+
+                if (!validateToken){
+                    response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                    DataBuffer buffer = response.bufferFactory().wrap("유효하지 않은 토큰입니다.".getBytes(StandardCharsets.UTF_8));
+                    return response.writeWith(Mono.just(buffer));
+                }
+                else {
+
+                    // Global PostFilter
+                    return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                        log.debug("Global PostFilter");
+                        log.debug("Global Filter - Response headers: {}", response.getHeaders());
+
+                    }));
+                }
+            } else {
+                // 인증 (로그인/회원가입)
+                if(path.equals("/api/auth/signUp") || path.equals("/api/auth/signIn")) {
+
+                    return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                    }));
+                }
+                else {
+                    response.setStatusCode(HttpStatus.BAD_REQUEST);
+                    DataBuffer buffer = response.bufferFactory().wrap("토큰이 존재하지 않습니다.".getBytes(StandardCharsets.UTF_8));
+                    return response.writeWith(Mono.just(buffer));
+
+                }
             }
-
-            // 인증 (로그인/회원가입)
-            if(path.equals("/api/auth/signUp")){
-
-            }
-            else if(path.equals("/api/auth/signIn")){
-
-            }
-
-            // 인가 (Token 검증)
-
-            boolean validateToken = authorizationToken.validateToken(accessToken);
-
-            if(validateToken)
-
-            if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer ")) {
-                accessToken = accessToken.substring(7);
-                log.debug("accessToken: "+accessToken);
-            }
-            else {
-                log.debug("No Token");
-            }
-
-                // Global PostFilter
-            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                log.debug("Global PostFilter");
-                log.debug("Global Filter - Response status code: {}", response.getStatusCode());
-                log.debug("Global Filter - Response headers: {}", response.getHeaders());
-
-            }));
         });
     }
 
     @Data
-    public static class Config{
+    public static class Config {
     }
 }

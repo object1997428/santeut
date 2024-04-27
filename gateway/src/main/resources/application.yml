@@ -51,3 +51,6 @@ logging:
     root: info
     org.springframework.cloud.gateway: debug
     com.santeut.gateway: debug
+
+jwt:
+  secretKey: HDdW3TQm9JwvEZZfgqtTriyY61h6sRIgh3ND4gqo74Mzx9I

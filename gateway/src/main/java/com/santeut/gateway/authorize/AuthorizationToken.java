@@ -30,7 +30,6 @@ public class AuthorizationToken {
         }
 
     };
-        // 인코딩된 BASE64 값을 디코딩 후 Jwt키 값으로 생성
         private Key getKey() {
             return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
         };
