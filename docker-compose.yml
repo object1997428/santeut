@@ -4,7 +4,8 @@ services:
   # MySQL, MongoDB, Redis
   mysql:
     image: mysql:latest
-    ports: "33690:33690"
+    ports:
+      - "33690:33690"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'Ekrvnf11'
@@ -12,7 +13,8 @@ services:
   
   mongo:
     image: mongo:latest
-    ports: "33691:33691"
+    ports:
+      - "33691:33691"
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: e201
@@ -20,7 +22,8 @@ services:
 
   redis:
     image: redis:latest
-    ports: "33692:33692"
+    ports:
+      - "33692:33692"
     restart: always
 
   # gateway, discovery, config
@@ -30,7 +33,8 @@ services:
       dockerfile: Dockerfile
     container_name: gateway
     image: gateway-server
-    ports: "17650:17650"
+    ports: 
+      - "17650:17650"
 
   discovery-server:
     build:
@@ -38,7 +42,8 @@ services:
       dockerfile: Dockerfile
     container_name: discovery
     image: discovery-server
-    ports: "17651:17651"
+    ports:
+      - "17651:17651"
   
   config-server:
     build:
@@ -46,7 +51,8 @@ services:
       dockerfile: Dockerfile
     container_name: config
     image: config-server
-    ports: "17652:17652"
+    ports:
+      - "17652:17652"
 
   # Auth Service Server
   auth:
@@ -55,7 +61,8 @@ services:
       dockerfile: Dockerfile
     container_name: auth
     image: auth-service
-    ports: "52711:52711"
+    ports:
+      - "52711:52711"
     depends_on:
       - mysql
       - redis
@@ -67,7 +74,8 @@ services:
       dockerfile: Dockerfile
     container_name: mountain
     image: mountain-service
-    ports: "52712:52712"
+    ports:
+      - "52712:52712"
     depends_on:
       - mysql
 
@@ -78,7 +86,8 @@ services:
       dockerfile: Dockerfile
     container_name: guild
     image: guild-service
-    ports: "52713:52713"
+    ports:
+      - "52713:52713"
     depends_on:
       - mysql
       - redis
@@ -91,7 +100,8 @@ services:
       dockerfile: Dockerfile
     container_name: party
     image: party-service
-    ports: "52714:52714"
+    ports:
+      - "52714:52714"
     depends_on:
       - mysql
       - mongo
@@ -103,7 +113,8 @@ services:
       dockerfile: Dockerfile
     container_name: hiking
     image: hiking-service
-    ports: "52715:52715"
+    ports:
+      - "52715:52715"
     depends_on:
       - redis
 
@@ -114,7 +125,8 @@ services:
       dockerfile: Dockerfile
     container_name: community
     image: community-service
-    ports: "52716:52716"
+    ports:
+      - "52716:52716"
     depends_on:
       - mysql
 
@@ -125,7 +137,8 @@ services:
       dockerfile: Dockerfile
     container_name: common
     image: common-service
-    ports: "52717:52717"
+    ports:
+      - "52717:52717"
     depends_on:
       - mysql
 
