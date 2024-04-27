@@ -27,7 +27,7 @@ services:
     restart: always
 
   # gateway, discovery, config
-  gateway-server:
+  gateway:
     build:
       context: gateway
       dockerfile: Dockerfile
@@ -36,7 +36,7 @@ services:
     ports: 
       - "17650:17650"
 
-  discovery-server:
+  discovery:
     build:
       context: discovery
       dockerfile: Dockerfile
@@ -45,7 +45,7 @@ services:
     ports:
       - "17651:17651"
   
-  config-server:
+  config:
     build:
       context: config
       dockerfile: Dockerfile
