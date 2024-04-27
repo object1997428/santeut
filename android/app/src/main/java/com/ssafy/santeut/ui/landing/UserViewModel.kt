@@ -22,7 +22,6 @@ class UserViewModel @Inject constructor(
 
     fun checkAuth() {
         viewModelScope.launch {
-            _state = _state.copy(token = "123")
 //            userUseCase.getToken()
 //                .catch { e ->
 //                    _state = _state.copy(token = "")
