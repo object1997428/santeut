@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        HOME_PATH = '/home/ubuntu'
-    }
-
     stages {
         // Build stage
         stage('Build Service') {
