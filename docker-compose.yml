@@ -1,0 +1,134 @@
+version: '3'
+services:
+
+  # MySQL, MongoDB, Redis
+  mysql:
+    image: mysql:latest
+    ports: "33690:33690"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'Ekrvnf11'
+      TZ: 'Asia/Seoul'
+  
+  mongo:
+    image: mongo:latest
+    ports: "33691:33691"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: e201
+      MONGO_INITDB_ROOT_PASSWORD: Ekrvnf11
+
+  redis:
+    image: redis:latest
+    ports: "33692:33692"
+    restart: always
+
+  # gateway, discovery, config
+  gateway-server:
+    build:
+      context: gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    image: gateway-server
+    ports: "17650:17650"
+
+  discovery-server:
+    build:
+      context: discovery
+      dockerfile: Dockerfile
+    container_name: discovery
+    image: discovery-server
+    ports: "17651:17651"
+  
+  config-server:
+    build:
+      context: config
+      dockerfile: Dockerfile
+    container_name: config
+    image: config-server
+    ports: "17652:17652"
+
+  # Auth Service Server
+  auth:
+    build:
+      context: auth
+      dockerfile: Dockerfile
+    container_name: auth
+    image: auth-service
+    ports: "52711:52711"
+    depends_on:
+      - mysql
+      - redis
+
+  # Mountain Service Server
+  mountain:
+    build:
+      context: mountain
+      dockerfile: Dockerfile
+    container_name: mountain
+    image: mountain-service
+    ports: "52712:52712"
+    depends_on:
+      - mysql
+
+  # Guild Service Server
+  guild:
+    build:
+      context: guild
+      dockerfile: Dockerfile
+    container_name: guild
+    image: guild-service
+    ports: "52713:52713"
+    depends_on:
+      - mysql
+      - redis
+      - mongo
+
+  # Party Service Server
+  party:
+    build:
+      context: party
+      dockerfile: Dockerfile
+    container_name: party
+    image: party-service
+    ports: "52714:52714"
+    depends_on:
+      - mysql
+      - mongo
+
+  # Hiking Service Server
+  hiking:
+    build:
+      context: hiking
+      dockerfile: Dockerfile
+    container_name: hiking
+    image: hiking-service
+    ports: "52715:52715"
+    depends_on:
+      - redis
+
+  # Community Service Server
+  community:
+    build:
+      context: community
+      dockerfile: Dockerfile
+    container_name: community
+    image: community-service
+    ports: "52716:52716"
+    depends_on:
+      - mysql
+
+  # Common Service Server
+  common:
+    build:
+      context: common
+      dockerfile: Dockerfile
+    container_name: common
+    image: common-service
+    ports: "52717:52717"
+    depends_on:
+      - mysql
+
+networks:
+  sdnetwork:
+    external: true
