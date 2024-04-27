@@ -21,4 +21,4 @@ RUN ls -al /app
 
 # port 
 EXPOSE 52716
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
