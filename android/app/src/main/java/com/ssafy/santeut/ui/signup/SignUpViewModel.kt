@@ -1,6 +1,8 @@
 package com.ssafy.santeut.ui.signup
 
 import android.util.Log
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,7 +13,13 @@ import com.ssafy.santeut.data.model.request.LoginRequest
 import com.ssafy.santeut.data.model.request.SignUpRequest
 import com.ssafy.santeut.domain.usecase.SignUpUseCase
 import com.ssafy.santeut.ui.login.LoginEvent
+import com.ssafy.santeut.ui.login.LoginViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,8 +48,8 @@ class SignUpViewModel @Inject constructor(
     private val _userGender = mutableStateOf(true)
     val userGender: State<Boolean> = _userGender
 
-    private val _signUpSuccess = mutableStateOf(false)
-    val signUpSuccess: State<Boolean> = _signUpSuccess
+    private val _uiEvent = MutableStateFlow<SignUpUiEvent>(SignUpUiEvent.Idle)
+    val uiEvent: StateFlow<SignUpUiEvent> = _uiEvent
 
     fun onEvent(event: SignUpEvent) {
         when (event) {
@@ -77,12 +85,21 @@ class SignUpViewModel @Inject constructor(
                         )
                     ).catch { e ->
                         Log.d("SignUp Error", "${e.message}")
+                        _uiEvent.value = SignUpUiEvent.SignUp(false);
                     }.collectLatest { data ->
                         Log.d("SignUp Success", "Success")
-                        _signUpSuccess.value = true
+                        _uiEvent.value = SignUpUiEvent.SignUp(true);
                     }
                 }
             }
         }
+    }
+
+    @Stable
+    sealed interface SignUpUiEvent {
+        @Immutable
+        data object Idle : SignUpUiEvent
+        @Immutable
+        data class SignUp(val success: Boolean) : SignUpUiEvent
     }
 }
