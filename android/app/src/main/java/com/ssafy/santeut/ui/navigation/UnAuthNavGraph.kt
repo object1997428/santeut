@@ -13,7 +13,7 @@ fun NavGraphBuilder.UnAuthNavGraph(
 ) {
     navigation(
         startDestination = "Landing",
-        route = "unauth"
+        route = "auth_graph"
     ) {
         composable("landing") {
             LandingScreen(

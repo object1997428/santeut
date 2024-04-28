@@ -8,12 +8,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ssafy.santeut.ui.navigation.SanteutNavGraph
+import com.ssafy.santeut.ui.navigation.bottom.BottomNavBar
 
 @Composable
 fun SanteutApp(
-
 ) {
     val navController = rememberNavController()
 
@@ -22,7 +23,12 @@ fun SanteutApp(
             .fillMaxSize()
             .fillMaxHeight(),
         bottomBar = {
-
+            BottomNavBar(
+                currentTap = navController.currentBackStackEntryAsState().value?.destination?.route,
+                onTabClick = {
+                    navController.navigate(it.route)
+                }
+            )
         },
         content = { padding ->
             Box(
