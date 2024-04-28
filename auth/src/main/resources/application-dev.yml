@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sanddeut?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ssafy
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        naming:
+          physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      password: 1q2w3e
+      timeout: 2000
+
+logging:
+  level:
+    root: info
+    org.hibernate:
+      sql: debug
+      type.type.descriptor.sql: trace
+    com.santeut.auth: debug
+
+jwt:
+  secretKey: HDdW3TQm9JwvEZZfgqtTriyY61h6sRIgh3ND4gqo74Mzx9I
+  accessToken: 31530000000
+  refreshToken: 31536000000
