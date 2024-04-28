@@ -4,7 +4,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun HomeScreen(
+fun HomeSccreen(
 ) {
     Text("홈 화면")
 }
