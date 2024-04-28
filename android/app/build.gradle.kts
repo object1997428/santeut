@@ -93,6 +93,9 @@ dependencies {
     // firebase
 
 
+    // compose
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+
     // ui
     implementation("androidx.compose.ui:ui:1.6.6")
     implementation("androidx.compose.material:material:1.6.6")

@@ -1,11 +1,11 @@
-package com.ssafy.santeut.ui.home
+package com.ssafy.santeut.ui.community
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun HomeScreen(
+fun CommunityScreen(
 
 ) {
-    Text("홈 화면")
+    Text("커뮤니티 화면")
 }
