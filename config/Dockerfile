@@ -16,7 +16,7 @@ FROM openjdk:17-jdk
 ENV TZ = Asia/Seoul
 
 # jar file
-COPY --from=builder ./build/libs/*.jar app.jar
+RUN CP --from=builder ./build/libs/*.jar app.jar
 RUN ls -al /app
 
 # port 
