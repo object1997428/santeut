@@ -1,4 +1,4 @@
-package com.santeut.community.common;
+package com.santeut.community.entity;
 
 
 import jakarta.persistence.Column;
