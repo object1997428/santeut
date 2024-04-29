@@ -16,19 +16,19 @@ public class CommentEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private int commentId;
+    private Integer id;
 
     @NotNull
-    @Column(name = "comment_reference_type", length = 255)
-    private String commentReferenceType;
+    @Column(name = "comment_reference_code", length = 1)
+    private Character commentReferenceType;
 
     @NotNull
     @Column(name = "comment_reference_id")
-    private int commentReferenceId;
+    private Integer commentReferenceId;
 
     @NotNull
     @Column(name = "user_id")
-    private int userId;
+    private Integer userId;
 
     @NotNull
     @Column(name = "comment_content", columnDefinition = "TEXT")
