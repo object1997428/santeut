@@ -23,4 +23,4 @@ RUN ls -al /app
 EXPOSE 17650
 
 # set entry point
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
