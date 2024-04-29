@@ -1,14 +1,13 @@
-package com.santeut.auth;
+package com.santeut.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Configuration;
 
 @SpringBootApplication
-public class AuthApplication {
+public class GatewayApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(AuthApplication.class, args);
+    SpringApplication.run(GatewayApplication.class, args);
   }
 
 }

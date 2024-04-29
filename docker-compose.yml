@@ -4,8 +4,17 @@ services:
   # MySQL, MongoDB, Redis
   mysql:
     image: mysql:latest
+<<<<<<< HEAD
     ports:
       - "33690:33690"
+=======
+<<<<<<< HEAD
+    ports:
+      - "33690:33690"
+=======
+    ports: "33690:33690"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'Ekrvnf11'
@@ -13,8 +22,17 @@ services:
   
   mongo:
     image: mongo:latest
+<<<<<<< HEAD
     ports:
       - "33691:33691"
+=======
+<<<<<<< HEAD
+    ports:
+      - "33691:33691"
+=======
+    ports: "33691:33691"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: e201
@@ -22,37 +40,84 @@ services:
 
   redis:
     image: redis:latest
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> auth-dev
     ports:
       - "33692:33692"
     restart: always
 
   # gateway, discovery, config
   gateway:
+<<<<<<< HEAD
+=======
+=======
+    ports: "33692:33692"
+    restart: always
+
+  # gateway, discovery, config
+  gateway-server:
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     build:
       context: gateway
       dockerfile: Dockerfile
     container_name: gateway
     image: gateway-server
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> auth-dev
     ports: 
       - "17650:17650"
 
   discovery:
+<<<<<<< HEAD
+=======
+=======
+    ports: "17650:17650"
+
+  discovery-server:
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     build:
       context: discovery
       dockerfile: Dockerfile
     container_name: discovery
     image: discovery-server
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> auth-dev
     ports:
       - "17651:17651"
   
   config:
+<<<<<<< HEAD
+=======
+=======
+    ports: "17651:17651"
+  
+  config-server:
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     build:
       context: config
       dockerfile: Dockerfile
     container_name: config
     image: config-server
+<<<<<<< HEAD
     ports:
       - "17652:17652"
+=======
+<<<<<<< HEAD
+    ports:
+      - "17652:17652"
+=======
+    ports: "17652:17652"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
 
   # Auth Service Server
   auth:
@@ -61,8 +126,17 @@ services:
       dockerfile: Dockerfile
     container_name: auth
     image: auth-service
+<<<<<<< HEAD
     ports:
       - "52711:52711"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52711:52711"
+=======
+    ports: "52711:52711"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - mysql
       - redis
@@ -74,8 +148,17 @@ services:
       dockerfile: Dockerfile
     container_name: mountain
     image: mountain-service
+<<<<<<< HEAD
     ports:
       - "52712:52712"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52712:52712"
+=======
+    ports: "52712:52712"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - mysql
 
@@ -86,8 +169,17 @@ services:
       dockerfile: Dockerfile
     container_name: guild
     image: guild-service
+<<<<<<< HEAD
     ports:
       - "52713:52713"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52713:52713"
+=======
+    ports: "52713:52713"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - mysql
       - redis
@@ -100,8 +192,17 @@ services:
       dockerfile: Dockerfile
     container_name: party
     image: party-service
+<<<<<<< HEAD
     ports:
       - "52714:52714"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52714:52714"
+=======
+    ports: "52714:52714"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - mysql
       - mongo
@@ -113,8 +214,17 @@ services:
       dockerfile: Dockerfile
     container_name: hiking
     image: hiking-service
+<<<<<<< HEAD
     ports:
       - "52715:52715"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52715:52715"
+=======
+    ports: "52715:52715"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - redis
 
@@ -125,8 +235,17 @@ services:
       dockerfile: Dockerfile
     container_name: community
     image: community-service
+<<<<<<< HEAD
     ports:
       - "52716:52716"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52716:52716"
+=======
+    ports: "52716:52716"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - mysql
 
@@ -137,11 +256,28 @@ services:
       dockerfile: Dockerfile
     container_name: common
     image: common-service
+<<<<<<< HEAD
     ports:
       - "52717:52717"
+=======
+<<<<<<< HEAD
+    ports:
+      - "52717:52717"
+=======
+    ports: "52717:52717"
+>>>>>>> gateway-dev
+>>>>>>> auth-dev
     depends_on:
       - mysql
 
 networks:
   sdnetwork:
+<<<<<<< HEAD
     external: true
+=======
+<<<<<<< HEAD
+    external: true
+=======
+    external: true
+>>>>>>> gateway-dev
+>>>>>>> auth-dev

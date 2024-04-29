@@ -1,6 +1,6 @@
 package com.santeut.auth.common.userDetail;
 
-import com.santeut.auth.Auth.entity.UserEntity;
+import com.santeut.auth.domain.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

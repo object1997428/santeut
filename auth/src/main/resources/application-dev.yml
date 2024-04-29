@@ -26,7 +26,7 @@ logging:
     org.hibernate:
       sql: debug
       type.type.descriptor.sql: trace
-    com.ssafy.sanddeut: debug
+    com.santeut.auth: debug
 
 jwt:
   secretKey: HDdW3TQm9JwvEZZfgqtTriyY61h6sRIgh3ND4gqo74Mzx9I

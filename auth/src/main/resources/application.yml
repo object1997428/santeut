@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 52711
   servlet:
     context-path: /api
 
@@ -8,7 +8,3 @@ spring:
     active: dev
   application:
     name: auth
-  config:
-    import:
-      optional:
-        configserver: http://e201:Ekrvnf11@localhost:8888
