@@ -1,7 +1,7 @@
 package com.santeut.auth.common.userDetail;
 
-import com.santeut.auth.domain.entity.UserEntity;
-import com.santeut.auth.domain.repository.UserRepository;
+import com.santeut.auth.entity.UserEntity;
+import com.santeut.auth.repository.UserRepository;
 import com.santeut.auth.common.exception.CustomException;
 import com.santeut.auth.common.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
