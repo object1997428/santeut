@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<PostEntity, Integer> {
         Optional<List<PostEntity>> findAllByPostType(char postType);
+        Optional<PostEntity> findByIdAndPostType(int postId, char postType);
 }
