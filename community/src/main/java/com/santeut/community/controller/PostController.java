@@ -2,7 +2,8 @@ package com.santeut.community.controller;
 
 import com.santeut.community.common.response.BasicResponse;
 import com.santeut.community.common.util.ResponseUtil;
-import com.santeut.community.dto.request.PostReqeustRequestDto;
+import com.santeut.community.dto.request.PostCreateReqeustRequestDto;
+import com.santeut.community.dto.request.PostUpdateReqeustRequestDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
 import com.santeut.community.feign.UserInfoClient;
@@ -31,8 +32,8 @@ public class PostController {
 
     // 게시글 생성 컨트롤러 ( CREATE )
     @PostMapping("/post")
-    public ResponseEntity<BasicResponse> createPost(@RequestBody PostReqeustRequestDto postReqeustRequestDto) {
-        postService.createPost(postReqeustRequestDto);
+    public ResponseEntity<BasicResponse> createPost(@RequestBody PostCreateReqeustRequestDto postCreateReqeustRequestDto) {
+        postService.createPost(postCreateReqeustRequestDto);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "성공적으로 게시글 작성");
     }
 
@@ -44,15 +45,17 @@ public class PostController {
     }
 
     // 게시글 수정하기 ( UPDATE )
-    @PatchMapping("/post/{postId}")
-    public ResponseEntity<BasicResponse> updatePost() {
-        return null;
+    @PatchMapping("/post/{postId}/{postType}")
+    public ResponseEntity<BasicResponse> updatePost(@RequestBody PostUpdateReqeustRequestDto postUpdateReqeustRequestDto, @PathVariable int postId, @PathVariable char postType) {
+        postService.updatePost(postUpdateReqeustRequestDto, postId, postType);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 수정하기를 성공했습니다");
     }
 
     // 게시글 삭제하기 ( DELETE )
-    @DeleteMapping("/post/{postId}")
-    public ResponseEntity<BasicResponse> deletePost() {
-        return null;
+    @DeleteMapping("/post/{postId}/{postType}")
+    public ResponseEntity<BasicResponse> deletePost(@PathVariable int postId, @PathVariable char postType) {
+        postService.deletePost(postId, postType);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 삭제하기를 성공했습니다.");
     }
 
     // 임시 openFeign 테스트

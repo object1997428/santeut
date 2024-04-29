@@ -20,10 +20,12 @@ public class PostEntity extends BaseEntity {
     @NotNull
     private Integer userId;
 
+    @Setter
     @Column(name = "post_title")
     @NotNull
     private String postTitle;
 
+    @Setter
     @Column(name = "post_content")
     @NotNull
     private String postContent;

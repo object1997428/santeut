@@ -1,7 +1,9 @@
 package com.santeut.community.service;
 
+import com.santeut.community.common.exception.AccessDeniedException;
 import com.santeut.community.common.exception.ZeroDataException;
-import com.santeut.community.dto.request.PostReqeustRequestDto;
+import com.santeut.community.dto.request.PostCreateReqeustRequestDto;
+import com.santeut.community.dto.request.PostUpdateReqeustRequestDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
 import com.santeut.community.dto.response.UserInfoFeignRequestDto;
@@ -56,13 +58,13 @@ public class PostService {
     }
 
     // 게시글 작성 (CREATE)
-    public void createPost(PostReqeustRequestDto postReqeustRequestDto) {
+    public void createPost(PostCreateReqeustRequestDto postCreateReqeustRequestDto) {
         postRepository.save(PostEntity.builder()
-                .userId(postReqeustRequestDto.getUserId())
-                .postType(postReqeustRequestDto.getPostType())
-                .postTitle(postReqeustRequestDto.getPostTitle())
-                .postContent(postReqeustRequestDto.getPostContent())
-                .userPartyId(postReqeustRequestDto.getUserPartyId())
+                .userId(postCreateReqeustRequestDto.getUserId())
+                .postType(postCreateReqeustRequestDto.getPostType())
+                .postTitle(postCreateReqeustRequestDto.getPostTitle())
+                .postContent(postCreateReqeustRequestDto.getPostContent())
+                .userPartyId(postCreateReqeustRequestDto.getUserPartyId())
                 .build()
         );
     }
@@ -88,9 +90,30 @@ public class PostService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found")); // PostEntity가 없는 경우 예외 처리
 
     }
+
     // 게시글 수정 (UPDATE)
+    public void updatePost(PostUpdateReqeustRequestDto postUpdateReqeustRequestDto, int postId, char postType) {
+        // title, content 외의 부분은 그대로 저장을 해야 하므로 우선 게시글을 조회해서 PostEntity에 넣어줌
+        PostEntity post = postRepository.findByIdAndPostType(postId, postType)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        // 바뀐 제목과 본문을 저장해줌
+        post.setPostTitle(postUpdateReqeustRequestDto.getPostTitle());
+        post.setPostContent(postUpdateReqeustRequestDto.getPostContent());
+        // jpa를 이용하여 실제로 저장함
+        postRepository.save(post);
+    }
 
     // 게시글 삭제 (DELETE)
+    public void deletePost(int postId, char postType) {
+        UserInfoFeignRequestDto userInfo = userInfoClient.getUserInfo();
+        PostEntity page = postRepository.findByIdAndPostType(postId, postType).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+        if(page.getUserId() == userInfo.getUserId()) {
+            postRepository.deleteById(postId);
+        }else {
+            throw new AccessDeniedException("삭제할 권한이 없습니다.");
+        }
+        postRepository.deleteById(postId);
+    }
 }
 
 
