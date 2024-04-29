@@ -67,4 +67,3 @@ fun GreetingPreview() {
         Screen()
     }
 }
-

@@ -40,3 +40,32 @@
     maven("https://repository.map.naver.com/archive/maven")
 
 - 기본 코드에서 compose의 형태로 바꾸는 과정이 생각보다 쉽지 않아 계속 시도해 봐야 할거 같다.
+
+
+# 04/29(월)
+
+## kotlin 학습
+1. 기본 구성
+    - 액티비티 : 화면을 구성하는 컴포넌트
+    - 서비스 : 백그라운드 작업을 하는 컴포넌트
+    - 콘텐츠 프로바이더 : 앱의 데이터를 공유하는 컴포넌트
+    - 브로드 캐스트 리시버 : 시스템 이벤트가 발생할 때 실행되는 컴포넌트
+2. 파일 구성
+    - androidMainfest.xml : 앱 환경 설정 파일
+    - MainActivity : 메인 액티비티 파일
+    - Project 단 build.gradle : 빌드 설정 파일
+    - Module 단 build.gradle : 빌드 설정 파일 (기본적인 설정은 대부분 여기에 속한다)
+    - res : 리소스 폴더
+    - res/drawable : 이미지 리소스
+    - res/layout : UI 구성에 필요한 xml
+    - cf) 자바 이름은 숫자로 시작할 수 없다, 파일 이름은 소문자(대문자 사용불가능), 단어를 이을 때는 '_'를 사용한다
+3. 뷰 객체의 계층 구조
+![Alt text](image/image.png)
+    - View : 모든 뷰 클래스의 최상위 클래스, Activity는 View의 서브클래스만 화면에 출력
+    - ViewGroup : View 의 하위 클래스지만 자체 UI는 없어서 화면에 출력해도 아무것도 없음, 다른 뷰 여러개를 묶어서 제어할 목적으로 사용, 일종의 컨테이너 기능을 담당.
+4. 제트팩 - 구글에서 안드로이드 앱 개발용으로 제공하는 다양한 라이러리 모음
+    - androidx.appcompat : 앱의 API 레벨 호환성을 해결
+    - androidx.recyclerView : 목록 화면을 구성합니다.
+    - androidx.viewpager2 : 스와이프로 넘기는 화면을 구성합니다.
+    - androidx.fragment : 액티비티처럼 동작하는 뷰를 제공합니다.
+    - androidx.drawearlayout : 옆에서 서랍처럼 열리는 화면을 구성
