@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        HOME_PATH = '/home/ubuntu'
+        DOCKER_COMPOSE_FILE = "/var/jenkins_home/docker-compose.yml"
     }
 
     stages {
@@ -29,10 +29,10 @@ pipeline {
             steps {
                 echo 'Deploying Service'
                 // 이미지 빌드 후, 컨테이너 중지 및 제거
-                sh 'docker-compose -f docker-compose.yml stop mountain || true'
-                sh 'docker-compose -f docker-compose.yml rm -f mountain || true'
+                sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} stop mountain || true'
+                sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} rm -f mountain || true'
                 // 새로운 컨테이너 실행
-                sh 'docker-compose -f docker-compose.yml up -d --force-recreate --no-deps mountain'
+                sh 'docker-compose -f ${DOCKER_COMPOSE_FILE} up -d --force-recreate --no-deps mountain'
             }
         }
     }
