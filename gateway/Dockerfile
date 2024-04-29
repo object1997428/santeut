@@ -16,11 +16,11 @@ FROM openjdk:17-jdk
 ENV TZ=Asia/Seoul
 
 # copy JAR file
-COPY --from=builder /app/build/libs/app.jar /app/
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
 RUN ls -al /app
 
 # expose port
 EXPOSE 17650
 
 # set entry point
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
