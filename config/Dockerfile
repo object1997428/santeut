@@ -8,3 +8,18 @@ COPY build.gradle settings.gradle /app/
 COPY src /app/src
 
 RUN gradle build -x test --parallel --continue
+
+# jar
+FROM openjdk:17-jdk
+
+WORKDIR /app
+# time zone
+ENV TZ=Asia/Seoul
+
+# jar file
+COPY --from=builder /app/build/libs/*.jar ./app.jar
+RUN ls -al /app
+
+# port 
+EXPOSE 17652
+ENTRYPOINT ["java", "-jar", "app.jar"]
