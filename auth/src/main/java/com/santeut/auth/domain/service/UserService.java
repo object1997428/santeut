@@ -1,9 +1,11 @@
 package com.santeut.auth.domain.service;
 
-import org.springframework.stereotype.Service;
+
+import com.santeut.auth.domain.entity.UserEntity;
 
 public interface UserService {
 
-    void getUserInfo();
+    void userLoginInfo();
 
+    UserEntity userInfo(int userId);
 }

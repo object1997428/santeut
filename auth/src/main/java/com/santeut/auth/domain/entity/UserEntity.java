@@ -70,4 +70,21 @@ public class UserEntity {
 
         return userEntity;
     }
+
+
+    public UserEntity getUserInfo(UserEntity userEntity){
+
+        UserEntity user = new UserEntity();
+
+        user.userId = userEntity.getUserId();
+        user.userNickname = userEntity.getUserNickname();
+        user.userLoginId = userEntity.getUserLoginId();
+        user.userBirth = userEntity.getUserBirth();
+        user.userProfile = userEntity.getUserBirth();
+        user.userGender = userEntity.getUserGender();
+        user.createdAt = userEntity.createdAt;
+        user.modifiedAt = userEntity.modifiedAt;
+
+        return user;
+    }
 }
