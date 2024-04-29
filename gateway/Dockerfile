@@ -12,13 +12,15 @@ RUN gradle build -x test --parallel --continue
 # jar
 FROM openjdk:17-jdk
 
-# time zone
-ENV TZ = Asia/Seoul
+# set time zone
+ENV TZ=Asia/Seoul
 
-# jar file
-COPY --from=builder /app/build/libs/*.jar /app/app.jar
+# copy JAR file
+COPY --from=builder /app/build/libs/app.jar /app/app.jar
 RUN ls -al /app
 
-# port 
+# expose port
 EXPOSE 17650
+
+# set entry point
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
