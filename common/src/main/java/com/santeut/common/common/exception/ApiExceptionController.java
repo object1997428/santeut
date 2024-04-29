@@ -1,7 +1,7 @@
 package com.santeut.common.common.exception;
 
 
-import com.santeut.community.common.response.ErrorResponse;
+import com.santeut.common.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;

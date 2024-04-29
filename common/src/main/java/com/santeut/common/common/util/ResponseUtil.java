@@ -1,9 +1,9 @@
 package com.santeut.common.common.util;
 
 
-import com.santeut.community.common.response.BasicResponse;
-import com.santeut.community.common.response.ErrorResponse;
-import com.santeut.community.common.response.PagingResponse;
+import com.santeut.common.common.response.BasicResponse;
+import com.santeut.common.common.response.ErrorResponse;
+import com.santeut.common.common.response.PagingResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
