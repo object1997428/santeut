@@ -12,8 +12,9 @@ RUN gradle build -x test --parallel --continue
 # jar
 FROM openjdk:17-jdk
 
+WORKDIR /app
 # time zone
-ENV TZ = Asia/Seoul
+ENV TZ=Asia/Seoul
 
 # jar file
 COPY --from=builder /app/build/libs/*.jar ./app.jar
