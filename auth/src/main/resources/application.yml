@@ -1,0 +1,10 @@
+server:
+  port: 52711
+  servlet:
+    context-path: /api
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: auth
