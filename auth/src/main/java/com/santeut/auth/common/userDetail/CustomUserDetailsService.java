@@ -1,8 +1,8 @@
 package com.santeut.auth.common.userDetail;
 
+import com.santeut.auth.common.exception.DataNotFoundException;
 import com.santeut.auth.entity.UserEntity;
 import com.santeut.auth.repository.UserRepository;
-import com.santeut.auth.common.exception.CustomException;
 import com.santeut.auth.common.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
        UserEntity userEntity = userRepository.findByUserLoginId(username)
-                .orElseThrow(() ->  new CustomException(ResponseCode.NOT_EXISTS_USER));
+                .orElseThrow(() ->  new DataNotFoundException(ResponseCode.NOT_EXISTS_USER));
 
         return User.builder()
                 .username(userEntity.getUserLoginId())

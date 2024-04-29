@@ -1,19 +1,21 @@
 package com.santeut.auth.controller;
 
 
-import com.santeut.auth.dto.requestDto.SignInRequestDto;
-import com.santeut.auth.dto.requestDto.SignUpRequestDto;
+import com.santeut.auth.common.response.BasicResponse;
+import com.santeut.auth.dto.request.SignInRequestDto;
+import com.santeut.auth.dto.request.SignUpRequestDto;
 import com.santeut.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping()
 public class AuthController {
 
     private final AuthService authService;
@@ -23,27 +25,27 @@ public class AuthController {
         return "WELCOME";
     }
 
-    @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto dto){
+    @PostMapping("/signup")
+    public BasicResponse signUp(@RequestBody SignUpRequestDto dto){
 
         log.debug("회원가입 : "+ dto.getUserLoginId());
         authService.signUp(dto);
-        return ResponseEntity.ok().body("회원가입 성공");
+        return new BasicResponse(HttpStatus.OK.value(), null);
 
     }
 
-    @PostMapping("/signIn")
-    public ResponseEntity<?> signIn(@RequestBody SignInRequestDto dto){
+    @PostMapping("/signin")
+    public BasicResponse signIn(@RequestBody SignInRequestDto dto){
 
         log.debug("로그인 : " + dto.getUserLoginId());
-        return ResponseEntity.ok().body(authService.signIn(dto));
+        return new BasicResponse(HttpStatus.OK.value(), authService.signIn(dto));
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissueToken(HttpServletRequest request){
+    public BasicResponse reissueToken(HttpServletRequest request){
 
         log.debug("Access Token 재발급: "+ request);
-        return ResponseEntity.ok().body(authService.reissueToken(request));
+        return new BasicResponse(HttpStatus.OK.value(), authService.reissueToken(request));
     }
 
 }

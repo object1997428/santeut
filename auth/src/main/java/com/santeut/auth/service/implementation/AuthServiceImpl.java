@@ -1,14 +1,16 @@
 package com.santeut.auth.service.implementation;
 
-import com.santeut.auth.dto.requestDto.SignInRequestDto;
-import com.santeut.auth.dto.requestDto.SignUpRequestDto;
-import com.santeut.auth.dto.responseDto.JwtTokenResponseDto;
+import com.santeut.auth.common.exception.DataNotFoundException;
+import com.santeut.auth.dto.request.SignInRequestDto;
+import com.santeut.auth.dto.request.SignUpRequestDto;
+import com.santeut.auth.dto.response.JwtTokenResponseDto;
 import com.santeut.auth.entity.RefreshToken;
 import com.santeut.auth.entity.UserEntity;
+import com.santeut.auth.entity.UserTierEntity;
 import com.santeut.auth.repository.RefreshTokenRepository;
 import com.santeut.auth.repository.UserRepository;
+import com.santeut.auth.repository.UserTierRepository;
 import com.santeut.auth.service.AuthService;
-import com.santeut.auth.common.exception.CustomException;
 import com.santeut.auth.common.jwt.JwtTokenProvider;
 import com.santeut.auth.common.response.ResponseCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final UserTierRepository userTierRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -37,15 +40,24 @@ public class AuthServiceImpl implements AuthService {
         String encodedPassword = bCryptPasswordEncoder.encode(password);
 
         boolean usedUserNickname = userRepository.existsByUserNickname(dto.getUserNickname());
-        if (usedUserNickname) throw new CustomException(ResponseCode.EXISTS_USER_NICKNAME);
+        if (usedUserNickname) throw new DataNotFoundException(ResponseCode.EXISTS_USER_NICKNAME);
 
         boolean usedUserLoginId = userRepository.existsByUserLoginId(dto.getUserLoginId());
-        if(usedUserLoginId) throw new CustomException(ResponseCode.EXISTS_USER_LOGIN_ID);
+        if(usedUserLoginId) throw new DataNotFoundException(ResponseCode.EXISTS_USER_LOGIN_ID);
 
         UserEntity userEntity = UserEntity.signUp(dto);
         userEntity.setUserPassword(encodedPassword);
 
         userRepository.save(userEntity);
+
+        UserEntity user = userRepository.findByUserLoginId(userEntity.getUserLoginId())
+                        .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_USER));
+
+        UserTierEntity userTierEntity = new UserTierEntity();
+        userTierEntity.setUserTierName("언덕");
+        userTierEntity.setUserTierPoint(0);
+        userTierEntity.setUserId(user.getUserId());
+        userTierRepository.save(userTierEntity);
     }
 
     @Override
@@ -55,22 +67,18 @@ public class AuthServiceImpl implements AuthService {
         String userPassword = dto.getUserPassword();
 
         UserEntity userEntity = userRepository.findByUserLoginId(userLoginId)
-                .orElseThrow(() -> new CustomException(ResponseCode.NOT_EXISTS_USER));
+                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_USER));
 
         if(!userLoginId.equals(userEntity.getUserLoginId())){
-            throw new CustomException(ResponseCode.NOT_MATCH_USER_LOGIN_ID);
+            throw new DataNotFoundException(ResponseCode.NOT_MATCH_USER_LOGIN_ID);
         }
         if (!bCryptPasswordEncoder.matches(userPassword, userEntity.getUserPassword())){
-            throw new CustomException(ResponseCode.NOT_MATCH_USER_PASSWORD);
+            throw new DataNotFoundException(ResponseCode.NOT_MATCH_USER_PASSWORD);
         }
 
         JwtTokenResponseDto jwtTokenResponse = jwtTokenProvider.issueToken(
                 userLoginId);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByUserLoginId(userLoginId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INVALID_REFRESH_TOKEN));
-        log.debug("userLoginId :" + refreshToken.getUserLoginId());
-        log.debug("refreshToken :" + refreshToken.getRefreshToken());
 
         if(refreshTokenRepository.existsByUserLoginId(userLoginId)){
             refreshTokenRepository.deleteByUserLoginId(userLoginId);

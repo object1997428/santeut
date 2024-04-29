@@ -6,15 +6,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -29,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = jwtTokenProvider.getTokenFromRequest(request);
 
-        System.out.println("token: "+ token);
+        log.debug("token: "+ token);
         if (token == null){
             filterChain.doFilter(request, response);
             return;
@@ -40,8 +43,9 @@ public class JwtFilter extends OncePerRequestFilter {
         if(userLoginId != null){
 
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(userLoginId);
-            System.out.println("userDetails: "+ userDetails.getUsername());
+            log.trace("userDetails: "+ userDetails.getUsername());
 
+            log.trace("ValidateToken: "+jwtTokenProvider.validateToken(token, userDetails));
             if(jwtTokenProvider.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
