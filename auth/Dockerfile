@@ -20,13 +20,6 @@ ENV TZ=Asia/Seoul
 COPY --from=builder /app/build/libs/*.jar ./app.jar
 RUN ls -al /app
 
-<<<<<<< HEAD:auth/Dockerfile
 # port 
 EXPOSE 52711
-=======
-# expose port
-EXPOSE 17650
-
-# set entry point
->>>>>>> 9af070922a771ed963693af74c97af19a467f620:gateway/Dockerfile
 ENTRYPOINT ["java", "-jar", "app.jar"]
