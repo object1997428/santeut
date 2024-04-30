@@ -55,6 +55,24 @@ public class UserEntity {
     @Column(columnDefinition = "TEXT")
     private String userProfile;
 
+    @NotNull
+    private int userAge;
+
+    @NotNull
+    private int userPoint;
+
+    @NotNull
+    private int userDistance;
+
+    @NotNull
+    private int userMoveTime;
+
+    @NotNull
+    private int userHikingCount;
+
+    @NotNull
+    private int userHikingMountain;
+
     public static UserEntity signUp(SignUpRequestDto dto){
 
         UserEntity userEntity = new UserEntity();
@@ -66,6 +84,11 @@ public class UserEntity {
         userEntity.userGender = dto.getUserGender();
         userEntity.createdAt = LocalDateTime.now();
         userEntity.modifiedAt = LocalDateTime.now();
+        userEntity.userPoint = 0;
+        userEntity.userDistance = 0;
+        userEntity.userMoveTime = 0;
+        userEntity.userHikingCount = 0;
+        userEntity.userHikingMountain = 0;
         userEntity.isDeleted = false;
 
         return userEntity;

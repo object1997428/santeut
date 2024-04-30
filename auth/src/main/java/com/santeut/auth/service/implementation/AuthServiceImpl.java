@@ -6,13 +6,13 @@ import com.santeut.auth.dto.request.SignUpRequestDto;
 import com.santeut.auth.dto.response.JwtTokenResponseDto;
 import com.santeut.auth.entity.RefreshToken;
 import com.santeut.auth.entity.UserEntity;
-import com.santeut.auth.entity.UserTierEntity;
 import com.santeut.auth.repository.RefreshTokenRepository;
 import com.santeut.auth.repository.UserRepository;
 import com.santeut.auth.repository.UserTierRepository;
 import com.santeut.auth.service.AuthService;
 import com.santeut.auth.common.jwt.JwtTokenProvider;
 import com.santeut.auth.common.response.ResponseCode;
+import com.santeut.auth.util.AgeUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AgeUtil ageUtil;
 
     @Override
     @Transactional
@@ -48,16 +49,10 @@ public class AuthServiceImpl implements AuthService {
         UserEntity userEntity = UserEntity.signUp(dto);
         userEntity.setUserPassword(encodedPassword);
 
+        int age = ageUtil.calculateAge(userEntity.getUserBirth());
+        userEntity.setUserAge(age);
         userRepository.save(userEntity);
 
-        UserEntity user = userRepository.findByUserLoginId(userEntity.getUserLoginId())
-                        .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_USER));
-
-        UserTierEntity userTierEntity = new UserTierEntity();
-        userTierEntity.setUserTierName("언덕");
-        userTierEntity.setUserTierPoint(0);
-        userTierEntity.setUserId(user.getUserId());
-        userTierRepository.save(userTierEntity);
     }
 
     @Override
