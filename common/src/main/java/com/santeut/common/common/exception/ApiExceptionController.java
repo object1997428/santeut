@@ -65,6 +65,14 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
     }
 
+    // Open Feign 호출 에러
+    @ExceptionHandler(FeignClientException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedException(FeignClientException e) {
+        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
+    }
+
+
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
         log.error("[exceptionHandle] ex={}", e.getMessage(), e);
         return new ErrorResponse(status.value(), errorType, e.getMessage());
