@@ -22,4 +22,12 @@ public class MountainServiceImpl implements MountainService {
         .collect(Collectors.toList());
 
   }
+
+  @Override
+  public List<MountainSearchResponseDto> getMountainByViews() {
+    return mountainRepository.findTop10ByOrderByViewsDesc()
+        .stream()
+        .map(MountainSearchResponseDto::from)
+        .collect(Collectors.toList());
+  }
 }

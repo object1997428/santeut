@@ -8,4 +8,6 @@ public interface MountainRepository extends JpaRepository<MountainEntity, Intege
 
   List<MountainEntity> findAllByMountainNameContainingOrderByViewsDesc(String mountainName);
 
+  List<MountainEntity> findTop10ByOrderByViewsDesc();
+
 }

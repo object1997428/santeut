@@ -6,4 +6,6 @@ import java.util.List;
 public interface MountainService {
 
   List<MountainSearchResponseDto> findByName(String name);
+
+  List<MountainSearchResponseDto> getMountainByViews();
 }
