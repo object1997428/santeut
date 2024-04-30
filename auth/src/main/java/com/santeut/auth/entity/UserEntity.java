@@ -43,7 +43,7 @@ public class UserEntity {
     private Boolean isDeleted;
 
     @NotNull
-    @Column(length = 6)
+    @Column(length = 9)
     private String userBirth;
 
     @NotNull

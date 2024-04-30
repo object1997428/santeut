@@ -3,6 +3,7 @@ package com.santeut.auth.service;
 
 import com.santeut.auth.dto.request.UpdatePasswordRequest;
 import com.santeut.auth.dto.request.UpdateProfileRequest;
+import com.santeut.auth.dto.response.GetMountainRecordResponse;
 import com.santeut.auth.dto.response.GetUserInfoResponse;
 import com.santeut.auth.dto.response.GetUserLevelResponse;
 import com.santeut.auth.entity.UserEntity;
@@ -20,4 +21,6 @@ public interface UserService {
     void updateProfile(String userLoginId, UpdateProfileRequest request);
 
     GetUserLevelResponse getLevel(String userLoginId);
+
+    GetMountainRecordResponse getMountainRecord(String userLoginId);
 }

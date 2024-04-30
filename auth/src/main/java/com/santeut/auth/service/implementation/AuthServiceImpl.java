@@ -8,7 +8,6 @@ import com.santeut.auth.entity.RefreshToken;
 import com.santeut.auth.entity.UserEntity;
 import com.santeut.auth.repository.RefreshTokenRepository;
 import com.santeut.auth.repository.UserRepository;
-import com.santeut.auth.repository.UserTierRepository;
 import com.santeut.auth.service.AuthService;
 import com.santeut.auth.common.jwt.JwtTokenProvider;
 import com.santeut.auth.common.response.ResponseCode;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final UserTierRepository userTierRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
