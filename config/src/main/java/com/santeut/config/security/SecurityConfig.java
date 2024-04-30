@@ -39,12 +39,12 @@ public class SecurityConfig {
   @Bean
   public UserDetailsService userDetailsService() {
 
-    UserDetails admin = User.builder()
-        .username("e201")
-        .password(bCryptPasswordEncoder().encode("Ekrvnf11"))
-        .roles("ADMIN")
-        .build();
+//    UserDetails admin = User.builder()
+//        .username("e201")
+//        .password(bCryptPasswordEncoder().encode("Ekrvnf11"))
+//        .roles("ADMIN")
+//        .build();
 
-    return new InMemoryUserDetailsManager(admin);
+    return null;
   }
 }
