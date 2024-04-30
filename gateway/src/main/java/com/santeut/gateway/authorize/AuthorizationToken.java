@@ -12,15 +12,16 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class AuthorizationToken {
 
-    @Value("${jwt.secretKey}")
-    private String jwtSecret;
-    public boolean validateToken(String token){
+            @Value("${jwt.secretKey}")
+            private String jwtSecret;
+            public boolean validateToken(String token){
 
-        try {
-             Jwts.parser()
-                    .verifyWith((SecretKey) getKey())
-                    .build()
-                    .parseSignedClaims(token)
+                try {
+                    SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+                    Jwts.parser()
+                        .verifyWith(key)
+                        .build()
+                        .parseSignedClaims(token)
                     .getPayload();
 
              return true;
@@ -29,8 +30,5 @@ public class AuthorizationToken {
 
         }
 
-    };
-        private Key getKey() {
-            return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-        };
+    }
 }
