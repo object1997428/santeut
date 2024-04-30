@@ -30,8 +30,8 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests((auth) -> auth.anyRequest().authenticated());
 
-    // http
-    //     .httpBasic(Customizer.withDefaults());
+    http
+        .httpBasic(Customizer.withDefaults());
 
     return http.build();
   }
@@ -45,7 +45,7 @@ public class SecurityConfig {
 //        .roles("ADMIN")
 //        .build();
 
-    return null;
+    return username -> null;
 //    return new InMemoryUserDetailsManager(admin);
   }
 }
