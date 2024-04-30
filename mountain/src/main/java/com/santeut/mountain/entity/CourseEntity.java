@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.awt.geom.Line2D;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,5 +48,11 @@ public class CourseEntity {
 
   @Column(name = "course_points", columnDefinition = "geometry")
   private Geometry coursePoints;
+
+  @Column(name="PMNTN_SN")
+  private int pmntn_sn;
+
+  @Column(name="MNTN_CODE")
+  private String mountain_code;
 
 }
