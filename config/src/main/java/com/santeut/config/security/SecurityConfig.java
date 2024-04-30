@@ -30,8 +30,8 @@ public class SecurityConfig {
     http
         .authorizeHttpRequests((auth) -> auth.anyRequest().authenticated());
 
-    http
-        .httpBasic(Customizer.withDefaults());
+    // http
+    //     .httpBasic(Customizer.withDefaults());
 
     return http.build();
   }
