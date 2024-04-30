@@ -1,9 +1,9 @@
 package com.santeut.auth.common.jwt;
 
-import com.santeut.auth.dto.responseDto.JwtTokenResponseDto;
+import com.santeut.auth.common.exception.DataNotFoundException;
+import com.santeut.auth.dto.response.JwtTokenResponseDto;
 import com.santeut.auth.entity.RefreshToken;
 import com.santeut.auth.repository.RefreshTokenRepository;
-import com.santeut.auth.common.exception.CustomException;
 import com.santeut.auth.common.response.ResponseCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -42,7 +42,7 @@ public class JwtTokenProvider {
 
         String userLoginId = extractUserLoginId(token);
 
-        if (expiredToken(token)) throw new CustomException(ResponseCode.INVALID_ACCESS_TOKEN);
+        if (expiredToken(token)) throw new DataNotFoundException(ResponseCode.INVALID_ACCESS_TOKEN);
 
         return userLoginId.equals(userDetails.getUsername());
     }
@@ -110,17 +110,17 @@ public class JwtTokenProvider {
         String token = getTokenFromRequest(request);
 
         if(token == null){
-            throw new CustomException(ResponseCode.INVALID_REFRESH_TOKEN);
+            throw new DataNotFoundException(ResponseCode.INVALID_REFRESH_TOKEN);
         }
 
         String userLoginId = extractUserLoginId(token);
 
         if(userLoginId == null){
-            throw new CustomException(ResponseCode.NOT_EXISTS_USER);
+            throw new DataNotFoundException(ResponseCode.NOT_EXISTS_USER);
         }
 
         RefreshToken refreshToken = refreshTokenRepository.findByUserLoginId(userLoginId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INVALID_REFRESH_TOKEN));
+                .orElseThrow(() -> new DataNotFoundException(ResponseCode.INVALID_REFRESH_TOKEN));
 
         String checkId = extractUserLoginId(refreshToken.getRefreshToken());
 
@@ -128,7 +128,7 @@ public class JwtTokenProvider {
 
         // 현재 로그인한 사용자의 RefreshToken이랑 redis에 저장된 refreshToken이랑 일치하는지 비교
         if(!token.equals(refreshToken.getRefreshToken())){
-            throw new CustomException(ResponseCode.NOT_MATCH_REFRESH_TOKEN);
+            throw new DataNotFoundException(ResponseCode.NOT_MATCH_REFRESH_TOKEN);
         }
 
         return issueToken(userLoginId);

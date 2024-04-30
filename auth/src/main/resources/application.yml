@@ -1,7 +1,7 @@
 server:
   port: 52711
   servlet:
-    context-path: /api
+    context-path: /api/auth
 
 spring:
   profiles:

@@ -1,6 +1,6 @@
 package com.santeut.auth.entity;
 
-import com.santeut.auth.dto.requestDto.SignUpRequestDto;
+import com.santeut.auth.dto.request.SignUpRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -69,22 +69,5 @@ public class UserEntity {
         userEntity.isDeleted = false;
 
         return userEntity;
-    }
-
-
-    public UserEntity getUserInfo(UserEntity userEntity){
-
-        UserEntity user = new UserEntity();
-
-        user.userId = userEntity.getUserId();
-        user.userNickname = userEntity.getUserNickname();
-        user.userLoginId = userEntity.getUserLoginId();
-        user.userBirth = userEntity.getUserBirth();
-        user.userProfile = userEntity.getUserBirth();
-        user.userGender = userEntity.getUserGender();
-        user.createdAt = userEntity.createdAt;
-        user.modifiedAt = userEntity.modifiedAt;
-
-        return user;
     }
 }

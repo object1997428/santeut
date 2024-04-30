@@ -1,4 +1,4 @@
-package com.santeut.auth.dto.requestDto;
+package com.santeut.auth.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
