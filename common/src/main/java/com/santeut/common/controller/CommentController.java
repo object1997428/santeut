@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequestMapping("/comment")
 @Slf4j
 @RestController
@@ -30,5 +32,12 @@ public class CommentController {
     public ResponseEntity<BasicResponse> getComments(@PathVariable Integer postId, @PathVariable Character postType) {
         CommentListResponseDto result = commentService.getComments(postId, postType);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, result);
+    }
+
+    // 댓글 수정하기 ( UPDATE )
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<BasicResponse> updateComment(@PathVariable Integer commentId, @RequestBody Map<String, String> commentContent) {
+        commentService.updateComment(commentId, commentContent.get("commentContent"));
+        return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "댓글 수정을 성공했습니다.");
     }
 }

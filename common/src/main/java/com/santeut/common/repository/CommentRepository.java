@@ -2,10 +2,18 @@ package com.santeut.common.repository;
 
 import com.santeut.common.entity.CommentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
     Optional<List<CommentEntity>> findAllByCommentReferenceIdAndCommentReferenceType(Integer commentReferenceId, Character commentReferenceType);
+    @Modifying
+    @Transactional
+    @Query("UPDATE CommentEntity c SET c.commentContent = :commentContent WHERE c.id=:commentId")
+    void updateCommentDirectly(@Param("commentId") Integer commentId, @Param("commentContent") String commentContent);
 }

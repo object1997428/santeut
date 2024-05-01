@@ -67,9 +67,9 @@ public class ApiExceptionController {
 
     // Open Feign 호출 에러
     @ExceptionHandler(FeignClientException.class)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleAccessDeniedException(FeignClientException e) {
-        return constructErrorResponse(e,HttpStatus.NO_CONTENT, "feignClientException");
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "feignClientException");
     }
 
 
