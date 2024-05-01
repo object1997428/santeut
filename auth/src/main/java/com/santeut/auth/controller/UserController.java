@@ -2,6 +2,7 @@ package com.santeut.auth.controller;
 
 import com.santeut.auth.common.response.BasicResponse;
 import com.santeut.auth.dto.request.UpdatePasswordRequest;
+import com.santeut.auth.dto.request.UpdateProfileImageRequest;
 import com.santeut.auth.dto.request.UpdateProfileRequest;
 import com.santeut.auth.service.UserService;
 import jakarta.persistence.Basic;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -49,9 +51,18 @@ public class UserController {
     public BasicResponse updateProfile(@AuthenticationPrincipal UserDetails userDetails,
                                         @RequestBody UpdateProfileRequest request){
 
-        log.debug("Password 수정하는 유저 ID: "+ userDetails.getUsername());
+        log.debug("Profile 수정하는 유저 ID: "+ userDetails.getUsername());
         userService.updateProfile(userDetails.getUsername(), request);
-        return new BasicResponse(HttpStatus.OK.value(), request.getUserProfile());
+        return new BasicResponse(HttpStatus.OK.value(), null);
+    }
+
+    @PostMapping("/profile/image")
+    public BasicResponse updateProfileImage(@AuthenticationPrincipal UserDetails userDetails,
+                                            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile){
+
+        log.debug("Image 수정하는 유저 ID: "+ userDetails.getUsername());
+        userService.updateProfileImage(userDetails.getUsername(), multipartFile);
+        return new BasicResponse(HttpStatus.OK.value(), null);
     }
 
     @GetMapping("/level")

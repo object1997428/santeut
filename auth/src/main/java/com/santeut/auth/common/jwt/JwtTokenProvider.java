@@ -12,7 +12,9 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,16 +28,21 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secretKey}")
-    private String jwtSecretKey;
 
-    @Value("${jwt.accessToken}")
-    private Long accessTokenExpired;
+//    @Value("${jwt.secretKey")
+//    private String jwtSecretKey;
 
-    @Value("${jwt.refreshToken}")
-    private Long refreshTokenExpired;
+//    @Value("${jwt.accessToken}")
+//    private Long accessTokenExpired;
+
+//    @Value("${jwt.refreshToken}")
+//    private Long refreshTokenExpired;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private Environment env;
+
 
     // 토큰 유효성 검증
     public boolean validateToken(String token, UserDetails userDetails){
@@ -66,6 +73,7 @@ public class JwtTokenProvider {
 
     // 인코딩된 BASE64 값을 디코딩 후 Jwt키 값으로 생성
     private Key getKey() {
+        String jwtSecretKey = env.getProperty("jwt.secretKey");
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
     }
 
@@ -98,6 +106,9 @@ public class JwtTokenProvider {
 
     // 키 발급
     public JwtTokenResponseDto issueToken(String userLoginId){
+
+        Long accessTokenExpired = Long.parseLong(env.getProperty("jwt.accessToken"));
+        Long refreshTokenExpired = Long.parseLong(env.getProperty("jwt.refreshToken"));
 
         String accessToken = generateToken(userLoginId, accessTokenExpired);
         String refreshToken = generateToken(userLoginId, refreshTokenExpired);

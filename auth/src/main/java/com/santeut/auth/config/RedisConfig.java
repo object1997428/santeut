@@ -1,8 +1,10 @@
 package com.santeut.auth.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -20,9 +22,15 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.password}")
     private String redisPassword;
+    @Autowired
+    private Environment env;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+//        String redisHost = env.getProperty("spring.data.redis.host");
+//        String redisPort = env.getProperty("spring.data.redis.port");
+//        String redisPassword = env.getProperty("spring.data.redis.password");
+
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(redisHost);
         redisStandaloneConfiguration.setPort(Integer.parseInt(redisPort));

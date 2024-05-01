@@ -38,4 +38,5 @@ out/
 
 ### application ###
 src/main/resources/application-dev.properties
+src/main/resources/application-config.properties
 
