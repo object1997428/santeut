@@ -1,12 +1,11 @@
 package com.santeut.common.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-@Getter
+@Getter @Setter
 @AllArgsConstructor
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
+@NoArgsConstructor
 public class UserInfoFeignRequestDto {
     private int userId;
     private String userNickname;
