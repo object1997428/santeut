@@ -49,9 +49,6 @@ public class CourseEntity {
   @Column(name = "course_points", columnDefinition = "geometry")
   private Geometry coursePoints;
 
-  @Column(name="PMNTN_SN")
-  private int pmntn_sn;
-
   @Column(name="MNTN_CODE")
   private String mountain_code;
 
