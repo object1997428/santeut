@@ -23,7 +23,11 @@ fun NavGraphBuilder.UnAuthNavGraph(
                     }
                 },
                 onNavigateHome = {
+<<<<<<< HEAD
                     navController.navigate(route = "home") {
+=======
+                    navController.navigate(route = "home_graph") {
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
                         popUpTo(0) { inclusive = true }
                     }
                 }
@@ -35,7 +39,11 @@ fun NavGraphBuilder.UnAuthNavGraph(
                     navController.navigate(route = "signup")
                 },
                 onNavigateHome = {
+<<<<<<< HEAD
                     navController.navigate(route = "home") {
+=======
+                    navController.navigate(route = "home_graph") {
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
                         popUpTo(0) { inclusive = true }
                     }
                 }

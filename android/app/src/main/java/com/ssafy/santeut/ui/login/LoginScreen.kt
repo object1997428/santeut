@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+<<<<<<< HEAD
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +14,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+=======
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+<<<<<<< HEAD
 import androidx.compose.foundation.layout.wrapContentSize
+=======
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,8 +40,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+<<<<<<< HEAD
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+=======
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,14 +59,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+<<<<<<< HEAD
 import androidx.compose.ui.tooling.preview.Preview
+=======
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ssafy.santeut.R
+<<<<<<< HEAD
 import com.ssafy.santeut.ui.landing.UserViewModel
 import kotlinx.coroutines.flow.collectLatest
+=======
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
 
 @Composable
 fun LoginScreen(
@@ -71,6 +91,7 @@ fun LoginScreen(
     SnackbarHost(hostState = snackBarHostState)
 
     LaunchedEffect(effect) {
+<<<<<<< HEAD
         if(effect is LoginViewModel.LoginUiEvent.Login){
             val loginEvent = effect as LoginViewModel.LoginUiEvent.Login
             if (loginEvent.success) {
@@ -79,6 +100,19 @@ fun LoginScreen(
                 )
                 onNavigateHome()
             } else {
+=======
+        Log.d("Login Screen", "감지했어요")
+        if (effect is LoginViewModel.LoginUiEvent.Login) {
+            val loginEvent = effect as LoginViewModel.LoginUiEvent.Login
+            if (loginEvent.success) {
+                Log.d("Login Screen", "성공")
+                onNavigateHome()
+                snackBarHostState.showSnackbar(
+                    message = "로그인을 성공했습니다."
+                )
+            } else {
+                Log.d("Login Screen", "실패")
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
                 snackBarHostState.showSnackbar(
                     message = "로그인을 할 수 없습니다."
                 )
@@ -225,6 +259,7 @@ fun LoginScreen(
             }
         }
     }
+<<<<<<< HEAD
 }
 
 @Preview
@@ -354,4 +389,6 @@ fun PreviceLogin() {
             }
         }
     }
+=======
+>>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
 }
