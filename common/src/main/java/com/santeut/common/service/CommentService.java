@@ -67,17 +67,33 @@ public class CommentService {
                 .build();
     }
 
-    public void updateComment(Integer commentId ,String commentContent) {
+    public void updateComment(Integer commentId, String commentContent) {
         // 댓글을 쓴 사람의 userId 조회
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
         // 요청한 사람의 userId 조회
         int requestUserId = authServerService.getUserId();
 
         // 권한이 없다면 에러 처리
-        if(requestUserId != commentUserId) {
+        if (requestUserId != commentUserId) {
             throw new AccessDeniedException("권한이 없습니다.");
         }
         // 댓글 수정 로직 구현
         commentRepository.updateCommentDirectly(commentId, commentContent);
+    }
+
+    public void deleteComment(Integer commentId) {
+
+        // 댓글을 쓴 사람의 userId 조회
+        int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
+
+        // 요청한 사람의 userId 조회
+        int requestUserId = authServerService.getUserId();
+
+        // 권한이 없다면 에러 처리
+        if (requestUserId != commentUserId) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+        // 댓글 삭제 로직 구현
+        commentRepository.deleteById(commentId);
     }
 }
