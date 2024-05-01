@@ -2,13 +2,12 @@ package com.santeut.common.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "comment")
 public class CommentEntity extends BaseEntity {
@@ -19,7 +18,7 @@ public class CommentEntity extends BaseEntity {
     private Integer id;
 
     @NotNull
-    @Column(name = "comment_reference_code", length = 1)
+    @Column(name = "comment_reference_type", length = 1)
     private Character commentReferenceType;
 
     @NotNull
