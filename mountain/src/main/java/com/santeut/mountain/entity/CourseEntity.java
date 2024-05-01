@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.geolatte.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 @Builder
 @AllArgsConstructor

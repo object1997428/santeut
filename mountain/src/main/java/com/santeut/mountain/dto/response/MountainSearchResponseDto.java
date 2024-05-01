@@ -8,19 +8,21 @@ import lombok.Getter;
 @Builder
 public class MountainSearchResponseDto {
 
+  public int mountainId;
   public String mountainName;
   public String regionName;
   public int height;
   public int courseCount;
   public boolean isTop100;
 
-  public static MountainSearchResponseDto from(MountainEntity e) {
+  public static MountainSearchResponseDto from(MountainEntity m) {
     return MountainSearchResponseDto.builder()
-        .mountainName(e.getMountainName())
-        .regionName(e.getRegionName())
-        .height(e.getHeight())
-        .courseCount(e.getCourseEntityList().size())
-        .isTop100(e.isTop100())
+        .mountainId(m.getMountainId())
+        .mountainName(m.getMountainName())
+        .regionName(m.getRegionName())
+        .height(m.getHeight())
+        .courseCount(m.getCourseEntityList().size())
+        .isTop100(m.isTop100())
         .build();
   }
 
