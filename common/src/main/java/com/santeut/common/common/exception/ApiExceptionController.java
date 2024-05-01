@@ -53,9 +53,9 @@ public class ApiExceptionController {
 
     // 데이터가 0개일 때
     @ExceptionHandler(ZeroDataException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ErrorResponse handleAccessDeniedException(ZeroDataException e) {
-        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleZeroDataException");
+        return constructErrorResponse(e,HttpStatus.NO_CONTENT, "handleZeroDataException");
     }
 
     // 권한없음(접근거부)
@@ -67,9 +67,9 @@ public class ApiExceptionController {
 
     // Open Feign 호출 에러
     @ExceptionHandler(FeignClientException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ErrorResponse handleAccessDeniedException(FeignClientException e) {
-        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
+        return constructErrorResponse(e,HttpStatus.NO_CONTENT, "feignClientException");
     }
 
 
