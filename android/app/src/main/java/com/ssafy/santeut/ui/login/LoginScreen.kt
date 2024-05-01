@@ -1,5 +1,6 @@
 package com.ssafy.santeut.ui.login
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -60,14 +61,17 @@ fun LoginScreen(
     SnackbarHost(hostState = snackBarHostState)
 
     LaunchedEffect(effect) {
+        Log.d("Login Screen", "감지했어요")
         if (effect is LoginViewModel.LoginUiEvent.Login) {
             val loginEvent = effect as LoginViewModel.LoginUiEvent.Login
             if (loginEvent.success) {
+                Log.d("Login Screen", "성공")
+                onNavigateHome()
                 snackBarHostState.showSnackbar(
                     message = "로그인을 성공했습니다."
                 )
-                onNavigateHome()
             } else {
+                Log.d("Login Screen", "실패")
                 snackBarHostState.showSnackbar(
                     message = "로그인을 할 수 없습니다."
                 )

@@ -1,5 +1,6 @@
 package com.ssafy.santeut.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,6 +53,7 @@ import com.ssafy.santeut.designsystem.theme.SanteutTheme
 fun HomeScreen(
 
 ) {
+    Log.d("Home Screen", "Loading")
 //    val viewModel = viewModel<HomeViewModel>()
 
     LazyColumn(
