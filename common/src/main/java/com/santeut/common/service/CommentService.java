@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,6 +95,6 @@ public class CommentService {
             throw new AccessDeniedException("권한이 없습니다.");
         }
         // 댓글 삭제 로직 구현
-        commentRepository.deleteById(commentId);
+        commentRepository.deleteCommentDirectly(commentId, LocalDateTime.now());
     }
 }
