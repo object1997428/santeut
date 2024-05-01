@@ -75,10 +75,10 @@ fun SignUpScreen(
         if(effect is SignUpViewModel.SignUpUiEvent.SignUp){
             val signUpEvent = effect as SignUpViewModel.SignUpUiEvent.SignUp
             if (signUpEvent.success) {
+                onNavigateLogin()
                 snackBarHostState.showSnackbar(
                     message = "회원가입을 성공했습니다."
                 )
-                onNavigateLogin()
             } else {
                 snackBarHostState.showSnackbar(
                     message = "회원가입을 할 수 없습니다."

@@ -11,6 +11,7 @@ import com.ssafy.santeut.data.model.request.LoginRequest
 import com.ssafy.santeut.domain.usecase.LoginUseCase
 import com.ssafy.santeut.ui.landing.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -46,8 +47,8 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginEvent.Login -> {
-                viewModelScope.launch {
-                    Log.d("Login", "userId: ${_userLoginId.value}")
+                viewModelScope.launch(Dispatchers.IO) {
+                    Log.d("Login ViewModel", "이벤트 발생")
                     loginUseCase.excute(
                         LoginRequest(
                             userLoginId = _userLoginId.value,
@@ -55,7 +56,7 @@ class LoginViewModel @Inject constructor(
                         )
                     ).catch { e ->
                         Log.d("Login Error", "${e.message}")
-                        _uiEvent.value = LoginUiEvent.Login(true);
+                        _uiEvent.value = LoginUiEvent.Login(false);
                     }.collectLatest { data ->
                         Log.d("Login Success", "Success")
                         // 토큰 저장 해야함
