@@ -289,7 +289,7 @@ fun SignUpScreen(
                     Text(
                         text = selectGender.value,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         color = Color(0xFF678C40)
                     )
                     DropdownMenu(
