@@ -19,7 +19,7 @@ public class PostReadResponseDto {
 
     private String postContent;
 
-    private String nickName;
+    private String userNickname;
 
     private LocalDate createdAt;
 

@@ -86,7 +86,7 @@ public class PostService {
                 .postType(postEntity.getPostType())
                 .postTitle(postEntity.getPostTitle())
                 .postContent(postEntity.getPostContent())
-                .nickName(authServerService.getNickname(postEntity.getUserId()))
+                .userNickname(authServerService.getNickname(postEntity.getUserId()))
                 .hitCnt(postEntity.getHitCnt())
                 .commentList(commentListResponseDto.getCommentList())
                 .build();
