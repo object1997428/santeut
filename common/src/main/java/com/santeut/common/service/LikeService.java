@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,5 +40,11 @@ public class LikeService {
                 .likeReferenceType(postType)
                 .userId(requestUserId).build();
         likeRepository.save(likeEntity);
+    }
+
+    public boolean isHited(Integer postId, Character postType) {
+        int requestUserId = authServerService.getUserId();
+        Optional<LikeEntity> likeEntity = likeRepository.findByReferenceIdAndReferenceType(postId, postType);
+        return likeEntity.isPresent();
     }
 }
