@@ -30,4 +30,11 @@ public class LikeController {
         result.put("likeCnt",cnt );
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, result);
     }
+
+    // 좋아요 누르기 ( CREATE )
+    @GetMapping("/{postId}/{postType}")
+    public ResponseEntity<BasicResponse> hitLike(@PathVariable Integer postId, @PathVariable Character postType) {
+        likeService.hitLike(postId, postType);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, null);
+    }
 }
