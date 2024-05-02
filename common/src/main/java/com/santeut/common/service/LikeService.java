@@ -44,7 +44,7 @@ public class LikeService {
 
     public boolean isHited(Integer postId, Character postType) {
         int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
-        Optional<LikeEntity> likeEntity = likeRepository.findByReferenceIdAndReferenceType(postId, postType);
+        Optional<LikeEntity> likeEntity = likeRepository.findByLikeReferenceIdAndLikeReferenceType(postId, postType);
         return likeEntity.isPresent();
     }
 }

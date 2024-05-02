@@ -18,5 +18,5 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Integer> {
     // 좋아요 개수 조회
     int countByLikeReferenceIdAndLikeReferenceType(@NotNull int likeReferenceId, @NotNull Character likeReferenceType);
 
-    Optional<LikeEntity> findByReferenceIdAndReferenceType(Integer referenceId, Character referenceType);
+    Optional<LikeEntity> findByLikeReferenceIdAndLikeReferenceType(Integer referenceId, Character referenceType);
 }
