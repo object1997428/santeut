@@ -16,7 +16,7 @@ public class LikeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
-    private int likeId;
+    private int id;
 
     @NotNull
     @Column(name = "like_reference_type", length = 255)
