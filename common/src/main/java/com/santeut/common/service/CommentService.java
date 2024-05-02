@@ -97,4 +97,8 @@ public class CommentService {
         // 댓글 삭제 로직 구현
         commentRepository.deleteCommentDirectly(commentId, LocalDateTime.now());
     }
+
+    public int getCommentCnt(Integer postId, Character postType) {
+        return commentRepository.countByCommentReferenceIdAndCommentReferenceType(postId, postType);
+    }
 }
