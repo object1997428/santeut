@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,6 +56,7 @@ public class PostService {
                                     .createdAt(post.getCreatedAt())
                                     .postType(post.getPostType())
                                     .userNickname(userNickName)
+                                    .hitCnt(post.getHitCnt())
                                     .build();
                         }
                 )
@@ -85,6 +87,7 @@ public class PostService {
                 .postTitle(postEntity.getPostTitle())
                 .postContent(postEntity.getPostContent())
                 .nickName(authServerService.getNickname(postEntity.getUserId()))
+                .hitCnt(postEntity.getHitCnt())
                 .commentList(commentListResponseDto.getCommentList())
                 .build();
     }
@@ -104,13 +107,11 @@ public class PostService {
     // 게시글 삭제 (DELETE)
     public void deletePost(int postId, char postType, int requestUserId) {
         PostEntity page = postRepository.findByIdAndPostType(postId, postType).orElseThrow(() -> new JpaQueryException("게시글 삭제 조회 중 오류 발생"));
+        // 게시글의 유저ID와 요청한 유저의 ID가 일치하는지 확인 하는 로직
         if(page.getUserId() == requestUserId) {
-            postRepository.deleteById(postId);
+            postRepository.deletePostDirectly(postId, LocalDateTime.now());
         }else {
             throw new AccessDeniedException("삭제할 권한이 없습니다.");
         }
-        postRepository.deleteById(postId);
     }
 }
-
-
