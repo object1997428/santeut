@@ -25,6 +25,10 @@ public class PostReadResponseDto {
 
     private int likeCnt;
 
+    private int commentCnt;
+
+    private int hitCnt;
+
     private List<CommentListResponseDto.Comment> commentList;
 
 }
