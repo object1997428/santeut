@@ -29,19 +29,19 @@ import java.util.Date;
 public class JwtTokenProvider {
 
 
-//    @Value("${jwt.secretKey")
-//    private String jwtSecretKey;
+    @Value("${jwt.secretKey")
+    private String jwtSecretKey;
 
-//    @Value("${jwt.accessToken}")
-//    private Long accessTokenExpired;
+    @Value("${jwt.accessToken}")
+    private Long accessTokenExpired;
 
-//    @Value("${jwt.refreshToken}")
-//    private Long refreshTokenExpired;
+    @Value("${jwt.refreshToken}")
+    private Long refreshTokenExpired;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Autowired
-    private Environment env;
+//    @Autowired
+//    private Environment env;
 
 
     // 토큰 유효성 검증
@@ -73,7 +73,7 @@ public class JwtTokenProvider {
 
     // 인코딩된 BASE64 값을 디코딩 후 Jwt키 값으로 생성
     private Key getKey() {
-        String jwtSecretKey = env.getProperty("jwt.secretKey");
+//        String jwtSecretKey = jwtSecretKey;
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
     }
 
@@ -107,8 +107,8 @@ public class JwtTokenProvider {
     // 키 발급
     public JwtTokenResponseDto issueToken(String userLoginId){
 
-        Long accessTokenExpired = Long.parseLong(env.getProperty("jwt.accessToken"));
-        Long refreshTokenExpired = Long.parseLong(env.getProperty("jwt.refreshToken"));
+//        Long accessTokenExpired = Long.parseLong(env.getProperty("jwt.accessToken"));
+//        Long refreshTokenExpired = Long.parseLong(env.getProperty("jwt.refreshToken"));
 
         String accessToken = generateToken(userLoginId, accessTokenExpired);
         String refreshToken = generateToken(userLoginId, refreshTokenExpired);
