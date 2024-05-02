@@ -17,21 +17,14 @@ public class CommentListResponseDto {
     @Builder
     @Setter
     public static class Comment {
+        private int commentId;
 
-        private Integer postId;
+        private int userId;
 
-        private Character postType;
+        private String userNickname;
 
-        private String postTitle;
-
-        private String postContent;
-
-        private String userNickname; // 작성자 닉네임
+        private String commentContent;
 
         private LocalDateTime createdAt;
-
-        private Integer likeCnt;
-
-        private Integer commentCnt;
     }
 }
