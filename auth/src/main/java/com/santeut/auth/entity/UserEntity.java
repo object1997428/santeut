@@ -80,7 +80,7 @@ public class UserEntity {
         userEntity.userLoginId = dto.getUserLoginId();
         userEntity.userPassword = dto.getUserPassword();
         userEntity.userBirth = dto.getUserBirth();
-        userEntity.userProfile = dto.getUserProfile();
+        userEntity.userProfile = null;
         userEntity.userGender = dto.getUserGender();
         userEntity.createdAt = LocalDateTime.now();
         userEntity.modifiedAt = LocalDateTime.now();

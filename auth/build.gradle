@@ -57,8 +57,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.2.2'
 
     // S3
-    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.445'
-
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 dependencyManagement {

@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-public class UpdateProfileRequest {
+public class UpdateProfileImageRequest {
 
-    String userNickname;
+    MultipartFile userProfile;
 }
