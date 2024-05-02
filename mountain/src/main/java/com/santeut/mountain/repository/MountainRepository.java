@@ -6,7 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MountainRepository extends JpaRepository<MountainEntity, Integer> {
 
-  List<MountainEntity> findAllByMountainNameContainingOrderByViewsDesc(String mountainName);
+  List<MountainEntity> findAllByMountainNameContaining(String mountainName);
+
+  List<MountainEntity> findAllByRegionNameLike(String regionName);
+
+  List<MountainEntity> findAllByMountainNameContainingAndRegionNameLike(String mountainName, String regionName);
 
   List<MountainEntity> findTop10ByOrderByViewsDesc();
 

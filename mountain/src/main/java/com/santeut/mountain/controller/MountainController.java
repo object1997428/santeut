@@ -21,8 +21,11 @@ public class MountainController {
   private final MountainService mountainService;
 
   @GetMapping("")
-  public ResponseEntity<BasicResponse> searchMountainByName(@RequestParam("name") String name)  {
-    return ResponseUtil.buildBasicResponse(HttpStatus.OK, mountainService.findByName(name));
+  public ResponseEntity<BasicResponse> searchMountainByName(
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "region", required = false) String region) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        mountainService.findByNameAndRegion(name, region));
   }
 
   @GetMapping("/popular")

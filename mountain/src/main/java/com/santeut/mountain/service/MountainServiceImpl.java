@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.MultiLineString;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,9 +18,23 @@ public class MountainServiceImpl implements MountainService {
   private final MountainRepository mountainRepository;
 
   @Override
-  public List<MountainSearchResponseDto> findByName(String name) {
+  public List<MountainSearchResponseDto> findByNameAndRegion(String name, String region) {
+    List<MountainEntity> mountainEntityList = new ArrayList<>();
+    if(name!=null && region != null) {
+      // region 지역 내 산 이름에 name을 포함한 산 검색
+      mountainEntityList = mountainRepository.findAllByMountainNameContainingAndRegionNameLike(name, region);
+    } else if(name!=null) {
+      // 전국, 산 이름에 name을 포함한 산 검색
+      mountainEntityList = mountainRepository.findAllByMountainNameContaining(name);
+    } else if(region !=null) {
+      // region 지역 내 모든 산 검색
+      mountainEntityList = mountainRepository.findAllByRegionNameLike(region);
+    } else {
+      // 전국 산 검색
+      mountainEntityList = mountainRepository.findAll();
+    }
 
-    return mountainRepository.findAllByMountainNameContainingOrderByViewsDesc(name)
+    return mountainEntityList
         .stream()
         .map(MountainSearchResponseDto::from)
         .collect(Collectors.toList());
