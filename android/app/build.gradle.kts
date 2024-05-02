@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -34,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -62,6 +64,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,7 +89,8 @@ dependencies {
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
-//    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    // kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
@@ -103,4 +107,13 @@ dependencies {
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
+
+    // navermap
+    implementation ("io.github.fornewid:naver-map-compose:1.7.0")
+    implementation ("io.github.fornewid:naver-map-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.naver.maps:map-sdk:3.18.0")
+
+    implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
+
 }

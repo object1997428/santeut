@@ -75,17 +75,10 @@ fun SignUpScreen(
         if(effect is SignUpViewModel.SignUpUiEvent.SignUp){
             val signUpEvent = effect as SignUpViewModel.SignUpUiEvent.SignUp
             if (signUpEvent.success) {
-<<<<<<< HEAD
-                snackBarHostState.showSnackbar(
-                    message = "회원가입을 성공했습니다."
-                )
-                onNavigateLogin()
-=======
                 onNavigateLogin()
                 snackBarHostState.showSnackbar(
                     message = "회원가입을 성공했습니다."
                 )
->>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
             } else {
                 snackBarHostState.showSnackbar(
                     message = "회원가입을 할 수 없습니다."
@@ -296,11 +289,7 @@ fun SignUpScreen(
                     Text(
                         text = selectGender.value,
                         fontSize = 16.sp,
-<<<<<<< HEAD
-                        fontWeight = FontWeight.ExtraBold,
-=======
                         fontWeight = FontWeight.Bold,
->>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
                         color = Color(0xFF678C40)
                     )
                     DropdownMenu(

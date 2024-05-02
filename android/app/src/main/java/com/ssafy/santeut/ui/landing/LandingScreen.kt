@@ -41,11 +41,7 @@ fun LandingScreen(
     viewModel.checkAuth()
 
     LaunchedEffect(effect) {
-<<<<<<< HEAD
-        if(effect is UserViewModel.AuthUiEvent.Auth){
-=======
         if (effect is UserViewModel.AuthUiEvent.Auth) {
->>>>>>> 070aae5b7e21058a8d65a52b920d7911e350f8a5
             delay(1000)
             val authEvent = effect as UserViewModel.AuthUiEvent.Auth
             if (authEvent.auth) {

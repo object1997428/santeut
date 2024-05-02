@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:usesCleartextTraffic="true"
@@ -17,6 +19,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Santeut"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="ph53d7696j"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

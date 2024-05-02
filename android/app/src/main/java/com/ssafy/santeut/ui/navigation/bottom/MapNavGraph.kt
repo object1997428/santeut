@@ -1,5 +1,6 @@
 package com.ssafy.santeut.ui.navigation.bottom
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -16,7 +17,9 @@ fun NavGraphBuilder.MapNavGraph(
         route = "map_graph"
     ) {
         composable("map") {
-            MapScreen()
+            // Composable 함수에서 Context를 직접적으로 참조할 수 있음
+            val context = LocalContext.current
+            MapScreen(context = context)
         }
     }
 }
