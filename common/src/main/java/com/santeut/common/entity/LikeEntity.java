@@ -2,14 +2,14 @@ package com.santeut.common.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "likes")
 public class LikeEntity extends BaseEntity {
 
@@ -20,7 +20,7 @@ public class LikeEntity extends BaseEntity {
 
     @NotNull
     @Column(name = "like_reference_type", length = 255)
-    private String likeReferenceType;
+    private Character likeReferenceType;
 
     @NotNull
     @Column(name = "like_reference_id")
