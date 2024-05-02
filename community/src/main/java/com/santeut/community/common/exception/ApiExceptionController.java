@@ -64,6 +64,18 @@ public class ApiExceptionController {
     public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
         return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
     }
+    // Open Feign 호출 에러
+    @ExceptionHandler(FeignClientException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(FeignClientException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "feignClientException");
+    }
+    // JPA 쿼리 매서드 호출 에러
+    @ExceptionHandler(JpaQueryException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAccessDeniedException(JpaQueryException e) {
+        return constructErrorResponse(e,HttpStatus.INTERNAL_SERVER_ERROR, "jpaQueryException");
+    }
 
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
         log.error("[exceptionHandle] ex={}", e.getMessage(), e);
