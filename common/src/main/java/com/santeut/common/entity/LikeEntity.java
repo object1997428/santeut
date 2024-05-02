@@ -20,7 +20,7 @@ public class LikeEntity extends BaseEntity {
 
     @NotNull
     @Column(name = "like_reference_type", length = 255)
-    private String likeReferenceType;
+    private Character likeReferenceType;
 
     @NotNull
     @Column(name = "like_reference_id")
