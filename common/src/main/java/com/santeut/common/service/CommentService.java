@@ -72,7 +72,7 @@ public class CommentService {
         // 댓글을 쓴 사람의 userId 조회
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
         // 요청한 사람의 userId 조회
-        int requestUserId = authServerService.getUserId();
+        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
 
         // 권한이 없다면 에러 처리
         if (requestUserId != commentUserId) {
@@ -88,7 +88,7 @@ public class CommentService {
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
 
         // 요청한 사람의 userId 조회
-        int requestUserId = authServerService.getUserId();
+        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
 
         // 권한이 없다면 에러 처리
         if (requestUserId != commentUserId) {

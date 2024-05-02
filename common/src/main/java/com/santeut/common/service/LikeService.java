@@ -34,7 +34,7 @@ public class LikeService {
 
     // 좋아요 누르기
     public void hitLike(Integer postId, Character postType) {
-        int requestUserId = authServerService.getUserId();
+        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
         LikeEntity likeEntity = LikeEntity.builder()
                 .likeReferenceId(postId)
                 .likeReferenceType(postType)
@@ -43,7 +43,7 @@ public class LikeService {
     }
 
     public boolean isHited(Integer postId, Character postType) {
-        int requestUserId = authServerService.getUserId();
+        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
         Optional<LikeEntity> likeEntity = likeRepository.findByReferenceIdAndReferenceType(postId, postType);
         return likeEntity.isPresent();
     }
