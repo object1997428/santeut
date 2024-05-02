@@ -1,6 +1,8 @@
 package com.santeut.community.dto.response;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,5 +25,6 @@ public class PostReadResponseDto {
 
     private int likeCnt;
 
-    private List<Object> commentList;
+    private List<CommentListResponseDto.Comment> commentList;
+
 }
