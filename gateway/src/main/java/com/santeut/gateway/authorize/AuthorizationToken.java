@@ -29,8 +29,6 @@ public class AuthorizationToken {
              return true;
         }catch (Exception e){
             return false;
-
         }
-
     }
 }
