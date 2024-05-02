@@ -38,6 +38,9 @@ dependencies {
 // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-spatial
     implementation group: 'org.hibernate.orm', name: 'hibernate-spatial', version: '7.0.0.Alpha1'
 
+    // eureka
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
 }
 
 dependencyManagement {
