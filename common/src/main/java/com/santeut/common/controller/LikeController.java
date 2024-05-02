@@ -23,7 +23,7 @@ public class LikeController {
     private final LikeService likeService;
 
     // 좋아요 개수 가져오기 쓰기 (READ)
-    @GetMapping("/{postId}/{postType}")
+    @GetMapping("/cnt/{postId}/{postType}")
     public ResponseEntity<BasicResponse> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType) {
         Map<String, Integer> result = new HashMap<>();
         int cnt = likeService.getLikeCnt(postId, postType);

@@ -22,7 +22,7 @@ public class CommentController {
     private final CommentService commentService;
 
     // 댓글 개수 가져오기 (READ)
-    @GetMapping("/{postId}/{postType}")
+    @GetMapping("/cnt/{postId}/{postType}")
     public ResponseEntity<BasicResponse> getCommentCnt(@PathVariable Integer postId, @PathVariable Character postType) {
         int commentCnt = commentService.getCommentCnt(postId, postType);
         Map<String, Integer> result = new HashMap<>();
