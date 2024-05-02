@@ -16,10 +16,10 @@ public interface CommonClient {
     @GetMapping("/like/{postId}/{postType}")
     Optional<Map<String, Integer>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
     @GetMapping("/like/cnt/{postId}/{postType}")
-    Optional<Map<String, Integer>> getCommentCnt(Integer postId, Character postType);
+    Optional<Map<String, Integer>> getCommentCnt(@PathVariable  Integer postId, @PathVariable Character postType);
 
     // comment controller 요청
     @GetMapping("/comment/{postId}/{postType}")
-     Optional<CommentListResponseDto> getCommentList(Integer postId, Character postType);
+     Optional<CommentListResponseDto> getCommentList(@PathVariable  Integer postId, @PathVariable Character postType);
 
 }
