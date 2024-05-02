@@ -14,14 +14,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.host}")
-    private String redisHost;
+//    @Value("${spring.data.redis.host}")
+//    private String redisHost;
+//
+//    @Value("${spring.data.redis.port}")
+//    private String redisPort;
 
-    @Value("${spring.data.redis.port}")
-    private String redisPort;
-
-    @Value("${spring.data.redis.password}")
-    private String redisPassword;
+//    @Value("${spring.data.redis.password}")
+//    private String redisPassword;
     @Autowired
     private Environment env;
 
@@ -32,9 +32,9 @@ public class RedisConfig {
 //        String redisPassword = env.getProperty("spring.data.redis.password");
 
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(redisHost);
-        redisStandaloneConfiguration.setPort(Integer.parseInt(redisPort));
-        redisStandaloneConfiguration.setPassword(redisPassword);
+        redisStandaloneConfiguration.setHostName(env.getProperty("spring.data.redis.host"));
+        redisStandaloneConfiguration.setPort(Integer.parseInt(env.getProperty("spring.data.redis.port")));
+//        redisStandaloneConfiguration.setPassword(redisPassword);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
