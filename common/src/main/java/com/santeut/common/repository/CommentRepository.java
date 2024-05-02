@@ -25,4 +25,6 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
     @Transactional
     @Query("UPDATE CommentEntity c SET c.isDelete = 1 , c.deletedAt = :deletedAt WHERE c.id=:commentId")
     void deleteCommentDirectly(@Param("commentId") Integer commentId, @Param("deletedAt") LocalDateTime deletedAt);
+
+    int countByCommentReferenceIdAndCommentReferenceType(Integer commentReferenceId, Character commentReferenceType);
 }

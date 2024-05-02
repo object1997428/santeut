@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping("/comment")
@@ -19,6 +20,15 @@ import java.util.Map;
 public class CommentController {
 
     private final CommentService commentService;
+
+    // 댓글 개수 가져오기 (READ)
+    @GetMapping("/{postId}/{postType}")
+    public ResponseEntity<BasicResponse> getCommentCnt(@PathVariable Integer postId, @PathVariable Character postType) {
+        int commentCnt = commentService.getCommentCnt(postId, postType);
+        Map<String, Integer> result = new HashMap<>();
+        result.put("commentCnt", commentCnt);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, result);
+    }
 
     // 댓글 쓰기 (CREATE)
     @PostMapping("/{postId}/{postType}")
