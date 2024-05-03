@@ -20,7 +20,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("welcome")
+    @GetMapping("/welcome")
     public String welcome(){
         return "WELCOME";
     }
