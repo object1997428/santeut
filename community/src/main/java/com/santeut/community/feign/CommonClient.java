@@ -13,10 +13,12 @@ import java.util.Optional;
 public interface CommonClient {
 
     // 좋아요 수 가져오기
-    @GetMapping("/like/{postId}/{postType}")
-    Optional<Map<String, Integer>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
     @GetMapping("/like/cnt/{postId}/{postType}")
-    Optional<Map<String, Integer>> getCommentCnt(@PathVariable  Integer postId, @PathVariable Character postType);
+//    Optional<ApiResponse<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
+    Optional<FeignResponseDto<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
+    // 댓글 개수 가져오기
+    @GetMapping("/comment/cnt/{postId}/{postType}")
+    Optional<FeignResponseDto<Map<String,Integer>>> getCommentCnt(@PathVariable  Integer postId, @PathVariable Character postType);
 
     // comment controller 요청
     @GetMapping("/comment/{postId}/{postType}")
