@@ -86,8 +86,6 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
                     DataBuffer buffer = response.bufferFactory().wrap("토큰이 존재하지 않습니다.".getBytes(StandardCharsets.UTF_8));
                     return response.writeWith(Mono.just(buffer));
 
-                    return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                    }));
                 }
             }
         });
