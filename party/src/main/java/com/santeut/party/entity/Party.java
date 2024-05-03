@@ -73,4 +73,10 @@ public class Party extends BaseEntity {
             .maxParticipants(requestDto.getMaxPeople())
             .build();
     }
+
+    public void modifyPartyInfo(String partyName, String schedule, String place) {
+        this.partyName = partyName;
+        this.schedule = LocalDateTime.parse(schedule, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.place = place;
+    }
 }
