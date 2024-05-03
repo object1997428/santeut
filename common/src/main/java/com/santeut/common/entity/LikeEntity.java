@@ -1,27 +1,26 @@
 package com.santeut.common.entity;
 
-import com.santeut.common.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "likes")
-public class Like extends BaseEntity {
+public class LikeEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
-    private int likeId;
+    private int id;
 
     @NotNull
     @Column(name = "like_reference_type", length = 255)
-    private String likeReferenceType;
+    private Character likeReferenceType;
 
     @NotNull
     @Column(name = "like_reference_id")

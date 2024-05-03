@@ -1,22 +1,21 @@
 package com.santeut.common.entity;
 
-import com.santeut.common.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Alarm extends BaseEntity {
+public class AlarmEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alarm_id")
-    private Integer alarmId;
+    private Integer id;
 
     @NotNull
     @Column(name = "user_id")
@@ -24,7 +23,7 @@ public class Alarm extends BaseEntity {
 
     @NotNull
     @Column(name = "reference_type", length = 255)
-    private String referenceType;
+    private Character referenceType;
 
     @NotNull
     @Column(name = "reference_id")

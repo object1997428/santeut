@@ -1,4 +1,4 @@
-package com.santeut.common.common;
+package com.santeut.common.entity;
 
 
 import jakarta.persistence.Column;
@@ -34,7 +34,7 @@ public abstract class BaseEntity {
     private LocalDateTime deletedAt;
 
     @NotNull
-    @Column(columnDefinition = "TINYINT DEFAULT 0")
+    @Column(name="is_deleted", columnDefinition = "TINYINT DEFAULT 0")
     @Setter
-    private boolean isDelete;
+    private boolean isDeleted;
 }
