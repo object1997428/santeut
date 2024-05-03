@@ -34,6 +34,10 @@ public class PostEntity extends BaseEntity {
     @NotNull
     private Character postType;
 
+    @Column(name="hit_cnt")
+    @NotNull
+    private int hitCnt;
+
     @Column(name = "user_party_id")
     @NotNull
     private Integer userPartyId;

@@ -54,13 +54,7 @@ public class PostController {
     // 게시글 삭제하기 ( DELETE )
     @DeleteMapping("/post/{postId}/{postType}")
     public ResponseEntity<BasicResponse> deletePost(@PathVariable int postId, @PathVariable char postType) {
-        postService.deletePost(postId, postType);
+        postService.deletePost(postId, postType, 1); // toFix : 3번 째 파라미터 헤더에 담긴 userId로 변환해야함!!!
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 삭제하기를 성공했습니다.");
-    }
-
-    // 임시 openFeign 테스트
-    @GetMapping("/openfeign")
-    public ResponseEntity<BasicResponse> openFeign() {
-        return ResponseUtil.buildBasicResponse(HttpStatus.OK, userInfoClient.getUserInfo());
     }
 }

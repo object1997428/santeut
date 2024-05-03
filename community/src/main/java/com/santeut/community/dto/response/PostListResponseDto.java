@@ -33,5 +33,7 @@ public class PostListResponseDto {
         private Integer likeCnt;
 
         private Integer commentCnt;
+
+        private Integer hitCnt;
     }
 }
