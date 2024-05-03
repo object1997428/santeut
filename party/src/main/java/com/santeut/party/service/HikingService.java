@@ -71,11 +71,11 @@ public class HikingService {
     @Transactional
     public void saveTrack(HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto) {
         for (TrackData trackData : hikingTrackSaveReignRequestDto.getTrackDataList()) {
-//            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId())
-//                    .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
+            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId())
+                    .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
 
-            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId()).get();
-            if(partyUser==null) continue;;
+//            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId()).get();
+//            if(partyUser==null) continue;
 
             //초기화할 때
             if(partyUser.getPoints()==null){

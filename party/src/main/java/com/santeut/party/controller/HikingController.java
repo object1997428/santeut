@@ -28,8 +28,9 @@ public class HikingController {
     }
 
     @PostMapping("/hiking/track")
-    public void saveHikingTrack(@RequestBody HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto){
+    public ResponseEntity<?> saveHikingTrack(@RequestBody HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto){
         log.info("Hiking Server 요청 들어옴");
         hikingService.saveTrack(hikingTrackSaveReignRequestDto);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK,"좌표 저장에 성공했습니다.");
     }
 }
