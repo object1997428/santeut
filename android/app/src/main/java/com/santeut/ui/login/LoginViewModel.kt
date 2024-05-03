@@ -57,6 +57,9 @@ class LoginViewModel @Inject constructor(
                     ).catch { e ->
                         Log.d("Login Error", "${e.message}")
                         _uiEvent.value = LoginUiEvent.Login(false);
+
+                        _userLoginId.value = ""
+                        _userPassword.value = ""
                     }.collectLatest { data ->
                         Log.d("Login Success", "Success ${data.accessToken}")
                         // 토큰 저장 해야함

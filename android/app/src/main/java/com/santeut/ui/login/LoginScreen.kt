@@ -67,14 +67,14 @@ fun LoginScreen(
             if (loginEvent.success) {
                 Log.d("Login Screen", "성공")
                 onNavigateHome()
-                snackBarHostState.showSnackbar(
-                    message = "로그인을 성공했습니다."
-                )
+//                snackBarHostState.showSnackbar(
+//                    message = "로그인을 성공했습니다."
+//                )
             } else {
                 Log.d("Login Screen", "실패")
-                snackBarHostState.showSnackbar(
-                    message = "로그인을 할 수 없습니다."
-                )
+//                snackBarHostState.showSnackbar(
+//                    message = "로그인을 할 수 없습니다."
+//                )
             }
         }
     }

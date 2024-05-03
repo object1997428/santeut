@@ -5,6 +5,8 @@ plugins {
 //    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -34,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -91,7 +93,12 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
+    // 권한 요청 관련
+//    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
     // compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
