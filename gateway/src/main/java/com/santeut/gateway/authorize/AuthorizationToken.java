@@ -15,14 +15,13 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class AuthorizationToken {
 
-            @Autowired
-            private Environment env;
+    @Value("${jwt.secretKey")
+    private String jwtSecretKey;
+
             public boolean validateToken(String token){
-                String jwtSecret = env.getProperty("jwt.secretKey");
                 try {
-                    SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
                     Jwts.parser()
-                        .verifyWith(key)
+                        .verifyWith((SecretKey) getKey())
                         .build()
                         .parseSignedClaims(token)
                     .getPayload();
@@ -33,11 +32,14 @@ public class AuthorizationToken {
         }
     }
 
+    private Key getKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
+    }
+
     public Claims extractAllClaims(String token){
-        String jwtSecret = env.getProperty("jwt.secretKey");
-        SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+
         return Jwts.parser()
-                .verifyWith(key)
+                .verifyWith((SecretKey) getKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
