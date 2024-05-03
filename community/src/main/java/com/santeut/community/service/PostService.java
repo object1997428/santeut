@@ -1,23 +1,19 @@
 package com.santeut.community.service;
 
 import com.santeut.community.common.exception.AccessDeniedException;
-import com.santeut.community.common.exception.FeignClientException;
 import com.santeut.community.common.exception.JpaQueryException;
-import com.santeut.community.common.exception.ZeroDataException;
 import com.santeut.community.dto.request.PostCreateReqeustRequestDto;
 import com.santeut.community.dto.request.PostUpdateReqeustRequestDto;
-import com.santeut.community.dto.response.CommentListResponseDto;
+import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
-import com.santeut.community.dto.response.UserInfoFeignRequestDto;
 import com.santeut.community.entity.PostEntity;
-import com.santeut.community.feign.CommonClient;
-import com.santeut.community.feign.UserInfoClient;
 import com.santeut.community.feign.service.AuthServerService;
 import com.santeut.community.feign.service.CommonServerService;
 import com.santeut.community.repository.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
     private final PostRepository postRepository;
     private final AuthServerService authServerService;
@@ -79,8 +76,7 @@ public class PostService {
     public PostReadResponseDto readPost(int postId, char postType) {
 
         PostEntity postEntity = postRepository.findByIdAndPostType(postId, postType).orElseThrow(() -> new JpaQueryException("게시글 디테일 읽기중 DB 오류 발생"));
-        CommentListResponseDto commentListResponseDto = commonServerService.getCommentList(postId, postType);
-
+        CommentListFeignDto commentListFeignDto = commonServerService.getCommentList(postId, postType);
         return PostReadResponseDto.builder()
                 .postId(postEntity.getId())
                 .postType(postEntity.getPostType())
@@ -88,7 +84,8 @@ public class PostService {
                 .postContent(postEntity.getPostContent())
                 .userNickname(authServerService.getNickname(postEntity.getUserId()))
                 .hitCnt(postEntity.getHitCnt())
-                .commentList(commentListResponseDto.getCommentList())
+                .commentList(commentListFeignDto.getCommentList())
+                .createdAt(postEntity.getCreatedAt())
                 .build();
     }
 
