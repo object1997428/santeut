@@ -29,42 +29,7 @@ import com.santeut.ui.navigation.bottom.BottomNavBar
 @Composable
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 fun CommunityScreen() {
-    Scaffold(
-        topBar = { ToolBar() },
-        content = { Tips() },
-    )
-}
-
-
-@Composable
-fun ToolBar() {
-    TopAppBar(
-        title = { Text(text = "커뮤니티") },
-        contentColor = MaterialTheme.colors.primary,
-        backgroundColor = Color.White,
-        navigationIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBackIosNew,
-                    contentDescription = "Back"
-                )
-            }
-        },
-        actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Outlined.Message,
-                    contentDescription = "Message"
-                )
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Outlined.Notifications,
-                    contentDescription = "Notifications"
-                )
-            }
-        }
-    )
+    Tips()
 }
 
 @Composable
