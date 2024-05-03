@@ -6,10 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostCreateReqeustRequestDto {
-    private Integer userId;
+public class PostUpdateRequestDto {
     private String postTitle;
     private String postContent;
-    private Character postType;
-    private Integer userPartyId;
 }

@@ -1,21 +1,18 @@
-package com.santeut.community.dto.response;
+package com.santeut.community.feign.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class CommentListResponseDto {
+@NoArgsConstructor
+public class CommentListFeignDto {
     private List<Comment> commentList;
     @Data
     @AllArgsConstructor
-    @Builder
-    @Setter
+    @NoArgsConstructor
     public static class Comment {
         private int commentId;
 

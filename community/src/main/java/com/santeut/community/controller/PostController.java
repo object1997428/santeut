@@ -2,8 +2,8 @@ package com.santeut.community.controller;
 
 import com.santeut.community.common.response.BasicResponse;
 import com.santeut.community.common.util.ResponseUtil;
-import com.santeut.community.dto.request.PostCreateReqeustRequestDto;
-import com.santeut.community.dto.request.PostUpdateReqeustRequestDto;
+import com.santeut.community.dto.request.PostCreateRequestDto;
+import com.santeut.community.dto.request.PostUpdateRequestDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
 import com.santeut.community.feign.UserInfoClient;
@@ -32,8 +32,8 @@ public class PostController {
 
     // 게시글 생성 컨트롤러 ( CREATE )
     @PostMapping("/post")
-    public ResponseEntity<BasicResponse> createPost(@RequestBody PostCreateReqeustRequestDto postCreateReqeustRequestDto) {
-        postService.createPost(postCreateReqeustRequestDto);
+    public ResponseEntity<BasicResponse> createPost(@RequestBody PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId) {
+        postService.createPost(postCreateRequestDto, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "성공적으로 게시글 작성");
     }
 
@@ -46,15 +46,19 @@ public class PostController {
 
     // 게시글 수정하기 ( UPDATE )
     @PatchMapping("/post/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> updatePost(@RequestBody PostUpdateReqeustRequestDto postUpdateReqeustRequestDto, @PathVariable int postId, @PathVariable char postType) {
-        postService.updatePost(postUpdateReqeustRequestDto, postId, postType);
+    public ResponseEntity<BasicResponse> updatePost(
+            @RequestBody PostUpdateRequestDto postUpdateRequestDto,
+            @PathVariable int postId, @PathVariable char postType,
+            @RequestHeader int userId
+    ) {
+        postService.updatePost(postUpdateRequestDto, postId, postType, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 수정하기를 성공했습니다");
     }
 
     // 게시글 삭제하기 ( DELETE )
     @DeleteMapping("/post/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> deletePost(@PathVariable int postId, @PathVariable char postType) {
-        postService.deletePost(postId, postType, 1); // toFix : 3번 째 파라미터 헤더에 담긴 userId로 변환해야함!!!
+    public ResponseEntity<BasicResponse> deletePost(@PathVariable int postId, @PathVariable char postType, @RequestHeader int userId) {
+        postService.deletePost(postId, postType, userId); // toFix : 3번 째 파라미터 헤더에 담긴 userId로 변환해야함!!!
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 삭제하기를 성공했습니다.");
     }
 }

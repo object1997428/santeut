@@ -1,7 +1,7 @@
 package com.santeut.community.feign;
 
 import com.santeut.community.common.config.FeignConfiguration;
-import com.santeut.community.dto.response.CommentListResponseDto;
+import com.santeut.community.feign.dto.CommentListFeignDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +22,5 @@ public interface CommonClient {
 
     // comment controller 요청
     @GetMapping("/comment/{postId}/{postType}")
-     Optional<CommentListResponseDto> getCommentList(@PathVariable  Integer postId, @PathVariable Character postType);
-
+     Optional<FeignResponseDto<CommentListFeignDto>> getCommentList(@PathVariable  Integer postId, @PathVariable Character postType);
 }

@@ -1,10 +1,11 @@
 package com.santeut.community.dto.response;
 
+import com.santeut.community.feign.dto.CommentListFeignDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter @Setter
@@ -21,7 +22,7 @@ public class PostReadResponseDto {
 
     private String userNickname;
 
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     private int likeCnt;
 
@@ -29,6 +30,6 @@ public class PostReadResponseDto {
 
     private int hitCnt;
 
-    private List<CommentListResponseDto.Comment> commentList;
+    private List<CommentListFeignDto.Comment> commentList;
 
 }

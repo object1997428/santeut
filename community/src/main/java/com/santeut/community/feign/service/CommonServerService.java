@@ -1,7 +1,7 @@
 package com.santeut.community.feign.service;
 
 import com.santeut.community.common.exception.FeignClientException;
-import com.santeut.community.dto.response.CommentListResponseDto;
+import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.feign.CommonClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class CommonServerService {
         return commonClient.getCommentCnt(postId, postType).orElseThrow(() ->new FeignClientException("common 서버에서 댓글 개수 가져오기 실패함")).getData().get("commentCnt");
     }
 
-    public CommentListResponseDto getCommentList(int postId, char postType) {
-        return commonClient.getCommentList(postId, postType).orElseThrow(() -> new FeignClientException("common 서버에서 댓글 목록 가져오기 실패함"));
+    public CommentListFeignDto getCommentList(int postId, char postType) {
+        return commonClient.getCommentList(postId, postType).orElseThrow(() -> new FeignClientException("common 서버에서 댓글 목록 가져오기 실패함")).getData();
     }
 }
