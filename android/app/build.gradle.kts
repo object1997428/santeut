@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ssafy.santeut"
+    namespace = "com.santeut"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.ssafy.santeut"
+        applicationId = "com.santeut"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
