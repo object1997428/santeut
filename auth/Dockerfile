@@ -1,4 +1,4 @@
-# Gateway Server Dockerfile
+# Auth Server Dockerfile
 
 # build
 FROM gradle:8.5-jdk17 AS builder
@@ -20,8 +20,6 @@ ENV TZ=Asia/Seoul
 COPY --from=builder /app/build/libs/*.jar ./app.jar
 RUN ls -al /app
 
-# expose port
-EXPOSE 17650
-
-# set entry point
+# port 
+EXPOSE 52711
 ENTRYPOINT ["java", "-jar", "app.jar"]
