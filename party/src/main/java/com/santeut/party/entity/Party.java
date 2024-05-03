@@ -1,7 +1,8 @@
 package com.santeut.party.entity;
 
-import com.santeut.party.entity.BaseEntity;
+import com.santeut.party.dto.request.CreatePartyRequestDto;
 import jakarta.persistence.*;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,9 +55,22 @@ public class Party extends BaseEntity {
     @Column(name = "party_participants", nullable = false)
     private int participants;
 
-    @Column(name = "party_started_at", nullable = false)
+    @Column(name = "party_started_at")
     private LocalDateTime started_at;
 
-    @Column(name = "party_finished_at", nullable = false)
+    @Column(name = "party_finished_at")
     private LocalDateTime finished_at;
+
+
+    public static Party createEntity(int userId, CreatePartyRequestDto requestDto) {
+        return Party.builder()
+            .userId(userId)
+            .mountainName(requestDto.getMountainName())
+            .partyName(requestDto.getPartyName())
+            .schedule(LocalDateTime.parse(requestDto.getSchedule(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+            .place(requestDto.getPlace())
+            .status('B')
+            .maxParticipants(requestDto.getMaxPeople())
+            .build();
+    }
 }

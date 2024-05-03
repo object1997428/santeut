@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Builder
@@ -30,21 +31,33 @@ public class PartyUser extends BaseEntity {
     @Column(name = "party_user_status", length = 1, nullable = false)
     private char status;
 
-    @Column(name = "party_user_distance", nullable = false)
-    private int distance;
+    @Column(name = "party_user_distance")
+    private Integer distance;
 
-    @Column(name = "party_user_best_height", nullable = false)
-    private int bestHeight;
+    @Column(name = "party_user_best_height")
+    private Integer bestHeight;
 
-    @Column(name = "party_user_move_time", nullable = false)
-    private int moveTime;
+    @Column(name = "party_user_move_time")
+    private Integer moveTime;
 
     @Column(name = "party_user_is_success"/*, nullable = false*/)//후순위
-    private boolean isSuccess;
+    private Boolean isSuccess;
 
     @Column(name = "party_user_points")
     private String points;
 
-    @Column(name = "party_user_started_at", nullable = false)
+    @Column(name = "party_user_started_at")
     private LocalDateTime started_at;
+
+    /** 비즈니스 로직 **/
+    public void setStatus(char status){
+        if(status=='P'){
+            this.started_at=LocalDateTime.now();
+        }
+        else if(status=='E'){
+            setDeleted(true);
+            this.moveTime= (int)Duration.between(getDeletedAt(),this.started_at).getSeconds()/60;
+        }
+        this.status=status;
+    }
 }
