@@ -19,7 +19,7 @@ public class MountainController {
 
   private final MountainService mountainService;
 
-  @GetMapping("")
+  @GetMapping("/")
   public ResponseEntity<BasicResponse> searchMountainByName(
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "region", required = false) String region) {
