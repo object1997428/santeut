@@ -23,19 +23,15 @@ class AuthRepositoryImpl @Inject constructor(
     }
     override suspend fun login(loginRequest: LoginRequest): Flow<LoginResponse> = flow {
         val response = authApiService.login(loginRequest)
-        if(response.code() == 200){
-            response.body()?.let {
-                emit(response.body()!!)
-            }
+        if(response.status == "200"){
+            emit(response.data)
         }
     }
 
     override suspend fun signup(signUpRequest: SignUpRequest): Flow<Unit>  = flow {
         val response = authApiService.signup(signUpRequest)
-        if(response.code() == 200){
-            response.body()?.let {
-                emit(response.body()!!)
-            }
+        if(response.status == "200"){
+            emit(response.data)
         }
     }
 }

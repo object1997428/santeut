@@ -1,0 +1,8 @@
+package com.ssafy.santeut.data.model
+
+import com.google.gson.annotations.SerializedName
+
+data class BaseResponse<out T>(
+    @SerializedName("status") val status: String,
+    @SerializedName("data") val data: T
+)
