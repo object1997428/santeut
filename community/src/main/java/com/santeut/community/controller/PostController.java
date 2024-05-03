@@ -3,7 +3,7 @@ package com.santeut.community.controller;
 import com.santeut.community.common.response.BasicResponse;
 import com.santeut.community.common.util.ResponseUtil;
 import com.santeut.community.dto.request.PostCreateReqeustRequestDto;
-import com.santeut.community.dto.request.PostUpdateReqeustRequestDto;
+import com.santeut.community.dto.request.PostUpdateRequestDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
 import com.santeut.community.feign.UserInfoClient;
@@ -46,8 +46,8 @@ public class PostController {
 
     // 게시글 수정하기 ( UPDATE )
     @PatchMapping("/post/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> updatePost(@RequestBody PostUpdateReqeustRequestDto postUpdateReqeustRequestDto, @PathVariable int postId, @PathVariable char postType) {
-        postService.updatePost(postUpdateReqeustRequestDto, postId, postType);
+    public ResponseEntity<BasicResponse> updatePost(@RequestBody PostUpdateRequestDto postUpdateRequestDto, @PathVariable int postId, @PathVariable char postType) {
+        postService.updatePost(postUpdateRequestDto, postId, postType);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 수정하기를 성공했습니다");
     }
 

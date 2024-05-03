@@ -3,7 +3,7 @@ package com.santeut.community.service;
 import com.santeut.community.common.exception.AccessDeniedException;
 import com.santeut.community.common.exception.JpaQueryException;
 import com.santeut.community.dto.request.PostCreateReqeustRequestDto;
-import com.santeut.community.dto.request.PostUpdateReqeustRequestDto;
+import com.santeut.community.dto.request.PostUpdateRequestDto;
 import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
@@ -90,13 +90,13 @@ public class PostService {
     }
 
     // 게시글 수정 (UPDATE)
-    public void updatePost(PostUpdateReqeustRequestDto postUpdateReqeustRequestDto, int postId, char postType) {
+    public void updatePost(PostUpdateRequestDto postUpdateRequestDto, int postId, char postType) {
         // title, content 외의 부분은 그대로 저장을 해야 하므로 우선 게시글을 조회해서 PostEntity에 넣어줌
         PostEntity post = postRepository.findByIdAndPostType(postId, postType)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
         // 바뀐 제목과 본문을 저장해줌
-        post.setPostTitle(postUpdateReqeustRequestDto.getPostTitle());
-        post.setPostContent(postUpdateReqeustRequestDto.getPostContent());
+        post.setPostTitle(postUpdateRequestDto.getPostTitle());
+        post.setPostContent(postUpdateRequestDto.getPostContent());
         // jpa를 이용하여 실제로 저장함
         postRepository.save(post);
     }
