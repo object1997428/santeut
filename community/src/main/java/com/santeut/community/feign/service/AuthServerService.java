@@ -15,7 +15,7 @@ public class AuthServerService {
     private final UserInfoClient userInfoClient;
 
     public String getNickname(Integer userId) {
-        return userInfoClient.getUserInfo(userId).orElseThrow(() -> new FeignClientException("닉네임 정보를 불러오는데 실패했습니다.")).getUserNickname();
+        return userInfoClient.getUserInfo(userId).orElseThrow(() -> new FeignClientException("닉네임 정보를 불러오는데 실패했습니다.")).getData().getUserNickname();
     }
     public UserInfoFeignRequestDto getUserInfo(Integer userId) {
         return userInfoClient.getUserInfo().orElseThrow(() -> new FeignClientException("유저 아이디 정보를 불러오는데 실패했습니다."));
