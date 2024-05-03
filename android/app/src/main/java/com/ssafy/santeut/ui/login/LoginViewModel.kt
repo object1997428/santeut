@@ -58,10 +58,9 @@ class LoginViewModel @Inject constructor(
                         Log.d("Login Error", "${e.message}")
                         _uiEvent.value = LoginUiEvent.Login(false);
                     }.collectLatest { data ->
-                        Log.d("Login Success", "Success")
+                        Log.d("Login Success", "Success ${data.accessToken}")
                         // 토큰 저장 해야함
-                        _userState.value =
-                            _userState.value.copy(token = data.accessToken, isLoggedIn = true)
+                        _userState.value.copy(token = data.accessToken, isLoggedIn = true)
                         _uiEvent.value = LoginUiEvent.Login(true);
                     }
                 }

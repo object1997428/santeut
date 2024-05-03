@@ -27,7 +27,8 @@ object RemoteModule {
     @Singleton
     @Named("retrofit")
     fun provideRetrofitInstance(gson: Gson, client: OkHttpClient): Retrofit {
-        return Retrofit.Builder().baseUrl("http://10.0.2.2:8000")
+        return Retrofit.Builder()
+            .baseUrl("https://k10e201.p.ssafy.io")
             .addConverterFactory(GsonConverterFactory.create(gson)).client(client)
             .build()
     }
