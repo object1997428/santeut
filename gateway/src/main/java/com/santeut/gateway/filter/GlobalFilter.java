@@ -82,10 +82,9 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
                     }));
                 }
                 else {
-                    // 임시로 끔
-//                    response.setStatusCode(HttpStatus.BAD_REQUEST);
-//                    DataBuffer buffer = response.bufferFactory().wrap("토큰이 존재하지 않습니다.".getBytes(StandardCharsets.UTF_8));
-//                    return response.writeWith(Mono.just(buffer));
+                    response.setStatusCode(HttpStatus.BAD_REQUEST);
+                    DataBuffer buffer = response.bufferFactory().wrap("토큰이 존재하지 않습니다.".getBytes(StandardCharsets.UTF_8));
+                    return response.writeWith(Mono.just(buffer));
 
                     return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                     }));
