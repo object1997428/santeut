@@ -58,8 +58,18 @@ public class PartyUser extends BaseEntity {
         else if(status=='E'){
             setDeleted(true);
             this.moveTime= (int)Duration.between(getDeletedAt(),this.started_at).getSeconds()/60;
+        } else if(status=='I') {
+            setDeleted(true);
         }
         this.status=status;
+    }
+
+    public static PartyUser of(int userId, int partyId) {
+        return PartyUser.builder()
+            .userId(userId)
+            .partyId(partyId)
+            .status('B')
+            .build();
     }
 
     public void addTrackPoints(Geometry points){
