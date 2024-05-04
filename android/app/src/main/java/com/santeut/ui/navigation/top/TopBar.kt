@@ -31,19 +31,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.santeut.R
 
 @Composable
 fun TopBar(
+    navController: NavController,
     currentTap: String?
 ) {
-    if(currentTap == "home"){
+    if (currentTap == "home") {
         HomeTopBar(
             onClickAlert = { /*TODO*/ },
             onClickChatting = { /*TODO*/ }
         )
-    }else if(currentTap == "community"){
-        CommunityTopBar()
+    } else if (currentTap == "community") {
+        CommunityTopBar(navController)
     }
 
     // TopBar 여기서 수정
@@ -100,13 +102,15 @@ fun HomeTopBar(
 }
 
 @Composable
-fun CommunityTopBar() {
+fun CommunityTopBar(navController: NavController) {
     TopAppBar(
         title = { Text(text = "커뮤니티") },
         contentColor = MaterialTheme.colors.primary,
         backgroundColor = Color.White,
         navigationIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBackIosNew,
                     contentDescription = "Back"
