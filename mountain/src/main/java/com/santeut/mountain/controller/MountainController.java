@@ -2,14 +2,12 @@ package com.santeut.mountain.controller;
 
 import com.santeut.mountain.common.response.BasicResponse;
 import com.santeut.mountain.common.util.ResponseUtil;
-import com.santeut.mountain.dto.response.MountainDetailResponseDto;
 import com.santeut.mountain.service.MountainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +35,14 @@ public class MountainController {
       @PathVariable("mountainId") int mountainId) {
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,
         mountainService.findMountainById(mountainId));
+  }
+
+  @GetMapping("/v2/{mountainId}")
+  public ResponseEntity<BasicResponse> getMountainDetailById(
+      @PathVariable("mountainId") int mountainId
+  ) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        mountainService.getMountainInfoById(mountainId));
   }
 
 }
