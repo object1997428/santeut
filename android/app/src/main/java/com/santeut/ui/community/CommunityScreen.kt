@@ -1,71 +1,71 @@
-package com.santeut.ui.community
-
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Devices
+import com.google.accompanist.pager.*
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.santeut.designsystem.theme.SanteutTheme
-import com.santeut.ui.navigation.bottom.BottomNavBar
+import com.santeut.ui.community.JoinGuildScreen
+import com.santeut.ui.community.JoinPartyScreen
+import com.santeut.ui.community.ShareCourseScreen
+import com.santeut.ui.community.ShareTipsScreen
 
-@Composable
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@OptIn(ExperimentalPagerApi::class)
+@Composable
 fun CommunityScreen() {
-    Tips()
-}
+    val pages = listOf("동호회", "소모임", "등산Tip", "코스공유")
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
 
-@Composable
-fun TabRow() {
+    Scaffold() {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+                    )
+                }
+            ) {
+                pages.forEachIndexed { index, title ->
+                    Tab(
+                        text = { Text(text = title) },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(index)
+                            }
+                        }
+                    )
+                }
+            }
 
-}
-
-@Composable
-fun Tips() {
-    LazyColumn(
-        modifier = Modifier
-            .background(color = Color.Green)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(10) {
-            TipDetail()
+            HorizontalPager(
+                count = pages.size,
+                state = pagerState
+            ) { page ->
+                when (page) {
+                    0 -> JoinGuildScreen()
+                    1 -> JoinPartyScreen()
+                    2 -> ShareTipsScreen()
+                    3 -> ShareCourseScreen()
+                    else -> Text("Unknown page")
+                }
+            }
         }
     }
 }
 
 @Composable
-fun TipDetail() {
-    Column {
-        Row {
-            Text(text = "Title ")
-            Text(text = "Writer")
-        }
-        Text(text = "내용")
-    }
-}
-
-@Composable
-@Preview(device = Devices.PIXEL_2)
-fun Preview() {
-    SanteutTheme {
-        CommunityScreen()
-    }
+@Preview
+fun PreviewCommunity() {
+    CommunityScreen()
 }
