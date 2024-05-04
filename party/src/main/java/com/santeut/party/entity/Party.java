@@ -89,4 +89,8 @@ public class Party extends BaseEntity {
         this.participants += 1;
         return true;
     }
+
+    public synchronized void minusParticipant() {
+        this.participants -= 1;
+    }
 }
