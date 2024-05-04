@@ -40,7 +40,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
     JPAQuery<Long> count = jpaQueryFactory
         .select(party.count())
         .from(party)
-        .where(dateBetween(startDate, endDate), guildIdEq(guildId), partyNameContains(name));
+        .where(dateBetween(startDate, endDate), guildIdEq(guildId), partyNameContains(name),
+            partyStatusEq('B'));
 
     return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
   }
@@ -69,7 +70,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
     return party.partyName.contains(partyName);
   }
 
-  private BooleanExpression partyStatusEq(Character status) {
+  private BooleanExpression partyStatusEq(char status) {
     return party.status.eq(status);
   }
 
