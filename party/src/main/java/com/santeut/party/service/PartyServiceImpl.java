@@ -11,6 +11,8 @@ import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,7 +33,11 @@ public class PartyServiceImpl implements PartyService {
   @Transactional
   public void createParty(int userId, CreatePartyRequestDto requestDto) {
     log.info("소모임 생성 정보: " + requestDto);
-    Party entity = partyRepository.save(Party.createEntity(userId, requestDto));
+    String selectedCourse = Arrays.stream(requestDto.getSelectedCourse())
+        .mapToObj(String::valueOf)
+        .collect(Collectors.joining("."));
+
+    Party entity = partyRepository.save(Party.createEntity(userId, requestDto, selectedCourse));
     partyUserService.joinUserParty(userId, entity.getPartyId());
   }
 
