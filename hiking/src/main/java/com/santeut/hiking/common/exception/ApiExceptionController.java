@@ -2,6 +2,7 @@ package com.santeut.hiking.common.exception;
 
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.hiking.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,13 @@ public class ApiExceptionController {
     }
 
     // 부적절한 객체상태오류
+    @ExceptionHandler(JsonProcessingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse illegalExHandle(JsonProcessingException  e) {
+        return constructErrorResponse(e,HttpStatus.BAD_REQUEST, "JsonProcessingException ");
+    }
+
+    //객체가 json으로 변환이 안되는 오류
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse illegalExHandle(IllegalStateException e) {
