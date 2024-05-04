@@ -24,6 +24,7 @@ import com.santeut.R
 
 @Composable
 fun JoinGuildScreen() {
+
     LazyColumn {
         items(10) {
             GuildCard()

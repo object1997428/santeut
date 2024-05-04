@@ -26,6 +26,7 @@ fun SanteutApp(
             .fillMaxHeight(),
         topBar = {
                  TopBar(
+                     navController,
                      currentTap = navController.currentBackStackEntryAsState().value?.destination?.route
                  )
         },
