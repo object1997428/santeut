@@ -8,7 +8,6 @@ import com.santeut.party.entity.PartyUser;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +35,9 @@ public class PartyUserServiceImpl implements PartyUserService {
 
   @Override
   @Transactional
-  public void deleteAllPartyUser(int partyId) {
+  public void deleteAllPartyUser(int partyId, char status) {
     partyUserRepository.findAllByPartyId(partyId)
-        .forEach(partyUser -> partyUser.setDeleted(true));
+        .forEach(partyUser -> partyUser.setStatus(status));
   }
 
   @Override
@@ -50,8 +49,8 @@ public class PartyUserServiceImpl implements PartyUserService {
         .orElseThrow(() -> new AccessDeniedException("해당 소모임에 가입하지 않았습니다"));
     if (party.getUserId() == userId) {
       // 소모임장이 탈퇴할 경우 다른 회원들도 자동으로 소모임에서 나감
-      party.setDeleted(true);
-      deleteAllPartyUser(partyId);
+      party.deleteParty('I');
+      deleteAllPartyUser(partyId, 'I');
     } else {
       // 소모임 나감
       partyUserRepository.delete(partyUser);

@@ -75,6 +75,11 @@ public class Party extends BaseEntity {
             .build();
     }
 
+    public void deleteParty(Character status) {
+        this.setDeleted(true);
+        this.status = status;
+    }
+
     public void modifyPartyInfo(String partyName, String schedule, String place, int maxParticipants) {
         this.partyName = partyName;
         this.schedule = LocalDateTime.parse(schedule, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

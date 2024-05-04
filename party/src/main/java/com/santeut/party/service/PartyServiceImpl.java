@@ -63,8 +63,8 @@ public class PartyServiceImpl implements PartyService {
     if(userId != party.getUserId()) {
       throw new AccessDeniedException("소모임 삭제 권한이 없습니다");
     }
-    party.setDeleted(true);
-    partyUserService.deleteAllPartyUser(partyId);
+    party.deleteParty('I');
+    partyUserService.deleteAllPartyUser(partyId, 'I');
   }
 
   @Override
