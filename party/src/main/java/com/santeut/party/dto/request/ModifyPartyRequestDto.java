@@ -8,5 +8,6 @@ public class ModifyPartyRequestDto {
   public String schedule;
   public String partyName;
   public String place;
+  public int maxPeople;
 
 }

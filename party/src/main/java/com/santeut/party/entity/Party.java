@@ -75,10 +75,11 @@ public class Party extends BaseEntity {
             .build();
     }
 
-    public void modifyPartyInfo(String partyName, String schedule, String place) {
+    public void modifyPartyInfo(String partyName, String schedule, String place, int maxParticipants) {
         this.partyName = partyName;
         this.schedule = LocalDateTime.parse(schedule, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.place = place;
+        this.maxParticipants = maxParticipants;
     }
 
     public synchronized boolean addParticipant() {

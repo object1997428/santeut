@@ -43,7 +43,7 @@ public class PartyServiceImpl implements PartyService {
       throw new AccessDeniedException("[party] 소모임 수정 권한이 없습니다");
     }
     entity.modifyPartyInfo(requestDto.getPartyName(), requestDto.getSchedule(),
-        requestDto.getPlace());
+        requestDto.getPlace(), requestDto.getMaxPeople());
     return PartyInfoResponseDto.of(
         userInfoAccessUtil.getUserInfo(entity.getUserId()).getUserNickname()
         , entity);
