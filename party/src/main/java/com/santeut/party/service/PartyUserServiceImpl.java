@@ -45,7 +45,7 @@ public class PartyUserServiceImpl implements PartyUserService {
   public void withdrawUserFromParty(int userId, Integer partyId) {
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
-    PartyUser partyUser = partyUserRepository.findByUserIdAndPartyId(userId, party.getPartyId())
+    PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(party.getPartyId(), userId)
         .orElseThrow(() -> new AccessDeniedException("해당 소모임에 가입하지 않았습니다"));
     if (party.getUserId() == userId) {
       // 소모임장이 탈퇴할 경우 다른 회원들도 자동으로 소모임에서 나감

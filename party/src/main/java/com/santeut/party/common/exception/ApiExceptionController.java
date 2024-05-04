@@ -21,7 +21,7 @@ public class ApiExceptionController {
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleDataNotFoundException(DataNotFoundException e) {
-        return constructErrorResponse(e,HttpStatus.NOT_FOUND,"DataNotFoundException");
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleDataNotFoundException");
     }
 
     // 이미 가입한 사용자
@@ -65,11 +65,7 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleNoHandlerFoundException");
     }
 
-    @ExceptionHandler(DataNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleDataNotFoundException(DataNotFoundException e) {
-        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleDataNotFoundException");
-    }
+
 
     // 권한없음(접근거부)
     @ExceptionHandler(AccessDeniedException.class)

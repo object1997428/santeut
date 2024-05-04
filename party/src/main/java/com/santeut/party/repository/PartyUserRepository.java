@@ -13,8 +13,6 @@ public interface PartyUserRepository extends JpaRepository<PartyUser, Integer> {
 
   boolean existsByUserIdAndPartyId(int userId, int partyId);
 
-  Optional<PartyUser> findByUserIdAndPartyId(int userId, int partyId);
-  
   Optional<PartyUser> findByPartyIdAndUserId(int partyId,int userId);
 
   List<PartyUser> findAllByPartyId(int partyId);
