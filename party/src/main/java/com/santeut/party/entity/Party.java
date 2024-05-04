@@ -71,6 +71,7 @@ public class Party extends BaseEntity {
             .place(requestDto.getPlace())
             .status('B')
             .maxParticipants(requestDto.getMaxPeople())
+            .participants(0)
             .build();
     }
 
@@ -78,5 +79,13 @@ public class Party extends BaseEntity {
         this.partyName = partyName;
         this.schedule = LocalDateTime.parse(schedule, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.place = place;
+    }
+
+    public synchronized boolean addParticipant() {
+        if(this.participants>=this.maxParticipants) {
+            return false;
+        }
+        this.participants += 1;
+        return true;
     }
 }

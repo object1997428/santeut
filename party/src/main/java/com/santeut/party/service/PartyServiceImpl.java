@@ -19,12 +19,15 @@ import org.springframework.stereotype.Service;
 public class PartyServiceImpl implements PartyService {
 
   private final PartyRepository partyRepository;
+  private final PartyUserService partyUserService;
   private final UserInfoAccessUtil userInfoAccessUtil;
 
   @Override
+  @Transactional
   public void createParty(int userId, CreatePartyRequestDto requestDto) {
     log.info("소모임 생성 정보: " + requestDto);
-    partyRepository.save(Party.createEntity(userId, requestDto));
+    Party entity = partyRepository.save(Party.createEntity(userId, requestDto));
+    partyUserService.joinUserParty(userId, entity.getPartyId());
   }
 
   @Override

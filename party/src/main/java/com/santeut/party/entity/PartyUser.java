@@ -60,4 +60,12 @@ public class PartyUser extends BaseEntity {
         }
         this.status=status;
     }
+
+    public static PartyUser of(int userId, int partyId) {
+        return PartyUser.builder()
+            .userId(userId)
+            .partyId(partyId)
+            .status('B')
+            .build();
+    }
 }
