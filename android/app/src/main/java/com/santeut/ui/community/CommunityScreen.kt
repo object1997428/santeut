@@ -2,10 +2,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.Message
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.google.accompanist.pager.*
@@ -14,8 +10,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import com.santeut.ui.community.JoinGuildScreen
 import com.santeut.ui.community.JoinPartyScreen
-import com.santeut.ui.community.ShareCourseScreen
-import com.santeut.ui.community.ShareTipsScreen
+import com.santeut.ui.community.PostCourseScreen
+import com.santeut.ui.community.PostTipsScreen
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -55,8 +51,8 @@ fun CommunityScreen() {
                 when (page) {
                     0 -> JoinGuildScreen()
                     1 -> JoinPartyScreen()
-                    2 -> ShareTipsScreen()
-                    3 -> ShareCourseScreen()
+                    2 -> PostTipsScreen()
+                    3 -> PostCourseScreen()
                     else -> Text("Unknown page")
                 }
             }

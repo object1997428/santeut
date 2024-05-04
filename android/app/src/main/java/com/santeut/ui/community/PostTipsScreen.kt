@@ -2,7 +2,6 @@ package com.santeut.ui.community
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Text
@@ -26,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ShareTipsScreen() {
+fun PostTipsScreen() {
     LazyColumn(
         modifier = Modifier
             .background(color = Color.White)
@@ -76,5 +74,5 @@ fun TipDetail() {
 @Preview
 @Composable
 fun ShareTipsPreview() {
-    ShareTipsScreen()
+    PostTipsScreen()
 }
