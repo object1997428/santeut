@@ -70,30 +70,25 @@ public class CommentService {
                 .build();
     }
 
-    public void updateComment(Integer commentId, String commentContent) {
+    public void updateComment(Integer commentId, String commentContent, int userId) {
         // 댓글을 쓴 사람의 userId 조회
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
-        // 요청한 사람의 userId 조회
-        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
 
         // 권한이 없다면 에러 처리
-        if (requestUserId != commentUserId) {
+        if (userId != commentUserId) {
             throw new AccessDeniedException("권한이 없습니다.");
         }
         // 댓글 수정 로직 구현
         commentRepository.updateCommentDirectly(commentId, commentContent);
     }
 
-    public void deleteComment(Integer commentId) {
+    public void deleteComment(Integer commentId, int userId) {
 
         // 댓글을 쓴 사람의 userId 조회
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
 
-        // 요청한 사람의 userId 조회
-        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
-
         // 권한이 없다면 에러 처리
-        if (requestUserId != commentUserId) {
+        if (userId != commentUserId) {
             throw new AccessDeniedException("권한이 없습니다.");
         }
         // 댓글 삭제 로직 구현

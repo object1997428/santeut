@@ -19,4 +19,6 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Integer> {
     int countByLikeReferenceIdAndLikeReferenceType(@NotNull int likeReferenceId, @NotNull Character likeReferenceType);
 
     Optional<LikeEntity> findByLikeReferenceIdAndLikeReferenceType(Integer referenceId, Character referenceType);
+
+    int countByUserIdAndLikeReferenceIdAndLikeReferenceType(int userId, Integer likeReferenceId, Character likeReferenceType);
 }

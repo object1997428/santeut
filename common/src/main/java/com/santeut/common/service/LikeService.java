@@ -11,6 +11,7 @@ import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.CommentRepository;
 import com.santeut.common.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,12 +34,14 @@ public class LikeService {
     }
 
     // 좋아요 누르기
-    public void hitLike(Integer postId, Character postType) {
-        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
+    public void hitLike(Integer postId, Character postType, int userId) {
+
+        if(likeRepository.countByUserIdAndLikeReferenceIdAndLikeReferenceType(userId,postId,postType) > 0) throw new AccessDeniedException("이미 좋아요를 눌렀습니다.");
+
         LikeEntity likeEntity = LikeEntity.builder()
                 .likeReferenceId(postId)
                 .likeReferenceType(postType)
-                .userId(requestUserId).build();
+                .userId(userId).build();
         likeRepository.save(likeEntity);
     }
 

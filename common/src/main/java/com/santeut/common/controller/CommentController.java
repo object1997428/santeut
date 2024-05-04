@@ -50,15 +50,15 @@ public class CommentController {
 
     // 댓글 수정하기 ( UPDATE )
     @PatchMapping("/{commentId}")
-    public ResponseEntity<BasicResponse> updateComment(@PathVariable Integer commentId, @RequestBody Map<String, String> commentContent) {
-        commentService.updateComment(commentId, commentContent.get("commentContent"));
+    public ResponseEntity<BasicResponse> updateComment(@PathVariable Integer commentId, @RequestBody Map<String, String> commentContent, @RequestHeader int userId) {
+        commentService.updateComment(commentId, commentContent.get("commentContent"), userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "댓글 수정을 성공했습니다.");
     }
 
     // 댓글 삭제하기 ( DELETE )
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<BasicResponse> deleteComment(@PathVariable Integer commentId) {
-        commentService.deleteComment(commentId);
+    public ResponseEntity<BasicResponse> deleteComment(@PathVariable Integer commentId, @RequestHeader int userId) {
+        commentService.deleteComment(commentId, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "댓글 삭제를 성공했습니다.");
     }
 }
