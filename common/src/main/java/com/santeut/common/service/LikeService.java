@@ -50,4 +50,9 @@ public class LikeService {
         Optional<LikeEntity> likeEntity = likeRepository.findByLikeReferenceIdAndLikeReferenceType(postId, postType);
         return likeEntity.isPresent();
     }
+
+    // 좋아요 취소하기
+    public void cancleLike(Integer postId, Character postType, int userId) {
+        likeRepository.deleteByLikeReferenceIdAndLikeReferenceTypeAndUserId(postId, postType, userId);
+    }
 }

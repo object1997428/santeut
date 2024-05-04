@@ -20,5 +20,12 @@ public interface LikeRepository extends JpaRepository<LikeEntity, Integer> {
 
     Optional<LikeEntity> findByLikeReferenceIdAndLikeReferenceType(Integer referenceId, Character referenceType);
 
+    // 좋아요 이미 눌렀는지 체크
     int countByUserIdAndLikeReferenceIdAndLikeReferenceType(int userId, Integer likeReferenceId, Character likeReferenceType);
+
+    //
+//    @Query("UPDATE LikeEntity l SET l.isDeleted = true")
+//    void deleteLikeDirectly(int likeReferenceId, char likeReferenceType, int userId);
+
+    void deleteByLikeReferenceIdAndLikeReferenceTypeAndUserId(Integer likeReferenceId, Character likeReferenceType, Integer userId);
 }

@@ -47,4 +47,10 @@ public class LikeController {
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 좋아요를 눌렀습니다.");
     }
 
+    // 좋아요 취소 ( DELETE )
+    @DeleteMapping("/{postId}/{postType}")
+    public ResponseEntity<BasicResponse> cancleLike(@PathVariable Integer postId, @PathVariable Character postType, @RequestHeader int userId) {
+        likeService.cancleLike(postId, postType, userId);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "좋아요를 취소했습니다.");
+    }
 }
