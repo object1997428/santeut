@@ -29,7 +29,7 @@ public class ResponseUtil {
 
     public static ResponseEntity<PagingResponse> buildPagingResponse(
             HttpStatus status,
-            List<?> content,
+            List<?> data,
             boolean isFirst,
             boolean isLast,
             int page,
@@ -42,7 +42,7 @@ public class ResponseUtil {
 
         PagingResponse pagingResponse = new PagingResponse(
                 status.value(),
-                content,
+                data,
                 isFirst,
                 isLast,
                 page,

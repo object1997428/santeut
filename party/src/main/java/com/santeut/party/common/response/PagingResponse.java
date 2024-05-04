@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class PagingResponse<T> {
     private int status;
-    private T content;
+    private T data;
     private boolean isFirst;
     private boolean isLast;
     private int page;
