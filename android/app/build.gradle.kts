@@ -105,4 +105,7 @@ dependencies {
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
+
+    // LiveData
+    implementation ("androidx.compose.runtime:runtime-livedata:1.2.0")
 }
