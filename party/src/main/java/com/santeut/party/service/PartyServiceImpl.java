@@ -48,4 +48,16 @@ public class PartyServiceImpl implements PartyService {
         userInfoAccessUtil.getUserInfo(entity.getUserId()).getUserNickname()
         , entity);
   }
+
+  @Override
+  @Transactional
+  public void deleteParty(int userId, int partyId) {
+    Party party = partyRepository.findById(partyId)
+        .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
+    if(userId != party.getUserId()) {
+      throw new AccessDeniedException("소모임 삭제 권한이 없습니다");
+    }
+    party.setDeleted(true);
+    partyUserService.deleteAllPartyUser(partyId);
+  }
 }

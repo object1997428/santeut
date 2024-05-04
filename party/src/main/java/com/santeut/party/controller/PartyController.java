@@ -10,6 +10,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,13 @@ public class PartyController {
       @PathVariable("partyId") int partyId, @RequestBody ModifyPartyRequestDto requestDto) {
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,
         partyService.modifyParty(userId, partyId, requestDto));
+  }
+
+  @DeleteMapping("/{partyId}")
+  public ResponseEntity<BasicResponse> deleteParty(@RequestHeader("userLoginId") int userId,
+      @PathVariable("partyId") int partyId) {
+    partyService.deleteParty(userId, partyId);
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,"소모임 삭제 성공");
   }
 
 

@@ -9,4 +9,6 @@ public interface PartyService {
   void createParty(int userId, CreatePartyRequestDto requestDto);
 
   PartyInfoResponseDto modifyParty(int userId, int partyId, ModifyPartyRequestDto requestDto);
+
+  void deleteParty(int userId, int partyId);
 }

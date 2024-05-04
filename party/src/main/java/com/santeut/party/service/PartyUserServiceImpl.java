@@ -8,6 +8,7 @@ import com.santeut.party.entity.PartyUser;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,4 +34,10 @@ public class PartyUserServiceImpl implements PartyUserService {
     }
   }
 
+  @Override
+  @Transactional
+  public void deleteAllPartyUser(int partyId) {
+    List<PartyUser> partyUsers = partyUserRepository.findAllByPartyId(partyId);
+    partyUsers.forEach(partyUser -> partyUser.setDeleted(true));
+  }
 }
