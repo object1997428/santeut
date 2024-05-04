@@ -54,7 +54,6 @@ public class CommentService {
         // 댓글 리스트 가져오기 (spring jpa)
         List<CommentEntity> commentEntitiesList = commentRepository.findAllByCommentReferenceIdAndCommentReferenceType(postId, postType)
                 .orElseThrow(() -> new DataNotFoundException("댓글이 없습니다."));
-
         // Entity를 Dto에 맞게 변환해서 반환
         return CommentListResponseDto.builder()
                 .guildId(null) // #1 구현후 값 넣어주기

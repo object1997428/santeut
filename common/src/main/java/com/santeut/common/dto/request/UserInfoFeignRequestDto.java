@@ -6,8 +6,8 @@ import lombok.*;
 @AllArgsConstructor
 //@RequiredArgsConstructor
 @NoArgsConstructor
+@Data
 public class UserInfoFeignRequestDto {
     private int userId;
     private String userNickname;
 }
-

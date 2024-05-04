@@ -13,5 +13,5 @@ public interface UserInfoClient {
     @GetMapping("/user")
     Optional<UserInfoFeignRequestDto> getUserInfo();
     @GetMapping("/user/{userId}")
-    Optional<UserInfoFeignRequestDto> getUserInfo(@PathVariable("userId") int userId);
+    Optional<FeignResponseDto<UserInfoFeignRequestDto>> getUserInfo(@PathVariable("userId") int userId);
 }
