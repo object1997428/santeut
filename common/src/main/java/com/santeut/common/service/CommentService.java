@@ -11,6 +11,7 @@ import com.santeut.common.feign.UserInfoClient;
 import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -28,17 +30,18 @@ public class CommentService {
     private final AuthServerService authServerService;
 
     // 댓글 작성 (CREATE)
-    public void createComment(int postId, char postType, String commentContent) {
+    public void createComment(int postId, char postType, String commentContent, int userId) {
         try {
             commentRepository.save(CommentEntity.builder()
                     .commentReferenceType(postType)
                     .commentReferenceId(postId)
-                    .id(authServerService.getUserId()) // open feign 사용
+                    .userId(userId) // open feign 사용
                     .commentContent(commentContent)
                     .build()
             );
         } catch (Exception e) {
-            throw new RepositorySaveException("댓글 등록 에러 발생");
+            log.info(e.getMessage());
+            throw new RepositorySaveException("댓글 저장중 에러 발생");
         }
     }
 
