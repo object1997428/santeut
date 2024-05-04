@@ -8,9 +8,13 @@ import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.entity.Party;
 import com.santeut.party.feign.UserInfoAccessUtil;
 import com.santeut.party.repository.PartyRepository;
+import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class PartyServiceImpl implements PartyService {
 
   private final PartyRepository partyRepository;
+  private final PartyUserRepository partyUserRepository;
   private final PartyUserService partyUserService;
   private final UserInfoAccessUtil userInfoAccessUtil;
 
@@ -46,7 +51,8 @@ public class PartyServiceImpl implements PartyService {
         requestDto.getPlace(), requestDto.getMaxPeople());
     return PartyInfoResponseDto.of(
         userInfoAccessUtil.getUserInfo(entity.getUserId()).getUserNickname()
-        , entity);
+        , entity
+        , true);
   }
 
   @Override
@@ -59,5 +65,22 @@ public class PartyServiceImpl implements PartyService {
     }
     party.setDeleted(true);
     partyUserService.deleteAllPartyUser(partyId);
+  }
+
+  @Override
+  public Page<PartyInfoResponseDto> findParty(int userId, Integer guildId, String name,
+      LocalDate startDate, LocalDate endDate, Pageable pageable
+  ) {
+    Page<Party> parties = partyRepository.findPartyWithSearchConditions(userId, guildId, name,
+        startDate, endDate,
+        pageable);
+
+    return parties.map(party -> {
+      boolean isMember = partyUserRepository.existsByUserIdAndPartyId(userId, party.getPartyId());
+      String owner = userInfoAccessUtil.getUserInfo(party.getUserId()).getUserNickname();
+      log.info("소모임 조회 "+party.getPartyId()+", "+party.getPartyName());
+      return PartyInfoResponseDto.of(
+          owner, party, isMember);
+    });
   }
 }

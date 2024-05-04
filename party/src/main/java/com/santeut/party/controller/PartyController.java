@@ -5,17 +5,20 @@ import com.santeut.party.common.util.ResponseUtil;
 import com.santeut.party.dto.request.CreatePartyRequestDto;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
 import com.santeut.party.service.PartyService;
-import com.santeut.party.service.PartyUserService;
-import java.util.Map;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -43,6 +46,18 @@ public class PartyController {
       @PathVariable("partyId") int partyId) {
     partyService.deleteParty(userId, partyId);
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,"소모임 삭제 성공");
+  }
+
+  @GetMapping("")
+  public ResponseEntity<BasicResponse> findParty(
+      @RequestHeader("userLoginId") int userId,
+      @RequestParam(name = "guild", required = false) Integer guildId,
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "start", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+      @RequestParam(name = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+      Pageable pageable) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        partyService.findParty(userId, guildId, name, startDate, endDate, pageable));
   }
 
 
