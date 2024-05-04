@@ -37,6 +37,9 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-spatial
+    implementation group: 'org.hibernate.orm', name: 'hibernate-spatial', version: '7.0.0.Alpha1'
 }
 
 dependencyManagement {

@@ -54,9 +54,20 @@ public class Party extends BaseEntity {
     @Column(name = "party_participants", nullable = false)
     private int participants;
 
-    @Column(name = "party_started_at", nullable = false)
+    @Column(name = "party_started_at")
     private LocalDateTime started_at;
 
-    @Column(name = "party_finished_at", nullable = false)
+    @Column(name = "party_finished_at")
     private LocalDateTime finished_at;
+
+    /** 비즈니스 로직 **/
+    public void setPartyStatus(char status){
+        if(status=='P'){
+            this.started_at=LocalDateTime.now();
+        }
+        else if(status=='E'){
+            this.finished_at=LocalDateTime.now();
+        }
+        this.status=status;
+    }
 }
