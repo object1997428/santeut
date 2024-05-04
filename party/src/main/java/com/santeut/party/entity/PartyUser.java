@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Geometry;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -43,8 +44,8 @@ public class PartyUser extends BaseEntity {
     @Column(name = "party_user_is_success"/*, nullable = false*/)//후순위
     private Boolean isSuccess;
 
-    @Column(name = "party_user_points")
-    private String points;
+    @Column(name = "party_user_points", columnDefinition = "geometry")
+    private Geometry points;
 
     @Column(name = "party_user_started_at")
     private LocalDateTime started_at;
@@ -69,5 +70,9 @@ public class PartyUser extends BaseEntity {
             .partyId(partyId)
             .status('B')
             .build();
+    }
+
+    public void addTrackPoints(Geometry points){
+        this.points=points;
     }
 }

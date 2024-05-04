@@ -65,6 +65,12 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleNoHandlerFoundException");
     }
 
+    @ExceptionHandler(DataNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDataNotFoundException(DataNotFoundException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleDataNotFoundException");
+    }
+
     // 권한없음(접근거부)
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -72,9 +78,35 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
     }
 
+    //만료된 파티에 접근할 때 발생하는 오류
+    @ExceptionHandler(PartyExpiredException.class)
+    @ResponseStatus(HttpStatus.GONE)
+    public ErrorResponse handlePartyExpiredException(PartyExpiredException e) {
+        return constructErrorResponse(e,HttpStatus.GONE, "handlePartyExpiredException");
+    }
+
+    //시작할 수 없는 파티에 접근할 때 발생하는 오류
+    @ExceptionHandler(PartyNotStartedException.class)
+    @ResponseStatus(HttpStatus.GONE)
+    public ErrorResponse handlePartyNotStartedException(PartyNotStartedException e) {
+        return constructErrorResponse(e,HttpStatus.GONE, "handlePartyNotStartedException");
+    }
+
+    //데이터 정합성이 맞지 않음
+    @ExceptionHandler(DataMismatchException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleDataMissMatchException(DataMismatchException e) {
+        return constructErrorResponse(e,HttpStatus.GONE, "handleDataMissMatchException");
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleException(Exception e) {
+        return constructErrorResponse(e,HttpStatus.GONE, "handleException");
+    }
 
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
-        log.error("[exceptionHandle] ex={}", e.getMessage(), e);
+        log.error("[Party Server][exceptionHandle] ex={}", e.getMessage(), e);
         return new ErrorResponse(status.value(), errorType, e.getMessage());
     }
 }

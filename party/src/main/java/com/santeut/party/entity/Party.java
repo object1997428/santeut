@@ -64,7 +64,6 @@ public class Party extends BaseEntity {
     @Column(name = "party_finished_at")
     private LocalDateTime finished_at;
 
-
     public static Party createEntity(int userId, CreatePartyRequestDto requestDto, String selectedCourse) {
         return Party.builder()
             .userId(userId)
@@ -101,5 +100,16 @@ public class Party extends BaseEntity {
 
     public synchronized void minusParticipant() {
         this.participants -= 1;
+    }
+
+    /** 비즈니스 로직 **/
+    public void setPartyStatus(char status){
+        if(status=='P'){
+            this.started_at=LocalDateTime.now();
+        }
+        else if(status=='E'){
+            this.finished_at=LocalDateTime.now();
+        }
+        this.status=status;
     }
 }
