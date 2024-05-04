@@ -42,8 +42,15 @@ public class LikeController {
 
     // 좋아요 누르기 ( CREATE )
     @GetMapping("/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> hitLike(@PathVariable Integer postId, @PathVariable Character postType) {
-        likeService.hitLike(postId, postType);
-        return ResponseUtil.buildBasicResponse(HttpStatus.OK, null);
+    public ResponseEntity<BasicResponse> hitLike(@PathVariable Integer postId, @PathVariable Character postType, @RequestHeader int userId) {
+        likeService.hitLike(postId, postType, userId);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 좋아요를 눌렀습니다.");
+    }
+
+    // 좋아요 취소 ( DELETE )
+    @DeleteMapping("/{postId}/{postType}")
+    public ResponseEntity<BasicResponse> cancleLike(@PathVariable Integer postId, @PathVariable Character postType, @RequestHeader int userId) {
+        likeService.cancleLike(postId, postType, userId);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "좋아요를 취소했습니다.");
     }
 }

@@ -11,6 +11,7 @@ import com.santeut.common.feign.UserInfoClient;
 import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -28,17 +30,18 @@ public class CommentService {
     private final AuthServerService authServerService;
 
     // 댓글 작성 (CREATE)
-    public void createComment(int postId, char postType, String commentContent) {
+    public void createComment(int postId, char postType, String commentContent, int userId) {
         try {
             commentRepository.save(CommentEntity.builder()
                     .commentReferenceType(postType)
                     .commentReferenceId(postId)
-                    .id(authServerService.getUserId()) // open feign 사용
+                    .userId(userId) // open feign 사용
                     .commentContent(commentContent)
                     .build()
             );
         } catch (Exception e) {
-            throw new RepositorySaveException("댓글 등록 에러 발생");
+            log.info(e.getMessage());
+            throw new RepositorySaveException("댓글 저장중 에러 발생");
         }
     }
 
@@ -51,7 +54,6 @@ public class CommentService {
         // 댓글 리스트 가져오기 (spring jpa)
         List<CommentEntity> commentEntitiesList = commentRepository.findAllByCommentReferenceIdAndCommentReferenceType(postId, postType)
                 .orElseThrow(() -> new DataNotFoundException("댓글이 없습니다."));
-
         // Entity를 Dto에 맞게 변환해서 반환
         return CommentListResponseDto.builder()
                 .guildId(null) // #1 구현후 값 넣어주기
@@ -68,30 +70,25 @@ public class CommentService {
                 .build();
     }
 
-    public void updateComment(Integer commentId, String commentContent) {
+    public void updateComment(Integer commentId, String commentContent, int userId) {
         // 댓글을 쓴 사람의 userId 조회
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
-        // 요청한 사람의 userId 조회
-        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
 
         // 권한이 없다면 에러 처리
-        if (requestUserId != commentUserId) {
+        if (userId != commentUserId) {
             throw new AccessDeniedException("권한이 없습니다.");
         }
         // 댓글 수정 로직 구현
         commentRepository.updateCommentDirectly(commentId, commentContent);
     }
 
-    public void deleteComment(Integer commentId) {
+    public void deleteComment(Integer commentId, int userId) {
 
         // 댓글을 쓴 사람의 userId 조회
         int commentUserId = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("커맨트 정보 조회중 오류 발생 ")).getUserId();
 
-        // 요청한 사람의 userId 조회
-        int requestUserId = 1;// Fix : 임시로 값을 하드코딩해서 넣음, 헤더에 있는 userId를 넣어주도록 구현해야함
-
         // 권한이 없다면 에러 처리
-        if (requestUserId != commentUserId) {
+        if (userId != commentUserId) {
             throw new AccessDeniedException("권한이 없습니다.");
         }
         // 댓글 삭제 로직 구현
