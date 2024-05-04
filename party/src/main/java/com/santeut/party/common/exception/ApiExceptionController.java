@@ -17,6 +17,20 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RestControllerAdvice
 public class ApiExceptionController {
 
+    // 소모임이 존재하지 않음
+    @ExceptionHandler(DataNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDataNotFoundException(DataNotFoundException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND,"DataNotFoundException");
+    }
+
+    // 이미 가입한 사용자
+    @ExceptionHandler(AlreadyJoinedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAlreadyJoinedException(AlreadyJoinedException e) {
+        return constructErrorResponse(e,HttpStatus.CONFLICT,"AlreadyJoinedException");
+    }
+
     // 잘못된 인수값 전달
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
