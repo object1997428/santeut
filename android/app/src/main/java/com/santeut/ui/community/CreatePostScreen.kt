@@ -1,49 +1,119 @@
-package com.santeut.ui.community
-
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.santeut.ui.community.PostViewModel
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun CreatePostScreen(
-    navController: NavController
+    navController: NavController,
+    postViewModel: PostViewModel,
+    postType: Char
 ) {
-    WritePost()
-    Text(text = "글작성 페이지")
-}
+    val focusManager = LocalFocusManager.current
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
 
-@Composable
-fun WritePost(
-) {
-    Column(
-        modifier = Modifier
-            .background(color = Color.White)
-            .fillMaxWidth()
-            .fillMaxHeight()
+    val postCreationSuccess by postViewModel.postCreationSuccess.observeAsState()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "글쓰기",
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        ),
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.Center)
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = "Close"
+                        )
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.primarySurface,
+                contentColor = Color.White
+            )
+        }
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            Alignment.Center
-        ) { Text(text = "글쓰기", style = MaterialTheme.typography.body2) }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 70.dp)  // 탑바에 의해 제목이 가려지는 것을 방지
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            TextField(
+                value = title,
+                onValueChange = { title = it },
+                placeholder = { Text("제목") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .border(1.dp, Color(0XFF678C40)),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(androidx.compose.ui.focus.FocusDirection.Down) })
+            )
+            TextField(
+                value = content,
+                onValueChange = { content = it },
+                placeholder = { Text("내용") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .background(Color.White)
+                    .border(1.dp, Color(0XFF678C40)),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+            )
+            Button(
+                onClick = {
+                    postViewModel.createPost(title, content, postType, 1)
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("작성하기")
+            }
+        }
     }
 
-}
-
-@Composable
-@Preview
-fun Preview() {
-    WritePost()
+    LaunchedEffect(postCreationSuccess) {
+        if (postCreationSuccess == true) {
+            navController.navigate("postTips")
+        }
+    }
 }

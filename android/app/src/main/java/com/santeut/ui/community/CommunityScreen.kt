@@ -13,6 +13,7 @@ import com.santeut.ui.community.JoinGuildScreen
 import com.santeut.ui.community.JoinPartyScreen
 import com.santeut.ui.community.PostCourseScreen
 import com.santeut.ui.community.PostTipsScreen
+import com.santeut.ui.community.ReadPostScreen
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)

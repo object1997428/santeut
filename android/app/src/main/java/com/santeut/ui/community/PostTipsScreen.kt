@@ -1,6 +1,7 @@
 package com.santeut.ui.community
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,7 +45,6 @@ fun PostTipsScreen(
     postViewModel: PostViewModel = hiltViewModel(),
 ) {
     var searchText by remember { mutableStateOf("") }
-    // 게시글 작성 버튼
 
     val posts by postViewModel.posts.observeAsState(initial = emptyList())
 
@@ -63,7 +63,7 @@ fun PostTipsScreen(
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { navController.navigate("createPost") }) {
+            Button(onClick = { navController.navigate("createPost/T") }) {
                 Text("글쓰기")
             }
         }
@@ -75,18 +75,21 @@ fun PostTipsScreen(
 //            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(posts) { post ->
-                TipDetail(post)
+                TipDetail(post, navController)
             }
         }
     }
 }
 
 @Composable
-fun TipDetail(post: PostResponse) {
+fun TipDetail(post: PostResponse, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+            .clickable {
+                navController.navigate("readPost/${post.postId}/${post.postType}")
+            }
     ) {
         Text(text = post.postTitle, style = MaterialTheme.typography.h6)
         Text(text = post.postContent, style = MaterialTheme.typography.body1)
@@ -135,8 +138,8 @@ fun formatTime(createdAt: LocalDateTime): String {
         val minutes = duration.toMinutes()
         return "$minutes 분 전"
     } else if (period.days < 1) {
-        val hours = duration.toHours()
-        return "$hours 시간 전"
+        val formatter = DateTimeFormatter.ofPattern("HH:mm")
+        return createdAt.format(formatter)
     } else {
         val formatter = DateTimeFormatter.ofPattern("MM월 dd일")
         return createdAt.format(formatter)

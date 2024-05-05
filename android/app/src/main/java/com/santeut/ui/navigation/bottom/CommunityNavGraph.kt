@@ -1,14 +1,17 @@
 package com.santeut.ui.navigation.bottom
 
 import CommunityScreen
+import CreatePostScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.santeut.ui.community.CreatePostScreen
 import com.santeut.ui.community.PostTipsScreen
-import com.santeut.ui.guild.GuildScreen
-
+import com.santeut.ui.community.PostViewModel
+import com.santeut.ui.community.ReadPostScreen
 
 fun NavGraphBuilder.CommunityNavGraph(
     navController: NavHostController
@@ -20,12 +23,28 @@ fun NavGraphBuilder.CommunityNavGraph(
         composable("community") {
             CommunityScreen(navController)
         }
-        composable("postTips"){
+        composable("postTips") {
             PostTipsScreen(navController)
         }
-        composable("createPost"){
-            CreatePostScreen(navController)
+        composable(
+            route = "createPost/{postType}",
+            arguments = listOf(navArgument("postType") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val postType = backStackEntry.arguments?.getString("postType") ?: "T"
+            val postViewModel = hiltViewModel<PostViewModel>()
+            CreatePostScreen(navController, postViewModel, postType.first())
         }
-
+        composable(
+            route = "readPost/{postId}/{postType}",
+            arguments = listOf(
+                navArgument("postId") { type = NavType.IntType },
+                navArgument("postType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getInt("postId") ?: 0
+            val postType = backStackEntry.arguments?.getString("postType") ?: "T"
+            val postViewModel = hiltViewModel<PostViewModel>()
+            ReadPostScreen(postId, postType.first(), postViewModel)
+        }
     }
 }
