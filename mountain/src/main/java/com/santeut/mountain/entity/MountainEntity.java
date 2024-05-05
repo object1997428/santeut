@@ -61,4 +61,8 @@ public class MountainEntity {
   @OneToMany(mappedBy = "mountainId")
   List<CourseEntity> courseEntityList = new ArrayList<>();
 
+  public void addViews() {
+    this.views += 1;
+  }
+
 }
