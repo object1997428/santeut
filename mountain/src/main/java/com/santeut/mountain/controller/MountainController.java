@@ -8,6 +8,7 @@ import com.santeut.mountain.entity.CourseEntity;
 import com.santeut.mountain.service.CourseService;
 import com.santeut.mountain.service.MountainService;
 import feign.Response;
+import jakarta.persistence.Basic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +65,13 @@ public class MountainController {
     return ResponseUtil.buildPagingResponse(HttpStatus.OK, page.getContent(), page.isFirst(),
         page.isLast(), page.getNumber(), page.getTotalPages(), page.getTotalElements(),
         page.getSize(), false, false, false);
+  }
+
+  @GetMapping("/v2/course/{courseId}")
+  public ResponseEntity<BasicResponse> getCourseCoord(
+      @PathVariable("courseId") int courseId
+  ) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK, courseService.findCourseCoordByCourseId(courseId));
   }
 
 }
