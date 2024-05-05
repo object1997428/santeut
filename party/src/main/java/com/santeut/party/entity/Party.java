@@ -40,6 +40,9 @@ public class Party extends BaseEntity {
     @Column(name = "party_mountain_name", length = 300, nullable = false)
     private String mountainName;
 
+    @Column(name = "mountain_id", nullable = false)
+    private int mountainId;
+
     @Column(name = "party_name", columnDefinition = "TEXT",nullable = false)
     private String partyName;
 
