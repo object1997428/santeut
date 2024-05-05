@@ -1,11 +1,9 @@
 package com.santeut.party.common.util;
 
 import com.santeut.party.dto.request.LocationData;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,12 +19,19 @@ public class GeometryUtils {
     }
 
     public static List<LocationData> convertGeometryToListLocationData(Geometry geometry) {
-        if (geometry instanceof LineString) {
-            LineString lineString = (LineString) geometry;
-            return Arrays.stream(lineString.getCoordinates())
+        List<LocationData> locationDataList = new ArrayList<>();
+        if (geometry instanceof LineString lineString) {
+            locationDataList.addAll(Arrays.stream(lineString.getCoordinates())
                     .map(coordinate -> new LocationData(coordinate.y, coordinate.x))
-                    .collect(Collectors.toList());
+                    .toList());
+        }else if (geometry instanceof MultiLineString multiLineString) {
+            for (int i = 0; i < multiLineString.getNumGeometries(); i++) {
+                LineString lineString = (LineString) multiLineString.getGeometryN(i);
+                locationDataList.addAll(Arrays.stream(lineString.getCoordinates())
+                        .map(coordinate -> new LocationData(coordinate.y, coordinate.x))
+                        .toList());
+            }
         }
-        return null;
+        return locationDataList;
     }
 }

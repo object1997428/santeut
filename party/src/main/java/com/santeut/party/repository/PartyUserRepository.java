@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface PartyUserRepository extends JpaRepository<PartyUser,Integer> {
     Optional<PartyUser> findByPartyIdAndUserId(int partyId,int userId);
+    boolean existsByUserIdAndMountainIdAndStatus(int userId,int mountainId,char status);
 }

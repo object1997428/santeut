@@ -1,28 +1,34 @@
 package com.santeut.party.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.party.common.exception.DataMismatchException;
 import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.common.exception.PartyExpiredException;
 import com.santeut.party.common.exception.PartyNotStartedException;
+import com.santeut.party.common.response.BasicResponse;
 import com.santeut.party.common.util.GeometryUtils;
-import com.santeut.party.dto.request.HikingTrackSaveReignRequestDto;
-import com.santeut.party.dto.request.LocationData;
-import com.santeut.party.dto.request.TrackData;
-import com.santeut.party.entity.HikingEnterRequest;
+import com.santeut.party.dto.request.*;
+import com.santeut.party.dto.response.HikingStartResponse;
+import com.santeut.party.dto.response.PartyTrackDataReginRequest;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
+import com.santeut.party.feign.FeignResponseDto;
+import com.santeut.party.feign.HikingAuthClient;
+import com.santeut.party.feign.HikingMountainClient;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import javax.sound.midi.Track;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,41 +36,138 @@ import java.util.stream.Collectors;
 public class HikingService {
     private final PartyRepository partyRepository;
     private final PartyUserRepository partyUserRepository;
-    private GeometryFactory geometryFactory=new GeometryFactory();
-    public void hikingStart(HikingEnterRequest hikingEnterRequest){
+    private final HikingMountainClient hikingMountainClient;
+    private final HikingAuthClient hikingAuthClient;
+    private final ObjectMapper om;
+    private GeometryFactory geometryFactory = new GeometryFactory();
+
+    @Transactional
+    public HikingStartResponse hikingStart(HikingEnterRequest hikingEnterRequest) {
         Party party = partyRepository.findByPartyId(hikingEnterRequest.getPartyId())
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
 
-        if(party.getStatus()=='E'||party.getStatus()=='I') throw new PartyExpiredException("해당 소모임은 이미 종료되었습니다.");
-        if(party.getSchedule().isAfter(LocalDateTime.now())) throw new PartyNotStartedException("해당 소모임은 아직 시작할 수 없습니다.");
-        if(party.getStatus()=='B'){
-            if(hikingEnterRequest.getUserId()!=party.getUserId()) throw new PartyNotStartedException("아직 소모임장이 소모임을 활성화 하지 않았습니다.");
+        if (party.getStatus() == 'E' || party.getStatus() == 'I')
+            throw new PartyExpiredException("해당 소모임은 이미 종료되었습니다.");
+        if (party.getSchedule().isAfter(LocalDateTime.now()))
+            throw new PartyNotStartedException("해당 소모임은 아직 시작할 수 없습니다.");
+        HikingStartResponse resp = null;
+        if (party.getStatus() == 'B') {
+            if (hikingEnterRequest.getUserId() != party.getUserId())
+                throw new PartyNotStartedException("아직 소모임장이 소모임을 활성화 하지 않았습니다.");
             //소모임 활성화
             party.setPartyStatus('P');
             partyRepository.save(party);
             //소모임 회원들한테 알림보내기 요청
-            log.info("[Party Server] Alarm 한테 요청");
+            log.info("[Party Server] Alarm 한테 Party 시작 요청");
 
             //소모임장 입장 처리
             PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), hikingEnterRequest.getUserId())
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
-            if(partyUser.getStatus()=='P'){
+            if (partyUser.getStatus() == 'P') {
                 log.error("Party가 시작 전(B)인데 PartyUser가 진행 중(P)이다");
                 throw new DataMismatchException("소모임이 시작하지 않았는데 회원이 이미 소모임을 진행 중");
             }
-            partyUser.setStatus('P');
+            partyUser.setStatus('P',hikingEnterRequest.getStartTime());
             partyUserRepository.save(partyUser);
-            return;
+
+            //Mountain 서버한테 부탁해서 등산로 좌표 가져오기
+            resp = getHikingTrack(party);
         }
-
-
-        if(party.getStatus()=='P'){
+        else if (party.getStatus() == 'P') {
             //입장 처리
             PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), hikingEnterRequest.getUserId())
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
-            if(partyUser.getStatus()=='P') throw new DataMismatchException("해당 유저는 이미 소모임을 진행 중입니다.");
-            partyUser.setStatus('P');
+            if (partyUser.getStatus() == 'P') throw new DataMismatchException("해당 유저는 이미 소모임을 진행 중입니다.");
+            partyUser.setStatus('P',hikingEnterRequest.getStartTime());
             partyUserRepository.save(partyUser);
+
+            //Mountain 서버한테 부탁해서 등산로 좌표 가져오기
+            resp = getHikingTrack(party);
+        }
+        return resp;
+    }
+
+    private HikingStartResponse getHikingTrack(Party party) {
+        //소모임의 등산로id 리스트 꺼내기
+        List<Integer> courseList=new ArrayList<>();
+        String[] split = party.getSelectedCourse().split("\\.");
+        for (String s : split) {
+            courseList.add(Integer.parseInt(s));
+        }
+        MountainCourseRequest mounainDto= MountainCourseRequest.builder()
+                .courseIdList(courseList)
+                .build();
+        log.info("[Party Server] Mountain 한테 등산로 좌표 조회 요청");
+        ResponseEntity<?> mountainResp = hikingMountainClient.getCourse(mounainDto);
+        if (mountainResp.getStatusCode().is2xxSuccessful()) {
+
+            BasicResponse basicResponse = om.convertValue(mountainResp.getBody(), BasicResponse.class);
+            if (basicResponse != null && basicResponse.getData() != null) {
+                PartyTrackDataReginRequest partyTrackDataReginRequest = om.convertValue(basicResponse.getData(), PartyTrackDataReginRequest.class);
+                List<LocationData> locationDataList = partyTrackDataReginRequest.getLocationDataList();
+                log.info("[Party Server] Mountain 한테 등산로 좌표 조회 응답 받음 locationDataList={}", locationDataList);
+                return new HikingStartResponse(locationDataList);
+            }
+        } else {
+            log.error("[Party Server] Mountain 한테 등산로 좌표 조회 요청 실패 mountainResp={}",mountainResp);
+        }
+        return null;
+    }
+
+    @Transactional
+    public void hikingEnd(HikingExitRequest hikingExitRequest) {
+        Party party = partyRepository.findByPartyId(hikingExitRequest.getPartyId())
+                .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
+        if (party.getStatus() == 'B' || party.getStatus() == 'I')
+            throw new PartyExpiredException("해당 소모임은 시작된 적이 없습니다.");
+        if (party.getStatus() == 'E' && hikingExitRequest.getUserId() == party.getUserId()) {
+            log.error("[Party Server][hikingEnd()]이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
+            throw new DataMismatchException("이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
+        }
+        //소모임장이 hiking을 비활성화
+        if (party.getStatus() == 'P' && hikingExitRequest.getUserId() == party.getUserId()) {
+            //소모임 비활성화
+            party.setPartyStatus('E');
+            partyRepository.save(party);
+            //소모임 회원들한테 알림보내기 요청
+            log.info("[Party Server] Alarm 한테 Party 종료 요청");
+
+            //소모임장 퇴장 처리
+            exitHiking(hikingExitRequest);
+
+            //redis 갱신
+            //1시간마다 갱신할거면, 여기서 처리하는 거 아님
+        }
+        //P인데 파티원이 그냥 먼저 퇴장하거나, E라서 알림받고 파티원이 나가거나
+        else {
+            //파티원 퇴장 처리
+            exitHiking(hikingExitRequest);
+        }
+    }
+
+    private void exitHiking(HikingExitRequest hikingExitRequest) {
+        PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), hikingExitRequest.getUserId())
+                .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
+        if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
+        partyUser.setStatus('E', hikingExitRequest.getEndTime());
+        partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight());
+
+        //Auth한테 포인트, 등산기록 정규화 요청
+        boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(hikingExitRequest.getUserId(), partyUser.getMountainId(), 'E');
+        HikingRecordUpdateFeignRequest authDto= HikingRecordUpdateFeignRequest.builder()
+                .userId(hikingExitRequest.getUserId())
+                .distance(partyUser.getDistance())
+                .bestHeight(partyUser.getBestHeight())
+                .moveTime(partyUser.getMoveTime())
+                .isFirstMountain(isFirstMountain)
+                .build();
+        log.info("[Auth Server] Auth 한테 등산 기록 업데이트 요청");
+        ResponseEntity<?> authResp = hikingAuthClient.updateHikingRecord(authDto);
+        if (authResp.getStatusCode().is2xxSuccessful()) {
+            log.info("[Auth Server] Auth 한테 등산 기록 업데이트 요청 성공 authResp={}",authResp);
+        }
+        else{
+            log.error("[Auth Server] Auth 한테 등산 기록 업데이트 요청 실패 authResp={}",authResp);
         }
     }
 
@@ -74,17 +177,17 @@ public class HikingService {
             PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId())
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
 
+//            테스트를 위해서 파티에 userId가 없으면 그냥 스킵(오류 말고)
 //            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId()).get();
 //            if(partyUser==null) continue;
 
             //초기화할 때
-            if(partyUser.getPoints()==null){
+            if (partyUser.getPoints() == null) {
                 LineString lineString = GeometryUtils.createLineStringFromLocations(trackData.getLocationDataList());
                 partyUser.addTrackPoints(lineString);
-            }
-            else{
+            } else {
                 // 기존 좌표에 새로운 좌표 합치기
-                List<Coordinate> existingCoordinates  = getCoordinatesFromGeometry(partyUser.getPoints());
+                List<Coordinate> existingCoordinates = getCoordinatesFromGeometry(partyUser.getPoints());
                 List<Coordinate> allCoordinates = new ArrayList<>(existingCoordinates);
                 trackData.getLocationDataList().forEach(loc ->
                         allCoordinates.add(new Coordinate(loc.getLng(), loc.getLat()))
@@ -93,14 +196,17 @@ public class HikingService {
                 partyUser.addTrackPoints(lineString);
             }
             partyUserRepository.save(partyUser);
-//            //제대로 저장됐는지 확인하기
+//            //제대로 저장됐는지 확인하기(테스트용)
 //            List<LocationData> locationData = GeometryUtils.convertGeometryToListLocationData(partyUser.getPoints());
 //            for (LocationData locationDatum : locationData) {
 //                log.info("locationDatum={},{}",locationDatum.getLat(),locationDatum.getLng());
 //            }
         }
     }
+
     private List<Coordinate> getCoordinatesFromGeometry(Geometry geometry) {
         return List.of(geometry.getCoordinates());
     }
+
+
 }

@@ -37,4 +37,18 @@ public abstract class BaseEntity {
     @Column(name="is_deleted", columnDefinition = "TINYINT DEFAULT 0")
     @Setter
     private boolean isDeleted;
+
+    /**
+     * 비즈니스 로직
+     **/
+    //소프트딜리트(삭제)용
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+        if (isDeleted) {
+            deletedAt = LocalDateTime.now();
+        } else {
+            deletedAt = null;
+        }
+    }
+
 }
