@@ -20,16 +20,16 @@ public class PartyUserController {
   private final PartyUserService partyUserService;
 
   @PostMapping("/user/join")
-  public ResponseEntity<BasicResponse> joinParty(@RequestHeader("userLoginId") int userId,
+  public ResponseEntity<BasicResponse> joinParty(@RequestHeader("userId") String userId,
       @RequestBody Map<String, Integer> map) {
-    partyUserService.joinUserParty(userId, map.get("partyId"));
+    partyUserService.joinUserParty(Integer.parseInt(userId), map.get("partyId"));
     return ResponseUtil.buildBasicResponse(HttpStatus.OK, "소모임 가입 완료");
   }
 
   @DeleteMapping("/user/withdraw")
-  public ResponseEntity<BasicResponse> withdrawParty(@RequestHeader("userLoginId") int userId,
+  public ResponseEntity<BasicResponse> withdrawParty(@RequestHeader("userId") String userId,
       @RequestBody Map<String, Integer> map) {
-    partyUserService.withdrawUserFromParty(userId, map.get("partyId"));
+    partyUserService.withdrawUserFromParty(Integer.parseInt(userId), map.get("partyId"));
     return ResponseUtil.buildBasicResponse(HttpStatus.OK, "소모임 탈퇴 성공");
   }
 
