@@ -5,12 +5,12 @@ import CreatePostScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.community.PostTipsScreen
 import com.santeut.ui.community.PostViewModel
-import com.santeut.ui.guild.GuildScreen
-
 
 fun NavGraphBuilder.CommunityNavGraph(
     navController: NavHostController
@@ -25,10 +25,13 @@ fun NavGraphBuilder.CommunityNavGraph(
         composable("postTips") {
             PostTipsScreen(navController)
         }
-        composable("createPost") {
+        composable(
+            route = "createPost/{postType}",
+            arguments = listOf(navArgument("postType") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val postType = backStackEntry.arguments?.getString("postType") ?: "T"
             val postViewModel = hiltViewModel<PostViewModel>()
-            CreatePostScreen(navController, postViewModel)
+            CreatePostScreen(navController, postViewModel, postType.first())
         }
-
     }
 }

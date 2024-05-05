@@ -31,7 +31,8 @@ import com.santeut.ui.community.PostViewModel
 @Composable
 fun CreatePostScreen(
     navController: NavController,
-    postViewModel: PostViewModel
+    postViewModel: PostViewModel,
+    postType: Char
 ) {
     val focusManager = LocalFocusManager.current
     var title by remember { mutableStateOf("") }
@@ -101,7 +102,7 @@ fun CreatePostScreen(
             )
             Button(
                 onClick = {
-                    postViewModel.createPost(title, content, 'T', 1)
+                    postViewModel.createPost(title, content, postType, 1)
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {

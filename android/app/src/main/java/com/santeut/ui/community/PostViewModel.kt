@@ -30,7 +30,7 @@ class PostViewModel @Inject constructor(
     val postCreationSuccess: LiveData<Boolean> = _postCreationSuccess
 
     init {
-        val postType = savedStateHandle.get<Char>("postType") ?: 'T'
+        val postType = savedStateHandle.get<String>("postType")?.first() ?: 'T'
         getPosts(postType)
     }
 
@@ -58,6 +58,4 @@ class PostViewModel @Inject constructor(
             }
         }
     }
-
-
 }

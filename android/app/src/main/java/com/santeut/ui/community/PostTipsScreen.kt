@@ -44,7 +44,6 @@ fun PostTipsScreen(
     postViewModel: PostViewModel = hiltViewModel(),
 ) {
     var searchText by remember { mutableStateOf("") }
-    // 게시글 작성 버튼
 
     val posts by postViewModel.posts.observeAsState(initial = emptyList())
 
@@ -63,7 +62,7 @@ fun PostTipsScreen(
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = { navController.navigate("createPost") }) {
+            Button(onClick = { navController.navigate("createPost/T") }) {
                 Text("글쓰기")
             }
         }
