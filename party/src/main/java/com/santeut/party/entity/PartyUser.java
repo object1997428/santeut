@@ -61,13 +61,36 @@ public class PartyUser extends BaseEntity {
         else if(status=='E'){
             setDeleted(true);
             this.moveTime= (int)Duration.between(this.started_at,time).getSeconds()/60;
+        } else if(status=='I') {
+            setDeleted(true);
         }
         this.status=status;
     }
 
-    public void addHikingRecord(int distance, int bestHeight){
-        this.distance=distance;
-        this.bestHeight=bestHeight;
+    public void setStatus(char status){
+        if(status=='P'){
+            this.started_at=LocalDateTime.now();
+        }
+        else if(status=='E'){
+            setDeleted(true);
+            this.moveTime= (int)Duration.between(this.started_at,LocalDateTime.now()).getSeconds()/60;
+        } else if(status=='I') {
+            setDeleted(true);
+        }
+        this.status=status;
+    }
+
+    public void addHikingRecord(int distance, int bestHeight) {
+        this.distance = distance;
+        this.bestHeight = bestHeight;
+    }
+
+    public static PartyUser of(int userId, int partyId) {
+        return PartyUser.builder()
+                .userId(userId)
+                .partyId(partyId)
+                .status('B')
+                .build();
     }
 
     public void addTrackPoints(Geometry points){

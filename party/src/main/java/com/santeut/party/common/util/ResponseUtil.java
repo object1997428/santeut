@@ -29,11 +29,12 @@ public class ResponseUtil {
 
     public static ResponseEntity<PagingResponse> buildPagingResponse(
             HttpStatus status,
-            List<?> content,
+            List<?> data,
             boolean isFirst,
             boolean isLast,
             int page,
             int totalPage,
+            Long totalElements,
             int size,
             boolean sorted,
             boolean asc,
@@ -41,11 +42,12 @@ public class ResponseUtil {
 
         PagingResponse pagingResponse = new PagingResponse(
                 status.value(),
-                content,
+                data,
                 isFirst,
                 isLast,
                 page,
                 totalPage,
+                totalElements,
                 size,
                 sorted,
                 asc,

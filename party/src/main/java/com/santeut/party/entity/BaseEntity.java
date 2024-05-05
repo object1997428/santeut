@@ -35,7 +35,6 @@ public abstract class BaseEntity {
 
     @NotNull
     @Column(name="is_deleted", columnDefinition = "TINYINT DEFAULT 0")
-    @Setter
     private boolean isDeleted;
 
     /**
