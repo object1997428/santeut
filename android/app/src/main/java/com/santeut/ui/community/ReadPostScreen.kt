@@ -10,18 +10,30 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.santeut.data.model.response.PostResponse
 
 @Composable
-fun ReadPostScreen() {
+fun ReadPostScreen(
+    postId: Int,
+    postType: Char,
+    postViewModel: PostViewModel
+) {
     val focusManager = LocalFocusManager.current
     var comment by remember { mutableStateOf("") }
+
+    val post by postViewModel.post.observeAsState()
+
+    LaunchedEffect(key1 = postId) {
+        postViewModel.readPost(postId, postType)
+    }
 
     Surface(
         modifier = Modifier
@@ -29,8 +41,8 @@ fun ReadPostScreen() {
         color = MaterialTheme.colorScheme.background
     ) {
         Column {
-            HeaderSection()
-            ContentSection()
+            HeaderSection(post)
+            ContentSection(post)
             CommentSection(
                 comment,
                 onCommentChange = { comment = it },
@@ -40,42 +52,52 @@ fun ReadPostScreen() {
 }
 
 @Composable
-fun HeaderSection() {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "카테고리", style = MaterialTheme.typography.bodyMedium)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Text(text = "제목", style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.weight(1f))
-            Icon(
-                imageVector = Icons.Outlined.FavoriteBorder,
-                contentDescription = "Like",
-                modifier = Modifier.size(24.dp)
-            )
+fun HeaderSection(post: PostResponse?) {
+    post?.let {
+        val category = when (post.postType) {
+            'T' -> "등산Tip"   // 'T'일 때 "등산Tip"
+            'C' -> "등산 코스" // 'C'일 때 "등산 코스"
+            else -> "기타"     // 그 외의 경우 "기타"
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Text(text = "닉네임", style = MaterialTheme.typography.bodyMedium)
-            Spacer(modifier = Modifier.weight(1f))
-            Text(text = "작성 시간", style = MaterialTheme.typography.bodyMedium)
+
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = category, style = MaterialTheme.typography.bodyMedium)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text(text = post.postTitle, style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Outlined.FavoriteBorder,
+                    contentDescription = "Like",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text(text = post.userNickname, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = formatTime(post.createdAt), style = MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }
 
 @Composable
-fun ContentSection() {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .height(200.dp),
-        contentAlignment = Alignment.TopStart
-    ) {
-        Text(text = "내용", style = MaterialTheme.typography.bodyLarge)
+fun ContentSection(post: PostResponse?) {
+    post?.let {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .height(200.dp),
+            contentAlignment = Alignment.TopStart
+        ) {
+            Text(text = post.postContent, style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }
 
@@ -87,9 +109,11 @@ fun CommentSection(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        LazyColumn(modifier = Modifier
-            .weight(1f)
-            .padding(bottom = 56.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .padding(bottom = 56.dp)
+        ) {
             items(30) { PostCommentScreen() }
         }
         Row(
@@ -117,10 +141,4 @@ fun CommentSection(
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun PreviewReadPostScreen() {
-    ReadPostScreen()
 }

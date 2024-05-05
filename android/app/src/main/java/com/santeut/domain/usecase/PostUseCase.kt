@@ -17,4 +17,8 @@ class PostUseCase @Inject constructor(
     suspend fun createPost(createPostRequest: CreatePostRequest): Flow<Unit> {
         return postRepository.createPost(createPostRequest)
     }
+
+    suspend fun readPost(postId: Int, postType: Char): PostResponse {
+        return postRepository.readPost(postId, postType)
+    }
 }

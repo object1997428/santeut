@@ -56,7 +56,7 @@ fun CommunityScreen(
                     0 -> JoinGuildScreen()
                     1 -> JoinPartyScreen()
                     2 -> PostTipsScreen(navController)
-                    3 -> ReadPostScreen()
+                    3 -> PostCourseScreen()
                     else -> Text("Unknown page")
                 }
             }

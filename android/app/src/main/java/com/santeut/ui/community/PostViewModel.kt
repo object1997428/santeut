@@ -1,5 +1,6 @@
 package com.santeut.ui.community
 
+import android.adservices.adid.AdId
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -29,6 +30,9 @@ class PostViewModel @Inject constructor(
     private val _postCreationSuccess = MutableLiveData<Boolean>()
     val postCreationSuccess: LiveData<Boolean> = _postCreationSuccess
 
+    private val _post = MutableLiveData<PostResponse>()
+    val post: LiveData<PostResponse> = _post
+
     init {
         val postType = savedStateHandle.get<String>("postType")?.first() ?: 'T'
         getPosts(postType)
@@ -55,6 +59,16 @@ class PostViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = "Failed to load posts: ${e.message}"
                 _postCreationSuccess.value = false
+            }
+        }
+    }
+
+    fun readPost(postId: Int, postType: Char) {
+        viewModelScope.launch {
+            try {
+                _post.value = postUseCase.readPost(postId, postType)
+            } catch (e: Exception) {
+                _error.value = "Failed to load posts: ${e.message}"
             }
         }
     }
