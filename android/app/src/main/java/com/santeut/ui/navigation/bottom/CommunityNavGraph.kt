@@ -5,6 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.santeut.ui.community.CreatePostScreen
+import com.santeut.ui.community.PostTipsScreen
 import com.santeut.ui.guild.GuildScreen
 
 
@@ -16,7 +18,14 @@ fun NavGraphBuilder.CommunityNavGraph(
         route = "community_graph"
     ) {
         composable("community") {
-            CommunityScreen()
+            CommunityScreen(navController)
         }
+        composable("postTips"){
+            PostTipsScreen(navController)
+        }
+        composable("createPost"){
+            CreatePostScreen(navController)
+        }
+
     }
 }

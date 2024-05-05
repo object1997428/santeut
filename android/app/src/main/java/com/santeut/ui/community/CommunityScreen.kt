@@ -8,6 +8,7 @@ import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.santeut.ui.community.JoinGuildScreen
 import com.santeut.ui.community.JoinPartyScreen
 import com.santeut.ui.community.PostCourseScreen
@@ -16,7 +17,9 @@ import com.santeut.ui.community.PostTipsScreen
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun CommunityScreen() {
+fun CommunityScreen(
+    navController: NavController
+) {
     val pages = listOf("동호회", "소모임", "등산Tip", "코스공유")
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -51,17 +54,11 @@ fun CommunityScreen() {
                 when (page) {
                     0 -> JoinGuildScreen()
                     1 -> JoinPartyScreen()
-                    2 -> PostTipsScreen()
+                    2 -> PostTipsScreen(navController)
                     3 -> PostCourseScreen()
                     else -> Text("Unknown page")
                 }
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun PreviewCommunity() {
-    CommunityScreen()
 }
