@@ -2,6 +2,7 @@ package com.santeut.mountain.service;
 
 import com.santeut.mountain.common.exception.NotFoundException;
 import com.santeut.mountain.dto.response.MountainDetailResponseDto;
+import com.santeut.mountain.dto.response.MountainInfoResponseDto;
 import com.santeut.mountain.dto.response.MountainSearchResponseDto;
 import com.santeut.mountain.entity.MountainEntity;
 import com.santeut.mountain.repository.MountainRepository;
@@ -56,4 +57,10 @@ public class MountainServiceImpl implements MountainService {
     return MountainDetailResponseDto.from(mountain);
   }
 
+  @Override
+  public MountainInfoResponseDto getMountainInfoById(int mountainId) {
+    MountainEntity mountain = mountainRepository.findById(mountainId)
+        .orElseThrow(() -> new NotFoundException("해당 산이 존재하지 않습니다"));
+    return MountainInfoResponseDto.from(mountain);
+  }
 }
