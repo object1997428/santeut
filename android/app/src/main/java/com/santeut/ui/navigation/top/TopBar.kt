@@ -45,7 +45,11 @@ fun TopBar(
             onClickChatting = { /*TODO*/ }
         )
     } else if (currentTap == "community") {
-        CommunityTopBar(navController)
+        DefaultTopBar(navController, "커뮤니티")
+    } else if (currentTap == "guild"){
+        DefaultTopBar(navController, "동호회")
+    } else if (currentTap == "mypage"){
+        DefaultTopBar(navController, "마이페이지")
     }
 
     // TopBar 여기서 수정
@@ -102,9 +106,9 @@ fun HomeTopBar(
 }
 
 @Composable
-fun CommunityTopBar(navController: NavController) {
+fun DefaultTopBar(navController: NavController, pageName:String) {
     TopAppBar(
-        title = { Text(text = "커뮤니티") },
+        title = { Text(pageName) },
         contentColor = MaterialTheme.colors.primary,
         backgroundColor = Color.White,
         navigationIcon = {
