@@ -3,6 +3,7 @@ package com.santeut.mountain.controller;
 import com.santeut.mountain.common.response.BasicResponse;
 import com.santeut.mountain.common.response.PagingResponse;
 import com.santeut.mountain.common.util.ResponseUtil;
+import com.santeut.mountain.dto.request.PartyTrackDataReginRequest;
 import com.santeut.mountain.dto.response.CourseInfoResponseDto;
 import com.santeut.mountain.entity.CourseEntity;
 import com.santeut.mountain.service.CourseService;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,6 +74,14 @@ public class MountainController {
       @PathVariable("courseId") int courseId
   ) {
     return ResponseUtil.buildBasicResponse(HttpStatus.OK, courseService.findCourseCoordByCourseId(courseId));
+  }
+
+  @GetMapping("/course/coordinates")
+  public ResponseEntity<BasicResponse> getCourseCoordInCourseId(
+      @RequestBody PartyTrackDataReginRequest request
+  ) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        courseService.findCourseCoordsByCourseId(request));
   }
 
 }
