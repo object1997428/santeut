@@ -2,11 +2,13 @@ package com.santeut.party.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BasicResponse {
-    private final int status;
-    private final Object data;
+    private int status;
+    private Object data;
 
 }

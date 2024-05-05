@@ -12,12 +12,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.nio.file.AccessDeniedException;
-
 
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionController {
+
+    // 소모임이 존재하지 않음
+    @ExceptionHandler(DataNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDataNotFoundException(DataNotFoundException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleDataNotFoundException");
+    }
+
+    // 이미 가입한 사용자
+    @ExceptionHandler(AlreadyJoinedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAlreadyJoinedException(AlreadyJoinedException e) {
+        return constructErrorResponse(e,HttpStatus.CONFLICT,"AlreadyJoinedException");
+    }
 
     // 잘못된 인수값 전달
     @ExceptionHandler(IllegalArgumentException.class)
@@ -53,11 +65,7 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleNoHandlerFoundException");
     }
 
-    @ExceptionHandler(DataNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleDataNotFoundException(DataNotFoundException e) {
-        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "handleDataNotFoundException");
-    }
+
 
     // 권한없음(접근거부)
     @ExceptionHandler(AccessDeniedException.class)
