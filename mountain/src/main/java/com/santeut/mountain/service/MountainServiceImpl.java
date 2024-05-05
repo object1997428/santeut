@@ -6,6 +6,7 @@ import com.santeut.mountain.dto.response.MountainInfoResponseDto;
 import com.santeut.mountain.dto.response.MountainSearchResponseDto;
 import com.santeut.mountain.entity.MountainEntity;
 import com.santeut.mountain.repository.MountainRepository;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,16 +52,20 @@ public class MountainServiceImpl implements MountainService {
   }
 
   @Override
+  @Transactional
   public MountainDetailResponseDto findMountainById(int mountainId) {
     MountainEntity mountain = mountainRepository.findById(mountainId)
         .orElseThrow(() -> new NotFoundException("해당 산이 존재하지 않습니다"));
+    mountain.addViews();
     return MountainDetailResponseDto.from(mountain);
   }
 
   @Override
+  @Transactional
   public MountainInfoResponseDto getMountainInfoById(int mountainId) {
     MountainEntity mountain = mountainRepository.findById(mountainId)
         .orElseThrow(() -> new NotFoundException("해당 산이 존재하지 않습니다"));
+    mountain.addViews();
     return MountainInfoResponseDto.from(mountain);
   }
 }

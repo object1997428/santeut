@@ -1,9 +1,13 @@
 package com.santeut.mountain.service;
 
 import com.santeut.mountain.common.exception.NotFoundException;
+import com.santeut.mountain.common.util.GeometryUtils;
+import com.santeut.mountain.dto.request.PartyTrackDataReginRequest;
 import com.santeut.mountain.dto.response.CourseCoordResponseDto;
 import com.santeut.mountain.dto.response.CourseCoordResponseDto.Coord;
 import com.santeut.mountain.dto.response.CourseInfoResponseDto;
+import com.santeut.mountain.dto.response.LocationData;
+import com.santeut.mountain.dto.response.PartyCourseResponse;
 import com.santeut.mountain.entity.CourseEntity;
 import com.santeut.mountain.entity.MountainEntity;
 import com.santeut.mountain.repository.CourseRepository;
@@ -11,6 +15,7 @@ import com.santeut.mountain.repository.MountainRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -21,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CourseServiceImpl implements CourseService {
 
   private final CourseRepository courseRepository;
@@ -45,6 +51,20 @@ public class CourseServiceImpl implements CourseService {
       return new CourseCoordResponseDto(coordPoints.size(), coordPoints);
     }
 
+  }
+
+  @Override
+  public PartyCourseResponse findCourseCoordsByCourseId(PartyTrackDataReginRequest request) {
+    List<LocationData> coords = new ArrayList<>();
+    log.info("[mountain] 등산로 좌표 모음 조회");
+    for(int courseId : request.getCourseIdList()) {
+      CourseEntity course = courseRepository.findById(courseId)
+              .orElseThrow(() -> new NotFoundException("해당 등산로는 존재하지 않습니다"));
+      log.info(course.getCourseId()+"번 등산로");
+      coords.addAll(GeometryUtils.convertGeometryToListLocationData(course.getCoursePoints()));
+    }
+    log.info("등산로 개수: "+coords.size());
+    return new PartyCourseResponse(coords);
   }
 
   private static List<Coord> convertGeometryToCoordinateList(Geometry geometry) {
