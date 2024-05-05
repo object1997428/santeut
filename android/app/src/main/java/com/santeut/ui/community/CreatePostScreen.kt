@@ -106,7 +106,7 @@ fun CreatePostScreen(
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Submit")
+                Text("작성하기")
             }
         }
     }
