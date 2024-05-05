@@ -28,11 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.santeut.data.model.response.PostResponse
 import java.time.Duration
 import java.time.LocalDate
@@ -50,7 +48,10 @@ fun PostTipsScreen(
 
     val posts by postViewModel.posts.observeAsState(initial = emptyList())
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Top
+    ) {
 
         Row(
             modifier = Modifier.fillMaxWidth()
