@@ -13,6 +13,7 @@ import com.santeut.ui.community.JoinGuildScreen
 import com.santeut.ui.community.JoinPartyScreen
 import com.santeut.ui.community.PostCourseScreen
 import com.santeut.ui.community.PostTipsScreen
+import com.santeut.ui.community.ReadPostScreen
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -55,7 +56,7 @@ fun CommunityScreen(
                     0 -> JoinGuildScreen()
                     1 -> JoinPartyScreen()
                     2 -> PostTipsScreen(navController)
-                    3 -> PostCourseScreen()
+                    3 -> ReadPostScreen()
                     else -> Text("Unknown page")
                 }
             }
