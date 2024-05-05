@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.apiservice.PostApiService
+import com.santeut.data.model.request.CreatePostRequest
 import com.santeut.data.model.response.PostListResponse
 import com.santeut.data.model.response.PostResponse
 import com.santeut.domain.usecase.PostUseCase
@@ -23,6 +24,10 @@ class PostViewModel @Inject constructor(
     val posts: LiveData<List<PostResponse>> = _posts
 
     private val _error = MutableLiveData<String>()
+    val error: LiveData<String> = _error
+
+    private val _postCreationSuccess = MutableLiveData<Boolean>()
+    val postCreationSuccess: LiveData<Boolean> = _postCreationSuccess
 
     init {
         val postType = savedStateHandle.get<Char>("postType") ?: 'T'
@@ -38,4 +43,21 @@ class PostViewModel @Inject constructor(
             }
         }
     }
+
+    fun createPost(postTitle: String, postContent: String, postType: Char, userPartyId: Int) {
+        viewModelScope.launch {
+            try {
+                val createPostRequest =
+                    CreatePostRequest(postTitle, postContent, postType, userPartyId)
+                postUseCase.createPost(createPostRequest).collect {
+                    _postCreationSuccess.value = true
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to load posts: ${e.message}"
+                _postCreationSuccess.value = false
+            }
+        }
+    }
+
+
 }
