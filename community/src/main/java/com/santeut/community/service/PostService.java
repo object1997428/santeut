@@ -73,9 +73,17 @@ public class PostService {
     }
 
     // 게시글 읽기 (READ)
-    public PostReadResponseDto readPost(int postId, char postType) {
+    public PostReadResponseDto readPost(int postId, char postType, int userId) {
 
         PostEntity postEntity = postRepository.findByIdAndPostType(postId, postType).orElseThrow(() -> new JpaQueryException("게시글 디테일 읽기중 DB 오류 발생"));
+
+        // 작성자인지 체크
+        boolean isWriter = (postRepository.countAllByIdAndPostTypeAndUserId(postId,postType,userId) > 0);
+
+        // 좋아요 눌렀는지 체크
+        boolean isLike  = commonServerService.likePushed(postId, postType, userId);
+
+
         CommentListFeignDto commentListFeignDto = commonServerService.getCommentList(postId, postType);
         return PostReadResponseDto.builder()
                 .postId(postEntity.getId())
@@ -84,6 +92,8 @@ public class PostService {
                 .postContent(postEntity.getPostContent())
                 .userNickname(authServerService.getNickname(postEntity.getUserId()))
                 .hitCnt(postEntity.getHitCnt())
+                .isLike(isLike)
+                .isWriter(isWriter)
                 .commentList(commentListFeignDto.getCommentList())
                 .createdAt(postEntity.getCreatedAt())
                 .build();

@@ -39,8 +39,8 @@ public class PostController {
 
     // 게시글 디테일 불러옴 ( READ )
     @GetMapping("/post/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> readPost(@PathVariable int postId, @PathVariable char postType) {
-        PostReadResponseDto postReadResponseDto = postService.readPost(postId, postType);
+    public ResponseEntity<BasicResponse> readPost(@PathVariable int postId, @PathVariable char postType, @RequestHeader int userId) {
+        PostReadResponseDto postReadResponseDto = postService.readPost(postId, postType, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, postReadResponseDto);
     }
 

@@ -23,4 +23,7 @@ public interface CommonClient {
     // comment controller 요청
     @GetMapping("/comment/{postId}/{postType}")
      Optional<FeignResponseDto<CommentListFeignDto>> getCommentList(@PathVariable  Integer postId, @PathVariable Character postType);
+
+    @GetMapping("/like/check/{postId}/{postType}/{userId}")
+    Optional<FeignResponseDto<Map<String,Boolean>>> likePushed(@PathVariable Integer postId, @PathVariable Character postType, @PathVariable Integer userId);
 }
