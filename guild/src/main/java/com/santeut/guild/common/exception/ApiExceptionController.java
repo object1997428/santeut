@@ -59,8 +59,20 @@ public class ApiExceptionController {
     }
 
 
+    @ExceptionHandler(DataNotFoundException.class)
+    public ErrorResponse CustomErrorResponse(DataNotFoundException e) {
+
+        return constructErrorResponse2(e, e.getCode());
+    }
+
+
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
         log.error("[exceptionHandle] ex={}", e.getMessage(), e);
         return new ErrorResponse(status.value(), errorType, e.getMessage());
+    }
+
+    private ErrorResponse constructErrorResponse2(Exception e, int status) {
+        log.error("[exceptionHandle] ex={}", e.getMessage(), e);
+        return new ErrorResponse(status, e.getMessage());
     }
 }
