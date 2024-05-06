@@ -20,4 +20,9 @@ public class AlarmTokenEntity extends BaseEntity{
     @NotNull
     @Column(name = "fcm_token")
     private String fcmToken;
+
+    //토큰 갱신
+    public void updateToken(String fcmToken){
+        this.fcmToken=fcmToken;
+    }
 }
