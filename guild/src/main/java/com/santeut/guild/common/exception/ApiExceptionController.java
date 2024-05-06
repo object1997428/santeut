@@ -57,6 +57,12 @@ public class ApiExceptionController {
     public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
         return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
     }
+    // 알맞은 카테고리 찾지 못함
+    @ExceptionHandler(CategoryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(CategoryNotFoundException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "categoryNotFoundException");
+    }
 
 
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
