@@ -37,6 +37,14 @@ import com.santeut.designsystem.theme.SanteutTheme
 @Composable
 fun HealthScreen(
 ) {
+    SupportedHealthScreen()
+//    NotSupportedHealthScreen()
+}
+
+@Composable
+fun SupportedHealthScreen(
+
+){
     val listState = rememberScalingLazyListState()
 
     Column (
@@ -150,6 +158,35 @@ fun HealthItem(
                 Spacer(modifier = Modifier.width(12.dp))
             }
         }
+}
+
+@Composable
+fun NotSupportedHealthScreen(
+
+){
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF335C49)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "1:22 PM",
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = "건강 정보",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(0.4f))
+        Text(text = "지원하지 않는")
+        Text(text = "디바이스 입니다.")
+        Spacer(modifier = Modifier.weight(0.6f))
+    }
 }
 
 @Preview(

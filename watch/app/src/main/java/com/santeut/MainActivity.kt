@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.santeut.designsystem.theme.SanteutTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,11 +18,13 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        setTheme(android.R.style.Theme_DeviceDefault)
+        val healthServicesRepository = (application as MainApplication).healthServicesRepository
 
         setContent {
-            SanteutApp {
-                moveTaskToBack(true)
+            SanteutTheme {
+                SanteutApp (
+//                    healthServicesRepository = healthServicesRepository
+                )
             }
         }
     }
