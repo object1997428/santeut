@@ -32,11 +32,11 @@ public class LikeController {
     }
 
     // 좋아요 했는지 체크하기 ( READ )
-    @GetMapping("/check/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> checkLike(@PathVariable Integer postId, @PathVariable Character postType) {
+    @GetMapping("/check/{postId}/{postType}/{userId}")
+    public ResponseEntity<BasicResponse> checkLike(@PathVariable Integer postId, @PathVariable Character postType, @PathVariable int userId) {
         Map<String, Boolean> result = new HashMap<>();
-        boolean isHit = likeService.isHited(postId, postType);
-        result.put("isHit",isHit );
+        boolean likePushed = likeService.likePushed(postId, postType, userId);
+        result.put("likePushed",likePushed );
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, result);
     }
 
