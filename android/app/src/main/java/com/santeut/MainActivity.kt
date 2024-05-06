@@ -93,10 +93,8 @@ class MainActivity : ComponentActivity() {
             }
 
             val token = task.result
-
-            // Log and toast
             Log.d("FCM My Token", token.toString())
-//            Toast.makeText(baseContext, token.toString(), Toast.LENGTH_SHORT).show()
+            MainApplication.sharedPreferencesUtil.saveFcmToken(token)
         })
     }
 }

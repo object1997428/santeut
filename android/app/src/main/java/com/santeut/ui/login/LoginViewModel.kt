@@ -7,6 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.santeut.MainApplication
 import com.santeut.data.model.request.LoginRequest
 import com.santeut.domain.usecase.LoginUseCase
 import com.santeut.ui.landing.UserState
@@ -62,7 +63,9 @@ class LoginViewModel @Inject constructor(
                         _userPassword.value = ""
                     }.collectLatest { data ->
                         Log.d("Login Success", "Success ${data.accessToken}")
-                        // 토큰 저장 해야함
+
+                        MainApplication.sharedPreferencesUtil.saveToken(data)
+
                         _userState.value.copy(token = data.accessToken, isLoggedIn = true)
                         _uiEvent.value = LoginUiEvent.Login(true);
                     }
