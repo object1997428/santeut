@@ -25,6 +25,7 @@ public class MountainDetailResponseDto {
   public double lat;
   public double lng;
   public int views;
+  public String image;
   public List<Course> courses;
 
   public static MountainDetailResponseDto from(MountainEntity m) {
@@ -37,6 +38,7 @@ public class MountainDetailResponseDto {
         .lat(m.getMountainTop().getY())
         .lng(m.getMountainTop().getX())
         .views(m.getViews())
+        .image(m.getImage())
         .courses(m.getCourseEntityList().stream()
             .map(Course::from)
             .toList())

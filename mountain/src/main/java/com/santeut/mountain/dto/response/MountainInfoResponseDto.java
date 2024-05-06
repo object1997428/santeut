@@ -16,6 +16,7 @@ public class MountainInfoResponseDto {
   public double lat;
   public double lng;
   public int views;
+  public String image;
 
   public static MountainInfoResponseDto from(MountainEntity m) {
     return MountainInfoResponseDto.builder()
@@ -27,6 +28,7 @@ public class MountainInfoResponseDto {
         .lat(m.getMountainTop().getY())
         .lng(m.getMountainTop().getX())
         .views(m.getViews())
+        .image(m.getImage())
         .build();
   }
 
