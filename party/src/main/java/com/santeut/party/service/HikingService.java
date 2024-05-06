@@ -93,7 +93,7 @@ public class HikingService {
                 .type("HIKING START")
                 .targetUserIds(partyMembers)
                 .title("소모임 시작 알림")
-                .message(party.getPartyName()+" 소모임이 시작되었습니다. 입장해주세요!")
+                .message("'"+party.getPartyName()+"'"+" 소모임이 시작되었습니다. 입장해주세요!")
                 .partyId(party.getPartyId())
                 .dataSource(null)
                 .alamType("PUSH")
