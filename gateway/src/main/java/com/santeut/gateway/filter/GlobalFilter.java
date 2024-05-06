@@ -46,16 +46,16 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
                 accessToken = request.getHeaders().getFirst("Authorization").substring(7);
                 log.debug("accessToken: " + accessToken);
 
-                String userLoginId = authorizationToken.extractAllClaims(accessToken).getSubject();
-                log.debug("userLoginId: "+ userLoginId);
+                String userId = authorizationToken.extractAllClaims(accessToken).getSubject();
+                log.debug("userId: "+ userId);
 
                 ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate()
-                        .header("userLoginId", userLoginId)
+                        .header("userId", userId)
                         .build();
                 exchange = exchange.mutate().request(serverHttpRequest).build();
 
-                String loginId = exchange.getRequest().getHeaders().getFirst("userLoginId");
-                log.debug("loginId: "+ loginId);
+//                String userId = exchange.getRequest().getHeaders().getFirst("userLoginId");
+//                log.debug("loginId: "+ loginId);
 
                 // 인가 (Token 검증)
                 boolean validateToken = authorizationToken.validateToken(accessToken);
