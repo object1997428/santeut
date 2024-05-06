@@ -56,15 +56,18 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public PartyCourseResponse findCourseCoordsByCourseId(PartyTrackDataReginRequest request) {
     List<LocationData> coords = new ArrayList<>();
+    double totalDistance = 0L;
+
     log.info("[mountain] 등산로 좌표 모음 조회");
     for(int courseId : request.getCourseIdList()) {
       CourseEntity course = courseRepository.findById(courseId)
               .orElseThrow(() -> new NotFoundException("해당 등산로는 존재하지 않습니다"));
       log.info(course.getCourseId()+"번 등산로");
+      totalDistance += course.getDistance();
       coords.addAll(GeometryUtils.convertGeometryToListLocationData(course.getCoursePoints()));
     }
     log.info("등산로 개수: "+coords.size());
-    return new PartyCourseResponse(coords);
+    return new PartyCourseResponse(totalDistance, coords);
   }
 
   private static List<Coord> convertGeometryToCoordinateList(Geometry geometry) {
