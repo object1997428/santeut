@@ -9,6 +9,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class PartyCourseResponse {
+  double distance;
   private List<LocationData> locationDataList;
 
 }
