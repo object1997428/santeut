@@ -54,6 +54,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
                         .build();
                 exchange = exchange.mutate().request(serverHttpRequest).build();
 
+                log.debug("userId: "+ userId);
 //                String userId = exchange.getRequest().getHeaders().getFirst("userLoginId");
 //                log.debug("loginId: "+ loginId);
 
