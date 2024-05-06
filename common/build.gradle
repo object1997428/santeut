@@ -36,9 +36,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-//    // Firebase
-//    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
-//    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
+    // Firebase
+    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
 
 }
 

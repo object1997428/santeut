@@ -1,7 +1,7 @@
 package com.santeut.common.service;
 
 import com.santeut.common.common.exception.AccessDeniedException;
-//import com.santeut.common.common.util.FcmUtils;
+import com.santeut.common.common.util.FcmUtils;
 import com.santeut.common.dto.FCMCategory;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.dto.request.AlarmRequestDto;
@@ -25,7 +25,7 @@ public class AlarmService {
 
     private final AlarmRepository alarmRepository;
     private final AlarmTokenRepository alarmTokenRepository;
-//    private final FcmUtils fcmUtils;
+    private final FcmUtils fcmUtils;
 
     public void createAlarm(Integer referenceId, Character referenceType, AlarmRequestDto alarmRequestDto) {
         AlarmEntity alarmEntity = AlarmEntity.builder()
@@ -46,13 +46,13 @@ public class AlarmService {
         }
     }
 
-//    public void sendAlarm(CommonHikingStartFeignRequest hikingStartFeignRequest) {
-//        List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(hikingStartFeignRequest.getTargetUserIds());
-//
-//        for (AlarmTokenEntity alarmToken : alarmTokenList) {
-//            fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(hikingStartFeignRequest.getTitle(),
-//                    String.format(hikingStartFeignRequest.getMessage()),
-//                    FCMCategory.HIKING_START));
-//        }
-//    }
+    public void sendAlarm(CommonHikingStartFeignRequest hikingStartFeignRequest) {
+        List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(hikingStartFeignRequest.getTargetUserIds());
+
+        for (AlarmTokenEntity alarmToken : alarmTokenList) {
+            fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(hikingStartFeignRequest.getTitle(),
+                    String.format(hikingStartFeignRequest.getMessage()),
+                    FCMCategory.HIKING_START));
+        }
+    }
 }
