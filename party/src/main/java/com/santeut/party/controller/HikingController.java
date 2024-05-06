@@ -2,7 +2,7 @@ package com.santeut.party.controller;
 
 import com.santeut.party.common.util.ResponseUtil;
 import com.santeut.party.dto.request.HikingExitRequest;
-import com.santeut.party.dto.request.HikingTrackSaveReignRequestDto;
+import com.santeut.party.feign.dto.request.HikingTrackSaveFeignRequestDto;
 import com.santeut.party.dto.request.HikingEnterRequest;
 import com.santeut.party.service.HikingService;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,9 @@ public class HikingController {
     }
 
     @PostMapping("/hiking/track")
-    public ResponseEntity<?> saveHikingTrack(@RequestBody HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto){
+    public ResponseEntity<?> saveHikingTrack(@RequestBody HikingTrackSaveFeignRequestDto hikingTrackSaveFeignRequestDto){
         log.info("Hiking Server 요청 들어옴");
-        hikingService.saveTrack(hikingTrackSaveReignRequestDto);
+        hikingService.saveTrack(hikingTrackSaveFeignRequestDto);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,"좌표 저장에 성공했습니다.");
     }
 

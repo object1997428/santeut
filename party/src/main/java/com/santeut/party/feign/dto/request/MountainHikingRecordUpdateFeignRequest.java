@@ -1,16 +1,15 @@
-package com.santeut.party.dto.request;
+package com.santeut.party.feign.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Builder @AllArgsConstructor
-public class HikingRecordUpdateFeignRequest {
+public class MountainHikingRecordUpdateFeignRequest {
     private int userId;
     private int distance;
     private int bestHeight;
     private int moveTime;
-    private boolean isFirstMountain;
+    private Boolean isFirstMountain;
 }
