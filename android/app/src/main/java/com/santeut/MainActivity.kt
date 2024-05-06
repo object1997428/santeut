@@ -1,19 +1,34 @@
 package com.santeut
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.santeut.designsystem.theme.SanteutTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
+    private var isCameraPermissionGranted = false
+    private var isPostNotificationsPermissionGranted = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -25,6 +40,60 @@ class MainActivity : ComponentActivity() {
                     SanteutApp()
                 }
             }
+        }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("Firebase", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            Log.d("FCM", token.toString())
+            Toast.makeText(baseContext, token.toString(), Toast.LENGTH_SHORT).show()
+        })
+
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){ permissions ->
+            isCameraPermissionGranted = permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                isPostNotificationsPermissionGranted = permissions[android.Manifest.permission.POST_NOTIFICATIONS] ?: isPostNotificationsPermissionGranted
+            }
+        }
+
+        requestPermission()
+    }
+
+    private fun requestPermission() {
+        val permissionRequest : MutableList<String> = ArrayList()
+
+        isCameraPermissionGranted = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if(!isCameraPermissionGranted){
+            permissionRequest.add(android.Manifest.permission.CAMERA)
+            Log.d("Permission Check", "Need Camera Permission")
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            isPostNotificationsPermissionGranted = ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if(!isPostNotificationsPermissionGranted){
+                permissionRequest.add(android.Manifest.permission.POST_NOTIFICATIONS)
+                permissionRequest.add(android.Manifest.permission.CAMERA)
+                Log.d("Permission Check", "Need Post Notifications Permission")
+            }
+        }
+
+        if(permissionRequest.isNotEmpty()){
+            permissionLauncher.launch(permissionRequest.toTypedArray())
         }
     }
 }

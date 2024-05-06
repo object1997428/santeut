@@ -98,7 +98,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-ktx")
 
     // 권한 요청 관련
-//    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
     // compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")

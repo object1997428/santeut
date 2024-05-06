@@ -21,13 +21,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.santeut.R
 
 @Composable
@@ -57,24 +55,14 @@ fun LoginScreen(
     val userLoginId = viewModel.userLoginId.value
     val userPassword = viewModel.userPassword.value
 
-    val snackBarHostState = remember { SnackbarHostState() }
-    SnackbarHost(hostState = snackBarHostState)
-
     LaunchedEffect(effect) {
-        Log.d("Login Screen", "감지했어요")
         if (effect is LoginViewModel.LoginUiEvent.Login) {
             val loginEvent = effect as LoginViewModel.LoginUiEvent.Login
             if (loginEvent.success) {
                 Log.d("Login Screen", "성공")
                 onNavigateHome()
-//                snackBarHostState.showSnackbar(
-//                    message = "로그인을 성공했습니다."
-//                )
             } else {
                 Log.d("Login Screen", "실패")
-//                snackBarHostState.showSnackbar(
-//                    message = "로그인을 할 수 없습니다."
-//                )
             }
         }
     }
