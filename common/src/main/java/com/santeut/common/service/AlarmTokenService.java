@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AlarmTokenService {
@@ -14,10 +16,16 @@ public class AlarmTokenService {
 
     @Transactional
     public void saveFcmToken(int userId, SaveTokenRequestDto saveTokenRequestDto){
-        AlarmTokenEntity alarmToken= AlarmTokenEntity.builder()
-                .Id(userId)
-                .fcmToken(saveTokenRequestDto.getFcmToken())
-                .build();
-        alarmTokenRepository.save(alarmToken);
+        Optional<AlarmTokenEntity> alarmToken = alarmTokenRepository.findById(userId);
+        if(alarmToken.isEmpty()){
+            AlarmTokenEntity newalarmToken= AlarmTokenEntity.builder()
+                    .Id(userId)
+                    .fcmToken(saveTokenRequestDto.getFcmToken())
+                    .build();
+            alarmTokenRepository.save(newalarmToken);
+            return;
+        }
+        alarmToken.get().setFcmToken(saveTokenRequestDto.getFcmToken());
+        alarmTokenRepository.save(alarmToken.get());
     }
 }
