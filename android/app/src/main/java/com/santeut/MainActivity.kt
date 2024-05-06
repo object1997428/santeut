@@ -42,20 +42,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("Firebase", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            Log.d("FCM", token.toString())
-            Toast.makeText(baseContext, token.toString(), Toast.LENGTH_SHORT).show()
-        })
-
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){ permissions ->
             isCameraPermissionGranted = permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -64,6 +50,8 @@ class MainActivity : ComponentActivity() {
         }
 
         requestPermission()
+
+        getFCMToken()
     }
 
     private fun requestPermission() {
@@ -95,6 +83,21 @@ class MainActivity : ComponentActivity() {
         if(permissionRequest.isNotEmpty()){
             permissionLauncher.launch(permissionRequest.toTypedArray())
         }
+    }
+
+    fun getFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("Firebase", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            val token = task.result
+
+            // Log and toast
+            Log.d("FCM My Token", token.toString())
+//            Toast.makeText(baseContext, token.toString(), Toast.LENGTH_SHORT).show()
+        })
     }
 }
 
