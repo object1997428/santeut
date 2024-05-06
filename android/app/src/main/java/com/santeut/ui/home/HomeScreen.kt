@@ -62,12 +62,6 @@ fun HomeScreen(
             .background(color = Color.White)
     ) {
         item {
-            HomeTopBar(
-                onClickAlert = {},
-                onClickChatting = {}
-            )
-        }
-        item {
             HomeSearchBar(
                 onSearchTextChanged = {},
                 onClickSearch = {},
@@ -94,56 +88,6 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     SanteutTheme {
         HomeScreen()
-    }
-}
-
-@Composable
-fun HomeTopBar(
-    onClickAlert: () -> Unit,
-    onClickChatting: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .padding(12.dp)
-            .background(color = Color.White),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(modifier = Modifier.width(6.dp))
-        Box(
-            modifier = Modifier
-                .size(50.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.logo),
-                contentDescription = "Logo",
-                contentScale = ContentScale.FillWidth,
-            )
-        }
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = "산뜻",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.Default.AddAlert,
-            contentDescription = "알림",
-            modifier = Modifier
-                .clickable { onClickAlert() }
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Image(
-            imageVector = Icons.Default.Comment,
-            contentDescription = "채팅",
-            modifier = Modifier
-                .padding(10.dp)
-                .clickable { onClickChatting() }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
     }
 }
 
