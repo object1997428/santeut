@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -16,7 +18,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
     }
 
     buildTypes {
@@ -79,10 +80,12 @@ dependencies {
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 
     // map
-    compileOnly("com.google.android.wearable:wearable:2.9.0")
-    implementation("com.google.android.support:wearable:2.9.0")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+
+//    compileOnly("com.google.android.wearable:wearable:2.9.0")
+//    implementation("com.google.android.support:wearable:2.9.0")
 
     // This dependency is necessary for ambient mode
-    implementation("androidx.wear:wear:1.3.0")
+//    implementation("androidx.wear:wear:1.3.0")
 }

@@ -56,7 +56,7 @@ fun MainScreen (
             )
         ) {
             Text(
-                text = "등산 시작",
+                text = "작시 산등",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
