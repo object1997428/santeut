@@ -19,10 +19,10 @@ public enum ResponseCode {
     NOT_EXISTS_USER(HttpServletResponse.SC_NOT_FOUND, "존재하지 않는 유저"),
     NOT_EXISTS_USER_LEVEL(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 등급 정보"),
 
-    // 토큰
-    INVALID_ACCESS_TOKEN(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "유효하지 않은 Access Token"),
-    INVALID_REFRESH_TOKEN(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "유효하지 않은 Refresh Token"),
-    NOT_MATCH_REFRESH_TOKEN(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "일치하지 않는 Refresh Token");
+    // 길드
+    EXISTS_GUILD_NAME(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하는 길드명"),
+    NOT_EXISTS_GUILD(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 길드"),
+    NOT_MATCH_GUILD_LEADER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "동호회장이 아닙니다.");
 
     private final int code;
     private final String message;
