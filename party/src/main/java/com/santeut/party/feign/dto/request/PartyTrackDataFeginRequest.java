@@ -1,4 +1,4 @@
-package com.santeut.party.dto.response;
+package com.santeut.party.feign.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.santeut.party.dto.request.LocationData;
@@ -13,6 +13,6 @@ import java.util.List;
 @Builder @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PartyTrackDataReginRequest {
+public class PartyTrackDataFeginRequest {
     private List<LocationData> locationDataList;
 }
