@@ -1,4 +1,4 @@
-package com.santeut.party.dto.request;
+package com.santeut.party.feign.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +8,6 @@ import java.util.List;
 
 @Data
 @Builder @AllArgsConstructor
-public class MountainCourseRequest {
+public class MountainCourseFeignRequest {
     private List<Integer> courseIdList;
 }

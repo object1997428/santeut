@@ -1,5 +1,6 @@
-package com.santeut.party.dto.request;
+package com.santeut.party.feign.dto.request;
 
+import com.santeut.party.dto.request.TrackData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class HikingTrackSaveReignRequestDto {
+public class HikingTrackSaveFeignRequestDto {
     private Integer partyId;
     private List<TrackData> trackDataList;
 }

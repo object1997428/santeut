@@ -1,4 +1,4 @@
-package com.santeut.party.feign.dto;
+package com.santeut.party.feign.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

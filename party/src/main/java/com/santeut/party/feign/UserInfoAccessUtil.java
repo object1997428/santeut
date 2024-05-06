@@ -1,6 +1,6 @@
 package com.santeut.party.feign;
 
-import com.santeut.party.feign.dto.UserInfoFeignResponseDto;
+import com.santeut.party.feign.dto.response.UserInfoFeignResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

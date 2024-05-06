@@ -9,10 +9,10 @@ import com.santeut.party.common.response.BasicResponse;
 import com.santeut.party.common.util.GeometryUtils;
 import com.santeut.party.dto.request.*;
 import com.santeut.party.dto.response.HikingStartResponse;
-import com.santeut.party.dto.response.PartyTrackDataReginRequest;
+import com.santeut.party.feign.HikingCommonClient;
+import com.santeut.party.feign.dto.request.*;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
-import com.santeut.party.feign.FeignResponseDto;
 import com.santeut.party.feign.HikingAuthClient;
 import com.santeut.party.feign.HikingMountainClient;
 import com.santeut.party.repository.PartyRepository;
@@ -23,9 +23,7 @@ import org.locationtech.jts.geom.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
-import javax.sound.midi.Track;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +36,7 @@ public class HikingService {
     private final PartyUserRepository partyUserRepository;
     private final HikingMountainClient hikingMountainClient;
     private final HikingAuthClient hikingAuthClient;
+    private final HikingCommonClient hikingCommonClient;
     private final ObjectMapper om;
     private GeometryFactory geometryFactory = new GeometryFactory();
 
@@ -57,8 +56,6 @@ public class HikingService {
             //소모임 활성화
             party.setPartyStatus('P');
             partyRepository.save(party);
-            //소모임 회원들한테 알림보내기 요청
-            log.info("[Party Server] Alarm 한테 Party 시작 요청");
 
             //소모임장 입장 처리
             PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), hikingEnterRequest.getUserId())
@@ -72,6 +69,9 @@ public class HikingService {
 
             //Mountain 서버한테 부탁해서 등산로 좌표 가져오기
             resp = getHikingTrack(party);
+
+            //소모임 회원들한테 알림보내기 요청
+            alertHikingStart(hikingEnterRequest, party);
         }
         else if (party.getStatus() == 'P') {
             //입장 처리
@@ -87,6 +87,22 @@ public class HikingService {
         return resp;
     }
 
+    private void alertHikingStart(HikingEnterRequest hikingEnterRequest, Party party) {
+        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingEnterRequest.getPartyId(), 'B');
+        CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
+                .type("HIKING START")
+                .targetUserIds(partyMembers)
+                .title("소모임 시작 알림")
+                .message(party.getPartyName()+" 소모임이 시작되었습니다. 입장해주세요!")
+                .partyId(party.getPartyId())
+                .dataSource(null)
+                .alamType("PUSH")
+                .build();
+        log.info("[Party Server][Common Request] Alarm 한테 Party 시작 요청");
+        ResponseEntity<?> responseEntity = hikingCommonClient.alertHikingStart(commonRequestDto);
+        log.info("[Party Server][Common response ={}",responseEntity);
+    }
+
     private HikingStartResponse getHikingTrack(Party party) {
         //소모임의 등산로id 리스트 꺼내기
         List<Integer> courseList=new ArrayList<>();
@@ -94,7 +110,7 @@ public class HikingService {
         for (String s : split) {
             courseList.add(Integer.parseInt(s));
         }
-        MountainCourseRequest mounainDto= MountainCourseRequest.builder()
+        MountainCourseFeignRequest mounainDto= MountainCourseFeignRequest.builder()
                 .courseIdList(courseList)
                 .build();
         log.info("[Party Server] Mountain 한테 등산로 좌표 조회 요청");
@@ -103,8 +119,8 @@ public class HikingService {
 
             BasicResponse basicResponse = om.convertValue(mountainResp.getBody(), BasicResponse.class);
             if (basicResponse != null && basicResponse.getData() != null) {
-                PartyTrackDataReginRequest partyTrackDataReginRequest = om.convertValue(basicResponse.getData(), PartyTrackDataReginRequest.class);
-                List<LocationData> locationDataList = partyTrackDataReginRequest.getLocationDataList();
+                PartyTrackDataFeginRequest partyTrackDataFeginRequest = om.convertValue(basicResponse.getData(), PartyTrackDataFeginRequest.class);
+                List<LocationData> locationDataList = partyTrackDataFeginRequest.getLocationDataList();
                 log.info("[Party Server] Mountain 한테 등산로 좌표 조회 응답 받음 locationDataList={}", locationDataList);
                 return new HikingStartResponse(locationDataList);
             }
@@ -154,7 +170,7 @@ public class HikingService {
 
         //Auth한테 포인트, 등산기록 정규화 요청
         boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(hikingExitRequest.getUserId(), partyUser.getMountainId(), 'E');
-        HikingRecordUpdateFeignRequest authDto= HikingRecordUpdateFeignRequest.builder()
+        MountainHikingRecordUpdateFeignRequest authDto= MountainHikingRecordUpdateFeignRequest.builder()
                 .userId(hikingExitRequest.getUserId())
                 .distance(partyUser.getDistance())
                 .bestHeight(partyUser.getBestHeight())
@@ -172,9 +188,9 @@ public class HikingService {
     }
 
     @Transactional
-    public void saveTrack(HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto) {
-        for (TrackData trackData : hikingTrackSaveReignRequestDto.getTrackDataList()) {
-            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveReignRequestDto.getPartyId(), trackData.getUserId())
+    public void saveTrack(HikingTrackSaveFeignRequestDto hikingTrackSaveFeignRequestDto) {
+        for (TrackData trackData : hikingTrackSaveFeignRequestDto.getTrackDataList()) {
+            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingTrackSaveFeignRequestDto.getPartyId(), trackData.getUserId())
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
 
 //            테스트를 위해서 파티에 userId가 없으면 그냥 스킵(오류 말고)
