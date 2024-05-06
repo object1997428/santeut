@@ -71,6 +71,7 @@ public class Party extends BaseEntity {
         return Party.builder()
             .userId(userId)
             .selectedCourse(selectedCourse)
+            .guildId(requestDto.getGuildId())
             .mountainName(requestDto.getMountainName())
             .partyName(requestDto.getPartyName())
             .schedule(LocalDateTime.parse(requestDto.getSchedule(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
