@@ -20,6 +20,8 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+application-env.properties
+santeutFirebaseAccountKey.json
 .idea
 *.iws
 *.iml

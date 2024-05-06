@@ -72,6 +72,13 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.NOT_FOUND, "feignClientException");
     }
 
+    // Firebase 설정 에러
+    @ExceptionHandler(FirebaseSettingFailException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleFirebaseSettingFailException(FirebaseSettingFailException e) {
+        return constructErrorResponse(e,HttpStatus.INTERNAL_SERVER_ERROR, "FirebaseSettingFailException");
+    }
+
 
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
         log.error("[exceptionHandle] ex={}", e.getMessage(), e);
