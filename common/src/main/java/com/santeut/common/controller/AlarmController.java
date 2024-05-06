@@ -3,6 +3,7 @@ package com.santeut.common.controller;
 import com.santeut.common.common.response.BasicResponse;
 import com.santeut.common.common.util.ResponseUtil;
 import com.santeut.common.dto.request.AlarmRequestDto;
+import com.santeut.common.dto.request.CommonHikingStartFeignRequest;
 import com.santeut.common.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,4 +32,12 @@ public class AlarmController {
         alarmService.deleteAlarm(alarmId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "알람이 성공적으로 삭제되었습니다.");
     }
+
+    //알림 생성하기
+    @PostMapping
+    ResponseEntity<?> alertHikingStart(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest){
+        alarmService.sendAlarm(hikingStartFeignRequest);
+        return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "알람이 성공적으로 생성되었습니다.");
+    }
+
 }

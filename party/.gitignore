@@ -4,8 +4,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-*.yml
-application.properties
 
 ### STS ###
 .apt_generated
@@ -21,7 +19,6 @@ bin/
 
 ### IntelliJ IDEA ###
 application-env.properties
-santeutFirebaseAccountKey.json
 .idea
 *.iws
 *.iml
@@ -39,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### properties
+application-env.properties
