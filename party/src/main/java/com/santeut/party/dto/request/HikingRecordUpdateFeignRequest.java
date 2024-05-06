@@ -12,5 +12,5 @@ public class HikingRecordUpdateFeignRequest {
     private int distance;
     private int bestHeight;
     private int moveTime;
-    private boolean isFirstMountain;
+    private Boolean isFirstMountain;
 }
