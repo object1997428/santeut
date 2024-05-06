@@ -18,8 +18,8 @@ public class AlarmTokenController {
     private final AlarmTokenService alarmTokenService;
 
     @PostMapping
-    public ResponseEntity<?> saveToken(@RequestBody SaveTokenRequestDto saveTokenRequestDto, @RequestHeader int userId){
-        alarmTokenService.saveFcmToken(userId,saveTokenRequestDto);
+    public ResponseEntity<?> saveToken(@RequestBody SaveTokenRequestDto saveTokenRequestDto, @RequestHeader String userId){
+        alarmTokenService.saveFcmToken(Integer.parseInt(userId),saveTokenRequestDto);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,"해당 토큰 저장에 성공했습니다.");
     }
 }
