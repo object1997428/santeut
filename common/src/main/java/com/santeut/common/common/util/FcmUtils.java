@@ -8,10 +8,12 @@ import com.santeut.common.common.exception.FirebaseSettingFailException;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.entity.AlarmTokenEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FcmUtils {
 
     private final FirebaseMessaging firebaseMessaging;
@@ -26,17 +28,22 @@ public class FcmUtils {
         Message message = Message.builder()
                 .setToken(receiver.getFcmToken())
                 .setNotification(notification)
-                .putData("category",reqDto.getCategory())
+                .putData("category", reqDto.getCategory())
                 .build();
 
         try {
             firebaseMessaging.send(message);
 //            notiRepository.save(NotificationEntity.from(reqDto, receiver));
             return true;
-        } catch(FirebaseMessagingException e) {
-            e.printStackTrace();
-            throw new FirebaseSettingFailException("Firebase 설정이 잘못되었습니다.");
+        } catch (FirebaseMessagingException e) {
+            log.error("e.getErrorCode()={}",e.getErrorCode());
+            if ("UNREGISTERED".equals(e.getErrorCode())||"NOT_FOUND".equals(e.getErrorCode())) {
+                log.error("UNREGISTERED!!, e.getErrorCode()={}",e.getErrorCode());
+                return false;
+            } else {
+                e.printStackTrace();
+                throw new FirebaseSettingFailException("Firebase 설정이 잘못되었습니다.");
+            }
         }
     }
-
 }
