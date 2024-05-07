@@ -77,6 +77,13 @@ public class MountainController {
     return ResponseUtil.buildBasicResponse(HttpStatus.OK, courseService.findCourseCoordByCourseId(courseId));
   }
 
+  @GetMapping("/v2/{mountainId}/all-course")
+  public ResponseEntity<BasicResponse> getAllCourseOfMountain(
+      @PathVariable("mountainId") int mountainId) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK, courseService.findAllCourseByMountainId(mountainId));
+  }
+
+
   @PostMapping("/course/coordinates")
   public ResponseEntity<BasicResponse> getCourseCoordInCourseId(
       @RequestBody PartyTrackDataReginRequest request

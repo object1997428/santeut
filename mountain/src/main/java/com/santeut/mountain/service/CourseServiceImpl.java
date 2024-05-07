@@ -3,6 +3,8 @@ package com.santeut.mountain.service;
 import com.santeut.mountain.common.exception.NotFoundException;
 import com.santeut.mountain.common.util.GeometryUtils;
 import com.santeut.mountain.dto.request.PartyTrackDataReginRequest;
+import com.santeut.mountain.dto.response.AllCourseResponse;
+import com.santeut.mountain.dto.response.AllCourseResponse.CourseSummary;
 import com.santeut.mountain.dto.response.CourseCoordResponseDto;
 import com.santeut.mountain.dto.response.CourseCoordResponseDto.Coord;
 import com.santeut.mountain.dto.response.CourseInfoResponseDto;
@@ -94,4 +96,16 @@ public class CourseServiceImpl implements CourseService {
     }
   }
 
+  @Override
+  public AllCourseResponse findAllCourseByMountainId(int mountainId) {
+    MountainEntity mountain = mountainRepository.findById(mountainId)
+        .orElseThrow(() -> new NotFoundException("해당 산은 존재하지 않습니다"));
+
+    List<CourseSummary> courseList = new ArrayList<>();
+    for (CourseEntity course : mountain.getCourseEntityList()) {
+      courseList.add(new CourseSummary(course.getCourseId(), course.getDistance(),
+          GeometryUtils.convertGeometryToListLocationData(course.getCoursePoints())));
+    }
+    return new AllCourseResponse(courseList);
+  }
 }
