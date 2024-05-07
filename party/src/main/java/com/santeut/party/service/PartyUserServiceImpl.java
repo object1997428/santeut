@@ -27,7 +27,7 @@ public class PartyUserServiceImpl implements PartyUserService {
       throw new AlreadyJoinedException("이미 가입한 소모임입니다");
     }
     if(party.addParticipant()) {
-      partyUserRepository.save(PartyUser.of(userId, partyId));
+      partyUserRepository.save(PartyUser.of(userId, partyId, party.getMountainId()));
     } else {
       throw new AccessDeniedException("소모임 인원이 이미 모두 찼습니다");
     }

@@ -10,6 +10,7 @@ public class CreatePartyRequestDto {
 
   public String schedule;
   public String partyName;
+  public int mountainId;
   public String mountainName;
   public int maxPeople;
   public int guildId;
