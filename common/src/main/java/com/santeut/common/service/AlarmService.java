@@ -50,9 +50,14 @@ public class AlarmService {
         List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(hikingStartFeignRequest.getTargetUserIds());
 
         for (AlarmTokenEntity alarmToken : alarmTokenList) {
+            //알람 보내기
             fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(hikingStartFeignRequest.getTitle(),
                     String.format(hikingStartFeignRequest.getMessage()),
                     FCMCategory.HIKING_START));
+
+            if(hikingStartFeignRequest.getDataSource().equals("safety_alert")){
+
+            }
         }
     }
 }
