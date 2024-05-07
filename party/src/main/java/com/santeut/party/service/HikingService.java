@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class HikingService {
     private GeometryFactory geometryFactory = new GeometryFactory();
 
     @Transactional
-    public HikingStartResponse hikingStart(HikingEnterRequest hikingEnterRequest) {
+    public HikingStartResponse hikingStart(int userId, HikingEnterRequest hikingEnterRequest) {
         Party party = partyRepository.findByPartyId(hikingEnterRequest.getPartyId())
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
 
@@ -51,14 +52,14 @@ public class HikingService {
             throw new PartyNotStartedException("해당 소모임은 아직 시작할 수 없습니다.");
         HikingStartResponse resp = null;
         if (party.getStatus() == 'B') {
-            if (hikingEnterRequest.getUserId() != party.getUserId())
+            if (userId != party.getUserId())
                 throw new PartyNotStartedException("아직 소모임장이 소모임을 활성화 하지 않았습니다.");
             //소모임 활성화
             party.setPartyStatus('P');
             partyRepository.save(party);
 
             //소모임장 입장 처리
-            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), hikingEnterRequest.getUserId())
+            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), userId)
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
             if (partyUser.getStatus() == 'P') {
                 log.error("Party가 시작 전(B)인데 PartyUser가 진행 중(P)이다");
@@ -75,7 +76,7 @@ public class HikingService {
         }
         else if (party.getStatus() == 'P') {
             //입장 처리
-            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), hikingEnterRequest.getUserId())
+            PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), userId)
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
             if (partyUser.getStatus() == 'P') throw new DataMismatchException("해당 유저는 이미 소모임을 진행 중입니다.");
             partyUser.setStatus('P',hikingEnterRequest.getStartTime());
@@ -95,11 +96,11 @@ public class HikingService {
                 .title("소모임 시작 알림")
                 .message("'"+party.getPartyName()+"'"+" 소모임이 시작되었습니다. 입장해주세요!")
                 .partyId(party.getPartyId())
-                .dataSource(null)
+                .dataSource("alarm")
                 .alamType("PUSH")
                 .build();
         log.info("[Party Server][Common Request] Alarm 한테 Party 시작 요청");
-        ResponseEntity<?> responseEntity = hikingCommonClient.alertHikingStart(commonRequestDto);
+        ResponseEntity<?> responseEntity = hikingCommonClient.alertHiking(commonRequestDto);
         log.info("[Party Server][Common response ={}",responseEntity);
     }
 
@@ -131,25 +132,25 @@ public class HikingService {
     }
 
     @Transactional
-    public void hikingEnd(HikingExitRequest hikingExitRequest) {
+    public void hikingEnd(int userId,HikingExitRequest hikingExitRequest) {
         Party party = partyRepository.findByPartyId(hikingExitRequest.getPartyId())
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
         if (party.getStatus() == 'B' || party.getStatus() == 'I')
             throw new PartyExpiredException("해당 소모임은 시작된 적이 없습니다.");
-        if (party.getStatus() == 'E' && hikingExitRequest.getUserId() == party.getUserId()) {
+        if (party.getStatus() == 'E' && userId == party.getUserId()) {
             log.error("[Party Server][hikingEnd()]이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
             throw new DataMismatchException("이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
         }
         //소모임장이 hiking을 비활성화
-        if (party.getStatus() == 'P' && hikingExitRequest.getUserId() == party.getUserId()) {
+        if (party.getStatus() == 'P' && userId == party.getUserId()) {
             //소모임 비활성화
             party.setPartyStatus('E');
             partyRepository.save(party);
             //소모임 회원들한테 알림보내기 요청
-            log.info("[Party Server] Alarm 한테 Party 종료 요청");
+            alertHikingEnd(hikingExitRequest,party);
 
             //소모임장 퇴장 처리
-            exitHiking(hikingExitRequest);
+            exitHiking(hikingExitRequest,userId);
 
             //redis 갱신
             //1시간마다 갱신할거면, 여기서 처리하는 거 아님
@@ -157,21 +158,37 @@ public class HikingService {
         //P인데 파티원이 그냥 먼저 퇴장하거나, E라서 알림받고 파티원이 나가거나
         else {
             //파티원 퇴장 처리
-            exitHiking(hikingExitRequest);
+            exitHiking(hikingExitRequest,userId);
         }
     }
 
-    private void exitHiking(HikingExitRequest hikingExitRequest) {
-        PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), hikingExitRequest.getUserId())
+    private void alertHikingEnd(HikingExitRequest hikingExitRequest, Party party) {
+        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingExitRequest.getPartyId(), 'B');
+        CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
+                .type("HIKING END")
+                .targetUserIds(partyMembers)
+                .title("소모임 종료 알림")
+                .message("'"+party.getPartyName()+"'"+" 소모임이 종료되었습니다. 즐거운 등반되셨나요?")
+                .partyId(party.getPartyId())
+                .dataSource(null)
+                .alamType("POPUP")
+                .build();
+        log.info("[Party Server][Common Request] Alarm 한테 Party 종료 요청");
+        ResponseEntity<?> responseEntity = hikingCommonClient.alertHiking(commonRequestDto);
+        log.info("[Party Server][Common response ={}",responseEntity);
+    }
+
+    private void exitHiking(HikingExitRequest hikingExitRequest,int userId) {
+        PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), userId)
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
         if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
         partyUser.setStatus('E', hikingExitRequest.getEndTime());
         partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight());
 
         //Auth한테 포인트, 등산기록 정규화 요청
-        boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(hikingExitRequest.getUserId(), partyUser.getMountainId(), 'E');
+        boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(userId, partyUser.getMountainId(), 'E');
         MountainHikingRecordUpdateFeignRequest authDto= MountainHikingRecordUpdateFeignRequest.builder()
-                .userId(hikingExitRequest.getUserId())
+                .userId(userId)
                 .distance(partyUser.getDistance())
                 .bestHeight(partyUser.getBestHeight())
                 .moveTime(partyUser.getMoveTime())
@@ -225,4 +242,22 @@ public class HikingService {
     }
 
 
+    public void hikingSafety(int userId, HikingSafetyRequest hikingSafetyRequest) {
+        Party party = partyRepository.findByPartyId(hikingSafetyRequest.getPartyId())
+                .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
+
+        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyId(hikingSafetyRequest.getPartyId());
+        CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
+                .type(hikingSafetyRequest.getType())
+                .targetUserIds(partyMembers)
+                .title("소모임 위험 알림!!")
+                .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 위험 신호를 보냈습니다.")
+                .partyId(party.getPartyId())
+                .dataSource("safety_alert")
+                .alamType("POPUP")
+                .build();
+        log.info("[Party Server][Common Request] Alarm 한테 Party 종료 요청");
+        ResponseEntity<?> responseEntity = hikingCommonClient.alertHiking(commonRequestDto);
+        log.info("[Party Server][Common response ={}",responseEntity);
+    }
 }
