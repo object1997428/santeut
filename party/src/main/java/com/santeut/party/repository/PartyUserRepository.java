@@ -23,6 +23,9 @@ public interface PartyUserRepository extends JpaRepository<PartyUser, Integer> {
     @Query("SELECT p.userId FROM PartyUser p WHERE p.partyId = :partyId AND p.status = :status AND p.isDeleted = false")
     List<Integer> findUserIdsByPartyIdAndStatus(@Param("partyId") Integer partyId, @Param("status") char status);
 
+    @Query("SELECT p.userId FROM PartyUser p WHERE p.partyId = :partyId")
+    List<Integer> findUserIdsByPartyId(@Param("partyId") Integer partyId);
+
     boolean existsByUserIdAndMountainIdAndStatus(int userId, int mountainId, char status);
 
 }

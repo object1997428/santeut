@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class HikingExitRequest {
     int partyId;
-    int userId;
+//    int userId;
     int distance;
     int bestHeight;
     LocalDateTime endTime;

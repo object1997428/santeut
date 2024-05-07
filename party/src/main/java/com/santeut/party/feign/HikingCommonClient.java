@@ -10,5 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "HikingCommonClient", url="${common-service.url}", configuration = FeignConfiguration.class)
 public interface HikingCommonClient {
     @PostMapping("/alarm")
-    ResponseEntity<?> alertHikingStart(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest);
+    ResponseEntity<?> alertHiking(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest);
+
 }

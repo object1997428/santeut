@@ -2,9 +2,11 @@ package com.santeut.party.controller;
 
 import com.santeut.party.common.util.ResponseUtil;
 import com.santeut.party.dto.request.HikingExitRequest;
+import com.santeut.party.dto.request.HikingSafetyRequest;
 import com.santeut.party.feign.dto.request.HikingTrackSaveFeignRequestDto;
 import com.santeut.party.dto.request.HikingEnterRequest;
 import com.santeut.party.service.HikingService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,8 +28,9 @@ public class HikingController {
     }
 
     @PostMapping("/hiking/start")
-    public ResponseEntity<?> startHiking(@RequestBody HikingEnterRequest hikingEnterRequest){
-        return ResponseUtil.buildBasicResponse(HttpStatus.OK,hikingService.hikingStart(hikingEnterRequest));
+    public ResponseEntity<?> startHiking(@RequestBody HikingEnterRequest hikingEnterRequest, HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK,hikingService.hikingStart(Integer.parseInt(userId),hikingEnterRequest));
     }
 
     @PostMapping("/hiking/track")
@@ -38,8 +41,16 @@ public class HikingController {
     }
 
     @PostMapping("/hiking/end")
-    public ResponseEntity<?> endHiking(@RequestBody HikingExitRequest hikingExitRequest){
-        hikingService.hikingEnd(hikingExitRequest);
+    public ResponseEntity<?> endHiking(@RequestBody HikingExitRequest hikingExitRequest, HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        hikingService.hikingEnd(Integer.parseInt(userId),hikingExitRequest);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,"등산 퇴장 처리에 성공했습니다.");
+    }
+
+    @PostMapping("/hiking/safety")
+    public ResponseEntity<?> safetyAlert(@RequestBody HikingSafetyRequest hikingSafetyRequest, HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        hikingService.hikingSafety(Integer.parseInt(userId),hikingSafetyRequest);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK,"등산 위험 알림에 성공했습니다.");
     }
 }

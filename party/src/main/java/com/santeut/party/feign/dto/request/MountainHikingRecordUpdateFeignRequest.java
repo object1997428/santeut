@@ -9,7 +9,6 @@ import lombok.Data;
 public class MountainHikingRecordUpdateFeignRequest {
     private int userId;
     private int distance;
-    private int bestHeight;
     private int moveTime;
     private Boolean isFirstMountain;
 }
