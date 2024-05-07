@@ -1,12 +1,11 @@
 package com.santeut.common.common.util;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.ErrorCode;
+import com.google.firebase.messaging.*;
 import com.santeut.common.common.exception.FirebaseSettingFailException;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.entity.AlarmTokenEntity;
+import com.santeut.common.repository.AlarmTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class FcmUtils {
 
     private final FirebaseMessaging firebaseMessaging;
-//    private final NotiRepository notiRepository;
+    private AlarmTokenRepository alarmTokenRepository;
 
     public boolean sendNotificationByToken(AlarmTokenEntity receiver, FCMRequestDto reqDto) {
         Notification notification = Notification.builder()
@@ -36,9 +35,9 @@ public class FcmUtils {
 //            notiRepository.save(NotificationEntity.from(reqDto, receiver));
             return true;
         } catch (FirebaseMessagingException e) {
-            log.error("e.getErrorCode()={}",e.getErrorCode());
-            if ("UNREGISTERED".equals(e.getErrorCode())||"NOT_FOUND".equals(e.getErrorCode())) {
-                log.error("UNREGISTERED!!, e.getErrorCode()={}",e.getErrorCode());
+            if (e.getErrorCode() == ErrorCode.NOT_FOUND || e.getErrorCode() == ErrorCode.INVALID_ARGUMENT) {
+                log.error("UNREGISTERED or NOT_FOUND error, Error Code: {}, receiver: {}", e.getErrorCode(),receiver.getId());
+                receiver.inactive();
                 return false;
             } else {
                 e.printStackTrace();

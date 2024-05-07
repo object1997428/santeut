@@ -60,6 +60,7 @@ public class AlarmService {
                     String.format(hikingStartFeignRequest.getMessage()),
                     FCMCategory.HIKING_START));
 
+            if(hikingStartFeignRequest.getDataSource()==null) continue;
             if(hikingStartFeignRequest.getDataSource().equals("safety_alert")){
                 SafetyAlertEntity safetyAlert= SafetyAlertEntity.builder()
                         .userId(alarmToken.getId())
@@ -69,7 +70,7 @@ public class AlarmService {
                         .build();
                 safetyAlertRepository.save(safetyAlert);
             }
-            else{
+            else if(hikingStartFeignRequest.getDataSource().equals("alarm")){
                 AlarmEntity alarm=AlarmEntity.builder()
                         .userId(alarmToken.getId())
                         .referenceType('P')

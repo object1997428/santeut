@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface AlarmTokenRepository extends JpaRepository<AlarmTokenEntity,Integer> {
     List<AlarmTokenEntity> findByIdIn(List<Integer> userIds);
+
+    @Override
+    void deleteById(Integer integer);
 }
