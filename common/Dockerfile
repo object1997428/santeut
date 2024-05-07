@@ -1,4 +1,4 @@
-# Party Server Dockerfile
+# Common Server Dockerfile
 
 # build
 FROM gradle:8.5-jdk17 AS builder
@@ -21,5 +21,5 @@ COPY --from=builder /app/build/libs/*.jar ./app.jar
 RUN ls -al /app
 
 # port 
-EXPOSE 52714
+EXPOSE 52717
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -2,14 +2,14 @@ package com.santeut.common.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
+@Builder
+@AllArgsConstructor
+@Entity(name = "image")
 public class ImageEntity extends BaseEntity {
 
     @Id
@@ -18,8 +18,8 @@ public class ImageEntity extends BaseEntity {
     private int id;
 
     @NotNull
-    @Column(name = "image_reference_type", length = 255)
-    private String imageReferenceType;
+    @Column(name = "image_reference_type", length = 1)
+    private Character imageReferenceType;
 
     @NotNull
     @Column(name = "image_reference_id")
