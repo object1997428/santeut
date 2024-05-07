@@ -2,24 +2,17 @@
 
 package com.example.testmap
 
-import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.testmap.ui.theme.TestmapTheme
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
@@ -29,8 +22,10 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.Call
 import android.util.Log
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -101,22 +96,90 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+//@Composable
+//fun MapScreen(context: Context, token: String) {
+//    val mountainService = remember { createMountainService(token) }
+//    var mountainData by remember { mutableStateOf<MountainData?>(null) }
+//
+//    LaunchedEffect(key1 = true) {
+//        mountainData = withContext(Dispatchers.IO) {
+//            try {
+//                val response = mountainService.getMountainData()
+//                Log.d("MapScreen", "API Response: $response")  // 로그로 API 응답 출력
+//                if (response.data != null) {
+//                    Log.d("MapScreen", "Mountain Lat: ${response.data.lat}, Lng: ${response.data.lng}")
+//                }
+//                response.data
+//            } catch (e: Exception) {
+//                Log.e("MapScreen", "Error fetching mountain data", e)  // 에러 로깅
+//                null
+//            }
+//        }
+//    }
+//
+//    val cameraPositionState = rememberCameraPositionState {
+//        position = CameraPosition(LatLng(35.8447943443487, 127.11199020254), 14.0)
+//    }
+//
+//    LaunchedEffect(key1 = mountainData) {
+//        mountainData?.let {
+//            cameraPositionState.position = CameraPosition(LatLng(it.lng, it.lat), 14.0)
+//        }
+//    }
+//
+//    val uiSettings = remember {
+//        MapUiSettings(
+//            isZoomControlEnabled = true,
+//            isLocationButtonEnabled = true,
+//            isCompassEnabled = true
+//        )
+//    }
+//
+//    Column(modifier = Modifier.fillMaxSize()) {
+//        Box(modifier = Modifier.weight(1f)) {
+//            NaverMap(
+//                modifier = Modifier.fillMaxSize(),
+//                cameraPositionState = cameraPositionState,
+//                locationSource = rememberFusedLocationSource(isCompassEnabled = uiSettings.isCompassEnabled),
+//                properties = MapProperties(
+//                    locationTrackingMode = LocationTrackingMode.Follow,
+//                    mapType = MapType.Terrain,
+//                    isMountainLayerGroupEnabled = true
+//                ),
+//                uiSettings = uiSettings
+//            ) {
+//                mountainData?.let {
+//                    Marker(
+//                        state = rememberMarkerState(position = LatLng(it.lng, it.lat)),
+//                        captionText = it.mountainName,
+//                        captionTextSize = 14.sp,
+//                        captionMinZoom = 12.0
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
+
+@ExperimentalNaverMapApi
 @Composable
 fun MapScreen(context: Context, token: String) {
     val mountainService = remember { createMountainService(token) }
-    var mountainData by remember { mutableStateOf<MountainData?>(null) }
+    var mountainData by remember { mutableStateOf<MountainData?>(null)}
+    var stepCount by remember { mutableIntStateOf(0) }  // 정수형 데이터 관리를 위한 mutableIntStateOf 사용
+    var distanceMoved by remember { mutableFloatStateOf(0f) }  // 부동 소수점 데이터 관리를 위한 mutableFloatStateOf 사용
 
     LaunchedEffect(key1 = true) {
         mountainData = withContext(Dispatchers.IO) {
             try {
                 val response = mountainService.getMountainData()
-                Log.d("MapScreen", "API Response: $response")  // 로그로 API 응답 출력
+                Log.d("MapScreen", "API Response: $response")
                 if (response.data != null) {
                     Log.d("MapScreen", "Mountain Lat: ${response.data.lat}, Lng: ${response.data.lng}")
                 }
                 response.data
             } catch (e: Exception) {
-                Log.e("MapScreen", "Error fetching mountain data", e)  // 에러 로깅
+                Log.e("MapScreen", "Error fetching mountain data", e)
                 null
             }
         }
@@ -141,7 +204,7 @@ fun MapScreen(context: Context, token: String) {
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.weight(8f)) {
             NaverMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
@@ -163,5 +226,30 @@ fun MapScreen(context: Context, token: String) {
                 }
             }
         }
+        Box(modifier = Modifier.weight(2f)) {
+            InfoPanel(mountainData?.height ?: 0, stepCount, distanceMoved)
+        }
     }
 }
+
+
+@Composable
+fun InfoPanel(elevation: Int, steps: Int, distance: Float) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        InfoItem(title = "고도", value = "$elevation m")
+        InfoItem(title = "걸음 수", value = "$steps 걸음")
+        InfoItem(title = "움직인 거리", value = String.format("%.2f km", distance))
+    }
+}
+
+@Composable
+fun InfoItem(title: String, value: String) {
+    Column(modifier = Modifier
+        .weight(1f)
+        .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = title, style = MaterialTheme.typography.titleMedium)
+        Text(text = value, style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
