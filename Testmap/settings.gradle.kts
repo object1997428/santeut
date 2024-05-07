@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "testmap"
+rootProject.name = "Testmap"
 include(":app")
  

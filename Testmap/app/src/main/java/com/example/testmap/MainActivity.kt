@@ -2,42 +2,99 @@
 
 package com.example.testmap
 
+import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.testmap.ui.theme.TestmapTheme
-import android.Manifest
-import android.content.Context
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.unit.sp
+import com.example.testmap.ui.theme.TestmapTheme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.Call
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+
+// API 인터페이스 정의
+interface MountainService {
+    @GET("mountain/v2/2")
+    suspend fun getMountainData(): MountainResponse
+}
+
+
+// 데이터 클래스 정의
+data class MountainResponse(
+    val status: Int,
+    val data: MountainData
+)
+
+data class MountainData(
+    val mountainName: String,
+    val address: String,
+    val description: String,
+    val height: Int,
+    val courseCount: Int,
+    val lat: Double,
+    val lng: Double,
+    val views: Int,
+    val image: String?
+)
+
+// 인증 토큰을 추가하는 Interceptor 구현
+class AuthInterceptor(private val token: String) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val originalRequest = chain.request()
+        val newRequest = originalRequest.newBuilder()
+            .addHeader("Authorization", "Bearer $token")
+            .build()
+        return chain.proceed(newRequest)
+    }
+}
+
+// OkHttpClient 및 Retrofit 서비스 설정
+fun createMountainService(token: String): MountainService {
+    val client = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor(token))
+        .build()
+
+    return Retrofit.Builder()
+        .baseUrl("https://k10e201.p.ssafy.io/api/")
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(MountainService::class.java)
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TestmapTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen(context = this@MainActivity)
+                    MapScreen(context = this@MainActivity, token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDAxIiwiaWF0IjoxNzE0NzA2MTEwLCJleHAiOjE3NDYyMzYxMTB9.c0bRrGh0NGA8HPd_oCMCUPfmQaAwzswftvHdv8xulzg")
                 }
             }
         }
@@ -45,68 +102,33 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun MapScreen(context: Context, token: String) {
+    val mountainService = remember { createMountainService(token) }
+    var mountainData by remember { mutableStateOf<MountainData?>(null) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TestmapTheme {
-        Greeting("Android")
-    }
-}
-
-@Composable
-fun MapScreen(context: Context) {
-    // 위치 권한 상태 관리
-    var hasLocationPermission by remember { mutableStateOf(false) }
-
-    // 위치 권한 요청
-    val locationPermissionRequest = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            hasLocationPermission = isGranted
-        }
-    )
-
-    val fusedLocationClient: FusedLocationProviderClient = remember {
-        LocationServices.getFusedLocationProviderClient(context)
-    }
-
-    // 앱 시작 시 위치 권한 요청
     LaunchedEffect(key1 = true) {
-        locationPermissionRequest.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-    }
-
-    // 현재 위치 데이터
-    var currentLocation by remember { mutableStateOf<LatLng?>(null) }
-
-    // 권한이 있을 때 현재 위치를 가져오기
-    LaunchedEffect(key1 = hasLocationPermission) {
-        if (hasLocationPermission) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    currentLocation = LatLng(location.latitude, location.longitude)
+        mountainData = withContext(Dispatchers.IO) {
+            try {
+                val response = mountainService.getMountainData()
+                Log.d("MapScreen", "API Response: $response")  // 로그로 API 응답 출력
+                if (response.data != null) {
+                    Log.d("MapScreen", "Mountain Lat: ${response.data.lat}, Lng: ${response.data.lng}")
                 }
+                response.data
+            } catch (e: Exception) {
+                Log.e("MapScreen", "Error fetching mountain data", e)  // 에러 로깅
+                null
             }
         }
     }
 
-    // 위치 추적 모드를 기본값으로 설정 (이전에 선택한 모드 사용 버튼 제거 후)
-    val locationTrackingMode = LocationTrackingMode.Follow
-
-    // 지도의 카메라 위치 상태 관리
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(37.5666102, 126.9783881), 14.0)
+        position = CameraPosition(LatLng(35.8447943443487, 127.11199020254), 14.0)
     }
 
-    LaunchedEffect(key1 = currentLocation) {
-        currentLocation?.let {
-            cameraPositionState.position = CameraPosition(it, 15.0)
+    LaunchedEffect(key1 = mountainData) {
+        mountainData?.let {
+            cameraPositionState.position = CameraPosition(LatLng(it.lng, it.lat), 14.0)
         }
     }
 
@@ -125,16 +147,16 @@ fun MapScreen(context: Context) {
                 cameraPositionState = cameraPositionState,
                 locationSource = rememberFusedLocationSource(isCompassEnabled = uiSettings.isCompassEnabled),
                 properties = MapProperties(
-                    locationTrackingMode = locationTrackingMode,
+                    locationTrackingMode = LocationTrackingMode.Follow,
                     mapType = MapType.Terrain,
                     isMountainLayerGroupEnabled = true
                 ),
                 uiSettings = uiSettings
             ) {
-                currentLocation?.let {
+                mountainData?.let {
                     Marker(
-                        state = rememberMarkerState(position = it),
-                        captionText = "현재 위치",
+                        state = rememberMarkerState(position = LatLng(it.lng, it.lat)),
+                        captionText = it.mountainName,
                         captionTextSize = 14.sp,
                         captionMinZoom = 12.0
                     )
