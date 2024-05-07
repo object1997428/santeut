@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.PostApiService
+import com.santeut.data.util.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
