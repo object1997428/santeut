@@ -1,4 +1,4 @@
-package com.santeut.presentation.theme
+package com.santeut.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme
