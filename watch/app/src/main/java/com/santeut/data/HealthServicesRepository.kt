@@ -19,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 class HealthServicesRepository(context: Context) {
     private val healthServicesClient = HealthServices.getClient(context)
     private val measureClient = healthServicesClient.measureClient
+    private val passiveMonitoringClient = healthServicesClient.passiveMonitoringClient
 
     suspend fun hasHeartRateCapability(): Boolean {
         val capabilities = measureClient.getCapabilitiesAsync().await()
@@ -52,6 +53,21 @@ class HealthServicesRepository(context: Context) {
                     .await()
             }
         }
+    }
+
+    suspend fun checkSupported1(): Unit {
+        val capabilities = measureClient.getCapabilitiesAsync().await()
+        Log.d("HEART_RATE_BPM", (DataType.HEART_RATE_BPM in capabilities.supportedDataTypesMeasure).toString())
+    }
+
+    suspend fun checkSupported2(): Unit {
+        val capabilities = passiveMonitoringClient.getCapabilitiesAsync().await()
+        Log.d("ELEVATION_GAIN", (DataType.ELEVATION_GAIN in capabilities.supportedDataTypesPassiveMonitoring).toString())
+        Log.d("DISTANCE", (DataType.DISTANCE in capabilities.supportedDataTypesPassiveMonitoring).toString())
+        Log.d("FLOORS", (DataType.FLOORS in capabilities.supportedDataTypesPassiveMonitoring).toString())
+        Log.d("HEART_RATE_BPM", (DataType.HEART_RATE_BPM in capabilities.supportedDataTypesPassiveMonitoring).toString())
+        Log.d("STEPS", (DataType.STEPS in capabilities.supportedDataTypesPassiveMonitoring).toString())
+        Log.d("CALORIES", (DataType.CALORIES in capabilities.supportedDataTypesPassiveMonitoring).toString())
     }
 }
 

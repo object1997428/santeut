@@ -43,8 +43,7 @@ import com.santeut.data.HealthServicesRepository
 @Composable
 fun HealthScreen(
     healthServicesRepository: HealthServicesRepository,
-    viewModel: HealthViewModel,
-    permissionState: PermissionState
+    viewModel: HealthViewModel
 ) {
 
     val enabled by viewModel.enabled.collectAsState()
@@ -52,17 +51,8 @@ fun HealthScreen(
     val availability by viewModel.availability
     val uiState by viewModel.uiState
 
-    LaunchedEffect(key1 = Unit) {
-        if (permissionState.status.isGranted) {
-            Log.d("Permission OK", "권한 있음")
-        } else {
-            Log.d("Permission NO", "권한 없음")
-            permissionState.launchPermissionRequest()
-        }
-    }
-
     val heartRate = if (availability == DataTypeAvailability.AVAILABLE) {
-        String.format("%.4f", hr)
+        hr.toInt().toString()
     } else {
         "--"
     }

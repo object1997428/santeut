@@ -17,16 +17,19 @@ class HealthViewModel(
     private val healthServicesRepository: HealthServicesRepository
 ) : ViewModel(){
     val enabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
     val hr: MutableState<Double> = mutableStateOf(0.0)
     val availability: MutableState<DataTypeAvailability> =
         mutableStateOf(DataTypeAvailability.UNKNOWN)
-
     val uiState: MutableState<UiState> = mutableStateOf(UiState.Startup)
 
     init {
         viewModelScope.launch {
             val supported = healthServicesRepository.hasHeartRateCapability()
+
+            Log.d("심장 되나요", healthServicesRepository.hasHeartRateCapability().toString())
+            healthServicesRepository.checkSupported1()
+            healthServicesRepository.checkSupported2()
+
             uiState.value = if (supported) {
                 UiState.Supported
             } else {
@@ -42,11 +45,9 @@ class HealthViewModel(
                         .collect { measureMessage ->
                             when (measureMessage) {
                                 is MeasureMessage.MeasureData -> {
-                                    Log.d("Measure Data Value", measureMessage.data.last().value.toString())
                                     hr.value = measureMessage.data.last().value
                                 }
                                 is MeasureMessage.MeasureAvailability -> {
-                                    Log.d("Measure Data Availability", measureMessage.availability.toString())
                                     availability.value = measureMessage.availability
                                 }
                             }
