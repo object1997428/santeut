@@ -67,9 +67,7 @@ dependencies {
     // compose
     implementation("androidx.wear.compose:compose-material:1.3.1")
     implementation("androidx.wear.compose:compose-foundation:1.3.1")
-
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
     implementation("androidx.compose.material:material-icons-extended:1.6.7")
 
     // permission
