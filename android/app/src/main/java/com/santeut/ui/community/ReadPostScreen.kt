@@ -24,7 +24,8 @@ import com.santeut.data.model.response.PostResponse
 fun ReadPostScreen(
     postId: Int,
     postType: Char,
-    postViewModel: PostViewModel
+    postViewModel: PostViewModel,
+    commonViewModel: CommonViewModel
 ) {
     val focusManager = LocalFocusManager.current
     var comment by remember { mutableStateOf("") }
@@ -44,9 +45,13 @@ fun ReadPostScreen(
             HeaderSection(post)
             ContentSection(post)
             CommentSection(
+                postId,
+                postType,
                 comment,
                 onCommentChange = { comment = it },
-                onSend = { focusManager.clearFocus() })
+                onSend = { focusManager.clearFocus() },
+                commonViewModel
+            )
         }
     }
 }
@@ -103,10 +108,13 @@ fun ContentSection(post: PostResponse?) {
 
 @Composable
 fun CommentSection(
+    postId: Int,
+    postType: Char,
     comment: String,
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
-    modifier: Modifier = Modifier
+    commonViewModel: CommonViewModel,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         LazyColumn(
@@ -123,6 +131,9 @@ fun CommentSection(
                 .fillMaxWidth()
                 .background(Color.White)
         ) {
+            fun onSend() {
+                commonViewModel.createComment(postId, postType, comment)
+            }
             TextField(
                 value = comment,
                 onValueChange = onCommentChange,
@@ -133,7 +144,7 @@ fun CommentSection(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onSend() })
             )
-            IconButton(onClick = onSend) {
+            IconButton(onClick = { onSend() }) {
                 Icon(
                     imageVector = Icons.Filled.Send,
                     contentDescription = "Send"

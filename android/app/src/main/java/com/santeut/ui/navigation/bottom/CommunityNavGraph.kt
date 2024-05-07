@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostTipsScreen
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.ReadPostScreen
@@ -44,7 +45,8 @@ fun NavGraphBuilder.CommunityNavGraph(
             val postId = backStackEntry.arguments?.getInt("postId") ?: 0
             val postType = backStackEntry.arguments?.getString("postType") ?: "T"
             val postViewModel = hiltViewModel<PostViewModel>()
-            ReadPostScreen(postId, postType.first(), postViewModel)
+            val commonViewModel = hiltViewModel<CommonViewModel>()
+            ReadPostScreen(postId, postType.first(), postViewModel, commonViewModel)
         }
     }
 }

@@ -2,6 +2,8 @@ package com.santeut.data.di
 
 import com.santeut.data.repository.AuthRepository
 import com.santeut.data.repository.AuthRepositoryImpl
+import com.santeut.data.repository.CommonRepository
+import com.santeut.data.repository.CommonRepositoryImpl
 import com.santeut.data.repository.PostRepository
 import com.santeut.data.repository.PostRepositoryImpl
 import dagger.Binds
@@ -17,4 +19,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindPostRepository(impl: PostRepositoryImpl): PostRepository
+
+    @Binds
+    abstract fun bindCommonRepository(impl: CommonRepositoryImpl): CommonRepository
 }

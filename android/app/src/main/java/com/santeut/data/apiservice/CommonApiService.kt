@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface CommonApiService {
     @GET("/api/common/comment/{postId}/{postType}")
-    suspend fun readPost(
+    suspend fun createComment(
         @Path("postId") postId: Int,
         @Path("postType") postType: String,
         @Body createCommentRequest: CreateCommentRequest
