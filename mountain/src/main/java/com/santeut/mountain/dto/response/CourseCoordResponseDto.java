@@ -11,6 +11,7 @@ import lombok.Data;
 public class CourseCoordResponseDto {
 
   public int coordCnt;
+  public double distance;
   public List<Coord> coordPoints;
 
   @Data
