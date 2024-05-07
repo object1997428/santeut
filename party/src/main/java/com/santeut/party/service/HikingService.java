@@ -190,7 +190,6 @@ public class HikingService {
         MountainHikingRecordUpdateFeignRequest authDto= MountainHikingRecordUpdateFeignRequest.builder()
                 .userId(userId)
                 .distance(partyUser.getDistance())
-                .bestHeight(partyUser.getBestHeight())
                 .moveTime(partyUser.getMoveTime())
                 .isFirstMountain(isFirstMountain)
                 .build();
