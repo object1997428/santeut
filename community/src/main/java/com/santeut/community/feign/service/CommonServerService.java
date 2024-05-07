@@ -3,10 +3,13 @@ package com.santeut.community.feign.service;
 import com.santeut.community.common.exception.FeignClientException;
 import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.feign.CommonClient;
+import feign.Feign;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,4 +35,13 @@ public class CommonServerService {
         return commonClient.getCommentList(postId, postType).orElseThrow(() -> new FeignClientException("common 서버에서 댓글 목록 가져오기 실패함")).getData();
     }
 
+    public void saveImageUrl(Integer postId, Character postType, String imageUrl) {
+        Map<String, String> imageUrlJson = new HashMap<>();
+        imageUrlJson.put("imageUrl", imageUrl);
+        commonClient.saveImageUrl(postId, postType, imageUrlJson);
+    }
+
+    public List<String> getImages(Integer postId, Character postType) {
+        return commonClient.getImages(postId, postType).orElseThrow(()->new FeignClientException("common 서버에서 이미지 목록 가져오기 실패함")).getData();
+    }
 }

@@ -1,6 +1,7 @@
 package com.santeut.community.service;
 
 import com.santeut.community.common.exception.AccessDeniedException;
+import com.santeut.community.common.exception.FeignClientException;
 import com.santeut.community.common.exception.JpaQueryException;
 import com.santeut.community.dto.request.PostCreateRequestDto;
 import com.santeut.community.dto.request.PostUpdateRequestDto;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +65,7 @@ public class PostService {
 
     // 게시글 작성 (CREATE)
     public void createPost(PostCreateRequestDto postCreateRequestDto, int userId) {
-        postRepository.save(PostEntity.builder()
+        PostEntity newPost = postRepository.save(PostEntity.builder()
                 .userId(userId)
                 .postType(postCreateRequestDto.getPostType())
                 .postTitle(postCreateRequestDto.getPostTitle())
@@ -70,6 +73,14 @@ public class PostService {
                 .userPartyId(postCreateRequestDto.getUserPartyId())
                 .build()
         );
+        // 이미지 넣기
+        try {
+            for (String url : postCreateRequestDto.getImages()) {
+                commonServerService.saveImageUrl(newPost.getId(), newPost.getPostType(), url);
+            }
+        } catch(FeignClientException e) {
+            log.error("이미지 저장 에러 : {}", e.getMessage());
+        }
     }
 
     // 게시글 읽기 (READ)
@@ -83,8 +94,13 @@ public class PostService {
         // 좋아요 눌렀는지 체크
         boolean isLike  = commonServerService.likePushed(postId, postType, userId);
 
+        // 게시글 이미지들 불러오기
+        List<String> images = commonServerService.getImages(postEntity.getId(), postEntity.getPostType());
 
+        // 댓글 리스트 불러오기
         CommentListFeignDto commentListFeignDto = commonServerService.getCommentList(postId, postType);
+
+        // 알맞은 Dto로 묶어서 반환
         return PostReadResponseDto.builder()
                 .postId(postEntity.getId())
                 .postType(postEntity.getPostType())
@@ -95,6 +111,7 @@ public class PostService {
                 .isLike(isLike)
                 .isWriter(isWriter)
                 .commentList(commentListFeignDto.getCommentList())
+                .images(images)
                 .createdAt(postEntity.getCreatedAt())
                 .build();
     }
