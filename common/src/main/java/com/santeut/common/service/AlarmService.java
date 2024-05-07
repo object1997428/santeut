@@ -18,6 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 
 @Service
@@ -51,32 +54,37 @@ public class AlarmService {
     }
 
     @Transactional
-    public void sendAlarm(CommonHikingStartFeignRequest hikingStartFeignRequest) {
-        List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(hikingStartFeignRequest.getTargetUserIds());
+    public void sendAlarm(CommonHikingStartFeignRequest alertRequest) {
+        List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdInAndActivated(alertRequest.getTargetUserIds(),true);
 
         for (AlarmTokenEntity alarmToken : alarmTokenList) {
+            //20일 지난 토큰은 비활성화하고 보내지 않음
+            if(Period.between(alarmToken.getActiveAt().toLocalDate(), LocalDate.now()).getDays()>=20){
+                alarmToken.inactive();
+                continue;
+            }
             //알람 보내기
-            fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(hikingStartFeignRequest.getTitle(),
-                    String.format(hikingStartFeignRequest.getMessage()),
+            fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(alertRequest.getTitle(),
+                    String.format(alertRequest.getMessage()),
                     FCMCategory.HIKING_START));
 
-            if(hikingStartFeignRequest.getDataSource()==null) continue;
-            if(hikingStartFeignRequest.getDataSource().equals("safety_alert")){
+            if(alertRequest.getDataSource()==null) continue;
+            if(alertRequest.getDataSource().equals("safety_alert")){
                 SafetyAlertEntity safetyAlert= SafetyAlertEntity.builder()
                         .userId(alarmToken.getId())
-                        .title(hikingStartFeignRequest.getTitle())
-                        .message(hikingStartFeignRequest.getMessage())
-                        .point(GeoUtils.createPoint(hikingStartFeignRequest.getLat(), hikingStartFeignRequest.getLng()))
+                        .title(alertRequest.getTitle())
+                        .message(alertRequest.getMessage())
+                        .point(GeoUtils.createPoint(alertRequest.getLat(), alertRequest.getLng()))
                         .build();
                 safetyAlertRepository.save(safetyAlert);
             }
-            else if(hikingStartFeignRequest.getDataSource().equals("alarm")){
+            else if(alertRequest.getDataSource().equals("alarm")){
                 AlarmEntity alarm=AlarmEntity.builder()
                         .userId(alarmToken.getId())
                         .referenceType('P')
-                        .referenceId(hikingStartFeignRequest.getPartyId())
-                        .alarmTitle(hikingStartFeignRequest.getTitle())
-                        .alarmContent(hikingStartFeignRequest.getMessage())
+                        .referenceId(alertRequest.getPartyId())
+                        .alarmTitle(alertRequest.getTitle())
+                        .alarmContent(alertRequest.getMessage())
                         .build();
                 alarmRepository.save(alarm);
             }

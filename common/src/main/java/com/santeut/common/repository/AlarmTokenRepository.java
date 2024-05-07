@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AlarmTokenRepository extends JpaRepository<AlarmTokenEntity,Integer> {
-    List<AlarmTokenEntity> findByIdIn(List<Integer> userIds);
+    List<AlarmTokenEntity> findByIdInAndActivated(List<Integer> userIds,boolean isActivated);
 
     @Override
     void deleteById(Integer integer);

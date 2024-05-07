@@ -32,7 +32,6 @@ public class FcmUtils {
 
         try {
             firebaseMessaging.send(message);
-//            notiRepository.save(NotificationEntity.from(reqDto, receiver));
             return true;
         } catch (FirebaseMessagingException e) {
             if (e.getErrorCode() == ErrorCode.NOT_FOUND || e.getErrorCode() == ErrorCode.INVALID_ARGUMENT) {
