@@ -17,4 +17,6 @@ public class CommonHikingStartFeignRequest {
     private int partyId;
     private String dataSource;
     private String alamType; //POPUP, PUSH, NONE
+    private Double lat;
+    private Double lng;
 }

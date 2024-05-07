@@ -3,6 +3,6 @@ package com.santeut.common.dto.request;
 import lombok.Data;
 
 @Data
-public class SaveTokenRequestDto {
+public class TokenRequestDto {
     private String fcmToken;
 }

@@ -1,7 +1,7 @@
 package com.santeut.common.controller;
 
 import com.santeut.common.common.util.ResponseUtil;
-import com.santeut.common.dto.request.SaveTokenRequestDto;
+import com.santeut.common.dto.request.TokenRequestDto;
 import com.santeut.common.service.AlarmTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +19,18 @@ public class AlarmTokenController {
     private final AlarmTokenService alarmTokenService;
 
     @PostMapping
-    public ResponseEntity<?> saveToken(@RequestBody SaveTokenRequestDto saveTokenRequestDto, HttpServletRequest request){
+    public ResponseEntity<?> saveToken(@RequestBody TokenRequestDto saveTokenRequestDto, HttpServletRequest request){
         String userId = request.getHeader("userId");
-        log.info("userId={}",userId);
-        alarmTokenService.saveFcmToken(Integer.parseInt(userId), saveTokenRequestDto);
+        log.info("UserId: "+ userId);
+        alarmTokenService.saveFcmToken(Integer.parseInt(userId),saveTokenRequestDto);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,"해당 토큰 저장에 성공했습니다.");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteToken(HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        log.info("UserId: "+ userId);
+        alarmTokenService.deleteFcmToken(Integer.parseInt(userId));
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK,"해당 토큰 삭제에 성공했습니다.");
     }
 }
