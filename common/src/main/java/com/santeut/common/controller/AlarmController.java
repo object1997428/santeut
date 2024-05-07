@@ -35,7 +35,7 @@ public class AlarmController {
 
     //알림 생성하기
     @PostMapping
-    ResponseEntity<?> alertHikingStart(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest){
+    ResponseEntity<?> alertHiking(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest){
         alarmService.sendAlarm(hikingStartFeignRequest);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "알람이 성공적으로 생성되었습니다.");
     }
