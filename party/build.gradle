@@ -71,19 +71,15 @@ sourceSets {
 }
 
 // compileQuerydsl Task 실행시 clean + compileQuerydsl 할 수 있도록 동작 변경
-//tasks.register('cleanGenerated', Delete) {
-//    delete generated
-//}
-//
-//clean.dependsOn(cleanGenerated)
-
-//tasks.named("compileQuerydsl").configure {
-//    dependsOn(clean)
-//}
-tasks.named('compileJava').configure {
-    dependsOn(clean)
+tasks.register('cleanGenerated', Delete) {
+    delete generated
 }
 
+clean.dependsOn(cleanGenerated)
+
+tasks.named("compileQuerydsl").configure {
+    dependsOn(clean)
+}
 
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
