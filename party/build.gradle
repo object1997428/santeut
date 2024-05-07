@@ -80,6 +80,9 @@ sourceSets {
 //tasks.named("compileQuerydsl").configure {
 //    dependsOn(clean)
 //}
+tasks.named('compileJava').configure {
+    dependsOn(clean)
+}
 
 
 compileQuerydsl {
