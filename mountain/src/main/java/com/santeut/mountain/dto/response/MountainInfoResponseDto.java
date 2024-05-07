@@ -25,8 +25,8 @@ public class MountainInfoResponseDto {
         .description(m.getDescription())
         .height(m.getHeight())
         .courseCount(m.getCourseEntityList().size())
-        .lat(m.getMountainTop().getY())
-        .lng(m.getMountainTop().getX())
+        .lat(m.getMountainTop().getX())
+        .lng(m.getMountainTop().getY())
         .views(m.getViews())
         .image(m.getImage())
         .build();
