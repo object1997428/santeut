@@ -70,18 +70,18 @@ sourceSets {
     main.java.srcDir generated
 }
 
-// compileQuerydsl Task 실행시 clean + compileQuerydsl 할 수 있도록 동작 변경
 tasks.register('cleanGenerated', Delete) {
     delete generated
 }
 
 clean.dependsOn(cleanGenerated)
 
-tasks.named("compileQuerydsl").configure {
-    dependsOn(clean)
+tasks.named("compileJava").configure {
+    dependsOn(cleanGenerated)
 }
 
 compileQuerydsl {
+    dependsOn(cleanGenerated)
     options.annotationProcessorPath = configurations.querydsl
 }
 
@@ -91,7 +91,45 @@ configurations {
     }
     querydsl.extendsFrom compileClasspath
 }
+//
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//    querydsl.extendsFrom compileClasspath
+//}
 
-clean {
-    delete file(generated)
-}
+// compileQuerydsl Task 실행시 clean + compileQuerydsl 할 수 있도록 동작 변경
+//tasks.register('cleanGenerated', Delete) {
+//    delete generated
+//}
+//
+//clean.dependsOn(cleanGenerated)
+//
+//tasks.named("compileQuerydsl").configure {
+//    dependsOn(clean)
+//}
+//
+//compileQuerydsl {
+//    options.annotationProcessorPath = configurations.querydsl
+//}
+//
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//    querydsl.extendsFrom compileClasspath
+//}
+//
+//clean {
+//    delete file(generated)
+//}
+
+//
+//tasks.withType(JavaCompile).configureEach {
+//    options.getGeneratedSourceOutputDirectory().set(file(generated))
+//}
+//
+//clean.doLast {
+//    file(generated).deleteDir()
+//}
