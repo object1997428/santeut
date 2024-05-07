@@ -30,6 +30,12 @@ public class PostReadResponseDto {
 
     private int hitCnt;
 
+    private boolean isWriter;
+
+    private boolean isLike;
+
     private List<CommentListFeignDto.Comment> commentList;
+
+    private List<String> images;
 
 }

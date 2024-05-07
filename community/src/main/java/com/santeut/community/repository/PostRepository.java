@@ -24,4 +24,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Integer> {
         @Transactional
         @Query("UPDATE PostEntity p SET p.isDeleted = true, p.deletedAt=:deletedAt WHERE p.id=:postId")
         void deletePostDirectly(int postId, LocalDateTime deletedAt);
+
+        // 게시글 작성자인지 조회
+        int countAllByIdAndPostTypeAndUserId(int postId, char postType, int userId);
 }
