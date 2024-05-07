@@ -28,9 +28,6 @@ public class AlarmTokenEntity{
     @Column(name = "last_active_at")
     private LocalDateTime activeAt;
 
-    @NotNull
-    @Column(name = "is_activated")
-    private boolean isActivated;
 
     @CreatedDate
     @NotNull
@@ -40,10 +37,12 @@ public class AlarmTokenEntity{
     //토큰 갱신
     public void updateToken(String fcmToken){
         this.fcmToken=fcmToken;
+        this.activeAt=LocalDateTime.now();
     }
 
-    public void inactive(){
-        this.isActivated=false;
+    public void active(){
+        this.activeAt=LocalDateTime.now();
     }
+
 
 }

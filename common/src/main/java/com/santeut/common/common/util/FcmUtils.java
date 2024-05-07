@@ -9,6 +9,7 @@ import com.santeut.common.repository.AlarmTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,8 +17,9 @@ import org.springframework.stereotype.Service;
 public class FcmUtils {
 
     private final FirebaseMessaging firebaseMessaging;
-    private AlarmTokenRepository alarmTokenRepository;
+    private final AlarmTokenRepository alarmTokenRepository;
 
+    @Transactional
     public boolean sendNotificationByToken(AlarmTokenEntity receiver, FCMRequestDto reqDto) {
         Notification notification = Notification.builder()
                 .setTitle(reqDto.getTitle())
@@ -36,7 +38,7 @@ public class FcmUtils {
         } catch (FirebaseMessagingException e) {
             if (e.getErrorCode() == ErrorCode.NOT_FOUND || e.getErrorCode() == ErrorCode.INVALID_ARGUMENT) {
                 log.error("UNREGISTERED or NOT_FOUND error, Error Code: {}, receiver: {}", e.getErrorCode(),receiver.getId());
-                receiver.inactive();
+                alarmTokenRepository.deleteById(receiver.getId());
                 return false;
             } else {
                 e.printStackTrace();
