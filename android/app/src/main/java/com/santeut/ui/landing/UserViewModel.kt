@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.santeut.MainApplication
 import com.santeut.domain.usecase.UserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,16 +28,12 @@ class UserViewModel @Inject constructor(
 
     fun checkAuth() {
         viewModelScope.launch {
-            _uiEvent.value = AuthUiEvent.Auth(false)
-//            userUseCase.getToken()
-//                .catch { e ->
-//                    Log.d("CheckAuth", "Error: ${e.message}")
-//                    _eventFlow.emit(UiEvent.UnAuth)
-//                }
-//                .collectLatest { data ->
-//                    // 토큰 넣어 주자.
-//                    _eventFlow.emit(UiEvent.Auth)
-//                }
+            val token = MainApplication.sharedPreferencesUtil.getAccessToken()
+            if(token != null && token != ""){
+                _uiEvent.value = AuthUiEvent.Auth(true)
+            }else{
+                _uiEvent.value = AuthUiEvent.Auth(false)
+            }
         }
     }
 
