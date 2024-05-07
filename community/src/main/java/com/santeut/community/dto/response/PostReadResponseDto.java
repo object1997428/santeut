@@ -36,4 +36,6 @@ public class PostReadResponseDto {
 
     private List<CommentListFeignDto.Comment> commentList;
 
+    private List<String> images;
+
 }

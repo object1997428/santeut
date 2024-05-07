@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,8 +94,13 @@ public class PostService {
         // 좋아요 눌렀는지 체크
         boolean isLike  = commonServerService.likePushed(postId, postType, userId);
 
+        // 게시글 이미지들 불러오기
+        List<String> images = commonServerService.getImages(postEntity.getId(), postEntity.getPostType());
 
+        // 댓글 리스트 불러오기
         CommentListFeignDto commentListFeignDto = commonServerService.getCommentList(postId, postType);
+
+        // 알맞은 Dto로 묶어서 반환
         return PostReadResponseDto.builder()
                 .postId(postEntity.getId())
                 .postType(postEntity.getPostType())
@@ -105,6 +111,7 @@ public class PostService {
                 .isLike(isLike)
                 .isWriter(isWriter)
                 .commentList(commentListFeignDto.getCommentList())
+                .images(images)
                 .createdAt(postEntity.getCreatedAt())
                 .build();
     }
