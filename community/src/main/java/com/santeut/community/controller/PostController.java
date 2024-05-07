@@ -30,8 +30,8 @@ public class PostController {
 
     // 게시글 목록을 불러옴
     @GetMapping("")
-    public ResponseEntity<BasicResponse> getPosts(@RequestParam("postType") char postType) {
-        PostListResponseDto result = postService.getPosts(postType);
+    public ResponseEntity<BasicResponse> getPosts(@RequestParam("postType") char postType, @RequestParam(required = false, defaultValue = "2147483647") int lastSeenId) {
+        PostListResponseDto result = postService.getPosts(postType, lastSeenId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, result);
     }
 
