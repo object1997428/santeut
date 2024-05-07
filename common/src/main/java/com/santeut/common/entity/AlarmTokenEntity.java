@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "alarm_token")
+@EntityListeners(AuditingEntityListener.class)
 public class AlarmTokenEntity{
     @Id
     @NotNull
@@ -24,6 +27,7 @@ public class AlarmTokenEntity{
     @Column(name = "fcm_token")
     private String fcmToken;
 
+    @LastModifiedDate
     @NotNull
     @Column(name = "last_active_at")
     private LocalDateTime activeAt;

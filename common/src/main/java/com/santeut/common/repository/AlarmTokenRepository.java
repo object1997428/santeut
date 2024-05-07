@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface AlarmTokenRepository extends JpaRepository<AlarmTokenEntity,Integer> {
-    List<AlarmTokenEntity> findByIdInAndActivated(List<Integer> userIds,boolean isActivated);
+    List<AlarmTokenEntity> findByIdIn(List<Integer> userIds);
 
     Optional<AlarmTokenEntity> findByFcmToken(String fcmToken);
 

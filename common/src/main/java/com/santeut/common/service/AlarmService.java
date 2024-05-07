@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
@@ -55,12 +54,12 @@ public class AlarmService {
 
     @Transactional
     public void sendAlarm(CommonHikingStartFeignRequest alertRequest) {
-        List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdInAndActivated(alertRequest.getTargetUserIds(),true);
+        List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(alertRequest.getTargetUserIds());
 
         for (AlarmTokenEntity alarmToken : alarmTokenList) {
             //20일 지난 토큰은 비활성화하고 보내지 않음
             if(Period.between(alarmToken.getActiveAt().toLocalDate(), LocalDate.now()).getDays()>=20){
-                alarmToken.inactive();
+                alarmTokenRepository.deleteById(alarmToken.getId());
                 continue;
             }
             //알람 보내기

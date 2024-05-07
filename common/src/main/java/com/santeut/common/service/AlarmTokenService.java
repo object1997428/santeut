@@ -1,6 +1,6 @@
 package com.santeut.common.service;
 
-import com.santeut.common.dto.request.SaveTokenRequestDto;
+import com.santeut.common.dto.request.TokenRequestDto;
 import com.santeut.common.entity.AlarmTokenEntity;
 import com.santeut.common.repository.AlarmTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class AlarmTokenService {
     private final AlarmTokenRepository alarmTokenRepository;
 
     @Transactional
-    public void saveFcmToken(int userId, SaveTokenRequestDto requestDto) {
+    public void saveFcmToken(int userId, TokenRequestDto requestDto) {
         Optional<AlarmTokenEntity> alarmToken = alarmTokenRepository.findByFcmToken(requestDto.getFcmToken());
         //새로운 기기 or 처음 로그인
         if (alarmToken.isEmpty()) {
@@ -36,7 +36,11 @@ public class AlarmTokenService {
 
     }
 
-    private void updateToken(int userId, SaveTokenRequestDto requestDto) {
+    public void deleteFcmToken(int userId) {
+        alarmTokenRepository.deleteById(userId);
+    }
+
+    private void updateToken(int userId, TokenRequestDto requestDto) {
         Optional<AlarmTokenEntity> userToken = alarmTokenRepository.findById(userId);
         if(userToken.isPresent()){
             alarmTokenRepository.deleteById(userId);
@@ -44,12 +48,13 @@ public class AlarmTokenService {
         addNewToken(userId, requestDto);
     }
 
-    private void addNewToken(int userId, SaveTokenRequestDto requestDto) {
+    private void addNewToken(int userId, TokenRequestDto requestDto) {
         AlarmTokenEntity newalarmToken = AlarmTokenEntity.builder()
                 .Id(userId)
                 .fcmToken(requestDto.getFcmToken())
                 .build();
         alarmTokenRepository.save(newalarmToken);
     }
+
 
 }
