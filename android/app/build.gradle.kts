@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -7,14 +5,16 @@ plugins {
 //    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.ssafy.santeut"
+    namespace = "com.santeut"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.ssafy.santeut"
+        applicationId = "com.santeut"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -64,7 +64,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,13 +88,17 @@ dependencies {
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
-
-    // kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+//    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
+    // 권한 요청 관련
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
     // compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
@@ -104,16 +107,19 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.6.6")
     implementation("androidx.compose.material:material:1.6.6")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
+    implementation ("com.google.accompanist:accompanist-pager:0.20.1")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.20.1")
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
+
+    // LiveData
+    implementation ("androidx.compose.runtime:runtime-livedata:1.2.0")
 
     // navermap
     implementation ("io.github.fornewid:naver-map-compose:1.7.0")
     implementation ("io.github.fornewid:naver-map-location:21.0.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation("com.naver.maps:map-sdk:3.18.0")
-
     implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
 
 }
