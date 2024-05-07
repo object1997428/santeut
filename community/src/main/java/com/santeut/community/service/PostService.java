@@ -1,6 +1,7 @@
 package com.santeut.community.service;
 
 import com.santeut.community.common.exception.AccessDeniedException;
+import com.santeut.community.common.exception.FeignClientException;
 import com.santeut.community.common.exception.JpaQueryException;
 import com.santeut.community.dto.request.PostCreateRequestDto;
 import com.santeut.community.dto.request.PostUpdateRequestDto;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +64,7 @@ public class PostService {
 
     // 게시글 작성 (CREATE)
     public void createPost(PostCreateRequestDto postCreateRequestDto, int userId) {
-        postRepository.save(PostEntity.builder()
+        PostEntity newPost = postRepository.save(PostEntity.builder()
                 .userId(userId)
                 .postType(postCreateRequestDto.getPostType())
                 .postTitle(postCreateRequestDto.getPostTitle())
@@ -70,6 +72,14 @@ public class PostService {
                 .userPartyId(postCreateRequestDto.getUserPartyId())
                 .build()
         );
+        // 이미지 넣기
+        try {
+            for (String url : postCreateRequestDto.getImages()) {
+                commonServerService.saveImageUrl(newPost.getId(), newPost.getPostType(), url);
+            }
+        } catch(FeignClientException e) {
+            log.error("이미지 저장 에러 : {}", e.getMessage());
+        }
     }
 
     // 게시글 읽기 (READ)

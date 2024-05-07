@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -30,6 +31,12 @@ public class CommonServerService {
 
     public CommentListFeignDto getCommentList(int postId, char postType) {
         return commonClient.getCommentList(postId, postType).orElseThrow(() -> new FeignClientException("common 서버에서 댓글 목록 가져오기 실패함")).getData();
+    }
+
+    public void saveImageUrl(Integer postId, Character postType, String imageUrl) {
+        Map<String, String> imageUrlJson = new HashMap<>();
+        imageUrlJson.put("imageUrl", imageUrl);
+        commonClient.saveImageUrl(postId, postType, imageUrlJson);
     }
 
 }

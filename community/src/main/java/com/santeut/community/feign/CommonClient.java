@@ -3,8 +3,7 @@ package com.santeut.community.feign;
 import com.santeut.community.common.config.FeignConfiguration;
 import com.santeut.community.feign.dto.CommentListFeignDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -26,4 +25,7 @@ public interface CommonClient {
 
     @GetMapping("/like/check/{postId}/{postType}/{userId}")
     Optional<FeignResponseDto<Map<String,Boolean>>> likePushed(@PathVariable Integer postId, @PathVariable Character postType, @PathVariable Integer userId);
+
+    @PostMapping("/image/upload/{referenceId}/{referenceType}")
+    void saveImageUrl(@PathVariable  Integer referenceId, @PathVariable Character referenceType, @RequestBody Map<String, String> imageUrl);
 }
