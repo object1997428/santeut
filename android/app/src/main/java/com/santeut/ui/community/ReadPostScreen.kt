@@ -114,7 +114,7 @@ fun CommentSection(
                 .weight(1f)
                 .padding(bottom = 56.dp)
         ) {
-            items(30) { PostCommentScreen() }
+            items(30) { CommentScreen() }
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
