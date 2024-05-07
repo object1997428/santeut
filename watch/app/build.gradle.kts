@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -80,4 +82,7 @@ dependencies {
     implementation("com.google.guava:guava:33.2.0-android")
     implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 
+    // google map
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
 }
