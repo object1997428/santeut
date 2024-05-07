@@ -45,10 +45,10 @@ public class CourseServiceImpl implements CourseService {
     CourseEntity course = courseRepository.findById(courseId)
         .orElseThrow(() -> new NotFoundException("해당 등산로는 존재하지 않습니다"));
     if (course.getCoursePoints() == null) {
-      return new CourseCoordResponseDto(0, null);
+      return new CourseCoordResponseDto(0, course.getDistance(), null);
     } else {
       List<Coord> coordPoints = convertGeometryToCoordinateList(course.getCoursePoints());
-      return new CourseCoordResponseDto(coordPoints.size(), coordPoints);
+      return new CourseCoordResponseDto(coordPoints.size(), course.getDistance(), coordPoints);
     }
 
   }
