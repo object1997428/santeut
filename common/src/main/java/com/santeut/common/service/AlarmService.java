@@ -2,14 +2,17 @@ package com.santeut.common.service;
 
 import com.santeut.common.common.exception.AccessDeniedException;
 import com.santeut.common.common.util.FcmUtils;
+import com.santeut.common.common.util.GeoUtils;
 import com.santeut.common.dto.FCMCategory;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.dto.request.AlarmRequestDto;
 import com.santeut.common.dto.request.CommonHikingStartFeignRequest;
 import com.santeut.common.entity.AlarmEntity;
 import com.santeut.common.entity.AlarmTokenEntity;
+import com.santeut.common.entity.SafetyAlertEntity;
 import com.santeut.common.repository.AlarmRepository;
 import com.santeut.common.repository.AlarmTokenRepository;
+import com.santeut.common.repository.SafetyAlertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ public class AlarmService {
 
     private final AlarmRepository alarmRepository;
     private final AlarmTokenRepository alarmTokenRepository;
+    private final SafetyAlertRepository safetyAlertRepository;
     private final FcmUtils fcmUtils;
 
     public void createAlarm(Integer referenceId, Character referenceType, AlarmRequestDto alarmRequestDto) {
@@ -46,6 +50,7 @@ public class AlarmService {
         }
     }
 
+    @Transactional
     public void sendAlarm(CommonHikingStartFeignRequest hikingStartFeignRequest) {
         List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(hikingStartFeignRequest.getTargetUserIds());
 
@@ -56,7 +61,23 @@ public class AlarmService {
                     FCMCategory.HIKING_START));
 
             if(hikingStartFeignRequest.getDataSource().equals("safety_alert")){
-
+                SafetyAlertEntity safetyAlert= SafetyAlertEntity.builder()
+                        .userId(alarmToken.getId())
+                        .title(hikingStartFeignRequest.getTitle())
+                        .message(hikingStartFeignRequest.getMessage())
+                        .point(GeoUtils.createPoint(hikingStartFeignRequest.getLat(), hikingStartFeignRequest.getLng()))
+                        .build();
+                safetyAlertRepository.save(safetyAlert);
+            }
+            else{
+                AlarmEntity alarm=AlarmEntity.builder()
+                        .userId(alarmToken.getId())
+                        .referenceType('P')
+                        .referenceId(hikingStartFeignRequest.getPartyId())
+                        .alarmTitle(hikingStartFeignRequest.getTitle())
+                        .alarmContent(hikingStartFeignRequest.getMessage())
+                        .build();
+                alarmRepository.save(alarm);
             }
         }
     }
