@@ -7,6 +7,7 @@ import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.apiservice.PostApiService
+import com.santeut.data.apiservice.UserApiService
 import com.santeut.data.util.AuthInterceptor
 import dagger.Module
 import dagger.Provides
@@ -42,9 +43,13 @@ object RemoteModule {
 
     @Provides
     @Singleton
-    fun guildCommonApiService(@Named("retrofit") retrofit: Retrofit) =
+    fun guildCommonApiService(@Named("retrofit") retrofit: Retrofit): GuildApiService =
         retrofit.create(GuildApiService::class.java)
 
+    @Provides
+    @Singleton
+    fun userCommonApiService(@Named("retrofit") retrofit: Retrofit): UserApiService =
+        retrofit.create(UserApiService::class.java)
 
     @Provides
     @Singleton
