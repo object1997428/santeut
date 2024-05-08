@@ -7,10 +7,9 @@ import java.util.List;
 
 @Data
 public class HikingSafetyRequest {
-    String type;
+    String type; //fall_detection, health_risk, off_course
     int partyId;
-//    int userId;
-    int distance;
-    int bestHeight;
-    LocalDateTime createdAt;
+    private Double lat;
+    private Double lng;
+    private LocalDateTime createdAt;
 }

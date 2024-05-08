@@ -246,16 +246,47 @@ public class HikingService {
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
 
         List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyId(hikingSafetyRequest.getPartyId());
-        CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
-                .type(hikingSafetyRequest.getType())
-                .targetUserIds(partyMembers)
-                .title("소모임 위험 알림!!")
-                .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 위험 신호를 보냈습니다.")
-                .partyId(party.getPartyId())
-                .dataSource("safety_alert")
-                .alamType("POPUP")
-                .build();
-        log.info("[Party Server][Common Request] Alarm 한테 Party 종료 요청");
+        CommonHikingStartFeignRequest commonRequestDto=null;
+
+        if ("off_course".equals(hikingSafetyRequest.getType())) {
+            commonRequestDto=CommonHikingStartFeignRequest.builder()
+                    .type(hikingSafetyRequest.getType())
+                    .targetUserIds(partyMembers)
+                    .title("소모임 위험 알림!!")
+                    .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 경로 이탈 신호를 보냈습니다.")
+                    .partyId(party.getPartyId())
+                    .dataSource("null")
+                    .alamType("POPUP")
+                    .build();
+        }
+        else if ("health_risk".equals(hikingSafetyRequest.getType())){
+            commonRequestDto=CommonHikingStartFeignRequest.builder()
+                    .type(hikingSafetyRequest.getType())
+                    .targetUserIds(partyMembers)
+                    .title("소모임 위험 알림!!")
+                    .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 건강위험 신호를 보냈습니다.")
+                    .partyId(party.getPartyId())
+                    .dataSource("safety_alert")
+                    .alamType("POPUP")
+                    .build();
+        }
+        else if ("fall_detection".equals(hikingSafetyRequest.getType())) {
+            commonRequestDto=CommonHikingStartFeignRequest.builder()
+                    .type(hikingSafetyRequest.getType())
+                    .targetUserIds(partyMembers)
+                    .title("소모임 위험 알림!!")
+                    .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님에게서 낙상이 감지 되었습니다.")
+                    .partyId(party.getPartyId())
+                    .dataSource("safety_alert")
+                    .alamType("POPUP")
+                    .build();
+        }
+        else {
+            throw new IllegalArgumentException("해당 타입은 존재하지 않습니다.");
+        }
+
+
+        log.info("[Party Server][Common Request] Alarm 한테 위험감지 알림 요청");
         ResponseEntity<?> responseEntity = hikingCommonClient.alertHiking(commonRequestDto);
         log.info("[Party Server][Common response ={}",responseEntity);
     }
