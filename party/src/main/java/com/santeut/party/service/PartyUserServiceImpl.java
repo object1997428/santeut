@@ -7,6 +7,7 @@ import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
+import com.santeut.party.feign.GuildAccessUtil;
 import com.santeut.party.feign.UserInfoAccessUtil;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
@@ -26,6 +27,7 @@ public class PartyUserServiceImpl implements PartyUserService {
   private final PartyRepository partyRepository;
   private final PartyUserRepository partyUserRepository;
   private final UserInfoAccessUtil userInfoAccessUtil;
+  private final GuildAccessUtil guildAccessUtil;
 
   @Override
   @Transactional
@@ -74,7 +76,9 @@ public class PartyUserServiceImpl implements PartyUserService {
         includeEnd, date, userId, pageable);
     return myParties.map(p -> {
       String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
-      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), true);
+      String guildName = (p.getParty().getGuildId() == null) ? null
+          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId()).getGuildName();
+      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), true, guildName);
     });
   }
 }

@@ -26,12 +26,12 @@ public class PartyInfoResponseDto {
   public char status;
   public boolean isMember;
 
-  public static PartyInfoResponseDto of(String nickname, Integer partyUserId, Party entity, boolean isMember) {
+  public static PartyInfoResponseDto of(String nickname, Integer partyUserId, Party entity, boolean isMember, String guildName) {
     return PartyInfoResponseDto.builder()
         .partyId(entity.getPartyId())
         .partyUserId(partyUserId)
         .partyName(entity.getPartyName())
-        .guildName("TODO")
+        .guildName(guildName)
         .schedule(entity.getSchedule().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
         .mountainName(entity.getMountainName())
         .place(entity.getPlace())
