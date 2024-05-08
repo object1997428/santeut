@@ -20,7 +20,6 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
     @Binds
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
-
     @Binds
     abstract fun bindPostRepository(impl: PostRepositoryImpl): PostRepository
 
