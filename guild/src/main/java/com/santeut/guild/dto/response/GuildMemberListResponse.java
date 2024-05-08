@@ -17,14 +17,18 @@ public class GuildMemberListResponse {
 
      List<GuildMemberInfo> memberList = new ArrayList<>();
 
-     public static List<GuildMemberInfo> memberList(BasicResponse response){
-          LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+     public static List<GuildMemberInfo> memberList(List<BasicResponse> responseList){
+
           List<GuildMemberInfo> list = new ArrayList<>();
+          for (BasicResponse response : responseList){
+
+          LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
 
           GuildMemberInfo guildMemberInfo = new GuildMemberInfo((Integer)data.get("userId"),
                   (String)data.get("userProfile"), (String)data.get("userNickname"));
 
           list.add(guildMemberInfo);
+          }
           return list;
      }
 

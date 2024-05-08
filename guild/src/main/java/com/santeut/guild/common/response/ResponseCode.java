@@ -29,7 +29,7 @@ public enum ResponseCode {
     WRONG_REGION_NAME(HttpServletResponse.SC_BAD_REQUEST, "잘못된 지역명"),
 
     // 길드 유저
-    NOT_EXISTS_GUILD_USER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 내 동호회"),
+    NOT_EXISTS_GUILD_USER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 동호회 유저"),
     MUST_NOT_QUIT_GUILD_LEADER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "동호회장은 탈퇴할 수 없음"),
 
     // 길드 요청

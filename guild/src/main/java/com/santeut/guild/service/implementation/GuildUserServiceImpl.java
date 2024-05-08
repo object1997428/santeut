@@ -56,7 +56,7 @@ public class GuildUserServiceImpl implements GuildUserService {
     }
 
     @Override
-    public List<ApplyGuildListResponse> applyGuildList(int guildId, String nowUserId) {
+    public ApplyGuildListResponse applyGuildList(int guildId, String nowUserId) {
 
         GuildEntity guildEntity = guildRepository.findByGuildId(guildId)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
@@ -65,8 +65,9 @@ public class GuildUserServiceImpl implements GuildUserService {
             throw new DataNotFoundException(ResponseCode.NOT_MATCH_GUILD_LEADER);
         }
         List<GuildRequestEntity> requestEntityList = guildRequestRepository.findByGuildId(guildId);
-        List<ApplyGuildListResponse> applyGuildListResponseList = new ArrayList<>();
+//        List<ApplyGuildListResponse> applyGuildListResponseList = new ArrayList<>();
 
+        List<BasicResponse> responseList = new ArrayList<>();
         for (GuildRequestEntity requestEntity : requestEntityList){
 
         int userId = requestEntity.getUserId();
@@ -74,10 +75,10 @@ public class GuildUserServiceImpl implements GuildUserService {
         log.debug("Response: "+ response);
 
         if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
-        applyGuildListResponseList.add(new ApplyGuildListResponse(response, requestEntity));
+            responseList.add(response);
         }
 
-        return applyGuildListResponseList;
+        return new ApplyGuildListResponse(ApplyGuildListResponse.applyGuildList(responseList, requestEntityList));
     }
 
     @Override
@@ -128,18 +129,16 @@ public class GuildUserServiceImpl implements GuildUserService {
         List<GuildUserEntity> guildUserEntityList = guildUserRepository.findByGuildUserList(guildId);
         if (guildUserEntityList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        List<GuildMemberListResponse.GuildMemberInfo> memberList = new ArrayList<>();
-
+        List<BasicResponse> responseList = new ArrayList<>();
         for(GuildUserEntity guildUserEntity : guildUserEntityList){
 
             int userId = guildUserEntity.getUserId();
             BasicResponse response = userFeign.userInfo(userId);
             log.debug("Response: "+ response);
-
             if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
-//            memberList.add(new GuildMemberListResponse(response));
+            responseList.add(response);
         }
-        return null;
+        return new GuildMemberListResponse(GuildMemberListResponse.memberList(responseList));
     }
 
     @Override
@@ -172,6 +171,9 @@ public class GuildUserServiceImpl implements GuildUserService {
         GuildEntity guildEntity = guildRepository.findByGuildId(guildId)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
 
+        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, newLeaderId)
+                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
+        
         if (guildEntity.getUserId() != oldLeaderId) throw new DataNotFoundException(ResponseCode.NOT_MATCH_GUILD_LEADER);
 
         guildEntity.setUserId(newLeaderId);

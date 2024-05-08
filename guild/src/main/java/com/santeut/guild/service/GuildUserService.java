@@ -8,8 +8,7 @@ import java.util.List;
 public interface GuildUserService {
 
     void applyGuild(int guildId, String userId);
-    List<ApplyGuildListResponse> applyGuildList(int guildId, String nowUserId);
-
+    ApplyGuildListResponse applyGuildList(int guildId, String nowUserId);
     void approveApply(int guildId, int userId, String leaderUserId);
     void denyApply(int guildId, int userId, String leaderUserId);
     GuildMemberListResponse memberList(int guildId);
