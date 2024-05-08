@@ -68,7 +68,7 @@ public class PostServiceImpl implements PostService {
     public List<PostListResponseDto> getPosts(int guildId, int categoryId, int lastSeenId) {
         List<PostListResponseDto> postList = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
-        for (GuildPostEntity entity : guildPostRepository.findAllByGuildIdAndCategoryIdAndIdLessThanOrderByIdDesc(guildId, categoryId, lastSeenId, pageable).orElseThrow(() -> new DataNotFoundException("게시글이 없습니다."))) {
+        for (GuildPostEntity entity : guildPostRepository.findAllByGuildIdAndCategoryIdAndIsDeletedFalseAndIdLessThanOrderByIdDesc(guildId, categoryId, lastSeenId, pageable).orElseThrow(() -> new DataNotFoundException("게시글이 없습니다."))) {
             postList.add(PostListResponseDto.builder()
                     .guildPostId(entity.getId())
                     .categoryId(entity.getCategoryId())
