@@ -7,13 +7,11 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.santeut.ui.community.JoinGuildScreen
-import com.santeut.ui.community.JoinPartyScreen
-import com.santeut.ui.community.PostCourseScreen
-import com.santeut.ui.community.PostTipsScreen
-import com.santeut.ui.community.ReadPostScreen
+import com.santeut.ui.community.guild.JoinGuildScreen
+import com.santeut.ui.community.party.JoinPartyScreen
+import com.santeut.ui.community.course.PostCourseScreen
+import com.santeut.ui.community.tips.PostTipsScreen
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)

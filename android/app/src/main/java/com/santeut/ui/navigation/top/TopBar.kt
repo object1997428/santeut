@@ -37,23 +37,16 @@ import com.santeut.R
 @Composable
 fun TopBar(
     navController: NavController,
-    currentTap: String?
+    currentTap: String?  // 페이지 식별자 혹은 경로
 ) {
-    if (currentTap == "home") {
-        HomeTopBar(
-            onClickAlert = { /*TODO*/ },
-            onClickChatting = { /*TODO*/ }
-        )
-    } else if (currentTap == "community") {
-        DefaultTopBar(navController, "커뮤니티")
-    } else if (currentTap == "guild"){
-        DefaultTopBar(navController, "동호회")
-    } else if (currentTap == "mypage"){
-        DefaultTopBar(navController, "마이페이지")
+    when (currentTap) {
+        "home" -> HomeTopBar(onClickAlert = { /*TODO*/ }, onClickChatting = { /*TODO*/ })
+        "community", "readPost" -> DefaultTopBar(navController, "커뮤니티")
+        "guild" -> DefaultTopBar(navController, "동호회")
+        "mypage" -> DefaultTopBar(navController, "마이페이지")
     }
-
-    // TopBar 여기서 수정
 }
+
 
 @Composable
 fun HomeTopBar(

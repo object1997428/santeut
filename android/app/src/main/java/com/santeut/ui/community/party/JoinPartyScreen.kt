@@ -1,4 +1,4 @@
-package com.santeut.ui.community
+package com.santeut.ui.community.party
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
