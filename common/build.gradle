@@ -26,22 +26,27 @@ ext {
 }
 
 dependencies {
-    implementation 'mysql:mysql-connector-java:8.0.33'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    compileOnly 'org.projectlombok:lombok'
+    // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'org.postgresql:postgresql'
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //	openfeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    // S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     // Firebase
-    // https://mvnrepository.com/artifact/com.google.firebase/firebase-admin
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
-
-    // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-spatial
     implementation group: 'org.hibernate.orm', name: 'hibernate-spatial', version: '7.0.0.Alpha1'
 
 }
