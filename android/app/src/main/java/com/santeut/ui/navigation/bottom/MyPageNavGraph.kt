@@ -16,7 +16,7 @@ fun NavGraphBuilder.MyPageNavGraph(
         route = "mypage_graph"
     ) {
         composable("mypage") {
-            MyPageScreen()
+            MyPageScreen(navController)
         }
     }
 }

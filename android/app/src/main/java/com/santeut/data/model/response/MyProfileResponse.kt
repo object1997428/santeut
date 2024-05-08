@@ -12,6 +12,6 @@ data class MyProfileResponse(
     @SerializedName("userDistance") val userDistance: Int,
     @SerializedName("userMoveTime") val userMoveTime: Int,
     @SerializedName("userHikingCount") val userHikingCount: Int,
-    @SerializedName("userHikingMountain") val userHikingMountain: Int
-
+    @SerializedName("userHikingMountain") val userHikingMountain: Int,
+    @SerializedName("userProfile") val userProfile: String
 )

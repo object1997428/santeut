@@ -8,6 +8,8 @@ import com.santeut.data.repository.GuildRepository
 import com.santeut.data.repository.GuildRepositoryImpl
 import com.santeut.data.repository.PostRepository
 import com.santeut.data.repository.PostRepositoryImpl
+import com.santeut.data.repository.UserRepository
+import com.santeut.data.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,4 +29,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindGuildRepository(impl: GuildRepositoryImpl): GuildRepository
+
+    @Binds
+    abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
 }
