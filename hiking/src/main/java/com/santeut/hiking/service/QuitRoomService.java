@@ -2,6 +2,7 @@ package com.santeut.hiking.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.hiking.common.util.MessageIdGenerator;
+import com.santeut.hiking.dto.response.MessageLocationResponseDto;
 import com.santeut.hiking.dto.response.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

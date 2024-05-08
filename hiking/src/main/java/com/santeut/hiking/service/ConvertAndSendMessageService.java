@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.hiking.common.util.MessageIdGenerator;
 import com.santeut.hiking.dto.request.LocationData;
-import com.santeut.hiking.dto.response.MessageResponseDto;
+import com.santeut.hiking.dto.response.MessageLocationResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ListOperations;
@@ -30,7 +30,7 @@ public class ConvertAndSendMessageService {
     ) throws JsonProcessingException {
         template.convertAndSend(
                 "/sub/websocket/room/" + partyId,
-                new MessageResponseDto(
+                new MessageLocationResponseDto(
                         MessageIdGenerator.generateId(),
                         type,
                         userId,

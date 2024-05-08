@@ -1,6 +1,9 @@
 package com.santeut.hiking.dto.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
@@ -9,8 +12,5 @@ import lombok.*;
 public class MessageResponseDto {
     private Long id;
     private String type;
-    private Integer userId;
-    private String userNickname;
-    private Double lat;
-    private Double lng;
+    private String message;
 }
