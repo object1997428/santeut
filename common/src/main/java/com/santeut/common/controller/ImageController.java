@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +30,19 @@ public class ImageController {
         imageService.savePostImages(referenceId, referenceType, imageUrl.get("imageUrl"));
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 이미지가 저장되었습니다.");
     }
+    // 게시글 이미지 s3에 저장
+    @PostMapping("/save")
+    public ResponseEntity<BasicResponse> uploadFile(@RequestParam("image") MultipartFile image) {
+        String url = imageService.uploadImage(image);
+        Map<String, String> res = new HashMap<>();
+        res.put("imageUrl", url);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, res);
+    }
 
     // 게시글 이미지들 불러오기 (READ)
     @GetMapping("/{referenceId}/{referenceType}")
     public ResponseEntity<BasicResponse> getImages(@PathVariable Integer referenceId, @PathVariable Character referenceType) {
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, imageService.getPostImages(referenceId, referenceType));
     }
+
 }
