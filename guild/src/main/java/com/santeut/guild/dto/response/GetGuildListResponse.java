@@ -14,29 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetGuildListResponse {
-
     List<GetDetailGuildResponse> guildList = new ArrayList<>();
-
-    public static List<GetDetailGuildResponse> guildList(List<GuildEntity> guildEntityList){
-
-        List<GetDetailGuildResponse> list = new ArrayList<>();
-
-        for (GuildEntity guildEntity : guildEntityList){
-
-            GetDetailGuildResponse guildListResponse = new GetDetailGuildResponse();
-            guildListResponse.guildId = guildEntity.getGuildId();
-            guildListResponse.guildName = guildEntity.getGuildName();
-            guildListResponse.guildProfile = guildEntity.getGuildProfile();
-            guildListResponse.guildInfo = guildEntity.getGuildInfo();
-            guildListResponse.guildMember = guildEntity.getGuildMember();
-            guildListResponse.regionId = guildEntity.getRegionId();
-            guildListResponse.guildGender = guildEntity.getGuildGender();
-            guildListResponse.guildMinAge = guildEntity.getGuildMinAge();
-            guildListResponse.guildMaxAge = guildEntity.getGuildMaxAge();
-            guildListResponse.createdAt = guildEntity.getCreatedAt();
-
-            list.add(guildListResponse);
-        }
-        return list;
-    }
 }

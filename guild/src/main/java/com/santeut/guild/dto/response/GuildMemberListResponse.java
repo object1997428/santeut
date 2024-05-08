@@ -1,24 +1,41 @@
 package com.santeut.guild.dto.response;
 
 import com.santeut.guild.common.response.BasicResponse;
+import com.santeut.guild.entity.GuildEntity;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class GuildMemberListResponse {
 
-     int userId;
-     String userProfile;
-     String userNickname;
+     List<GuildMemberInfo> memberList = new ArrayList<>();
 
-     public GuildMemberListResponse(BasicResponse response){
+     public static List<GuildMemberInfo> memberList(BasicResponse response){
           LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+          List<GuildMemberInfo> list = new ArrayList<>();
 
-          this.userId = (Integer)data.get("userId");
-          this.userProfile = (String)data.get("userProfile");
-          this.userNickname = (String)data.get("userNickname");
+          GuildMemberInfo guildMemberInfo = new GuildMemberInfo((Integer)data.get("userId"),
+                  (String)data.get("userProfile"), (String)data.get("userNickname"));
+
+          list.add(guildMemberInfo);
+          return list;
+     }
+
+     @NoArgsConstructor
+     @AllArgsConstructor
+     @Data
+     public static class GuildMemberInfo{
+          int userId;
+          String userProfile;
+          String userNickname;
      }
 }
+
+

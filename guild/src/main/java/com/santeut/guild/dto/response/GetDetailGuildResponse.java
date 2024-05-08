@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,5 +38,27 @@ public class GetDetailGuildResponse {
         this.guildMinAge = guildEntity.getGuildMinAge();
         this.guildMaxAge = guildEntity.getGuildMaxAge();
         this.createdAt = guildEntity.getCreatedAt();
+    }
+
+    public static List<GetDetailGuildResponse> guildList(List<GuildEntity> guildEntityList){
+
+        List<GetDetailGuildResponse> list = new ArrayList<>();
+        for (GuildEntity guildEntity : guildEntityList){
+
+            GetDetailGuildResponse guildListResponse = new GetDetailGuildResponse();
+            guildListResponse.guildId = guildEntity.getGuildId();
+            guildListResponse.guildName = guildEntity.getGuildName();
+            guildListResponse.guildProfile = guildEntity.getGuildProfile();
+            guildListResponse.guildInfo = guildEntity.getGuildInfo();
+            guildListResponse.guildMember = guildEntity.getGuildMember();
+            guildListResponse.regionId = guildEntity.getRegionId();
+            guildListResponse.guildGender = guildEntity.getGuildGender();
+            guildListResponse.guildMinAge = guildEntity.getGuildMinAge();
+            guildListResponse.guildMaxAge = guildEntity.getGuildMaxAge();
+            guildListResponse.createdAt = guildEntity.getCreatedAt();
+
+            list.add(guildListResponse);
+        }
+        return list;
     }
 }

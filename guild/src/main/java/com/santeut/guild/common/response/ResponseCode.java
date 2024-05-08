@@ -36,6 +36,7 @@ public enum ResponseCode {
     NOT_EXISTS_REQUEST(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 가입 요청"),
     ALREADY_REQUEST(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "이미 동호회 요청 중입니다."),
     ALREADY_APPROVE(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "이미 가입된 동호회입니다."),
+    NOT_REQUEST_USER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "가입 요청 상태가 아닙니다."),
 
     // Feign
     FEIGN_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "FEIGN ERROR");

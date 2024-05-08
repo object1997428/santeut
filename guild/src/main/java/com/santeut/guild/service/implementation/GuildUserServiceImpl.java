@@ -48,8 +48,8 @@ public class GuildUserServiceImpl implements GuildUserService {
         }
 
         // 동호회장을 위임하고 가입 요청을 보내는 경우 방지
-        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, Integer.parseInt(userId))
-                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
+//        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, Integer.parseInt(userId))
+//                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
 
         guildRequestEntity = GuildRequestEntity.requestGuild(guildId, Integer.parseInt(userId));
         guildRequestRepository.save(guildRequestEntity);
@@ -93,6 +93,8 @@ public class GuildUserServiceImpl implements GuildUserService {
             throw new DataNotFoundException(ResponseCode.NOT_MATCH_GUILD_LEADER);
         }
 
+        if (guildRequestEntity.getStatus() != 'R') throw new DataNotFoundException(ResponseCode.NOT_REQUEST_USER);
+
         guildRequestEntity.setModifiedAt(LocalDateTime.now());
         guildRequestEntity.setStatus('A');
         guildRequestRepository.save(guildRequestEntity);
@@ -121,12 +123,12 @@ public class GuildUserServiceImpl implements GuildUserService {
     }
 
     @Override
-    public List<GuildMemberListResponse> memberList(int guildId) {
+    public GuildMemberListResponse memberList(int guildId) {
 
         List<GuildUserEntity> guildUserEntityList = guildUserRepository.findByGuildUserList(guildId);
         if (guildUserEntityList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        List<GuildMemberListResponse> guildMemberListResponseList = new ArrayList<>();
+        List<GuildMemberListResponse.GuildMemberInfo> memberList = new ArrayList<>();
 
         for(GuildUserEntity guildUserEntity : guildUserEntityList){
 
@@ -135,9 +137,9 @@ public class GuildUserServiceImpl implements GuildUserService {
             log.debug("Response: "+ response);
 
             if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
-            guildMemberListResponseList.add(new GuildMemberListResponse(response));
+//            memberList.add(new GuildMemberListResponse(response));
         }
-        return guildMemberListResponseList;
+        return null;
     }
 
     @Override

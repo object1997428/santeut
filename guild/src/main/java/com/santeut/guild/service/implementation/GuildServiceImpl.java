@@ -135,21 +135,20 @@ public class GuildServiceImpl implements GuildService {
         List<GuildEntity> guildList = guildRepository.findByAllGuild();
         if(guildList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        List<GetDetailGuildResponse> list = GetGuildListResponse.guildList(guildList);
-        return new GetGuildListResponse(list);
+        return new GetGuildListResponse(GetDetailGuildResponse.guildList(guildList));
     }
 
     @Override
-    public List<GetMyGuildResponse> myGuildList(String userId) {
+    public GetMyGuildResponse myGuildList(String userId) {
 
         List<GuildEntity> myguildList = guildRepository.findByMyGuild(Integer.parseInt(userId));
         if (myguildList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        return GetMyGuildResponse.guildList(myguildList);
+        return new GetMyGuildResponse(GetDetailGuildResponse.guildList(myguildList));
     }
 
     @Override
-    public List<SearchGuildListResponse> searchGuildList(String regionName, String gender) {
+    public SearchGuildListResponse searchGuildList(String regionName, String gender) {
 
         RegionEntity regionEntity = regionRepository.findByRegionName(regionName)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.WRONG_REGION_NAME));
@@ -172,6 +171,6 @@ public class GuildServiceImpl implements GuildService {
             log.debug("전체 검색");
             searchGuildList = guildRepository.findByAllGuild();
         }
-        return SearchGuildListResponse.searchGuildList(searchGuildList);
+        return new SearchGuildListResponse(GetDetailGuildResponse.guildList(searchGuildList));
     }
 }

@@ -18,6 +18,6 @@ public interface GuildService {
     void patchGuild(int guildId, PatchGuildInfoRequest request, MultipartFile multipartFile, String userId);
     void deleteGuild(int guildId, String userId);
     GetGuildListResponse getGuildList();
-    List<GetMyGuildResponse> myGuildList(String userId);
-    List<SearchGuildListResponse> searchGuildList(String regionName, String gender);
+    GetMyGuildResponse myGuildList(String userId);
+    SearchGuildListResponse searchGuildList(String regionName, String gender);
 }

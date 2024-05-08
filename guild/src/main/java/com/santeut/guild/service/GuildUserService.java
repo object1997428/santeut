@@ -12,7 +12,7 @@ public interface GuildUserService {
 
     void approveApply(int guildId, int userId, String leaderUserId);
     void denyApply(int guildId, int userId, String leaderUserId);
-    List<GuildMemberListResponse> memberList(int guildId);
+    GuildMemberListResponse memberList(int guildId);
     void kickMember(int guildId, int userId, String leaderUserId);
     void delegateLeader(int guildId, int newLeaderId, int oldLeaderId);
     void quitGuild(int guildId, int userId);
