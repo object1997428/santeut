@@ -55,4 +55,17 @@ public class GuildUserEntity {
         return  guildUserEntity;
     }
 
+    public static GuildUserEntity createGuildUser(int guildId, int userId){
+
+        GuildUserEntity guildUserEntity = new GuildUserEntity();
+        guildUserEntity.setGuildId(guildId);
+        guildUserEntity.setUserId(userId);
+        guildUserEntity.setVisitedAt(LocalDateTime.now());
+        guildUserEntity.setCreatedAt(LocalDateTime.now());
+        guildUserEntity.setModifiedAt(LocalDateTime.now());
+        guildUserEntity.isDeleted = false;
+
+        return  guildUserEntity;
+    }
+
 }

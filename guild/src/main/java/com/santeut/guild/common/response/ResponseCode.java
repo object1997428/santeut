@@ -30,10 +30,15 @@ public enum ResponseCode {
 
     // 길드 유저
     NOT_EXISTS_GUILD_USER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 내 동호회"),
+    MUST_NOT_QUIT_GUILD_LEADER(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "동호회장은 탈퇴할 수 없음"),
 
     // 길드 요청
+    NOT_EXISTS_REQUEST(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "존재하지 않는 가입 요청"),
     ALREADY_REQUEST(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "이미 동호회 요청 중입니다."),
-    ALREADY_APPROVE(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "이미 가입된 동호회입니다.");
+    ALREADY_APPROVE(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "이미 가입된 동호회입니다."),
+
+    // Feign
+    FEIGN_ERROR(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "FEIGN ERROR");
 
     private final int code;
     private final String message;
