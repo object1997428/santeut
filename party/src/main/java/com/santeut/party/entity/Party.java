@@ -32,7 +32,7 @@ public class Party extends BaseEntity {
     private String selectedCourse;
 
     @Column(name = "guild_id")
-    private int guildId;
+    private Integer guildId;
 
     @Column(name = "user_id", nullable = false)
     private int userId;

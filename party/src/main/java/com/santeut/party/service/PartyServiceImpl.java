@@ -57,6 +57,7 @@ public class PartyServiceImpl implements PartyService {
         requestDto.getPlace(), requestDto.getMaxPeople());
     return PartyInfoResponseDto.of(
         userInfoAccessUtil.getUserInfo(entity.getUserId()).getUserNickname()
+        ,null
         , entity
         , true);
   }
@@ -86,7 +87,7 @@ public class PartyServiceImpl implements PartyService {
       String owner = userInfoAccessUtil.getUserInfo(party.getUserId()).getUserNickname();
       log.info("소모임 조회 "+party.getPartyId()+", "+party.getPartyName());
       return PartyInfoResponseDto.of(
-          owner, party, isMember);
+          owner, null, party, isMember);
     });
   }
 }

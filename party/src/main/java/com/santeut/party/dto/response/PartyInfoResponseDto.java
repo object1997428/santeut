@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class PartyInfoResponseDto {
 
   public int partyId;
+  public Integer partyUserId;
   public String partyName;
   public String guildName;
   public String schedule;
@@ -25,9 +26,10 @@ public class PartyInfoResponseDto {
   public char status;
   public boolean isMember;
 
-  public static PartyInfoResponseDto of(String nickname, Party entity, boolean isMember) {
+  public static PartyInfoResponseDto of(String nickname, Integer partyUserId, Party entity, boolean isMember) {
     return PartyInfoResponseDto.builder()
         .partyId(entity.getPartyId())
+        .partyUserId(partyUserId)
         .partyName(entity.getPartyName())
         .guildName("TODO")
         .schedule(entity.getSchedule().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))

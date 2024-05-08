@@ -13,7 +13,7 @@ public class CreatePartyRequestDto {
   public int mountainId;
   public String mountainName;
   public int maxPeople;
-  public int guildId;
+  public Integer guildId;
   public String place;
   public int[] selectedCourse;
 

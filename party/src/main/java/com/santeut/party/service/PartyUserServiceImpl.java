@@ -3,20 +3,29 @@ package com.santeut.party.service;
 import com.santeut.party.common.exception.AccessDeniedException;
 import com.santeut.party.common.exception.AlreadyJoinedException;
 import com.santeut.party.common.exception.DataNotFoundException;
+import com.santeut.party.dto.response.PartyInfoResponseDto;
+import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
+import com.santeut.party.feign.UserInfoAccessUtil;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PartyUserServiceImpl implements PartyUserService {
 
   private final PartyRepository partyRepository;
   private final PartyUserRepository partyUserRepository;
+  private final UserInfoAccessUtil userInfoAccessUtil;
 
   @Override
   @Transactional
@@ -56,5 +65,16 @@ public class PartyUserServiceImpl implements PartyUserService {
       partyUserRepository.delete(partyUser);
       party.minusParticipant();
     }
+  }
+
+  @Override
+  public Page<PartyInfoResponseDto> findMyParty(int userId, boolean includeEnd, LocalDate date,
+      Pageable pageable) {
+    Page<PartyWithPartyUserIdResponse> myParties = partyRepository.findMyPartyWithSearchCondition(
+        includeEnd, date, userId, pageable);
+    return myParties.map(p -> {
+      String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
+      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), true);
+    });
   }
 }
