@@ -163,7 +163,7 @@ public class HikingService {
     }
 
     private void alertHikingEnd(HikingExitRequest hikingExitRequest, Party party) {
-        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingExitRequest.getPartyId(), 'B');
+        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingExitRequest.getPartyId(), 'P');
         CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
                 .type("HIKING END")
                 .targetUserIds(partyMembers)
