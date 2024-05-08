@@ -6,6 +6,8 @@ import com.santeut.data.repository.CommonRepository
 import com.santeut.data.repository.CommonRepositoryImpl
 import com.santeut.data.repository.GuildRepository
 import com.santeut.data.repository.GuildRepositoryImpl
+import com.santeut.data.repository.PartyRepository
+import com.santeut.data.repository.PartyRepositoryImpl
 import com.santeut.data.repository.PostRepository
 import com.santeut.data.repository.PostRepositoryImpl
 import com.santeut.data.repository.UserRepository
@@ -20,6 +22,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
     @Binds
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+
     @Binds
     abstract fun bindPostRepository(impl: PostRepositoryImpl): PostRepository
 
@@ -31,4 +34,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    abstract fun bindPartyRepository(impl: PartyRepositoryImpl): PartyRepository
 }

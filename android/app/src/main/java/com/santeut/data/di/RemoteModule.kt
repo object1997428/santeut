@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
+import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.apiservice.PostApiService
 import com.santeut.data.apiservice.UserApiService
 import com.santeut.data.util.AuthInterceptor
@@ -43,13 +44,18 @@ object RemoteModule {
 
     @Provides
     @Singleton
-    fun guildCommonApiService(@Named("retrofit") retrofit: Retrofit): GuildApiService =
+    fun provideGuildApiService(@Named("retrofit") retrofit: Retrofit): GuildApiService =
         retrofit.create(GuildApiService::class.java)
 
     @Provides
     @Singleton
-    fun userCommonApiService(@Named("retrofit") retrofit: Retrofit): UserApiService =
+    fun provideUserApiService(@Named("retrofit") retrofit: Retrofit): UserApiService =
         retrofit.create(UserApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePartyApiService(@Named("retrofit") retrofit: Retrofit): PartyApiService =
+        retrofit.create(PartyApiService::class.java)
 
     @Provides
     @Singleton
