@@ -77,22 +77,22 @@ fun ProfileStats(myProfile: MyProfileResponse?) {
     StatCard(
         icon = Icons.Filled.DirectionsWalk,
         contentDescription = "걸음",
-        statText = "총 ${myProfile?.userDistance}m 걸었어요!"
+        statText = "총 ${myProfile?.userDistance ?: 0}m 걸었어요!"
     )
     StatCard(
         icon = Icons.Outlined.Timer,
         contentDescription = "시간",
-        statText = "${myProfile?.userMoveTime}분 동안 걸었어요!"
+        statText = "${myProfile?.userMoveTime ?: 0}분 동안 걸었어요!"
     )
     StatCard(
         icon = Icons.Outlined.Healing,
         contentDescription = "등산",
-        statText = "지금까지 등반을 ${myProfile?.userHikingCount}번 완료했어요!"
+        statText = "지금까지 등반을 ${myProfile?.userHikingCount ?: 0}번 완료했어요!"
     )
     StatCard(
         icon = Icons.Filled.Hiking,
         contentDescription = "산 정복",
-        statText = "${myProfile?.userHikingMountain}개의 산을 정복했어요!"
+        statText = "${myProfile?.userHikingMountain ?: 0}개의 산을 정복했어요!"
     )
 }
 

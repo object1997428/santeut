@@ -36,4 +36,18 @@ class GuildRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun getGuild(guildId: Int): GuildResponse {
+        return try {
+            val response = guildApiService.getGuild(guildId)
+            if (response.status == "200") {
+                response.data
+            } else {
+                throw Exception("Failed to load post: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error while fetching post: ${e.message}", e)
+            throw e
+        }
+    }
 }

@@ -8,4 +8,6 @@ interface GuildRepository {
     suspend fun getGuilds(): List<GuildResponse>
 
     suspend fun myGuilds(): List<GuildResponse>
+
+    suspend fun getGuild(guildId: Int): GuildResponse
 }

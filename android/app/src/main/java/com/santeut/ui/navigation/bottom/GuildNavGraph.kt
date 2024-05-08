@@ -2,9 +2,12 @@ package com.santeut.ui.navigation.bottom
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.guild.GuildScreen
+import com.santeut.ui.guild.MyGuildScreen
 
 
 fun NavGraphBuilder.GuildNavGraph(
@@ -15,7 +18,16 @@ fun NavGraphBuilder.GuildNavGraph(
         route = "guild_graph"
     ) {
         composable("guild") {
-            GuildScreen(navController)
+            MyGuildScreen(navController)
+        }
+        composable(
+            route = "getGuild/{guildId}",
+            arguments = listOf(
+                navArgument("guildId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            GuildScreen(guildId)
         }
     }
 }

@@ -16,4 +16,8 @@ class GuildUseCase @Inject constructor(
     suspend fun myGuilds(): List<GuildResponse> {
         return guildRepository.myGuilds()
     }
+
+    suspend fun getGuild(guildId: Int): GuildResponse {
+        return guildRepository.getGuild(guildId)
+    }
 }
