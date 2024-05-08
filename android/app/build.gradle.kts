@@ -107,12 +107,16 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.6.6")
     implementation("androidx.compose.material:material:1.6.6")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
-    implementation ("com.google.accompanist:accompanist-pager:0.20.1")
-    implementation ("com.google.accompanist:accompanist-pager-indicators:0.20.1")
+    implementation("com.google.accompanist:accompanist-pager:0.20.1")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.20.1")
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
 
     // LiveData
-    implementation ("androidx.compose.runtime:runtime-livedata:1.2.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.2.0")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
 }
