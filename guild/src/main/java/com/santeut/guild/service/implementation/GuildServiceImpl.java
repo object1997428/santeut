@@ -130,12 +130,13 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public List<GetGuildListResponse> getGuildList() {
+    public GetGuildListResponse getGuildList() {
 
         List<GuildEntity> guildList = guildRepository.findByAllGuild();
         if(guildList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        return GetGuildListResponse.guildList(guildList);
+        List<GetDetailGuildResponse> list = GetGuildListResponse.guildList(guildList);
+        return new GetGuildListResponse(list);
     }
 
     @Override

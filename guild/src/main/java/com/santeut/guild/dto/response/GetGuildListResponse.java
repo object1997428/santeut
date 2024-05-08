@@ -2,6 +2,7 @@ package com.santeut.guild.dto.response;
 
 import com.santeut.guild.entity.GuildEntity;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,24 +15,31 @@ import java.util.List;
 @NoArgsConstructor
 public class GetGuildListResponse {
 
-    int guildId;
-    String guildName;
-    String guildProfile;
-    String guildInfo;
-    int guildMember;
-    int regionId;
-    char guildGender;
-    int guildMinAge;
-    int guildMaxAge;
-    LocalDateTime createdAt;
+    List<GetDetailGuildResponse> guildList = new ArrayList<>();
 
-    public static List<GetGuildListResponse> guildList(List<GuildEntity> guildEntityList){
+//    @Data
+//    @AllArgsConstructor
+//    @NoArgsConstructor
+//    public static class GuildInfo{
+//        int guildId;
+//        String guildName;
+//        String guildProfile;
+//        String guildInfo;
+//        int guildMember;
+//        int regionId;
+//        char guildGender;
+//        int guildMinAge;
+//        int guildMaxAge;
+//        LocalDateTime createdAt;
+//    }
 
-        List<GetGuildListResponse> list = new ArrayList<>();
+    public static List<GetDetailGuildResponse> guildList(List<GuildEntity> guildEntityList){
+
+        List<GetDetailGuildResponse> list = new ArrayList<>();
 
         for (GuildEntity guildEntity : guildEntityList){
 
-            GetGuildListResponse guildListResponse = new GetGuildListResponse();
+            GetDetailGuildResponse guildListResponse = new GetDetailGuildResponse();
             guildListResponse.guildId = guildEntity.getGuildId();
             guildListResponse.guildName = guildEntity.getGuildName();
             guildListResponse.guildProfile = guildEntity.getGuildProfile();

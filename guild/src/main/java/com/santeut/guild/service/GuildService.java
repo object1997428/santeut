@@ -17,7 +17,7 @@ public interface GuildService {
     GetDetailGuildResponse getDetailGuild(int guildId);
     void patchGuild(int guildId, PatchGuildInfoRequest request, MultipartFile multipartFile, String userId);
     void deleteGuild(int guildId, String userId);
-    List<GetGuildListResponse> getGuildList();
+    GetGuildListResponse getGuildList();
     List<GetMyGuildResponse> myGuildList(String userId);
     List<SearchGuildListResponse> searchGuildList(String regionName, String gender);
 }
