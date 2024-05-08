@@ -8,26 +8,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Text
-import com.santeut.ui.SummaryState.MainViewModel
 
 @Composable
 fun MainScreen(
+    onStart: () -> Unit,
+    onEnd: () -> Unit,
+    state: Boolean
 ) {
-    val viewModel = hiltViewModel<MainViewModel>()
-
-    val state by viewModel.state
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,9 +33,7 @@ fun MainScreen(
         Spacer(modifier = Modifier.weight(0.5f))
         if(!state){
             Button(
-                onClick = {
-                    viewModel.startExercise()
-                },
+                onClick = { onStart() },
                 modifier = Modifier
                     .height(60.dp)
                     .width(120.dp),
@@ -58,9 +52,7 @@ fun MainScreen(
         }
         else{
             Button(
-                onClick = {
-                    viewModel.endExercise()
-                },
+                onClick = { onEnd() },
                 modifier = Modifier
                     .height(60.dp)
                     .width(120.dp),

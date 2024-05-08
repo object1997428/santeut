@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,20 +21,39 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Text
+import com.santeut.ui.health.HealthScreenState
+import com.santeut.ui.health.HealthViewModel
 
 @Composable
 fun HealthScreen(
+    state: Boolean
 ) {
-    HealthDataScreen(
-    )
+    val viewModel = hiltViewModel<HealthViewModel>()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    if (uiState.error == null){
+        if(!state){
+            PrepareScreen()
+        }
+        else {
+            HealthDataScreen(
+                uiState = uiState
+            )
+        }
+    }else{
+        NotSupportedScreen()
+    }
 }
 
 @Composable
 fun HealthDataScreen(
+    uiState: HealthScreenState,
 ){
     val listState = rememberScalingLazyListState()
 
@@ -46,7 +66,7 @@ fun HealthDataScreen(
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "건강 정보",
-            fontSize = 12.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
         ScalingLazyColumn (
@@ -59,21 +79,63 @@ fun HealthDataScreen(
             item {
                 HealthItem(
                     title = "심박수",
-                    value = "112",
+                    value = uiState.exerciseState?.exerciseMetrics?.heartRate?.toInt()?.toString() ?: "--",
                     unit = "bpm"
                 )
             }
             item {
                 HealthItem(
-                    title = "심박수2",
-                    value = "112",
+                    title = "이동거리",
+                    value = uiState.exerciseState?.exerciseMetrics?.distance?.toInt()?.toString() ?: "--",
                     unit = "bpm"
                 )
             }
             item {
                 HealthItem(
                     title = "걸음 수",
-                    value = "5,334",
+                    value = uiState.exerciseState?.exerciseMetrics?.stepsTotal?.toString() ?: "--",
+                    unit = "걸음"
+                )
+            }
+            item {
+                HealthItem(
+                    title = "칼로리",
+                    value = uiState.exerciseState?.exerciseMetrics?.calories?.toInt()?.toString() ?: "--",
+                    unit = "kcal"
+                )
+            }
+            item {
+                HealthItem(
+                    title = "고도",
+                    value = uiState.exerciseState?.exerciseMetrics?.absoluteElevation?.toInt()?.toString() ?: "--",
+                    unit = "m"
+                )
+            }
+            item {
+                HealthItem(
+                    title = "오른 높이",
+                    value = uiState.exerciseState?.exerciseMetrics?.elevationGainTotal?.toInt()?.toString() ?: "--",
+                    unit = "m"
+                )
+            }
+            item {
+                HealthItem(
+                    title = "위도",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.latitude?.toInt()?.toString() ?: "--",
+                    unit = ""
+                )
+            }
+            item {
+                HealthItem(
+                    title = "경도",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.longitude?.toInt()?.toString() ?: "--",
+                    unit = ""
+                )
+            }
+            item {
+                HealthItem(
+                    title = "고도",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.altitude?.toInt()?.toString() ?: "--",
                     unit = ""
                 )
             }
@@ -120,5 +182,47 @@ fun HealthItem(
             )
             Spacer(modifier = Modifier.width(12.dp))
         }
+    }
+}
+
+@Composable
+fun PrepareScreen(){
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF335C49)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "건강 정보",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(0.4f))
+        Text(text = "등산을")
+        Text(text = "시작해 주세요.")
+        Spacer(modifier = Modifier.weight(0.6f))
+    }
+}
+
+@Composable
+fun NotSupportedScreen(){
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF335C49)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "건강 정보",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(0.4f))
+        Text(text = "지원하지 않는")
+        Text(text = "모델입니다.")
+        Spacer(modifier = Modifier.weight(0.6f))
     }
 }

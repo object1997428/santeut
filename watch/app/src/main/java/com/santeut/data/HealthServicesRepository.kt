@@ -1,6 +1,7 @@
 package com.santeut.data
 
 import android.content.Context
+import android.util.Log
 import androidx.health.services.client.data.LocationAvailability
 import com.santeut.di.bindService
 import com.santeut.service.ExerciseLogger
@@ -56,6 +57,7 @@ class HealthServicesRepository @Inject constructor(
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
         binderConnection.runWhenConnected {
+            Log.d("안녕하세요", "안녕하세요")
             function(it.getService())
         }
     }

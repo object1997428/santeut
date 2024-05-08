@@ -1,6 +1,7 @@
 package com.santeut.data
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.health.services.client.ExerciseClient
 import androidx.health.services.client.ExerciseUpdateCallback
 import androidx.health.services.client.HealthServicesClient
@@ -41,8 +42,8 @@ class ExerciseClientManager @Inject constructor(
     suspend fun getExerciseCapabilities(): ExerciseTypeCapabilities? {
         val capabilities = exerciseClient.getCapabilities()
 
-        return if (ExerciseType.RUNNING in capabilities.supportedExerciseTypes) {
-            capabilities.getExerciseTypeCapabilities(ExerciseType.RUNNING)
+        return if (ExerciseType.HIKING in capabilities.supportedExerciseTypes) {
+            capabilities.getExerciseTypeCapabilities(ExerciseType.HIKING)
         } else {
             null
         }
@@ -62,7 +63,14 @@ class ExerciseClientManager @Inject constructor(
             DataType.HEART_RATE_BPM_STATS,
             DataType.CALORIES_TOTAL,
             DataType.DISTANCE_TOTAL,
+            DataType.ABSOLUTE_ELEVATION,
+            DataType.ELEVATION_GAIN_TOTAL,
+            DataType.LOCATION,
+            DataType.STEPS_TOTAL
         ).intersect(capabilities.supportedDataTypes)
+
+        Log.d("사용 가능한 기능", dataTypes.toString())
+
         val exerciseGoals = mutableListOf<ExerciseGoal<Double>>()
         if (supportsCalorieGoal(capabilities)) {
             exerciseGoals.add(
@@ -91,7 +99,7 @@ class ExerciseClientManager @Inject constructor(
         val supportsAutoPauseAndResume = capabilities.supportsAutoPauseAndResume
 
         val config = ExerciseConfig(
-            exerciseType = ExerciseType.RUNNING,
+            exerciseType = ExerciseType.HIKING,
             dataTypes = dataTypes,
             isAutoPauseAndResumeEnabled = supportsAutoPauseAndResume,
             isGpsEnabled = true,
@@ -105,7 +113,7 @@ class ExerciseClientManager @Inject constructor(
     suspend fun prepareExercise() {
         logger.log("Preparing an exercise")
         val warmUpConfig = WarmUpConfig(
-            exerciseType = ExerciseType.RUNNING,
+            exerciseType = ExerciseType.HIKING,
             dataTypes = setOf(DataType.HEART_RATE_BPM, DataType.LOCATION)
         )
         try {
