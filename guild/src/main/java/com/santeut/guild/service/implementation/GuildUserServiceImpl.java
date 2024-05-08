@@ -186,11 +186,13 @@ public class GuildUserServiceImpl implements GuildUserService {
         if (guildEntity.getUserId() == userId) throw new DataNotFoundException(ResponseCode.MUST_NOT_QUIT_GUILD_LEADER);
 
         GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildId, userId)
-                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_REQUEST));
+                .orElse(null);
 
+        if (guildRequestEntity != null){
         guildRequestEntity.setModifiedAt(LocalDateTime.now());
         guildRequestEntity.setStatus('C');
         guildRequestRepository.save(guildRequestEntity);
+        }
 
         GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, userId)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
