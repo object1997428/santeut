@@ -7,6 +7,7 @@ import com.santeut.party.dto.request.CreatePartyRequestDto;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.service.PartyService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,36 +34,36 @@ public class PartyController {
   private final PartyService partyService;
 
   @PostMapping("/")
-  public ResponseEntity<BasicResponse> createParty(@RequestHeader("userId") String userId,
+  public ResponseEntity<BasicResponse> createParty(HttpServletRequest request,
       @RequestBody CreatePartyRequestDto requestDto) {
-    partyService.createParty(Integer.parseInt(userId), requestDto);
+    partyService.createParty(Integer.parseInt(request.getHeader("userId")), requestDto);
     return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "소모임 생성 성공");
   }
 
   @PatchMapping("/{partyId}")
-  public ResponseEntity<BasicResponse> modifyParty(@RequestHeader("userId") String userId,
+  public ResponseEntity<BasicResponse> modifyParty(HttpServletRequest request,
       @PathVariable("partyId") int partyId, @RequestBody ModifyPartyRequestDto requestDto) {
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,
-        partyService.modifyParty(Integer.parseInt(userId), partyId, requestDto));
+        partyService.modifyParty(Integer.parseInt(request.getHeader("userId")), partyId, requestDto));
   }
 
   @DeleteMapping("/{partyId}")
-  public ResponseEntity<BasicResponse> deleteParty(@RequestHeader("userId") String userId,
+  public ResponseEntity<BasicResponse> deleteParty(HttpServletRequest request,
       @PathVariable("partyId") int partyId) {
-    partyService.deleteParty(Integer.parseInt(userId), partyId);
+    partyService.deleteParty(Integer.parseInt(request.getHeader("userId")), partyId);
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,"소모임 삭제 성공");
   }
 
   @GetMapping("")
   public ResponseEntity<PagingResponse> findParty(
-      @RequestHeader("userId") String userId,
+      HttpServletRequest request,
       @RequestParam(name = "guild", required = false) Integer guildId,
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "start", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
       @RequestParam(name = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
       @PageableDefault(page = 0, size = 5, sort = "schedule", direction = Sort.Direction.ASC) Pageable pageable) {
 
-    Page<PartyInfoResponseDto> party = partyService.findParty(Integer.parseInt(userId), guildId, name, startDate,
+    Page<PartyInfoResponseDto> party = partyService.findParty(Integer.parseInt(request.getHeader("userId")), guildId, name, startDate,
         endDate, pageable);
     return ResponseUtil.buildPagingResponse(HttpStatus.OK, party.getContent(), party.isFirst(),
         party.isLast(), party.getNumber(), party.getTotalPages(), party.getTotalElements(),

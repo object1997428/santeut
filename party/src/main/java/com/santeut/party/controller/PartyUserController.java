@@ -3,6 +3,7 @@ package com.santeut.party.controller;
 import com.santeut.party.common.response.BasicResponse;
 import com.santeut.party.common.util.ResponseUtil;
 import com.santeut.party.service.PartyUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,16 +21,16 @@ public class PartyUserController {
   private final PartyUserService partyUserService;
 
   @PostMapping("/user/join")
-  public ResponseEntity<BasicResponse> joinParty(@RequestHeader("userId") String userId,
+  public ResponseEntity<BasicResponse> joinParty(HttpServletRequest request,
       @RequestBody Map<String, Integer> map) {
-    partyUserService.joinUserParty(Integer.parseInt(userId), map.get("partyId"));
+    partyUserService.joinUserParty(Integer.parseInt(request.getHeader("userId")), map.get("partyId"));
     return ResponseUtil.buildBasicResponse(HttpStatus.OK, "소모임 가입 완료");
   }
 
   @DeleteMapping("/user/withdraw")
-  public ResponseEntity<BasicResponse> withdrawParty(@RequestHeader("userId") String userId,
+  public ResponseEntity<BasicResponse> withdrawParty(HttpServletRequest request,
       @RequestBody Map<String, Integer> map) {
-    partyUserService.withdrawUserFromParty(Integer.parseInt(userId), map.get("partyId"));
+    partyUserService.withdrawUserFromParty(Integer.parseInt(request.getHeader("userId")), map.get("partyId"));
     return ResponseUtil.buildBasicResponse(HttpStatus.OK, "소모임 탈퇴 성공");
   }
 
