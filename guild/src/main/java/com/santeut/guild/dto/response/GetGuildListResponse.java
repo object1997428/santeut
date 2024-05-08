@@ -17,22 +17,6 @@ public class GetGuildListResponse {
 
     List<GetDetailGuildResponse> guildList = new ArrayList<>();
 
-//    @Data
-//    @AllArgsConstructor
-//    @NoArgsConstructor
-//    public static class GuildInfo{
-//        int guildId;
-//        String guildName;
-//        String guildProfile;
-//        String guildInfo;
-//        int guildMember;
-//        int regionId;
-//        char guildGender;
-//        int guildMinAge;
-//        int guildMaxAge;
-//        LocalDateTime createdAt;
-//    }
-
     public static List<GetDetailGuildResponse> guildList(List<GuildEntity> guildEntityList){
 
         List<GetDetailGuildResponse> list = new ArrayList<>();
