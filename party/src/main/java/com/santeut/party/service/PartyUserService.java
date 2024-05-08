@@ -1,5 +1,6 @@
 package com.santeut.party.service;
 
+import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import java.time.LocalDate;
 import org.springframework.data.domain.Page;
@@ -15,5 +16,7 @@ public interface PartyUserService {
 
   Page<PartyInfoResponseDto> findMyParty(int userId, boolean includeEnd, LocalDate date,
       Pageable pageable);
+
+  HikingStartResponse findMyHikingTrailByPartyUserId(int partyUserId);
 
 }

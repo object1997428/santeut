@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -57,6 +58,15 @@ public class PartyUserController {
         myParty.isLast(), myParty.getNumber(), myParty.getTotalPages(), myParty.getTotalElements(),
         myParty.getSize(), true, true, true);
 
+  }
+
+  @GetMapping("/user/{partyUserId}")
+  public ResponseEntity<BasicResponse> findMyHikingTrailByPartyUserId(
+      HttpServletRequest request,
+      @PathVariable("partyUserId") int partyUserId
+  ) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        partyUserService.findMyHikingTrailByPartyUserId(partyUserId));
   }
 
 }
