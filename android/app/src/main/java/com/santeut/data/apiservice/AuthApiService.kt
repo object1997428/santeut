@@ -1,6 +1,7 @@
 package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
+import com.santeut.data.model.request.FCMTokenRequest
 import com.santeut.data.model.request.LoginRequest
 import com.santeut.data.model.request.SignUpRequest
 import com.santeut.data.model.response.LoginResponse
@@ -16,4 +17,6 @@ interface AuthApiService {
     suspend fun login(@Body loginRequest: LoginRequest): CustomResponse<LoginResponse>
     @POST("/api/auth/signup")
     suspend fun signup(@Body signUpRequest: SignUpRequest): CustomResponse<Unit>
+    @POST("/api/common/alarm/token")
+    suspend fun sendFCMToken(@Body fcmTokenRequest: FCMTokenRequest): CustomResponse<Unit>
 }
