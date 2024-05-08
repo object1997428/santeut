@@ -19,5 +19,4 @@ public class CommonHikingStartFeignRequest {
     private String alamType; //POPUP, PUSH
     private Double lat;
     private Double lng;
-    private LocalDateTime createdAt;
 }

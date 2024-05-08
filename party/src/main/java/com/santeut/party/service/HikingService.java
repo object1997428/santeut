@@ -256,6 +256,8 @@ public class HikingService {
                     .partyId(party.getPartyId())
                     .dataSource("null")
                     .alamType("POPUP")
+                    .lat(hikingSafetyRequest.getLat())
+                    .lng(hikingSafetyRequest.getLng())
                     .build();
         }
         else if ("health_risk".equals(hikingSafetyRequest.getType())){
@@ -267,6 +269,8 @@ public class HikingService {
                     .partyId(party.getPartyId())
                     .dataSource("safety_alert")
                     .alamType("POPUP")
+                    .lat(hikingSafetyRequest.getLat())
+                    .lng(hikingSafetyRequest.getLng())
                     .build();
         }
         else if ("fall_detection".equals(hikingSafetyRequest.getType())) {
@@ -278,6 +282,8 @@ public class HikingService {
                     .partyId(party.getPartyId())
                     .dataSource("safety_alert")
                     .alamType("POPUP")
+                    .lat(hikingSafetyRequest.getLat())
+                    .lng(hikingSafetyRequest.getLng())
                     .build();
         }
         else {
