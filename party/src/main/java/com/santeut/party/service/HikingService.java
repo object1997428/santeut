@@ -181,9 +181,9 @@ public class HikingService {
         PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), userId)
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
         if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
-        partyUser.setStatus('E', hikingExitRequest.getEndTime());
-        partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight(), hikingExitRequest.getMoveTime());
-
+        partyUser.setStatus('E', hikingExitRequest.getEndTime()); //moveTime 갱신
+        partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight());
+        partyUserRepository.save(partyUser);
         //Auth한테 포인트, 등산기록 정규화 요청
         boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(userId, partyUser.getMountainId(), 'E');
         HikingRecordRequest authDto= HikingRecordRequest.builder()

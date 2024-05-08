@@ -80,10 +80,9 @@ public class PartyUser extends BaseEntity {
         this.status = status;
     }
 
-    public void addHikingRecord(int distance, int bestHeight, int moveTime) {
+    public void addHikingRecord(int distance, int bestHeight) {
         this.distance = distance;
         this.bestHeight = bestHeight;
-        this.moveTime = moveTime;
     }
 
     public static PartyUser of(int userId, int partyId) {
