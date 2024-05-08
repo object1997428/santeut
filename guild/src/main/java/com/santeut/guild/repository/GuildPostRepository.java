@@ -12,4 +12,6 @@ import java.util.Optional;
 @Repository
 public interface GuildPostRepository extends JpaRepository<GuildPostEntity, Integer> {
     Optional<List<GuildPostEntity>> findAllByGuildIdAndCategoryIdAndIdLessThanOrderByIdDesc(int guildId, int categoryId, int id, Pageable pageable);
+
+    Optional<GuildPostEntity> findById(int id);
 }

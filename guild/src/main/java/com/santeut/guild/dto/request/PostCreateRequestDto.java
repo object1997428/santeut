@@ -16,11 +16,11 @@ public class PostCreateRequestDto {
 
     private int guildId;
 
-    private String type;
+    private int categoryId;
 
-    private String title;
+    private String guildPostTitle;
 
-    private String content;
+    private String guildPostContent;
 
-    private List<Map<String, String>> photos;
+    private List<String> images;
 }

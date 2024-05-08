@@ -40,6 +40,6 @@ public class GuildPostEntity extends BaseEntity {
     private String guildPostContent;
 
     @NotNull
-    @Column(name = "hit_cnt", columnDefinition = "DEFAULT 0")
+    @Column(name = "hit_cnt", columnDefinition = "INTEGER DEFAULT 0")
     private int hitCnt;
 }

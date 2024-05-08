@@ -34,4 +34,10 @@ public class GuildPostController {
     ) {
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, postService.getPosts(guildId, categoryId, lastSeenId));
     }
+
+    // 길드 게시글 디테일 보기 (READ)
+    @GetMapping("/{guildPostId}")
+    public ResponseEntity<BasicResponse> readPost(@PathVariable int guildPostId, @RequestHeader int userId ) {
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, postService.readPost(guildPostId, userId));
+    }
 }
