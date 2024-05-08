@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.nio.file.AccessDeniedException;
-
 
 @Slf4j
 @RestControllerAdvice
@@ -30,6 +28,7 @@ public class ApiExceptionController {
     public ErrorResponse illegalExHandle(IllegalStateException e) {
         return constructErrorResponse(e,HttpStatus.BAD_REQUEST, "IllegalStateException");
     }
+
 
     // 잘못된 요청 데이터
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,7 +54,20 @@ public class ApiExceptionController {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
-        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
+        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "AccessDeniedException");
+    }
+
+    // Open Feign 호출 에러
+    @ExceptionHandler(FeignClientException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(FeignClientException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "feignClientException");
+    }
+    // 알맞은 카테고리 찾지 못함
+    @ExceptionHandler(CategoryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(CategoryNotFoundException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "categoryNotFoundException");
     }
 
 
