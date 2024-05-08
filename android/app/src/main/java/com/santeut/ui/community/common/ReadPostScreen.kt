@@ -1,5 +1,6 @@
 package com.santeut.ui.community.common
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,46 +17,60 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
 import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.tips.formatTime
+import com.santeut.ui.navigation.top.TopBar
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ReadPostScreen(
     postId: Int,
     postType: Char,
     postViewModel: PostViewModel,
-    commonViewModel: CommonViewModel
+    commonViewModel: CommonViewModel,
+    navController: NavController
 ) {
     val focusManager = LocalFocusManager.current
     var comment by remember { mutableStateOf("") }
-
     val post by postViewModel.post.observeAsState()
 
     LaunchedEffect(key1 = postId) {
         postViewModel.readPost(postId, postType)
     }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column {
-            HeaderSection(post)
-            ContentSection(post)
-            CommentSection(
-                postId,
-                postType,
-                comment,
-                onCommentChange = { comment = it },
-                onSend = { focusManager.clearFocus() },
-                commonViewModel
-            )
+    Scaffold(
+
+        topBar = {
+            TopBar(navController, "readPost")
+        },
+
+        content = {innerPadding->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column {
+                    HeaderSection(post)
+                    ContentSection(post)
+                    CommentSection(
+                        postId,
+                        postType,
+                        comment,
+                        onCommentChange = { comment = it },
+                        onSend = { focusManager.clearFocus() },
+                        commonViewModel
+                    )
+                }
+            }
         }
-    }
+    )
 }
+
 
 @Composable
 fun HeaderSection(post: PostResponse?) {
