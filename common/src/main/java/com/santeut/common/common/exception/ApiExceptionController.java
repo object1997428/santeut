@@ -71,6 +71,12 @@ public class ApiExceptionController {
     public ErrorResponse handleAccessDeniedException(FeignClientException e) {
         return constructErrorResponse(e,HttpStatus.NOT_FOUND, "feignClientException");
     }
+    // S3 저장 에러
+    @ExceptionHandler(S3Exception.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(S3Exception e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "S3Exception");
+    }
 
     // Firebase 설정 에러
     @ExceptionHandler(FirebaseSettingFailException.class)
