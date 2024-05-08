@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<PostEntity, Integer> {
 
         // 게시글 목록 조회
-        Optional<List<PostEntity>> findAllByPostTypeAndIdLessThanOrderByIdDesc(char postType, int id, Pageable pageable);
+        Optional<List<PostEntity>> findAllByPostTypeAndIsDeletedFalseAndIdLessThanOrderByIdDesc(char postType, int id, Pageable pageable);
 
         // 게시글 디테일 조회
         Optional<PostEntity> findByIdAndPostType(int postId, char postType);

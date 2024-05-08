@@ -42,7 +42,7 @@ public class PostService {
 
         Pageable pageable = PageRequest.of(0, 10,Sort.by(Sort.Direction.DESC, "id"));
 
-        return new PostListResponseDto(postRepository.findAllByPostTypeAndIdLessThanOrderByIdDesc(postType, lastSeenId, pageable)
+        return new PostListResponseDto(postRepository.findAllByPostTypeAndIsDeletedFalseAndIdLessThanOrderByIdDesc(postType, lastSeenId, pageable)
                 .orElseThrow(() -> new JpaQueryException("게시글 목록 불러오는중 DB 오류 발생"))
                 .stream()
                 .map(post -> {
