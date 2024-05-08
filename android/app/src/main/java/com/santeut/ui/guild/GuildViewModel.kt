@@ -1,5 +1,6 @@
 package com.santeut.ui.guild
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,7 @@ class GuildViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _guilds.value = guildUseCase.getGuilds()
+                Log.d("GuildViewModel", "Touch Guild View Model")
             } catch (e: Exception) {
                 _error.value = "Failed to load posts: ${e.message}"
             }

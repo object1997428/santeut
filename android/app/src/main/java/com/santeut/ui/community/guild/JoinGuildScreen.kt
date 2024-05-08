@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -26,6 +27,11 @@ fun JoinGuildScreen(
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
+
+    LaunchedEffect(Unit) {
+        guildViewModel.getGuilds()
+    }
+
     LazyColumn {
         items(guilds) { guild ->
             GuildCard(guild)
