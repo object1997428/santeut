@@ -59,9 +59,3 @@ fun GuildCard() {
         }
     }
 }
-
-@Composable
-@Preview(device = Devices.PIXEL_2)
-fun PreviewJoinGuild() {
-    JoinGuildScreen()
-}
