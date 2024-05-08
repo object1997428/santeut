@@ -16,7 +16,6 @@ import lombok.Setter;
 public class RegionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int regionId;
 
     @NotNull

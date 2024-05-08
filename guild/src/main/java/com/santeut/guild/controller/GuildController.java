@@ -39,14 +39,14 @@ public class GuildController {
     }
 
     @PatchMapping("/{guildId}")
-    public BasicResponse patchGuildInfo(@PathVariable int guildId,
+    public BasicResponse patchGuild(@PathVariable int guildId,
                                         @RequestPart("request") PatchGuildInfoRequest request,
                                         @RequestPart(value = "guildProfile", required = false) MultipartFile multipartFile,
                                         HttpServletRequest httpServletRequest){
 
         String userId = httpServletRequest.getHeader("userId");
         log.debug("동호회 정보 수정 : "+ guildId);
-        guildService.patchGuildInfo(guildId, request, multipartFile, userId);
+        guildService.patchGuild(guildId, request, multipartFile, userId);
         return new BasicResponse(HttpStatus.OK.value(), "동호회 수정 성공");
     }
 
@@ -64,7 +64,21 @@ public class GuildController {
     public BasicResponse getGuildList(){
 
         log.debug("동호회 목록 조회");
-
         return new BasicResponse(HttpStatus.OK.value(), guildService.getGuildList());
+    }
+
+    @GetMapping("/myguild")
+    public BasicResponse myGuildList(HttpServletRequest httpServletRequest){
+
+        log.debug("내 동호회 목록 조회");
+        return new BasicResponse(HttpStatus.OK.value(), guildService.myGuildList(httpServletRequest.getHeader("userId")));
+    }
+
+    @GetMapping("/search")
+    public BasicResponse searchGuild(@RequestParam String regionName,
+                                     @RequestParam String gender){
+
+        log.debug("동호회 필터링 검색");
+        return new BasicResponse(HttpStatus.OK.value(), guildService.searchGuildList(regionName, gender));
     }
 }

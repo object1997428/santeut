@@ -16,7 +16,7 @@ public class GetDetailGuildResponse {
     String guildInfo;
     int guildMember;
     int regionId;
-    int guildGender;
+    char guildGender;
     int guildMinAge;
     int guildMaxAge;
     LocalDateTime createdAt;
