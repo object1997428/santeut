@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -183,7 +182,7 @@ public class HikingService {
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
         if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
         partyUser.setStatus('E', hikingExitRequest.getEndTime());
-        partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight());
+        partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight(), hikingExitRequest.getMoveTime());
 
         //Auth한테 포인트, 등산기록 정규화 요청
         boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(userId, partyUser.getMountainId(), 'E');
@@ -194,7 +193,7 @@ public class HikingService {
                 .isFirstMountain(isFirstMountain)
                 .build();
         log.info("[Auth Server] Auth 한테 등산 기록 업데이트 요청");
-        ResponseEntity<?> authResp = hikingAuthClient.updateHikingRecord(authDto);
+        ResponseEntity<?> authResp = hikingAuthClient.patchRecord(authDto);
         if (authResp.getStatusCode().is2xxSuccessful()) {
             log.info("[Auth Server] Auth 한테 등산 기록 업데이트 요청 성공 authResp={}",authResp);
         }

@@ -10,5 +10,6 @@ public class HikingExitRequest {
 //    int userId;
     int distance;
     int bestHeight;
+    int moveTime;
     LocalDateTime endTime;
 }
