@@ -15,6 +15,9 @@ import com.santeut.community.repository.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,9 +38,11 @@ public class PostService {
 
 
     // 게시글 목록을 불러오는 Service
-    public PostListResponseDto getPosts(char postType) {
+    public PostListResponseDto getPosts(char postType, int lastSeenId) {
 
-        return new PostListResponseDto(postRepository.findAllByPostType(postType)
+        Pageable pageable = PageRequest.of(0, 10,Sort.by(Sort.Direction.DESC, "id"));
+
+        return new PostListResponseDto(postRepository.findAllByPostTypeAndIdLessThanOrderByIdDesc(postType, lastSeenId, pageable)
                 .orElseThrow(() -> new JpaQueryException("게시글 목록 불러오는중 DB 오류 발생"))
                 .stream()
                 .map(post -> {
