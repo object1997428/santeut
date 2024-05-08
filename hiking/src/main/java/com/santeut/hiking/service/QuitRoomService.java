@@ -18,14 +18,15 @@ public class QuitRoomService {
     public void quitRoom(String type,
                          Integer partyId,
                          Integer userId) throws JsonProcessingException {
-        template.convertAndSend(
-                "/sub/websocket/room/" + partyId,
-                new MessageResponseDto(
-                        MessageIdGenerator.generateId(),
-                        type,
-                        "사용자 " + userId + " 님이 "
-                                + "채팅방 " + partyId + "에서 나갔습니다."
-                )
-        );
+        log.info("[Hiking서버 - quitRoom] type={}, partyId={}, userId={}",type, partyId, userId);
+//        template.convertAndSend(
+//                "/sub/websocket/room/" + partyId,
+//                new MessageResponseDto(
+//                        MessageIdGenerator.generateId(),
+//                        type,
+//                        "사용자 " + userId + " 님이 "
+//                                + "채팅방 " + partyId + "에서 나갔습니다."
+//                )
+//        );
     }
 }

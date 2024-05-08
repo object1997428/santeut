@@ -48,7 +48,5 @@ public class ConvertAndSendMessageService {
 
         ListOperations<String, String> listOps = redisTemplate.opsForList();
         listOps.rightPush(redisKey, locationJson);
-
-
     }
 }

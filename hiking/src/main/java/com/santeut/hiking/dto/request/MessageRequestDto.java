@@ -10,5 +10,4 @@ public class MessageRequestDto {
     private String type;
     private Integer partyId;
     private Integer userId;
-    private String message;
 }

@@ -19,15 +19,15 @@ public class EnterRoomService {
                           Integer partyId,
                           Integer userId) {
         log.info("[Hiking서버 - enterRoom] type={}, partyId={}, userId={}",type, partyId, userId);
-        template.convertAndSend(
-                "/sub/websocket/room/" + partyId,
-                new MessageResponseDto(
-                        MessageIdGenerator.generateId(),
-                        type,
-                        "사용자 " + userId + " 님이 "
-                                + "채팅방 " + partyId + "에 입장하셨습니다."
-                )
-        );
-        log.info("-- [Hiking서버 - enterRoom] type={}, partyId={}, userId={}",type, partyId, userId);
+//        template.convertAndSend(
+//                "/sub/websocket/room/" + partyId,
+//                new MessageResponseDto(
+//                        MessageIdGenerator.generateId(),
+//                        type,
+//                        "사용자 " + userId + " 님이 "
+//                                + "채팅방 " + partyId + "에 입장하셨습니다."
+//                )
+//        );
+//        log.info("-- [Hiking서버 - enterRoom] type={}, partyId={}, userId={}",type, partyId, userId);
     }
 }
