@@ -76,9 +76,9 @@ public class PartyUserServiceImpl implements PartyUserService {
         includeEnd, date, userId, pageable);
     return myParties.map(p -> {
       String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
-      String guildName = (p.getParty().getGuildId() == null) ? null
+      String guildName = (p.getParty().getGuildId() == null) ? ""
           : guildAccessUtil.getGuildInfo(p.getParty().getGuildId()).getGuildName();
-      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), true, guildName);
+      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), null, guildName);
     });
   }
 }

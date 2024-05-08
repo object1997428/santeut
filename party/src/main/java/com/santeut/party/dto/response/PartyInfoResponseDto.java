@@ -1,5 +1,6 @@
 package com.santeut.party.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.santeut.party.entity.Party;
 import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
 public class PartyInfoResponseDto {
 
   public int partyId;
@@ -24,9 +26,9 @@ public class PartyInfoResponseDto {
   public int curPeople;
   public String owner;
   public char status;
-  public boolean isMember;
+  public Boolean isMember;
 
-  public static PartyInfoResponseDto of(String nickname, Integer partyUserId, Party entity, boolean isMember, String guildName) {
+  public static PartyInfoResponseDto of(String nickname, Integer partyUserId, Party entity, Boolean isMember, String guildName) {
     return PartyInfoResponseDto.builder()
         .partyId(entity.getPartyId())
         .partyUserId(partyUserId)
