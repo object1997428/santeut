@@ -103,8 +103,10 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
 
   private BooleanExpression guildIdEq(Integer guildId) {
     if (guildId == null) {
-      return null;
+      // 어느 길드에도 소속되지 않은 소모임 조회
+      return party.guildId.isNull();
     }
+    // 특정 길드에 소속된 소모임만 조회
     return party.guildId.eq(guildId);
   }
 
