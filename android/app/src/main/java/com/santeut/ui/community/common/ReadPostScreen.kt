@@ -1,11 +1,10 @@
-package com.santeut.ui.community
+package com.santeut.ui.community.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.*
@@ -18,6 +17,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.santeut.data.model.response.PostResponse
+import com.santeut.ui.community.CommonViewModel
+import com.santeut.ui.community.PostViewModel
+import com.santeut.ui.community.tips.formatTime
 
 @Composable
 fun ReadPostScreen(

@@ -10,9 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.community.CommonViewModel
-import com.santeut.ui.community.PostTipsScreen
+import com.santeut.ui.community.tips.PostTipsScreen
 import com.santeut.ui.community.PostViewModel
-import com.santeut.ui.community.ReadPostScreen
+import com.santeut.ui.community.common.ReadPostScreen
 
 fun NavGraphBuilder.CommunityNavGraph(
     navController: NavHostController

@@ -1,4 +1,4 @@
-package com.santeut.ui.community
+package com.santeut.ui.community.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.santeut.data.model.response.CommentResponse
-import org.w3c.dom.Comment
+import com.santeut.ui.community.CommonViewModel
+import com.santeut.ui.community.tips.formatTime
 
 @Composable
 fun CommentScreen(
