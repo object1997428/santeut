@@ -1,6 +1,7 @@
 package com.santeut.guild.feign;
 
 import com.santeut.guild.feign.dto.CommentFeignDto;
+import com.santeut.guild.feign.dto.CommentListFeignDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,7 @@ public interface CommonClient {
 
     // comment controller 요청
     @GetMapping("/comment/{postId}/{postType}")
-     Optional<FeignResponseDto<List<CommentFeignDto>>> getCommentList(@PathVariable  Integer postId, @PathVariable Character postType);
+     Optional<FeignResponseDto<CommentListFeignDto>> getCommentList(@PathVariable  Integer postId, @PathVariable Character postType);
 
     @GetMapping("/like/check/{postId}/{postType}/{userId}")
     Optional<FeignResponseDto<Map<String,Boolean>>> likePushed(@PathVariable Integer postId, @PathVariable Character postType, @PathVariable Integer userId);

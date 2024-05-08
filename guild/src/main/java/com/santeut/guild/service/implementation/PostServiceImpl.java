@@ -10,6 +10,7 @@ import com.santeut.guild.entity.GuildPostEntity;
 import com.santeut.guild.feign.AuthClient;
 import com.santeut.guild.feign.CommonClient;
 import com.santeut.guild.feign.dto.CommentFeignDto;
+import com.santeut.guild.feign.dto.CommentListFeignDto;
 import com.santeut.guild.repository.CategoryRepository;
 import com.santeut.guild.repository.GuildPostRepository;
 import com.santeut.guild.service.PostService;
@@ -21,10 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -89,6 +87,7 @@ public class PostServiceImpl implements PostService {
     public PostReadResponseDto readPost(int guildPostId, int userId) {
 
         // 길드포스트 찾는 query
+//        GuildPostEntity entity = guildPostRepository.findById(guildPostId).orElseThrow(() -> new DataNotFoundException("게시글을 찾을 수 없습니다."));
         GuildPostEntity entity = guildPostRepository.findById(guildPostId).orElseThrow(() -> new DataNotFoundException("게시글을 찾을 수 없습니다."));
 
         // 카테고리 이름 찾는 query
@@ -106,14 +105,15 @@ public class PostServiceImpl implements PostService {
         List<String> images  = commonClient.getImages(entity.getId(),'G').orElseThrow(()->new FeignClientException("common 서버에서 이미지 경로 정보 불러오지 못했습니다.")).getData();
 
         // 댓글 목록 리스트 들고오기 API 호출
-        List<CommentFeignDto> commentList = commonClient.getCommentList(entity.getId(), 'G').orElseThrow(() -> new FeignClientException("common서버에서 댓글 목록을 가져오지 못했습니다.")).getData();
+        List<CommentListFeignDto.Comment> commentList = commonClient.getCommentList(entity.getId(), 'G').orElseThrow(() -> new FeignClientException("common서버에서 댓글 목록을 가져오지 못했습니다.")).getData().getCommentList();
 
         //글 작성자인지 확인
         boolean isWriter = userId == entity.getUserId();
 
         // Dto에 적절한 값 넣어줘서 생성
-        PostReadResponseDto.builder()
+        return PostReadResponseDto.builder()
                 .guildPostId(entity.getId())
+                .guildId(entity.getGuildId())
                 .categoryId(entity.getCategoryId())
                 .categoryName(categoryName)
                 .guildPostTitle(entity.getGuildPostTitle())
@@ -128,6 +128,5 @@ public class PostServiceImpl implements PostService {
                 .images(images)
                 .isLike(likePushed)
                 .build();
-        return null;
     }
 }
