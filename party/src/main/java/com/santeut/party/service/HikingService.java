@@ -186,7 +186,7 @@ public class HikingService {
 
         //Auth한테 포인트, 등산기록 정규화 요청
         boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(userId, partyUser.getMountainId(), 'E');
-        MountainHikingRecordUpdateFeignRequest authDto= MountainHikingRecordUpdateFeignRequest.builder()
+        HikingRecordRequest authDto= HikingRecordRequest.builder()
                 .userId(userId)
                 .distance(partyUser.getDistance())
                 .moveTime(partyUser.getMoveTime())

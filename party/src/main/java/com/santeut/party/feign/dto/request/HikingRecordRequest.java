@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder @AllArgsConstructor
-public class MountainHikingRecordUpdateFeignRequest {
+public class HikingRecordRequest {
     private int userId;
     private int distance;
     private int moveTime;
