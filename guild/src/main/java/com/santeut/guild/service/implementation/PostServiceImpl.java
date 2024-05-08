@@ -1,8 +1,10 @@
 package com.santeut.guild.service.implementation;
 
+import com.santeut.guild.common.exception.AccessDeniedException;
 import com.santeut.guild.common.exception.CategoryNotFoundException;
 import com.santeut.guild.common.exception.DataNotFoundException;
 import com.santeut.guild.common.exception.FeignClientException;
+import com.santeut.guild.dto.request.GuildPostUpdateRequestDto;
 import com.santeut.guild.dto.request.PostCreateRequestDto;
 import com.santeut.guild.dto.response.PostListResponseDto;
 import com.santeut.guild.dto.response.PostReadResponseDto;
@@ -20,8 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -128,5 +133,36 @@ public class PostServiceImpl implements PostService {
                 .images(images)
                 .isLike(likePushed)
                 .build();
+    }
+
+    // 길드 게시글 삭제하기
+    @Override
+    public void deletePost(int guildPostId, int userId) {
+        GuildPostEntity entity = guildPostRepository.findById(guildPostId).orElseThrow();
+        // 게시글의 유저ID와 요청한 유저의 ID가 일치하는지 확인 하는 로직
+        if(entity.getUserId() == userId) {
+            guildPostRepository.deleteGuildPostDirectly(guildPostId, LocalDateTime.now());
+        }else {
+            throw new AccessDeniedException("삭제할 권한이 없습니다.");
+        }
+    }
+
+    // 길드 게시글 수정하기
+    @Override
+    public void updatePost(GuildPostUpdateRequestDto guildPostUpdateRequestDto, int guildPostId, int userId) {
+
+        // 권한 확인을 위해 글쓴이 ID를 받아옴
+        GuildPostEntity entity = guildPostRepository.findById(guildPostId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        // 작성자인지 검사함
+        if (entity.getUserId() != userId) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        // 업데이트 쿼리 실행
+        String guildPostTitle = guildPostUpdateRequestDto.getGuildPostTitle();
+        String guildPostContent = guildPostUpdateRequestDto.getGuildPostContent();
+        guildPostRepository.updateGuildPostDirectly(guildPostId, guildPostTitle, guildPostContent, LocalDateTime.now());
     }
 }

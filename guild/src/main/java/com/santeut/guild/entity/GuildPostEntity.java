@@ -32,10 +32,12 @@ public class GuildPostEntity extends BaseEntity {
     private int userId;
 
     @NotNull
+    @Setter
     @Column(name = "guild_post_title", length = 150)
     private String guildPostTitle;
 
     @NotNull
+    @Setter
     @Column(name = "guild_post_content", columnDefinition = "TEXT")
     private String guildPostContent;
 

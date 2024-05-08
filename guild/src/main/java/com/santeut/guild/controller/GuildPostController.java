@@ -3,6 +3,7 @@ package com.santeut.guild.controller;
 
 import com.santeut.guild.common.response.BasicResponse;
 import com.santeut.guild.common.util.ResponseUtil;
+import com.santeut.guild.dto.request.GuildPostUpdateRequestDto;
 import com.santeut.guild.dto.request.PostCreateRequestDto;
 import com.santeut.guild.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,19 @@ public class GuildPostController {
     @GetMapping("/{guildPostId}")
     public ResponseEntity<BasicResponse> readPost(@PathVariable int guildPostId, @RequestHeader int userId ) {
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, postService.readPost(guildPostId, userId));
+    }
+
+    // 게시글 삭제하기 ( DELETE )
+    @DeleteMapping("/{guildPostId}")
+    public ResponseEntity<BasicResponse> deletePost(@PathVariable int guildPostId, @RequestHeader int userId) {
+        postService.deletePost(guildPostId, userId);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 삭제하기를 성공했습니다.");
+    }
+
+    // 게시글 수정하기 ( UPDATE )
+    @PatchMapping("/{guildPostId}")
+    public ResponseEntity<BasicResponse> deletePost(@RequestBody GuildPostUpdateRequestDto guildPostUpdateRequestDto,@PathVariable int guildPostId, @RequestHeader int userId) {
+        postService.updatePost(guildPostUpdateRequestDto, guildPostId, userId);
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 게시글을 수정하였습니다");
     }
 }
