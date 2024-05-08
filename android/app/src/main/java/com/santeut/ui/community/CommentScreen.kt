@@ -1,14 +1,42 @@
 package com.santeut.ui.community
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun CommentScreen() {
-    Column {
-        Text(text = "댓글 작성자 닉네임")
-        Text(text = "내용")
-        Text(text = "작성 시각")
+fun CommentScreen(
+    postId: Int, postType: Char,
+    commonViewModel: CommonViewModel
+) {
+
+    val comments by commonViewModel.comments.observeAsState(initial = emptyList())
+
+    LaunchedEffect(key1 = postId, key2 = postType) {
+        commonViewModel.getComment(postId, postType)
     }
+
+    LazyColumn(
+        modifier = Modifier
+            .padding(bottom = 56.dp)
+    ) {
+        items(comments) { comment ->
+            Column {
+                Text(text = comment.userNickname)
+                Text(text = comment.commentContent)
+                Text(text = formatTime(comment.createdAt))
+            }
+        }
+    }
+
+
 }

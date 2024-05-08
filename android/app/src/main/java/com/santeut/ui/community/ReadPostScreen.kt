@@ -2,12 +2,12 @@ package com.santeut.ui.community
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
 
 @Composable
@@ -117,39 +116,34 @@ fun CommentSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        LazyColumn(
+        CommentScreen(postId, postType, commonViewModel)
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
+        fun onSend() {
+            commonViewModel.createComment(postId, postType, comment)
+        }
+        TextField(
+            value = comment,
+            onValueChange = onCommentChange,
+            placeholder = { Text("내용") },
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = 56.dp)
-        ) {
-            items(30) { CommentScreen() }
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            fun onSend() {
-                commonViewModel.createComment(postId, postType, comment)
-            }
-            TextField(
-                value = comment,
-                onValueChange = onCommentChange,
-                placeholder = { Text("내용") },
-                modifier = Modifier
-                    .weight(1f)
-                    .background(Color.Transparent),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { onSend() })
+                .background(Color.Transparent),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { onSend() })
+        )
+        IconButton(onClick = { onSend() }) {
+            Icon(
+                imageVector = Icons.Outlined.Send,
+                contentDescription = "Send"
             )
-            IconButton(onClick = { onSend() }) {
-                Icon(
-                    imageVector = Icons.Filled.Send,
-                    contentDescription = "Send"
-                )
-            }
         }
     }
 }
