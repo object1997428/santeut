@@ -1,7 +1,8 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
-
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("dagger.hilt.android.plugin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
@@ -18,7 +19,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
     }
 
     buildTypes {
@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.play.services.wearable)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
@@ -65,24 +64,37 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-
-    // compose
-    implementation("androidx.wear.compose:compose-material:1.3.1")
-    implementation("androidx.wear.compose:compose-foundation:1.3.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation(libs.androidx.material3)
 
     // permission
-    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation(libs.accompanist.permissions)
 
-    // health-service
-    implementation("androidx.health:health-services-client:1.0.0-rc02")
+    // Ongoing Activity
+    implementation(libs.wear.ongoing.activity)
 
-    // Used to bridge between Futures and coroutines
-    implementation("com.google.guava:guava:33.2.0-android")
-    implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
+    // Lifecycle
+    implementation (libs.androidx.lifecycle.viewmodel)
+    implementation (libs.androidx.lifecycle.runtime)
+    implementation (libs.androidx.lifecycle.common.java8)
+    implementation (libs.androidx.lifecycle.extensions)
+    implementation (libs.androidx.lifecycle.service)
+    implementation (libs.androidx.lifecycle.runtime.compose)
+    implementation (libs.androidx.core.splashscreen)
 
-    // google map
-    implementation("com.google.maps.android:maps-compose:2.11.4")
-    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation (libs.guava)
+    implementation (libs.androidx.concurrent)
+
+    // Health Services
+    implementation (libs.androidx.health.services)
+
+    implementation (libs.horologist.health.service)
+
+    // Hilt
+    implementation (libs.hilt.navigation.compose)
+    implementation (libs.dagger.hilt.android)
+    ksp(libs.dagger.hilt.android.compiler)
+
+    // Map
+    implementation(libs.google.map.compose)
+    implementation(libs.android.gms.service.map)
 }

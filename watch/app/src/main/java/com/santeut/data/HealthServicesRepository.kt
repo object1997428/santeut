@@ -1,77 +1,94 @@
 package com.santeut.data
 
 import android.content.Context
-import android.util.Log
-import androidx.concurrent.futures.await
-import androidx.health.services.client.HealthServices
-import androidx.health.services.client.MeasureCallback
-import androidx.health.services.client.data.Availability
-import androidx.health.services.client.data.DataPointContainer
-import androidx.health.services.client.data.DataType
-import androidx.health.services.client.data.DataTypeAvailability
-import androidx.health.services.client.data.DeltaDataType
-import androidx.health.services.client.data.SampleDataPoint
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.runBlocking
+import androidx.health.services.client.data.LocationAvailability
+import com.santeut.di.bindService
+import com.santeut.service.ExerciseLogger
+import com.santeut.service.ExerciseService
+import com.santeut.service.ExerciseServiceState
+import dagger.hilt.android.ActivityRetainedLifecycle
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HealthServicesRepository(context: Context) {
-    private val healthServicesClient = HealthServices.getClient(context)
-    private val measureClient = healthServicesClient.measureClient
-    private val passiveMonitoringClient = healthServicesClient.passiveMonitoringClient
+@ActivityRetainedScoped
+class HealthServicesRepository @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
+    val exerciseClientManager: ExerciseClientManager,
+    val logger: ExerciseLogger,
+    val coroutineScope: CoroutineScope,
+    val lifecycle: ActivityRetainedLifecycle
+) {
+    private val binderConnection =
+        lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
-    suspend fun hasHeartRateCapability(): Boolean {
-        val capabilities = measureClient.getCapabilitiesAsync().await()
-        return (DataType.HEART_RATE_BPM in capabilities.supportedDataTypesMeasure)
-    }
+    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> = binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
 
-    fun heartRateMeasureFlow() = callbackFlow {
-        val callback = object : MeasureCallback {
-            override fun onAvailabilityChanged(
-                dataType: DeltaDataType<*, *>,
-                availability: Availability
-            ) {
-                if (availability is DataTypeAvailability) {
-                    trySendBlocking(MeasureMessage.MeasureAvailability(availability))
-                }
-            }
+    private var errorState: MutableStateFlow<String?> = MutableStateFlow(null)
 
-            override fun onDataReceived(data: DataPointContainer) {
-                val heartRateBpm = data.getData(DataType.HEART_RATE_BPM)
-                trySendBlocking(MeasureMessage.MeasureData(heartRateBpm))
-            }
+    val serviceState: StateFlow<ServiceState> = exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
+        ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+    }.stateIn(
+        coroutineScope,
+        started = SharingStarted.Eagerly,
+        initialValue = ServiceState.Disconnected
+    )
+
+    suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
+
+    private suspend fun getExerciseCapabilities() = exerciseClientManager.getExerciseCapabilities()
+
+    suspend fun isExerciseInProgress(): Boolean =
+        exerciseClientManager.exerciseClient.isExerciseInProgress()
+
+    suspend fun isTrackingExerciseInAnotherApp(): Boolean =
+        exerciseClientManager.exerciseClient.isTrackingExerciseInAnotherApp()
+
+    fun prepareExercise() = serviceCall { prepareExercise() }
+
+    private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
+        binderConnection.runWhenConnected {
+            function(it.getService())
         }
+    }
 
-        Log.d("HealthServicesRepository", "Registering for data")
-        measureClient.registerMeasureCallback(DataType.HEART_RATE_BPM, callback)
-
-        awaitClose {
-            Log.d("HealthServicesRepository", "Unregistering for data")
-            runBlocking {
-                measureClient.unregisterMeasureCallbackAsync(DataType.HEART_RATE_BPM, callback)
-                    .await()
-            }
+    fun startExercise() = serviceCall {
+        try {
+            errorState.value = null
+            startExercise()
+        } catch (e: Exception) {
+            errorState.value = e.message
+            logger.error("Error starting exercise", e.fillInStackTrace())
         }
     }
+    fun pauseExercise() = serviceCall { pauseExercise() }
+    fun endExercise() = serviceCall { endExercise() }
+    fun resumeExercise() = serviceCall { resumeExercise() }
+}
 
-    suspend fun checkSupported1(): Unit {
-        val capabilities = measureClient.getCapabilitiesAsync().await()
-        Log.d("HEART_RATE_BPM", (DataType.HEART_RATE_BPM in capabilities.supportedDataTypesMeasure).toString())
-    }
+/** Store exercise values in the service state. While the service is connected,
+ * the values will persist.**/
+sealed class ServiceState {
+    data object Disconnected : ServiceState()
 
-    suspend fun checkSupported2(): Unit {
-        val capabilities = passiveMonitoringClient.getCapabilitiesAsync().await()
-        Log.d("ELEVATION_GAIN", (DataType.ELEVATION_GAIN in capabilities.supportedDataTypesPassiveMonitoring).toString())
-        Log.d("DISTANCE", (DataType.DISTANCE in capabilities.supportedDataTypesPassiveMonitoring).toString())
-        Log.d("FLOORS", (DataType.FLOORS in capabilities.supportedDataTypesPassiveMonitoring).toString())
-        Log.d("HEART_RATE_BPM", (DataType.HEART_RATE_BPM in capabilities.supportedDataTypesPassiveMonitoring).toString())
-        Log.d("STEPS", (DataType.STEPS in capabilities.supportedDataTypesPassiveMonitoring).toString())
-        Log.d("CALORIES", (DataType.CALORIES in capabilities.supportedDataTypesPassiveMonitoring).toString())
+    data class Connected(
+        val exerciseServiceState: ExerciseServiceState,
+    ) : ServiceState() {
+        val locationAvailabilityState: LocationAvailability =
+            exerciseServiceState.locationAvailability
     }
 }
 
-sealed class MeasureMessage {
-    class MeasureAvailability(val availability: DataTypeAvailability) : MeasureMessage()
-    class MeasureData(val data: List<SampleDataPoint<Double>>) : MeasureMessage()
-}
+
+
+
+
+
