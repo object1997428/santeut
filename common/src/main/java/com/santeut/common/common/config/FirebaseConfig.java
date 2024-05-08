@@ -22,7 +22,7 @@ public class FirebaseConfig {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @Value("${FIREBASE_CONFIG_PATH}")
+    @Value("${firebase.config.path}")
     private String firebaseConfigPath;
 
 
