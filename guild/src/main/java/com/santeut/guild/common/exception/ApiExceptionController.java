@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.nio.file.AccessDeniedException;
-
 
 @Slf4j
 @RestControllerAdvice
@@ -30,6 +28,7 @@ public class ApiExceptionController {
     public ErrorResponse illegalExHandle(IllegalStateException e) {
         return constructErrorResponse(e,HttpStatus.BAD_REQUEST, "IllegalStateException");
     }
+
 
     // 잘못된 요청 데이터
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,7 +54,7 @@ public class ApiExceptionController {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
-        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
+        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "AccessDeniedException");
     }
 
     // Open Feign 호출 에러
