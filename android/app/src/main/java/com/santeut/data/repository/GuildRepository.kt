@@ -6,4 +6,6 @@ import com.santeut.data.model.response.GuildResponse
 interface GuildRepository {
 
     suspend fun getGuilds(): List<GuildResponse>
+
+    suspend fun myGuilds(): List<GuildResponse>
 }

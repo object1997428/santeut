@@ -13,7 +13,20 @@ class GuildRepositoryImpl @Inject constructor(
         return try {
             val response = guildApiService.getGuilds()
             if (response.status == "200") {
-                Log.d("BuildRepository", "Touch Build Repository")
+                response.data.guildList
+            } else {
+                throw Exception("Failed to load post: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun myGuilds(): List<GuildResponse> {
+        return try {
+            val response = guildApiService.myGuilds()
+            if (response.status == "200") {
                 response.data.guildList
             } else {
                 throw Exception("Failed to load post: ${response.status} ${response.data}")

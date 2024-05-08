@@ -15,7 +15,7 @@ fun NavGraphBuilder.GuildNavGraph(
         route = "guild_graph"
     ) {
         composable("guild") {
-            GuildScreen()
+            GuildScreen(navController)
         }
     }
 }

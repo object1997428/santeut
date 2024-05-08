@@ -7,9 +7,13 @@ import javax.inject.Inject
 
 class GuildUseCase @Inject constructor(
     private val guildRepository: GuildRepository
-){
+) {
 
     suspend fun getGuilds(): List<GuildResponse> {
         return guildRepository.getGuilds()
+    }
+
+    suspend fun myGuilds(): List<GuildResponse> {
+        return guildRepository.myGuilds()
     }
 }

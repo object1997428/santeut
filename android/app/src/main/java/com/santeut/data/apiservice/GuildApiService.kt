@@ -9,4 +9,7 @@ interface GuildApiService {
     @GET("/api/guild/list")
     suspend fun getGuilds(): CustomResponse<GuildListResponse>
 
+    @GET("/api/guild/myguild")
+    suspend fun myGuilds(): CustomResponse<GuildListResponse>
+
 }

@@ -32,4 +32,15 @@ class GuildViewModel @Inject constructor(
             }
         }
     }
+
+    fun myGuilds() {
+        viewModelScope.launch {
+            try {
+                _guilds.value = guildUseCase.myGuilds()
+                Log.d("GuildViewModel", "Touch Guild View Model")
+            } catch (e: Exception) {
+                _error.value = "Failed to load posts: ${e.message}"
+            }
+        }
+    }
 }
