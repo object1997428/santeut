@@ -1,17 +1,23 @@
 package com.santeut.ui.guild
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 
 @Composable
 fun GuildInfoScreen(guild: GuildResponse) {
-    Column {
-
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
         val gender = when (guild.guildGender) {
             'F' -> "여"
             'M' -> "남"
@@ -20,16 +26,44 @@ fun GuildInfoScreen(guild: GuildResponse) {
 
         AsyncImage(
             model = guild.guildProfile ?: R.drawable.logo,
-            contentDescription = "동호회 사진"
+            contentDescription = "동호회 사진",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
         )
 
-        Text(text = guild.guildName)
-        Text(text = guild.guildInfo)
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Row {
-            Text(text = "인원 " + guild.guildMember.toString() + "명")
-            Text(text = "성별 $gender")
-            Text(text = "연령 " + guild.guildMinAge + "세 ~ " + guild.guildMaxAge + "세")
+        Text(
+            text = guild.guildName,
+            style = MaterialTheme.typography.headlineMedium, // 크기와 스타일 조정
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+
+        Text(
+            text = guild.guildInfo,
+            style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "인원 ${guild.guildMember}명",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "성별 $gender",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                text = "연령 ${guild.guildMinAge}세 ~ ${guild.guildMaxAge}세",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
