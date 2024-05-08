@@ -2,50 +2,44 @@ package com.santeut.guild.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Builder
 @Entity
 @Table(name = "guild_post")
-public class GuildPostEntity {
+public class GuildPostEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int guildPostId;
+    @Column(name = "guild_post_id")
+    private int id;
 
     @NotNull
+    @Column(name = "category_id")
     private int categoryId;
 
     @NotNull
+    @Column(name = "guild_id")
     private int guildId;
 
     @NotNull
+    @Column(name = "user_id")
     private int userId;
 
     @NotNull
-    @Column(length = 150)
+    @Column(name = "guild_post_title", length = 150)
     private String guildPostTitle;
 
     @NotNull
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "guild_post_content", columnDefinition = "TEXT")
     private String guildPostContent;
 
     @NotNull
-    private LocalDateTime createdAt;
-
-    @NotNull
-    private LocalDateTime modifiedAt;
-
-    @NotNull
-    private boolean isDeleted;
-
-    private LocalDateTime deletedAt;
+    @Column(name = "hit_cnt", columnDefinition = "INTEGER DEFAULT 0")
+    private int hitCnt;
 }

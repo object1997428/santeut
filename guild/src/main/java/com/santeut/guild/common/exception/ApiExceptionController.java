@@ -58,6 +58,19 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
     }
 
+    // Open Feign 호출 에러
+    @ExceptionHandler(FeignClientException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(FeignClientException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "feignClientException");
+    }
+    // 알맞은 카테고리 찾지 못함
+    @ExceptionHandler(CategoryNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAccessDeniedException(CategoryNotFoundException e) {
+        return constructErrorResponse(e,HttpStatus.NOT_FOUND, "categoryNotFoundException");
+    }
+
 
     @ExceptionHandler(DataNotFoundException.class)
     public ErrorResponse CustomErrorResponse(DataNotFoundException e) {
