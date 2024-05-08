@@ -25,6 +25,7 @@ public class ConvertAndSendMessageService {
     public void convertAndSendMessage(String type,
                                       Integer partyId,
                                       Integer userId,
+                                      String userNickname,
                                       Double lat, Double rat
     ) throws JsonProcessingException {
         template.convertAndSend(
@@ -32,7 +33,10 @@ public class ConvertAndSendMessageService {
                 new MessageResponseDto(
                         MessageIdGenerator.generateId(),
                         type,
-                        "사용자 " + userId + ": " + lat + ", " + rat
+                        userId,
+                        userNickname,
+                        lat,
+                        rat
                 )
         );
         LocationData locationData = LocationData.builder()

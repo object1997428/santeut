@@ -9,5 +9,8 @@ import lombok.*;
 public class MessageResponseDto {
     private Long id;
     private String type;
-    private String value;
+    private Integer userId;
+    private String userNickname;
+    private Double lat;
+    private Double lng;
 }

@@ -15,6 +15,7 @@ public class MessageLocationDto {
     private String type;
     private Integer partyId;
     private Integer userId;
+    private String userNickname;
     private Double lat;
-    private Double rat;
+    private Double lng;
 }

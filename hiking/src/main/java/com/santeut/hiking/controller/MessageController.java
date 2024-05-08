@@ -64,8 +64,9 @@ public class MessageController {
                 messageRequestDto.getType(),
                 messageRequestDto.getPartyId(),
                 messageRequestDto.getUserId(),
+                messageRequestDto.getUserNickname(),
                 messageRequestDto.getLat(),
-                messageRequestDto.getRat()
+                messageRequestDto.getLng()
         );
 
     }
