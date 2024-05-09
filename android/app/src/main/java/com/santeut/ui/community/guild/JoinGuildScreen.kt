@@ -1,6 +1,7 @@
 package com.santeut.ui.community.guild
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -60,14 +62,14 @@ fun JoinGuildScreen(
 
     LazyColumn {
         items(guilds) { guild ->
-            GuildCard(guild)
+            GuildCard(guild, guildViewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun GuildCard(guild: GuildResponse) {
+fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -107,7 +109,7 @@ fun GuildCard(guild: GuildResponse) {
             Surface(modifier = Modifier.padding(16.dp)) {
                 Column {
                     // 동호회 상세 정보
-                    GuildDetail(guild)
+                    GuildDetail(guild, guildViewModel)
                 }
             }
         }
@@ -115,11 +117,18 @@ fun GuildCard(guild: GuildResponse) {
 }
 
 @Composable
-fun GuildDetail(guild: GuildResponse) {
+fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
+
+    var isRequested by remember { mutableStateOf(false) }
+    val buttonBackgroundColor =
+        if (isRequested) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primary
+    val buttonText = if (isRequested) "가입 요청 완료" else "가입 요청하기"
+
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         AsyncImage(
@@ -127,25 +136,27 @@ fun GuildDetail(guild: GuildResponse) {
             contentDescription = "동호회 사진",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
+                .height(200.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = guild.guildName,
-            style = MaterialTheme.typography.headlineMedium, // 크기와 스타일 조정
+            style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
         Text(
             text = guild.guildInfo,
-            style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "인원 ${guild.guildMember ?: 0}명",
@@ -164,6 +175,16 @@ fun GuildDetail(guild: GuildResponse) {
             )
         }
 
-        Button(onClick = { /*TODO*/ }) { Text(text = "가입 요청하기") }
+        Button(
+            onClick = {
+                if (!isRequested) {
+                    guildViewModel.applyGuild(guild.guildId)
+                    isRequested = true
+                }
+            },
+            colors = ButtonDefaults.buttonColors(buttonBackgroundColor)
+        ) {
+            Text(text = buttonText)
+        }
     }
 }

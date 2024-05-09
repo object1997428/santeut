@@ -30,7 +30,7 @@ class GuildViewModel @Inject constructor(
             try {
                 _guilds.postValue(guildUseCase.getGuilds())
             } catch (e: Exception) {
-                _error.value = "Failed to load posts: ${e.message}"
+                _error.value = "길드 목록 조회 실패: ${e.message}"
             }
         }
     }
@@ -40,7 +40,7 @@ class GuildViewModel @Inject constructor(
             try {
                 _guilds.postValue(guildUseCase.myGuilds())
             } catch (e: Exception) {
-                _error.value = "Failed to load posts: ${e.message}"
+                _error.value = "내 길드 목록 조회 실패: ${e.message}"
             }
         }
     }
@@ -50,7 +50,19 @@ class GuildViewModel @Inject constructor(
             try {
                 _guild.value = guildUseCase.getGuild(guildId)
             } catch (e: Exception) {
-                _error.value = "Failed to load posts: ${e.message}"
+                _error.value = "길드 정보 조회 실패: ${e.message}"
+            }
+        }
+    }
+
+    fun applyGuild(guildId: Int){
+        viewModelScope.launch {
+            try {
+                guildUseCase.applyGuild(guildId).collect{
+                    Log.d("GuildViewModel", "가입 요청 전송")
+                }
+            }catch (e:Exception){
+                _error.value = "가입 요청 전송 실패: ${e.message}"
             }
         }
     }

@@ -4,6 +4,8 @@ import android.util.Log
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GuildRepositoryImpl @Inject constructor(
@@ -27,7 +29,7 @@ class GuildRepositoryImpl @Inject constructor(
         return try {
             val response = guildApiService.myGuilds()
             if (response.status == "200") {
-                response.data.guildList?: emptyList()
+                response.data.guildList ?: emptyList()
             } else {
                 throw Exception("Failed to load post: ${response.status} ${response.data}")
             }
@@ -48,6 +50,16 @@ class GuildRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("GuildRepository", "Network error while fetching post: ${e.message}", e)
             throw e
+        }
+    }
+
+    override suspend fun applyGuild(guildId: Int): Flow<Unit> = flow {
+        val response = guildApiService.applyGuild(guildId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "가입 요청 성공")
+            emit(response.data)
+        } else {
+            throw Exception("가입 요청 실패: ${response.status} ${response.data}")
         }
     }
 }

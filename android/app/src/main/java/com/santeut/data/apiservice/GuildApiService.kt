@@ -4,6 +4,7 @@ import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildResponse
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface GuildApiService {
@@ -18,5 +19,10 @@ interface GuildApiService {
     suspend fun getGuild(
         @Path("guildId") guildId: Int
     ): CustomResponse<GuildResponse>
+
+    @POST("/api/guild/user/apply/{guildId}")
+    suspend fun applyGuild(
+        @Path("guildId") guildId: Int
+    ): CustomResponse<Unit>
 
 }
