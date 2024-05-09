@@ -4,7 +4,10 @@ import com.santeut.party.common.exception.AccessDeniedException;
 import com.santeut.party.common.exception.AlreadyJoinedException;
 import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.common.util.GeometryUtils;
+import com.santeut.party.dto.request.HikingRecordRequest;
+import com.santeut.party.dto.request.HikingRecordRequestInterface;
 import com.santeut.party.dto.request.LocationData;
+import com.santeut.party.dto.response.HikingRecordResponse;
 import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
@@ -110,5 +113,20 @@ public class PartyUserServiceImpl implements PartyUserService {
       dateSet.add(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
     return new PartyByYearMonthResponse(dateSet);
+  }
+
+  @Override
+  public Page<HikingRecordResponse> findMyEndedHikingRecord(int userId, Pageable pageable) {
+    Page<HikingRecordRequestInterface> hikingRecord = partyUserRepository.findMyHikingRecord(userId,
+        pageable);
+
+    return hikingRecord.map(r -> {
+      String guildName = (r.getGuildId() == null) ? ""
+          : guildAccessUtil.getGuildInfo(r.getGuildId()).getGuildName();
+      return HikingRecordResponse.of(r.getPartyUserId(), r.getPartyName(), guildName,
+          r.getMountainName(), r.getSchedule(), r.getDistance(), r.getBestHeight(),
+          r.getMoveTime());
+
+    });
   }
 }

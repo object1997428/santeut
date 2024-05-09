@@ -1,5 +1,6 @@
 package com.santeut.party.service;
 
+import com.santeut.party.dto.response.HikingRecordResponse;
 import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
@@ -24,4 +25,5 @@ public interface PartyUserService {
 
   PartyByYearMonthResponse findMyPartyByYearMonth(int userId, int year, int month);
 
+  Page<HikingRecordResponse> findMyEndedHikingRecord(int userId, Pageable pageable);
 }
