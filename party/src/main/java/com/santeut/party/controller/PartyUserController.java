@@ -7,6 +7,8 @@ import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.service.PartyUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -67,6 +69,17 @@ public class PartyUserController {
   ) {
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,
         partyUserService.findMyHikingTrailByPartyUserId(partyUserId));
+  }
+
+  @GetMapping("/user/schedule")
+  public ResponseEntity<BasicResponse> findMyPartyByYearMonth(
+      HttpServletRequest request,
+      @RequestParam("year") int year,
+      @RequestParam("month") int month
+  ) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        partyUserService.findMyPartyByYearMonth(Integer.parseInt(request.getHeader("userId")), year,
+            month));
   }
 
 }

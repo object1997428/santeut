@@ -6,6 +6,7 @@ import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.common.util.GeometryUtils;
 import com.santeut.party.dto.request.LocationData;
 import com.santeut.party.dto.response.HikingStartResponse;
+import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
@@ -16,7 +17,13 @@ import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -93,5 +100,15 @@ public class PartyUserServiceImpl implements PartyUserService {
         .orElseThrow(() -> new DataNotFoundException("사용자-소모임이 존재하지 않습니다"));
     return new HikingStartResponse(GeometryUtils.convertGeometryToListLocationData(
         partyUser.getPoints()));
+  }
+
+  @Override
+  public PartyByYearMonthResponse findMyPartyByYearMonth(int userId, int year, int month) {
+    List<LocalDateTime> dateList = partyUserRepository.findMyPartyByYearAndMonth(userId, year, month);
+    Set<String> dateSet = new HashSet<>();
+    for(LocalDateTime localDateTime:dateList) {
+      dateSet.add(localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    }
+    return new PartyByYearMonthResponse(dateSet);
   }
 }
