@@ -46,15 +46,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.designsystem.theme.SanteutTheme
 import com.santeut.R
+import com.santeut.ui.mountain.MountainViewModel
 
 @Composable
 fun HomeScreen(
-
+    mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
     Log.d("Home Screen", "Loading")
-//    val viewModel = viewModel<HomeViewModel>()
 
     LazyColumn(
         modifier = Modifier
