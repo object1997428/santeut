@@ -1,7 +1,11 @@
 package com.santeut.party.repository;
 
+import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.entity.PartyUser;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,5 +31,9 @@ public interface PartyUserRepository extends JpaRepository<PartyUser, Integer> {
     List<Integer> findUserIdsByPartyId(@Param("partyId") Integer partyId);
 
     boolean existsByUserIdAndMountainIdAndStatus(int userId, int mountainId, char status);
+
+    @Query("SELECT p.schedule FROM PartyUser pu JOIN Party p on pu.partyId = p.partyId WHERE p.status != 'I' and pu.userId = :userId and Year(p.schedule) = :year and Month(p.schedule) = :month")
+    List<LocalDateTime> findMyPartyByYearAndMonth(@Param("userId") int userId, @Param("year")
+    int year, @Param("month") int month);
 
 }

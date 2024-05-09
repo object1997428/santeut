@@ -17,4 +17,7 @@ public interface PartyService {
 
   Page<PartyInfoResponseDto> findParty(int userId, Integer guildId, String name, LocalDate startDate,
       LocalDate endDate, Pageable pageable);
+
+  PartyInfoResponseDto findPartyById(int userId, int partyId);
+
 }
