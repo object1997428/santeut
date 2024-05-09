@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.GuildViewModel
+import com.santeut.ui.guild.regionName
 
 @Composable
 fun JoinGuildScreen(
@@ -42,27 +44,6 @@ fun JoinGuildScreen(
 @Composable
 fun GuildCard(guild: GuildResponse) {
 
-    val region = when (guild.guildId) {
-        0 -> "전체"
-        1 -> "서울"
-        2 -> "부산"
-        3 -> "대구"
-        4 -> "인천"
-        5 -> "광주"
-        6 -> "대전"
-        7 -> "울산"
-        8 -> "세종"
-        9 -> "경기"
-        10 -> "충북"
-        11 -> "충남"
-        12 -> "전북"
-        13 -> "전남"
-        14 -> "경북"
-        15 -> "경남"
-        16 -> "제주"
-        17 -> "강원"
-        else -> "기타"
-    }
 
     Card(
         modifier = Modifier
@@ -77,14 +58,14 @@ fun GuildCard(guild: GuildResponse) {
             Row {
 
                 AsyncImage(
-                    model = guild.guildProfile,
+                    model = guild.guildProfile ?: R.drawable.logo,
                     contentDescription = "동호회 사진"
                 )
 
                 Column {
                     Text(text = guild.guildName)
-                    Text(text = "${guild.guildMember}명")
-                    Text(text = region)
+                    Text(text = "${guild.guildMember ?: 0}명")
+                    Text(text = regionName(guild.regionId))
                 }
             }
         }

@@ -66,7 +66,7 @@ fun GuildScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> GuildInfoScreen(guild!!)
+                    0 -> GuildInfoScreen(guild)
                     1 -> GuildCommunityScreen()
                     2 -> PartyListScreen()
                     3 -> GuildRankingScreen()

@@ -85,7 +85,7 @@ fun MyGuildScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> MyGuildListScreen()
+                    0 -> MyGuildListScreen(navController)
                     1 -> PartyListScreen()
                     else -> Text("Unknown page")
                 }

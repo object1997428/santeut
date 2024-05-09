@@ -1,5 +1,7 @@
 package com.santeut.ui.guild
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 
 @Composable
 fun MyGuildListScreen(
+    navController: NavController,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
@@ -46,16 +51,47 @@ fun MyGuildListScreen(
     } else {
         LazyColumn {
             items(guilds) { guild ->
-                GuildCard(guild)
+                GuildCard(guild, navController)
             }
         }
     }
 }
 
 @Composable
-fun GuildCard(guild: GuildResponse) {
+fun GuildCard(guild: GuildResponse, navController: NavController) {
 
-    val region = when (guild.guildId) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable {
+                navController.navigate("getGuild/${guild.guildId}")
+            },
+        shape = RoundedCornerShape(8.dp),
+        elevation = 5.dp,
+    ) {
+        Box(
+            modifier = Modifier.height(150.dp),
+        ) {
+            Row {
+
+                AsyncImage(
+                    model = guild.guildProfile ?: R.drawable.logo,
+                    contentDescription = "동호회 사진"
+                )
+
+                Column {
+                    androidx.compose.material.Text(text = guild.guildName)
+                    androidx.compose.material.Text(text = "${guild.guildMember ?: 0}명")
+                    androidx.compose.material.Text(text = regionName(guild.regionId))
+                }
+            }
+        }
+    }
+}
+
+fun regionName(regionId: Int): String {
+    return when (regionId) {
         0 -> "전체"
         1 -> "서울"
         2 -> "부산"
@@ -75,31 +111,5 @@ fun GuildCard(guild: GuildResponse) {
         16 -> "제주"
         17 -> "강원"
         else -> "기타"
-    }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        shape = RoundedCornerShape(8.dp),
-        elevation = 5.dp,
-    ) {
-        Box(
-            modifier = Modifier.height(150.dp),
-        ) {
-            Row {
-
-                AsyncImage(
-                    model = guild.guildProfile,
-                    contentDescription = "동호회 사진"
-                )
-
-                Column {
-                    androidx.compose.material.Text(text = guild.guildName)
-                    androidx.compose.material.Text(text = "${guild.guildMember}명")
-                    androidx.compose.material.Text(text = region)
-                }
-            }
-        }
     }
 }

@@ -28,8 +28,7 @@ class GuildViewModel @Inject constructor(
     fun getGuilds() {
         viewModelScope.launch {
             try {
-                _guilds.value = guildUseCase.getGuilds()
-                Log.d("GuildViewModel", "Touch Guild View Model")
+                _guilds.postValue(guildUseCase.getGuilds())
             } catch (e: Exception) {
                 _error.value = "Failed to load posts: ${e.message}"
             }
@@ -39,8 +38,7 @@ class GuildViewModel @Inject constructor(
     fun myGuilds() {
         viewModelScope.launch {
             try {
-                _guilds.value = guildUseCase.myGuilds()
-                Log.d("GuildViewModel", "Touch Guild View Model")
+                _guilds.postValue(guildUseCase.myGuilds())
             } catch (e: Exception) {
                 _error.value = "Failed to load posts: ${e.message}"
             }
@@ -51,7 +49,6 @@ class GuildViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _guild.value = guildUseCase.getGuild(guildId)
-                Log.d("GuildViewModel", "Touch Guild View Model")
             } catch (e: Exception) {
                 _error.value = "Failed to load posts: ${e.message}"
             }
