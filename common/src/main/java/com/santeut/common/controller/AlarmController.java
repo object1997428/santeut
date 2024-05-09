@@ -27,7 +27,7 @@ public class AlarmController {
     }
 
     // 알람 삭제하기 ( DELETE )
-    @DeleteMapping("/alarmId")
+    @DeleteMapping("/{alarmId}")
     public ResponseEntity<BasicResponse> deleteAlarm(@PathVariable Integer alarmId) {
         alarmService.deleteAlarm(alarmId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "알람이 성공적으로 삭제되었습니다.");

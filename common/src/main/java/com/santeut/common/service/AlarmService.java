@@ -16,10 +16,14 @@ import com.santeut.common.repository.AlarmTokenRepository;
 import com.santeut.common.repository.SafetyAlertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +51,7 @@ public class AlarmService {
 
     public void deleteAlarm(int alarmId) {
         try {
-            alarmRepository.deleteById(alarmId);
+            alarmRepository.deleteAlarmDirectly(alarmId, LocalDateTime.now());
         }catch (Exception e) {
             log.error("delete alarm error", e);
             throw new AccessDeniedException("삭제할 수 없습니다.");
@@ -96,7 +100,7 @@ public class AlarmService {
 
     public AlarmListResponseDto getAlarms(int userId) {
 
-        List<AlarmEntity> alarmEntities = alarmRepository.findAllByIdAndIsDeletedFalseOrderByCreatedAtDesc(userId).orElseThrow(null);
+        List<AlarmEntity> alarmEntities = alarmRepository.findAlarmDirectly(userId).orElseThrow(null);
         return new AlarmListResponseDto(alarmEntities.stream()
                 .map(alarm ->
                      AlarmListResponseDto.Alarm.builder()

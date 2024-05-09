@@ -10,6 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString
+@Table(name = "alarm")
 public class AlarmEntity extends BaseEntity {
 
     @Id
