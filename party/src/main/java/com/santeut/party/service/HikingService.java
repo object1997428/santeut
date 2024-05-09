@@ -15,6 +15,7 @@ import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
 import com.santeut.party.feign.HikingAuthClient;
 import com.santeut.party.feign.HikingMountainClient;
+import com.santeut.party.feign.dto.request.HikingRecordRequest;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import lombok.RequiredArgsConstructor;
