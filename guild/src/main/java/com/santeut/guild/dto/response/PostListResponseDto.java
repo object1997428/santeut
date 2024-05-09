@@ -1,11 +1,9 @@
 package com.santeut.guild.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,23 +11,34 @@ import java.time.LocalDateTime;
 @Builder
 public class PostListResponseDto {
 
-    private int guildPostId;
+    private List<Post> postList;
 
-    private int categoryId;
 
-    private int guildId;
+    @Data
+    @AllArgsConstructor
+    @Builder
+    @Setter
+    public static class Post {
 
-    private int userId;
+        private int guildPostId;
 
-    private String guildPostTitle;
+        private int categoryId;
 
-    private String guildPostContent;
+        private int guildId;
 
-    private LocalDateTime createdAt;
+        private int userId;
 
-    private Integer likeCnt;
+        private String guildPostTitle;
 
-    private Integer commentCnt;
+        private String guildPostContent;
 
-    private Integer hitCnt;
+        private LocalDateTime createdAt;
+
+        private Integer likeCnt;
+
+        private Integer commentCnt;
+
+        private Integer hitCnt;
+    }
+
 }

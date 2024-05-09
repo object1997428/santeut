@@ -29,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -62,26 +63,35 @@ public class PostServiceImpl implements PostService {
 
     // 길드 게시글 목록 가져오기
     @Override
-    public List<PostListResponseDto> getPosts(int guildId, int categoryId, int lastSeenId) {
+    public PostListResponseDto getPosts(int guildId, int categoryId, int lastSeenId) {
         List<PostListResponseDto> postList = new ArrayList<>();
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
-        for (GuildPostEntity entity : guildPostRepository.findAllByGuildIdAndCategoryIdAndIsDeletedFalseAndIdLessThanOrderByIdDesc(guildId, categoryId, lastSeenId, pageable).orElseThrow(() -> new DataNotFoundException("게시글이 없습니다."))) {
-            postList.add(PostListResponseDto.builder()
-                    .guildPostId(entity.getId())
-                    .categoryId(entity.getCategoryId())
-                    .guildId(entity.getGuildId())
-                    .userId(entity.getUserId())
-                    .guildPostTitle(entity.getGuildPostTitle())
-                    .guildPostContent(entity.getGuildPostContent())
-                    .createdAt(entity.getCreatedAt())
-                    .likeCnt(0) // Fix : 하드코딩 된 값 common 서버와 통신해서 넣기
-                    .commentCnt(0) // Fix : 하드코딩 된 값 common 서버와 통신해서 넣식
-                    .hitCnt(entity.getHitCnt())
-                    .build()
-            );
-        }
 
-        return postList;
+        return new PostListResponseDto(guildPostRepository.findAllByGuildIdAndCategoryIdAndIsDeletedFalseAndIdLessThanOrderByIdDesc(guildId, categoryId, lastSeenId, pageable)
+                .orElseThrow(() -> new DataNotFoundException("게시글이 없습니다."))
+                .stream()
+                .map(post -> {
+                    // 닉네임 받아오기 위한 feign 함수
+                    String userNickName = authClient.getUserInfo(post.getUserId()).orElseThrow(null).getData().getUserNickname();
+                    // 좋아요 수 가져오기 위한 feign 함수
+                    int likeCnt = commonClient.getLikeCnt(post.getId(), 'G').orElseThrow(null).getData().get("likeCnt");
+                    // 댓글 수 가져오기 위한 feign 함수
+                    int commentCnt = commonClient.getCommentCnt(post.getId(), 'G').orElseThrow(null).getData().get("commentCnt");
+
+                    return PostListResponseDto.Post.builder()
+                            .guildPostId(post.getId())
+                            .categoryId(post.getCategoryId())
+                            .guildId(post.getGuildId())
+                            .userId(post.getUserId())
+                            .guildPostTitle(post.getGuildPostTitle())
+                            .guildPostContent(post.getGuildPostContent())
+                            .createdAt(post.getCreatedAt())
+                            .likeCnt(likeCnt)
+                            .commentCnt(commentCnt)
+                            .hitCnt(post.getHitCnt())
+                            .build();
+
+                }).collect(Collectors.toList()));
     }
 
     // 게시글 디테일 가져오기

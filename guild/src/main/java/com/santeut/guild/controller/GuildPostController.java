@@ -5,6 +5,7 @@ import com.santeut.guild.common.response.BasicResponse;
 import com.santeut.guild.common.util.ResponseUtil;
 import com.santeut.guild.dto.request.GuildPostUpdateRequestDto;
 import com.santeut.guild.dto.request.PostCreateRequestDto;
+import com.santeut.guild.dto.response.PostListResponseDto;
 import com.santeut.guild.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/post")
 @Slf4j
@@ -36,6 +39,7 @@ public class GuildPostController {
                                                   @PathVariable int categoryId,
                                                   @RequestParam(required = false, defaultValue = "2147483647") int lastSeenId
     ) {
+//        List<PostListResponseDto> postList = postService.getPosts(guildId, categoryId, lastSeenId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, postService.getPosts(guildId, categoryId, lastSeenId));
     }
 
