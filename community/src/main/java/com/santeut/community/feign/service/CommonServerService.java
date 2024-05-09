@@ -7,6 +7,7 @@ import feign.Feign;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,10 @@ public class CommonServerService {
         Map<String, String> imageUrlJson = new HashMap<>();
         imageUrlJson.put("imageUrl", imageUrl);
         commonClient.saveImageUrl(postId, postType, imageUrlJson);
+    }
+
+    public void saveImage(int referenceId, char referenceType , List<MultipartFile> images) {
+        commonClient.saveImage(referenceId, referenceType, images);
     }
 
     public List<String> getImages(Integer postId, Character postType) {

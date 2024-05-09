@@ -39,7 +39,6 @@ public class PostEntity extends BaseEntity {
     private int hitCnt;
 
     @Column(name = "user_party_id")
-    @NotNull
     private Integer userPartyId;
 }
 

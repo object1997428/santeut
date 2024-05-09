@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -69,7 +70,9 @@ public class PostService {
     }
 
     // 게시글 작성 (CREATE)
-    public void createPost(PostCreateRequestDto postCreateRequestDto, int userId) {
+    public void createPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> images,  int userId) {
+
+        // 게시글 DB에 저장
         PostEntity newPost = postRepository.save(PostEntity.builder()
                 .userId(userId)
                 .postType(postCreateRequestDto.getPostType())
@@ -78,13 +81,8 @@ public class PostService {
                 .userPartyId(postCreateRequestDto.getUserPartyId())
                 .build()
         );
-        // 이미지 넣기
-        try {
-            for (String url : postCreateRequestDto.getImages()) {
-                commonServerService.saveImageUrl(newPost.getId(), newPost.getPostType(), url);
-            }
-        } catch(FeignClientException e) {
-            log.error("이미지 저장 에러 : {}", e.getMessage());
+        if(!images.isEmpty()) {
+            commonServerService.saveImage(newPost.getId(), newPost.getPostType(),images);
         }
     }
 

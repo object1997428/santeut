@@ -8,6 +8,7 @@ import java.util.List;
 @Setter @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
 public class PostCreateRequestDto {
 
@@ -18,6 +19,4 @@ public class PostCreateRequestDto {
     private Character postType;
 
     private Integer userPartyId;
-
-    private List<String> images;
 }
