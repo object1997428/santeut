@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.outlined.Healing
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -31,6 +32,10 @@ import com.santeut.data.model.response.MyProfileResponse
 @Composable
 fun MyProfileScreen(userViewModel: UserViewModel = hiltViewModel()) {
     val myProfile by userViewModel.myProfile.observeAsState()
+
+    LaunchedEffect(Unit) {
+        userViewModel.getMyProfile()
+    }
 
     Column(
         modifier = Modifier
