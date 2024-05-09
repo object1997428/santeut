@@ -95,6 +95,13 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.GONE, "handleDataMissMatchException");
     }
 
+    // openfeign 오류
+    @ExceptionHandler(FeignException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleOpenFeignException(FeignException e) {
+        return constructErrorResponse(e,HttpStatus.INTERNAL_SERVER_ERROR, "handleFeignException");
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception e) {

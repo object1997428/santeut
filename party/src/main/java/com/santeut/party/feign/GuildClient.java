@@ -3,7 +3,6 @@ package com.santeut.party.feign;
 import com.santeut.party.common.config.FeignConfiguration;
 import com.santeut.party.feign.dto.response.FeignResponseDto;
 import com.santeut.party.feign.dto.response.GuildInfoFeignResponseDto;
-import com.santeut.party.feign.dto.response.UserInfoFeignResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
