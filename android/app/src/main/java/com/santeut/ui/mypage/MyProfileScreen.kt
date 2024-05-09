@@ -61,8 +61,12 @@ fun ProfileHeader(myProfile: MyProfileResponse?) {
         )
         Column {
             Text(
-                text = "Lv. ${myProfile?.userNickname}",
+                text = "${myProfile?.userNickname}",
                 style = MaterialTheme.typography.h6
+            )
+            Text(
+                text = "Lv. ${myProfile?.userTierName}",
+                style = MaterialTheme.typography.body1
             )
             Text(
                 text = "포인트 ${myProfile?.userTierPoint}P",
