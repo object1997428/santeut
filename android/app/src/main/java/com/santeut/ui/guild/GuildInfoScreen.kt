@@ -17,11 +17,6 @@ fun GuildInfoScreen(guild: GuildResponse?) {
             .padding(16.dp)
             .fillMaxWidth()
     ) {
-        val gender = when (guild?.guildGender) {
-            'F' -> "여"
-            'M' -> "남"
-            else -> "성별 무관"
-        }
 
         if (guild != null) {
             AsyncImage(
@@ -31,7 +26,6 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                     .fillMaxWidth()
                     .height(200.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
             )
-
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -56,7 +50,7 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "성별 $gender",
+                    text = "성별 ${genderToString(guild)}",
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -67,5 +61,13 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                 )
             }
         }
+    }
+}
+
+fun genderToString(guild: GuildResponse?):String {
+    return when (guild?.guildGender) {
+        'F' -> "여"
+        'M' -> "남"
+        else -> "성별 무관"
     }
 }

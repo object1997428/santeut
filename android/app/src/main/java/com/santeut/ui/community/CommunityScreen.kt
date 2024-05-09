@@ -51,7 +51,7 @@ fun CommunityScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> JoinGuildScreen()
+                    0 -> JoinGuildScreen(navController)
                     1 -> JoinPartyScreen()
                     2 -> PostTipsScreen(navController)
                     3 -> PostCourseScreen()
