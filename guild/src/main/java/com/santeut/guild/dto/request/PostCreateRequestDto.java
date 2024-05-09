@@ -21,6 +21,4 @@ public class PostCreateRequestDto {
     private String guildPostTitle;
 
     private String guildPostContent;
-
-    private List<String> images;
 }

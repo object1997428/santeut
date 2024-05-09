@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequestMapping("/post")
 @Slf4j
@@ -22,8 +25,8 @@ public class GuildPostController {
 
     // 길드 게시글 작성하기 (CREATE)
     @PostMapping("")
-    public ResponseEntity<BasicResponse> createPost(@RequestBody PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId ) {
-        postService.createPost(postCreateRequestDto, userId);
+    public ResponseEntity<BasicResponse> createPost(@RequestPart(required = false) List<MultipartFile> images, @RequestPart PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId ) {
+        postService.createPost(postCreateRequestDto,images, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 길드 게시글 작성");
     }
 
