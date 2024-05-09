@@ -15,6 +15,7 @@ import javax.inject.Inject
 class HealthViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository
 ) : ViewModel() {
+
     val uiState: StateFlow<HealthScreenState> = healthServicesRepository.serviceState.map {
         HealthScreenState(
             hasExerciseCapabilities = healthServicesRepository.hasExerciseCapability(),

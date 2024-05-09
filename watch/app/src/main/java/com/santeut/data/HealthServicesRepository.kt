@@ -56,28 +56,30 @@ class HealthServicesRepository @Inject constructor(
     fun prepareExercise() = serviceCall { prepareExercise() }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
+        Log.d("로그 체크 2","찍힘")
         binderConnection.runWhenConnected {
-            Log.d("안녕하세요", "안녕하세요")
+            Log.d("로그 체크 3","안찍힘")
             function(it.getService())
         }
     }
 
     fun startExercise() = serviceCall {
         try {
+            Log.d("로그 체크 6","안찍힘")
             errorState.value = null
             startExercise()
         } catch (e: Exception) {
+            Log.d("로그 체크 6-2","안찍힘")
             errorState.value = e.message
             logger.error("Error starting exercise", e.fillInStackTrace())
         }
     }
+
     fun pauseExercise() = serviceCall { pauseExercise() }
     fun endExercise() = serviceCall { endExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
 }
 
-/** Store exercise values in the service state. While the service is connected,
- * the values will persist.**/
 sealed class ServiceState {
     data object Disconnected : ServiceState()
 
@@ -88,9 +90,3 @@ sealed class ServiceState {
             exerciseServiceState.locationAvailability
     }
 }
-
-
-
-
-
-

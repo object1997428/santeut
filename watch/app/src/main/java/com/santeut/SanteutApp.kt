@@ -13,6 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -22,6 +23,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.santeut.ui.HealthScreen
 import com.santeut.ui.MainScreen
 import com.santeut.ui.MapScreen
+import com.santeut.ui.health.HealthViewModel
 import com.santeut.ui.main.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,11 +31,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun SanteutApp(
-    onFinishActivity: () -> Unit
+    onFinishActivity: () -> Unit,
+    onMoveTaskBack: () -> Unit
 ) {
     val viewModel = hiltViewModel<MainViewModel>()
     val state by viewModel.state
 
+    val healthViewModel = hiltViewModel<HealthViewModel>()
+    val uiState by healthViewModel.uiState.collectAsStateWithLifecycle()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -54,9 +59,7 @@ fun SanteutApp(
         }
     }
 
-    val pagerState = rememberPagerState(
-        pageCount = { 3 }
-    )
+    val pagerState = rememberPagerState(pageCount = { 3 })
 
     HorizontalPager(
         modifier = Modifier
@@ -76,10 +79,11 @@ fun SanteutApp(
                     state = state
                 )
                 1 -> HealthScreen(
-                    state = state
+                    state = state,
+                    uiState = uiState
                 )
                 2 -> MapScreen(
-
+                    uiState = uiState
                 )
             }
         }

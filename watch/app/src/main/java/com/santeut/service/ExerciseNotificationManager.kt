@@ -70,9 +70,9 @@ class ExerciseNotificationManager @Inject constructor(
     companion object {
         const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_CHANNEL =
-            "com.example.exercisesamplecompose.ONGOING_EXERCISE"
+            "com.santeut.ONGOING_EXERCISE"
         private const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Exercise"
-        private const val NOTIFICATION_TITLE = "Exercise Sample"
+        private const val NOTIFICATION_TITLE = "Santeut"
         private const val NOTIFICATION_TEXT = "Ongoing Exercise"
         private const val ONGOING_STATUS_TEMPLATE = "Ongoing Exercise #duration#"
     }

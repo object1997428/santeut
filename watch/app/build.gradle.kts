@@ -97,4 +97,5 @@ dependencies {
     // Map
     implementation(libs.google.map.compose)
     implementation(libs.android.gms.service.map)
+    implementation(libs.android.gms.service.location)
 }

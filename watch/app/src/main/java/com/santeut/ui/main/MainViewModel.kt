@@ -3,8 +3,10 @@ package com.santeut.ui.main
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.santeut.data.HealthServicesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,12 +17,18 @@ class MainViewModel @Inject constructor(
     private val _state = mutableStateOf(false)
     val state = _state
 
-    fun startExercise() {
-        Log.d("너 존재하니?", healthServicesRepository.toString())
+    init {
+        viewModelScope.launch {
+            healthServicesRepository.prepareExercise()
+        }
+    }
 
+    fun startExercise() {
+        Log.d("로그 체크 1","찍힘")
         healthServicesRepository.startExercise()
         _state.value = true
     }
+
     fun endExercise() {
         healthServicesRepository.endExercise()
         _state.value = false

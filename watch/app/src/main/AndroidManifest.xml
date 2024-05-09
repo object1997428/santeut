@@ -31,6 +31,10 @@
             android:name="com.google.android.wearable.standalone"
             android:value="true" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${googleApiKey}"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -43,11 +47,11 @@
             </intent-filter>
         </activity>
 
-        <!-- Add foreground service location permission for exercise tracking -->
-<!--        <service-->
-<!--            android:name=".service.ExerciseService"-->
-<!--            android:exported="false"-->
-<!--            android:foregroundServiceType="location" />-->
+<!--         Add foreground service location permission for exercise tracking-->
+        <service
+            android:name=".service.ExerciseService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
     </application>
 
     <queries>

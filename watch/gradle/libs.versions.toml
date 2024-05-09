@@ -12,6 +12,7 @@ androidx-lifecycle = "2.7.0"
 health-services = "1.0.0-rc02"
 google-map-compose = "2.11.4"
 gms-service = "18.1.0"
+gms-location = "17.0.0"
 accompanist-permissions = "0.34.0"
 horologist = "0.5.27"
 
@@ -48,6 +49,8 @@ dagger-hilt-android-compiler = {module = "com.google.dagger:hilt-android-compile
 hilt-navigation-compose = "androidx.hilt:hilt-navigation-compose:1.2.0"
 google-map-compose = {module = "com.google.maps.android:maps-compose", version.ref = "google-map-compose"}
 android-gms-service-map = { module = "com.google.android.gms:play-services-maps", version.ref = "gms-service"}
+android-gms-service-location = { module = "com.google.android.gms:play-services-location", version.ref = "gms-location"}
+
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions"}
 horologist-health-service = { module = "com.google.android.horologist:horologist-health-service", version.ref = "horologist" }
 

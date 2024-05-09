@@ -50,6 +50,7 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
+        Log.d("로그 체크 3","찍힘")
         postOngoingActivityNotification()
         exerciseClientManager.startExercise()
     }

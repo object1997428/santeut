@@ -50,11 +50,11 @@ class ExerciseClientManager @Inject constructor(
     }
 
     suspend fun startExercise() {
-        logger.log("Starting exercise")
+        Log.d("ExerciseClientManager", "Starting")
         val capabilities = getExerciseCapabilities()
 
         if (capabilities == null) {
-            logger.log("No capabilities")
+            Log.d("ExerciseClientManager", "No capabilities")
             return
         }
 
@@ -69,7 +69,7 @@ class ExerciseClientManager @Inject constructor(
             DataType.STEPS_TOTAL
         ).intersect(capabilities.supportedDataTypes)
 
-        Log.d("사용 가능한 기능", dataTypes.toString())
+        Log.d("Available Data Type", dataTypes.toString())
 
         val exerciseGoals = mutableListOf<ExerciseGoal<Double>>()
         if (supportsCalorieGoal(capabilities)) {
@@ -107,7 +107,7 @@ class ExerciseClientManager @Inject constructor(
         )
 
         exerciseClient.startExercise(config)
-        logger.log("Started exercise")
+        Log.d("ExerciseClientManager", "Started exercise")
     }
 
     suspend fun prepareExercise() {

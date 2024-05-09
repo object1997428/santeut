@@ -13,29 +13,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.santeut.ui.health.HealthScreenState
-import com.santeut.ui.health.HealthViewModel
 
 @Composable
 fun HealthScreen(
-    state: Boolean
+    state: Boolean,
+    uiState: HealthScreenState
 ) {
-    val viewModel = hiltViewModel<HealthViewModel>()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
 
     if (uiState.error == null){
         if(!state){
@@ -106,13 +105,6 @@ fun HealthDataScreen(
             }
             item {
                 HealthItem(
-                    title = "고도",
-                    value = uiState.exerciseState?.exerciseMetrics?.absoluteElevation?.toInt()?.toString() ?: "--",
-                    unit = "m"
-                )
-            }
-            item {
-                HealthItem(
                     title = "오른 높이",
                     value = uiState.exerciseState?.exerciseMetrics?.elevationGainTotal?.toInt()?.toString() ?: "--",
                     unit = "m"
@@ -120,22 +112,40 @@ fun HealthDataScreen(
             }
             item {
                 HealthItem(
+                    title = "고도",
+                    value = uiState.exerciseState?.exerciseMetrics?.absoluteElevation?.toInt()?.toString() ?: "--",
+                    unit = "m"
+                )
+            }
+            item {
+                HealthItem(
                     title = "위도",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.latitude?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.latitude?.let {
+                        String.format("%.6f", it)
+                    } ?: "--",
                     unit = ""
                 )
             }
             item {
                 HealthItem(
                     title = "경도",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.longitude?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.longitude?.let {
+                        String.format("%.6f", it)
+                    } ?: "--",
                     unit = ""
                 )
             }
             item {
                 HealthItem(
                     title = "고도",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.altitude?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.altitude?.toLong()?.toString() ?: "--",
+                    unit = ""
+                )
+            }
+            item {
+                HealthItem(
+                    title = "방향",
+                    value = uiState.exerciseState?.exerciseMetrics?.location?.bearing?.toInt()?.toString() ?: "--",
                     unit = ""
                 )
             }
@@ -224,5 +234,17 @@ fun NotSupportedScreen(){
         Text(text = "지원하지 않는")
         Text(text = "모델입니다.")
         Spacer(modifier = Modifier.weight(0.6f))
+    }
+}
+
+@Composable
+fun formatDistanceKm(meters: Double?) = buildAnnotatedString {
+    if (meters == null) {
+        append("--")
+    } else {
+        append("%02.2f".format(meters / 1_000))
+        withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
+            append("km")
+        }
     }
 }
