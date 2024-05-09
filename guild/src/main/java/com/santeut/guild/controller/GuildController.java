@@ -40,7 +40,7 @@ public class GuildController {
 
     @PatchMapping("/{guildId}")
     public BasicResponse patchGuild(@PathVariable int guildId,
-                                        @RequestPart("request") PatchGuildInfoRequest request,
+                                        @RequestPart(value = "request", required = false) PatchGuildInfoRequest request,
                                         @RequestPart(value = "guildProfile", required = false) MultipartFile multipartFile,
                                         HttpServletRequest httpServletRequest){
 

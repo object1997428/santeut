@@ -87,25 +87,27 @@ public class GuildServiceImpl implements GuildService {
 //        boolean existedGuildName = guildRepository.existsByGuildName(request.getGuildName());
 //        if (existedGuildName) throw new DataNotFoundException(ResponseCode.EXISTS_GUILD_NAME);
 
-        GuildEntity patchGuildEntity = GuildEntity.patchGuild(request, guildEntity);
+        if (request != null) {
+            guildEntity = GuildEntity.patchGuild(request, guildEntity);
+        }
 
         if (multipartFile != null) {
             String imageUrl = imageUtil.saveImage(multipartFile);
             guildEntity.setGuildProfile(imageUrl);
-            guildRepository.save(patchGuildEntity);
+            guildRepository.save(guildEntity);
         }
 
-        if (request.getRegionId() != null){
-        String regionName = regionUtil.getRegionName(request.getRegionId());
-        RegionEntity regionEntity = new RegionEntity(request.getRegionId(), regionName);
-        regionRepository.save(regionEntity);
-        }
+//        if (request != null && request.getRegionId() != null){
+//        String regionName = regionUtil.getRegionName(request.getRegionId());
+//        RegionEntity regionEntity = new RegionEntity(request.getRegionId(), regionName);
+//        regionRepository.save(regionEntity);
+//        }
 
-        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildId(guildId)
-                        .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
-
-        guildUserEntity.setModifiedAt(LocalDateTime.now());
-        guildUserRepository.save(guildUserEntity);
+//        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildId(guildId)
+//                        .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
+//
+//        guildUserEntity.setModifiedAt(LocalDateTime.now());
+//        guildUserRepository.save(guildUserEntity);
     }
 
     @Override

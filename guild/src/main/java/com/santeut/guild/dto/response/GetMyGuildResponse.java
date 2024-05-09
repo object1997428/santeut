@@ -14,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetMyGuildResponse {
-    List<GetDetailGuildResponse> myGuildList = new ArrayList<>();
+    List<GetDetailGuildResponse> guildList = new ArrayList<>();
 }
