@@ -1,12 +1,11 @@
 package com.santeut.common.service;
 
-import com.santeut.common.common.exception.AccessDeniedException;
-import com.santeut.common.common.exception.DataNotFoundException;
-import com.santeut.common.common.exception.FeignClientException;
-import com.santeut.common.common.exception.RepositorySaveException;
+import com.santeut.common.common.exception.*;
+import com.santeut.common.dto.request.AlarmRequestDto;
 import com.santeut.common.dto.request.UserInfoFeignRequestDto;
 import com.santeut.common.dto.response.CommentListResponseDto;
 import com.santeut.common.entity.CommentEntity;
+import com.santeut.common.feign.CommunityClient;
 import com.santeut.common.feign.UserInfoClient;
 import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.CommentRepository;
@@ -28,17 +27,36 @@ public class CommentService {
     private final CommentRepository commentRepository;
     //    private final UserInfoClient userInfoClient;
     private final AuthServerService authServerService;
+    private final AlarmService alarmService;
+    private final CommunityClient communityClient;
 
     // 댓글 작성 (CREATE)
     public void createComment(int postId, char postType, String commentContent, int userId) {
         try {
-            commentRepository.save(CommentEntity.builder()
+            CommentEntity comment = commentRepository.save(CommentEntity.builder()
                     .commentReferenceType(postType)
                     .commentReferenceId(postId)
                     .userId(userId) // open feign 사용
                     .commentContent(commentContent)
                     .build()
             );
+            // 길드 게시판인지 커뮤니티 게시판인지에 따라 다른 서버 서비스 호출
+            int postUserId = 0;
+            if(postType == 'G') {
+            }else {
+                postUserId = communityClient.getPostInfo(postId, postType).orElseThrow(()->new ZeroDataException("흠흠흠")).getData().getUserId();
+            }
+            // 알람 만들 DTO 작성
+            AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
+                    .userId(postUserId)
+                    .referenceId(comment.getCommentReferenceId())
+                    .referenceType(comment.getCommentReferenceType())
+                    .alarmTitle("댓글 알림!")
+                    .alarmContent("님이 쓴 게시글에 댓글 달림 ㅋ")
+                    .build();
+
+//             알람을 만들어주는 함수 호출
+            alarmService.createAlarm(comment.getCommentReferenceId(), comment.getCommentReferenceType(), alarmRequestDto);
         } catch (Exception e) {
             log.info(e.getMessage());
             throw new RepositorySaveException("댓글 저장중 에러 발생");
