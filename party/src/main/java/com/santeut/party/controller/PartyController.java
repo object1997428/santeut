@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,9 +64,7 @@ public class PartyController {
 
     Page<PartyInfoResponseDto> party = partyService.findParty(Integer.parseInt(request.getHeader("userId")), guildId, name, startDate,
         endDate, pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, party.getContent(), party.isFirst(),
-        party.isLast(), party.getNumber(), party.getTotalPages(), party.getTotalElements(),
-        party.getSize(), true, true, true);
+    return ResponseUtil.buildPagingResponse(HttpStatus.OK, party, true, true, true);
 
   }
 

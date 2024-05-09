@@ -54,9 +54,7 @@ public class PartyUserController {
       @PageableDefault(page = 0, size = 10, sort = "schedule", direction = Sort.Direction.ASC) Pageable pageable) {
     Page<PartyInfoResponseDto> myParty = partyUserService.findMyParty(
         Integer.parseInt(request.getHeader("userId")), includeEnd, date, pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, myParty.getContent(), myParty.isFirst(),
-        myParty.isLast(), myParty.getNumber(), myParty.getTotalPages(), myParty.getTotalElements(),
-        myParty.getSize(), true, true, true);
+    return ResponseUtil.buildPagingResponse(HttpStatus.OK, myParty, true, true, true);
 
   }
 
@@ -87,10 +85,7 @@ public class PartyUserController {
   ) {
     Page<HikingRecordResponse> hikingRecord = partyUserService.findMyEndedHikingRecord(
         Integer.parseInt(request.getHeader("userId")), pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, hikingRecord.getContent(),
-        hikingRecord.isFirst(),
-        hikingRecord.isLast(), hikingRecord.getNumber(), hikingRecord.getTotalPages(),
-        hikingRecord.getTotalElements(), hikingRecord.getSize(), true, false, false);
+    return ResponseUtil.buildPagingResponse(HttpStatus.OK, hikingRecord, true, false, false);
   }
 
 }
