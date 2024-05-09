@@ -33,7 +33,8 @@ public class MessageController {
         return "hello";
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    //    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @MessageMapping("/enter")
     public void enter(MessageRequestDto messageRequestDto) {
         enterRoomService.enterRoom(
@@ -44,7 +45,8 @@ public class MessageController {
         hikingDataScheduler.startTracking(messageRequestDto.getPartyId().toString(), messageRequestDto.getUserId().toString());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    //    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @MessageMapping("/quit")
     public void quit(MessageRequestDto messageRequestDto) throws JsonProcessingException {
         log.info("messageRequestDto2={}", messageRequestDto);
@@ -56,7 +58,8 @@ public class MessageController {
         hikingDataScheduler.stopTascking(messageRequestDto.getPartyId().toString(), messageRequestDto.getUserId().toString());
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    //    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "*")
     @MessageMapping("/message")
     public void message(MessageLocationDto messageRequestDto) throws JsonProcessingException {
         log.info("messageRequestDto3={}", messageRequestDto);
