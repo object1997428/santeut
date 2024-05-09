@@ -34,7 +34,7 @@ public class MessageController {
     }
 
     //    @CrossOrigin(origins = "http://localhost:3000")
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*", allowCredentials= "false")
     @MessageMapping("/enter")
     public void enter(MessageRequestDto messageRequestDto) {
         enterRoomService.enterRoom(
@@ -46,7 +46,7 @@ public class MessageController {
     }
 
     //    @CrossOrigin(origins = "http://localhost:3000")
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*", allowCredentials= "false")
     @MessageMapping("/quit")
     public void quit(MessageRequestDto messageRequestDto) throws JsonProcessingException {
         log.info("messageRequestDto2={}", messageRequestDto);
@@ -59,7 +59,7 @@ public class MessageController {
     }
 
     //    @CrossOrigin(origins = "http://localhost:3000")
-    @CrossOrigin(origins = "*")
+    @CrossOrigin(origins = "*", allowCredentials= "false")
     @MessageMapping("/message")
     public void message(MessageLocationDto messageRequestDto) throws JsonProcessingException {
         log.info("messageRequestDto3={}", messageRequestDto);
