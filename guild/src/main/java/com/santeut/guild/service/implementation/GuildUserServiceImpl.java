@@ -65,7 +65,6 @@ public class GuildUserServiceImpl implements GuildUserService {
             throw new DataNotFoundException(ResponseCode.NOT_MATCH_GUILD_LEADER);
         }
         List<GuildRequestEntity> requestEntityList = guildRequestRepository.findByGuildId(guildId);
-//        List<ApplyGuildListResponse> applyGuildListResponseList = new ArrayList<>();
 
         List<BasicResponse> responseList = new ArrayList<>();
         for (GuildRequestEntity requestEntity : requestEntityList){
@@ -76,8 +75,8 @@ public class GuildUserServiceImpl implements GuildUserService {
 
         if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
             responseList.add(response);
-        }
 
+        }
         return new ApplyGuildListResponse(ApplyGuildListResponse.applyGuildList(responseList, requestEntityList));
     }
 

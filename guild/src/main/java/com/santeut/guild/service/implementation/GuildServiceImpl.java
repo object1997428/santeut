@@ -50,18 +50,18 @@ public class GuildServiceImpl implements GuildService {
             String imageUrl = imageUtil.saveImage(multipartFile);
             guildEntity.setGuildProfile(imageUrl);
         }
-        guildRepository.save(guildEntity);
+        guildEntity = guildRepository.save(guildEntity);
 
 //        guildEntity = guildRepository.findByGuildName(request.getGuildName())
 //                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
 
-        guildEntity = guildRepository.findLastRecord()
-                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
+//        guildEntity = guildRepository.findLastRecord()
+//                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
 
         String regionName = regionUtil.getRegionName(request.getRegionId());
         RegionEntity regionEntity = new RegionEntity(request.getRegionId(), regionName);
 
-        GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(guildEntity);
+        GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(guildEntity.getUserId(), guildEntity.getGuildId());
 
         regionRepository.save(regionEntity);
         guildUserRepository.save(guildUserEntity);
