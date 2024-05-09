@@ -43,6 +43,13 @@ public class AlarmService {
                 .alarmTitle(alarmRequestDto.getAlarmTitle())
                 .alarmContent(alarmRequestDto.getAlarmContent()).build();
         alarmRepository.save(alarmEntity);
+
+        //알람 보내기
+        AlarmTokenEntity alarmToken = alarmTokenRepository.findById(alarmEntity.getId()).orElseThrow();
+        log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]",alarmToken.getId());
+        fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(alarmRequestDto.getAlarmTitle(),
+                String.format(alarmRequestDto.getAlarmContent()),
+                FCMCategory.HIKING_START));
     }
 
     public void deleteAlarm(int alarmId) {

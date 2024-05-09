@@ -32,7 +32,6 @@ public class CommentService {
 
     // 댓글 작성 (CREATE)
     public void createComment(int postId, char postType, String commentContent, int userId) {
-        try {
             CommentEntity comment = commentRepository.save(CommentEntity.builder()
                     .commentReferenceType(postType)
                     .commentReferenceId(postId)
@@ -44,7 +43,7 @@ public class CommentService {
             int postUserId = 0;
             if(postType == 'G') {
             }else {
-                postUserId = communityClient.getPostInfo(postId, postType).orElseThrow(()->new ZeroDataException("흠흠흠")).getData().getUserId();
+                postUserId = communityClient.getPostInfo(postId, postType).orElseThrow(()->new FeignClientException("community에 요청 실패")).getData().getUserId();
             }
             // 알람 만들 DTO 작성
             AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
@@ -57,10 +56,7 @@ public class CommentService {
 
 //             알람을 만들어주는 함수 호출
             alarmService.createAlarm(comment.getCommentReferenceId(), comment.getCommentReferenceType(), alarmRequestDto);
-        } catch (Exception e) {
-            log.info(e.getMessage());
-            throw new RepositorySaveException("댓글 저장중 에러 발생");
-        }
+
     }
 
     // 댓글 목록 가져오기 (READ)
