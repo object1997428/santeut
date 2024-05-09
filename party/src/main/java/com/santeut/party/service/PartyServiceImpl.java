@@ -70,6 +70,7 @@ public class PartyServiceImpl implements PartyService {
   @Override
   @Transactional
   public void deleteParty(int userId, int partyId) {
+    log.info("소모임 삭제 요청: "+partyId);
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
     if(userId != party.getUserId()) {

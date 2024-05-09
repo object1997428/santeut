@@ -46,6 +46,7 @@ public class PartyUserServiceImpl implements PartyUserService {
   @Override
   @Transactional
   public void joinUserParty(int userId, int partyId) {
+    log.info("소모임 가입 요청: userId, partyId = "+userId+", "+partyId);
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
     if(partyUserRepository.existsByUserIdAndPartyId(userId, partyId)) {
@@ -68,6 +69,7 @@ public class PartyUserServiceImpl implements PartyUserService {
   @Override
   @Transactional
   public void withdrawUserFromParty(int userId, Integer partyId) {
+    log.info("소모임 나가기: userId, partyId = "+userId+", "+partyId);
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
     PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(party.getPartyId(), userId)
