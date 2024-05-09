@@ -16,7 +16,7 @@ class GuildViewModel @Inject constructor(
     private val guildUseCase: GuildUseCase
 ) : ViewModel() {
 
-    private val _guilds = MutableLiveData<List<GuildResponse>>()
+    private val _guilds = MutableLiveData<List<GuildResponse>>(emptyList())
     val guilds: LiveData<List<GuildResponse>> = _guilds
 
     private val _error = MutableLiveData<String>()
