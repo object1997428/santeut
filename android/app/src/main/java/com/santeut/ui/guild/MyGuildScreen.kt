@@ -105,6 +105,7 @@ fun MyGuildScreen(
                         }
                         TextButton(onClick = {
                             // 소모임 생성 로직
+                            navController.navigate("createParty")
                             coroutineScope.launch { sheetState.hide() }
                         }) {
                             Text("소모임 만들기", style = MaterialTheme.typography.titleMedium)

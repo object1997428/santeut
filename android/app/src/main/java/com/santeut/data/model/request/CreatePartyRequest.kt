@@ -4,10 +4,10 @@ data class CreatePartyRequest(
 
     val schedule: String,
     val partyName: String,
-    val mountainId: String,
+    val mountainId: Int,
     val mountainName: String,
-    val maxPeople: String,
-    val guildId: String?,
+    val maxPeople: Int,
+    val guildId: Int?,
     val place: String,
     val selectedCourse: List<Int>
 

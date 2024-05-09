@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.MyGuildScreen
+import com.santeut.ui.party.CreatePartyScreen
 
 
 fun NavGraphBuilder.GuildNavGraph(
@@ -28,6 +29,9 @@ fun NavGraphBuilder.GuildNavGraph(
         ) { backStackEntry ->
             val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
             GuildScreen(guildId)
+        }
+        composable("createParty"){
+            CreatePartyScreen(navController)
         }
     }
 }

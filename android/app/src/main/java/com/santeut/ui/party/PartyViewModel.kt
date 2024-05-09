@@ -24,10 +24,10 @@ class PartyViewModel @Inject constructor(
     fun createParty(
         schedule: String,
         partyName: String,
-        mountainId: String,
+        mountainId: Int,
         mountainName: String,
-        maxPeople: String,
-        guildId: String?,
+        maxPeople: Int,
+        guildId: Int?,
         place: String,
         selectedCourse: List<Int>
     ) {
