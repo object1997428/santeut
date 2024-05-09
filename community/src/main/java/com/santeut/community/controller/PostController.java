@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -37,8 +38,8 @@ public class PostController {
 
     // 게시글 생성 컨트롤러 ( CREATE )
     @PostMapping("")
-    public ResponseEntity<BasicResponse> createPost(@RequestBody PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId) {
-        postService.createPost(postCreateRequestDto, userId);
+    public ResponseEntity<BasicResponse> createPost(@RequestPart List<MultipartFile> images,  @RequestPart PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId) {
+        postService.createPost(postCreateRequestDto,images, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "성공적으로 게시글 작성");
     }
 

@@ -8,6 +8,7 @@ import java.util.List;
 @Setter @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
 public class PostCreateRequestDto {
 
