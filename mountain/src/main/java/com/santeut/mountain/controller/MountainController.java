@@ -5,15 +5,11 @@ import com.santeut.mountain.common.response.PagingResponse;
 import com.santeut.mountain.common.util.ResponseUtil;
 import com.santeut.mountain.dto.request.PartyTrackDataReginRequest;
 import com.santeut.mountain.dto.response.CourseInfoResponseDto;
-import com.santeut.mountain.entity.CourseEntity;
 import com.santeut.mountain.service.CourseService;
 import com.santeut.mountain.service.MountainService;
-import feign.Response;
-import jakarta.persistence.Basic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +61,7 @@ public class MountainController {
       @PageableDefault(page = 0, size = 5) Pageable pageable
   ) {
     Page<CourseInfoResponseDto> page = courseService.findCourseByMountainId(mountainId, pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, page.getContent(), page.isFirst(),
-        page.isLast(), page.getNumber(), page.getTotalPages(), page.getTotalElements(),
-        page.getSize(), false, false, false);
+    return ResponseUtil.buildPagingResponse(HttpStatus.OK, page, false, false, false);
   }
 
   @GetMapping("/v2/course/{courseId}")
