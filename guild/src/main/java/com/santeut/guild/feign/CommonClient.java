@@ -1,12 +1,10 @@
 package com.santeut.guild.feign;
 
-import com.santeut.guild.feign.dto.CommentFeignDto;
 import com.santeut.guild.feign.dto.CommentListFeignDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -30,9 +28,10 @@ public interface CommonClient {
     @GetMapping("/like/check/{postId}/{postType}/{userId}")
     Optional<FeignResponseDto<Map<String,Boolean>>> likePushed(@PathVariable Integer postId, @PathVariable Character postType, @PathVariable Integer userId);
 
-    // 이미지 s3에 저장
-    @PostMapping("/image/upload/{referenceId}/{referenceType}")
-    void saveImageUrl(@PathVariable  Integer referenceId, @PathVariable Character referenceType, @RequestBody Map<String, String> imageUrl);
+    // 이미지 S3에 저장 하고 DB에 저장
+    @PostMapping(value="/image/save/{referenceId}/{referenceType}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    void saveImage(@PathVariable int referenceId, @PathVariable char referenceType ,@RequestPart List<MultipartFile> images);
+
 
     // 게시글 이미지 리스트 불러오기
     @GetMapping("/image/{referenceId}/{referenceType}")

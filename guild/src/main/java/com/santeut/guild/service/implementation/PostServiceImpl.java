@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -41,8 +42,9 @@ public class PostServiceImpl implements PostService {
 
     // 길드 게시글 작성
     @Override
-    public void createPost(PostCreateRequestDto reqDto, int userId) {
-//        int categoryId = categoryRepository.findByCategoryName(reqDto.getType()).orElseThrow(()->new CategoryNotFoundException("카테고리가 존재하지 않습니다.")).getCategoryId();
+    public void createPost(PostCreateRequestDto reqDto, List<MultipartFile> images , int userId) {
+
+        // 게시글 DB에 저장
         GuildPostEntity newPost = guildPostRepository.save(GuildPostEntity .builder()
                         .categoryId(reqDto.getCategoryId())
                         .guildId(reqDto.getGuildId())
@@ -51,15 +53,10 @@ public class PostServiceImpl implements PostService {
                         .guildPostContent(reqDto.getGuildPostContent())
                         .build()
         );
-        // 이미지 넣기
-        try {
-            for (String url : reqDto.getImages()) {
-                Map<String, String> imageUrl = new HashMap<>();
-                imageUrl.put("imageUrl", url);
-                commonClient.saveImageUrl(newPost.getId(), 'G', imageUrl);
-            }
-        } catch(FeignClientException e) {
-            log.error("이미지 저장 에러 : {}", e.getMessage());
+
+        // 이미지 넣기 로직
+        if(images !=null && !images.isEmpty()) {
+            commonClient.saveImage(newPost.getId(), 'G', images);
         }
     }
 
