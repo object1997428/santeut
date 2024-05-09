@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/image")
@@ -25,18 +27,20 @@ public class ImageController {
     private final ImageService imageService;
 
     // 게시글 이미지 저장 (CREATE)
-    @PostMapping("/upload/{referenceId}/{referenceType}")
-    public ResponseEntity<BasicResponse> saveImageUrl(@PathVariable Integer referenceId, @PathVariable Character referenceType,@RequestBody Map<String, String> imageUrl) {
-        imageService.savePostImages(referenceId, referenceType, imageUrl.get("imageUrl"));
-        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 이미지가 저장되었습니다.");
-    }
-    // 게시글 이미지 s3에 저장
-    @PostMapping("/save")
-    public ResponseEntity<BasicResponse> uploadFile(@RequestParam("image") MultipartFile image) {
-        String url = imageService.uploadImage(image);
-        Map<String, String> res = new HashMap<>();
-        res.put("imageUrl", url);
-        return ResponseUtil.buildBasicResponse(HttpStatus.OK, res);
+    @PostMapping("/save/{referenceId}/{referenceType}")
+    public ResponseEntity<BasicResponse> uploadFile(@PathVariable int referenceId, @PathVariable char referenceType, @RequestPart List<MultipartFile> images) {
+        List<String> imageUrlList = new ArrayList<>();
+
+        // S3에 저장
+        for(MultipartFile image : images) {
+            imageUrlList.add(imageService.uploadImage(image));
+        }
+        Map<String, List<String>> res = new HashMap<>();
+        // DB에 이미지 URL 저장
+        for(String imageUrl : imageUrlList) {
+            imageService.savePostImages(referenceId, referenceType, imageUrl);
+        }
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 이미지가 저장 됨");
     }
 
     // 게시글 이미지들 불러오기 (READ)
