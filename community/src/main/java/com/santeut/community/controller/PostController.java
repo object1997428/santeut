@@ -38,7 +38,7 @@ public class PostController {
 
     // 게시글 생성 컨트롤러 ( CREATE )
     @PostMapping("")
-    public ResponseEntity<BasicResponse> createPost(@RequestPart List<MultipartFile> images,  @RequestPart PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId) {
+    public ResponseEntity<BasicResponse> createPost(@RequestPart(required = false) List<MultipartFile> images,  @RequestPart PostCreateRequestDto postCreateRequestDto, @RequestHeader int userId) {
         postService.createPost(postCreateRequestDto,images, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "성공적으로 게시글 작성");
     }
