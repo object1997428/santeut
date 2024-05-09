@@ -31,11 +31,12 @@ public class GuildController {
     }
 
     @GetMapping("/{guildId}")
-    public BasicResponse getDetailGuild(@PathVariable int guildId,  HttpServletRequest httpServletRequest){
+    public BasicResponse getDetailGuild(@PathVariable int guildId,  HttpServletRequest request){
 
-        log.debug("userId : "+ httpServletRequest.getHeader("userId"));
+        log.debug("userId : "+ request.getHeader("userId"));
         log.debug("동호회 상세 조회 : "+ guildId);
-        return new BasicResponse(HttpStatus.OK.value(), guildService.getDetailGuild(guildId));
+        int userId = Integer.parseInt(request.getHeader("userId"));
+        return new BasicResponse(HttpStatus.OK.value(), guildService.getDetailGuild(guildId, userId));
     }
 
     @PatchMapping("/{guildId}")

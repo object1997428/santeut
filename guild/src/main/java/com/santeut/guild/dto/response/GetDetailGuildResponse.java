@@ -27,6 +27,7 @@ public class GetDetailGuildResponse {
     int guildMaxAge;
     LocalDateTime createdAt;
 
+
     public GetDetailGuildResponse(GuildEntity guildEntity){
         this.guildId = guildEntity.getGuildId();
         this.guildName = guildEntity.getGuildName();

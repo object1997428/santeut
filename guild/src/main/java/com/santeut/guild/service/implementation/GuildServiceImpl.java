@@ -4,15 +4,10 @@ import com.santeut.guild.common.exception.DataNotFoundException;
 import com.santeut.guild.common.response.ResponseCode;
 import com.santeut.guild.dto.request.CreateGuildRequest;
 import com.santeut.guild.dto.request.PatchGuildInfoRequest;
-import com.santeut.guild.dto.response.GetDetailGuildResponse;
-import com.santeut.guild.dto.response.GetGuildListResponse;
-import com.santeut.guild.dto.response.GetMyGuildResponse;
-import com.santeut.guild.dto.response.SearchGuildListResponse;
-import com.santeut.guild.entity.GuildEntity;
-import com.santeut.guild.entity.GuildUserEntity;
-import com.santeut.guild.entity.Image;
-import com.santeut.guild.entity.RegionEntity;
+import com.santeut.guild.dto.response.*;
+import com.santeut.guild.entity.*;
 import com.santeut.guild.repository.GuildRepository;
+import com.santeut.guild.repository.GuildRequestRepository;
 import com.santeut.guild.repository.GuildUserRepository;
 import com.santeut.guild.repository.RegionRepository;
 import com.santeut.guild.service.GuildService;
@@ -38,6 +33,7 @@ public class GuildServiceImpl implements GuildService {
     private final RegionRepository regionRepository;
     private final RegionUtil regionUtil;
     private final GuildUserRepository guildUserRepository;
+    private final GuildRequestRepository guildRequestRepository;
 
     @Override
     public void createGuild(CreateGuildRequest request, String userId, MultipartFile multipartFile) {
@@ -68,12 +64,26 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public GetDetailGuildResponse getDetailGuild(int guildId) {
+    public GetDetailGuildWithStatusResponse getDetailGuild(int guildId, int userId) {
 
         GuildEntity guildEntity = guildRepository.findByGuildId(guildId)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
 
-        return new GetDetailGuildResponse(guildEntity);
+        GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildId, userId)
+                .orElse(null);
+
+        char status = 'N';
+        if (guildRequestEntity != null){
+
+            if (guildRequestEntity.getStatus() == 'R'){
+                status = 'R';
+            }
+            else if(guildRequestEntity.getStatus() == 'A') {
+                status = 'A';
+            }
+        }
+
+        return new GetDetailGuildWithStatusResponse(guildEntity, status);
     }
 
     @Override
