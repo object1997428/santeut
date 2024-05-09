@@ -33,6 +33,13 @@ public class AlarmController {
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "알람이 성공적으로 삭제되었습니다.");
     }
 
+    // 알람 목록 조회하기 ( READ )
+    @GetMapping("")
+    public ResponseEntity<BasicResponse> getAlarms(@RequestHeader int userId) {
+        alarmService.getAlarms(userId);
+        return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, alarmService.getAlarms(userId));
+    }
+
     //알림 생성하기
     @PostMapping
     ResponseEntity<?> alertHiking(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest){

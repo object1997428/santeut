@@ -7,6 +7,7 @@ import com.santeut.common.dto.FCMCategory;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.dto.request.AlarmRequestDto;
 import com.santeut.common.dto.request.CommonHikingStartFeignRequest;
+import com.santeut.common.dto.response.AlarmListResponseDto;
 import com.santeut.common.entity.AlarmEntity;
 import com.santeut.common.entity.AlarmTokenEntity;
 import com.santeut.common.entity.SafetyAlertEntity;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -90,5 +92,20 @@ public class AlarmService {
                 alarmRepository.save(alarm);
             }
         }
+    }
+
+    public AlarmListResponseDto getAlarms(int userId) {
+
+        List<AlarmEntity> alarmEntities = alarmRepository.findAllByIdAndIsDeletedFalseOrderByCreatedAtDesc(userId).orElseThrow(null);
+        return new AlarmListResponseDto(alarmEntities.stream()
+                .map(alarm ->
+                     AlarmListResponseDto.Alarm.builder()
+                            .alarmTitle(alarm.getAlarmTitle())
+                            .alarmContent(alarm.getAlarmContent())
+                            .referenceId(alarm.getReferenceId())
+                            .referenceType(alarm.getReferenceType())
+                            .createdAt(alarm.getCreatedAt())
+                            .build()
+                ).collect(Collectors.toList()));
     }
 }

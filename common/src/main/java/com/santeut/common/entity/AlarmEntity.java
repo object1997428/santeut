@@ -22,7 +22,7 @@ public class AlarmEntity extends BaseEntity {
     private int userId;
 
     @NotNull
-    @Column(name = "reference_type", length = 255)
+    @Column(name = "reference_type", length = 1)
     private Character referenceType;
 
     @NotNull
