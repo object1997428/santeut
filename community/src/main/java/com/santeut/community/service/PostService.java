@@ -84,6 +84,15 @@ public class PostService {
         if(!images.isEmpty()) {
             commonServerService.saveImage(newPost.getId(), newPost.getPostType(),images);
         }
+
+        // 이미지 DB에 넣기
+//        try {
+//            for (String url : postCreateRequestDto.getImages()) {
+//                commonServerService.saveImageUrl(newPost.getId(), newPost.getPostType(), url);
+//            }
+//        } catch(FeignClientException e) {
+//            log.error("이미지 저장 에러 : {}", e.getMessage());
+//        }
     }
 
     // 게시글 읽기 (READ)
