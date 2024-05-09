@@ -1,5 +1,6 @@
 package com.santeut.party.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.santeut.party.entity.Party;
 import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
@@ -11,9 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
 public class PartyInfoResponseDto {
 
   public int partyId;
+  public Integer partyUserId;
   public String partyName;
   public String guildName;
   public String schedule;
@@ -23,13 +26,14 @@ public class PartyInfoResponseDto {
   public int curPeople;
   public String owner;
   public char status;
-  public boolean isMember;
+  public Boolean isMember;
 
-  public static PartyInfoResponseDto of(String nickname, Party entity, boolean isMember) {
+  public static PartyInfoResponseDto of(String nickname, Integer partyUserId, Party entity, Boolean isMember, String guildName) {
     return PartyInfoResponseDto.builder()
         .partyId(entity.getPartyId())
+        .partyUserId(partyUserId)
         .partyName(entity.getPartyName())
-        .guildName("TODO")
+        .guildName(guildName)
         .schedule(entity.getSchedule().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
         .mountainName(entity.getMountainName())
         .place(entity.getPlace())

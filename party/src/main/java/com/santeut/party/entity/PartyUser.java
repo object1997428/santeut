@@ -85,10 +85,11 @@ public class PartyUser extends BaseEntity {
         this.bestHeight = bestHeight;
     }
 
-    public static PartyUser of(int userId, int partyId) {
+    public static PartyUser of(int userId, int partyId, int mountainId) {
         return PartyUser.builder()
                 .userId(userId)
                 .partyId(partyId)
+                .mountainId(mountainId)
                 .status('B')
                 .build();
     }
