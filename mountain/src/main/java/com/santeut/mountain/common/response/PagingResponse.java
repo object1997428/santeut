@@ -2,20 +2,19 @@ package com.santeut.mountain.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.domain.Page;
 
 @Data
 @AllArgsConstructor
 public class PagingResponse<T> {
 
   private int status;
-  private T data;
-  private boolean isFirst;
-  private boolean isLast;
-  private int page;
-  private int totalPage;
-  private Long totalElements;
-  private int size;
-  private boolean sorted = false;
-  private boolean asc = false;
-  private boolean filtered = false;
+  private PagingDataResponse<T> data;
+
+  public PagingResponse(int status, Page<?> page, boolean sorted, boolean asc, boolean filtered) {
+    this.status = status;
+    this.data = new PagingDataResponse(page.getContent(), page.isFirst(), page.isLast(),
+        page.getNumber(), page.getTotalPages(), page.getTotalElements(), page.getSize(), sorted,
+        asc, filtered);
+  }
 }
