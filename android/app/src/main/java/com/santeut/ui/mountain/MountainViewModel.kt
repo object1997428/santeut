@@ -37,14 +37,9 @@ class MountainViewModel @Inject constructor(
     fun searchMountain(name: String, region: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-//                val data = mountainUseCase.searchMountain(name, region)
-//                _mountains.postValue(data.result)
-
-                mountainUseCase.searchMountain(name, region).let{ data ->
-                    Log.d("", data.result.get(0).mountainName)
-                    _mountains.postValue(data.result)
+                mountainUseCase.searchMountain(name, region).let{
+                    _mountains.postValue(mountainUseCase.searchMountain(name, region))
                 }
-
             } catch (e: Exception) {
                 _error.postValue("산 목록 조회 실패: ${e.message}")
             }
