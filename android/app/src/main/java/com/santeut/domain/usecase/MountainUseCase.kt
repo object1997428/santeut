@@ -9,6 +9,6 @@ import javax.inject.Inject
 class MountainUseCase @Inject constructor(
     private val mountainRepository: MountainRepository
 ) {
-    suspend fun searchMountain(name: String, region: String?): MountainListResponse =
+    suspend fun searchMountain(name: String, region: String?): List<MountainResponse> =
         mountainRepository.searchMountain(name, region)
 }

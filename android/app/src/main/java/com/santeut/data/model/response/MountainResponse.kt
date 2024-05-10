@@ -16,6 +16,6 @@ data class MountainResponse(
     @SerializedName("courseCount") val courseCount: Int,
     @SerializedName("isTop100") val isTop100: Boolean,
     @SerializedName("image") val image: String,
-    @SerializedName("top100") val top100: Boolean,
+    @SerializedName("top100") val top100: Boolean
 
-    )
+)

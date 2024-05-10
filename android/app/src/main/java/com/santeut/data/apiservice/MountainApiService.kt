@@ -12,5 +12,5 @@ interface MountainApiService {
     fun searchMountain(
         @Query("name") name: String,
         @Query("region") region: String?
-    ): Call<MountainListResponse>
+    ): CustomResponse<MountainListResponse>
 }
