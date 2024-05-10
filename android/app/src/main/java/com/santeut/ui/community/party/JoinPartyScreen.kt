@@ -67,7 +67,7 @@ fun JoinPartyScreen(
         if(partyList.isEmpty()){
             Text(text = "소모임이 없습니다")
         }else{
-            LazyColumn {
+            LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
                 items(partyList){party ->
                     PartyCard(party)
                 }

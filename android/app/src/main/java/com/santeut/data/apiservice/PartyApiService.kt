@@ -2,6 +2,7 @@ package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.MyPartyListResponse
 import com.santeut.data.model.response.PartyListResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -19,8 +20,18 @@ interface PartyApiService {
         @Query("end") end: String?
     ): CustomResponse<PartyListResponse>
 
+    @GET("/api/party/user")
+    suspend fun getMyPartyList(
+        @Query("date") date: String?,
+        @Query("includeEnd") includeEnd: Boolean,
+        @Query("page") page: Int?,
+        @Query("size") size: Int?
+    ): CustomResponse<MyPartyListResponse>
+
     @POST("/api/party/")
     suspend fun createParty(
         @Body createPartyRequest: CreatePartyRequest
     ): CustomResponse<Unit>
+
+
 }
