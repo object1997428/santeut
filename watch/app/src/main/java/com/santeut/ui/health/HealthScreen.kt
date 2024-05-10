@@ -85,8 +85,8 @@ fun HealthDataScreen(
             item {
                 HealthItem(
                     title = "이동거리",
-                    value = uiState.exerciseState?.exerciseMetrics?.distance?.toInt()?.toString() ?: "--",
-                    unit = "bpm"
+                    value = "%.2f".format(uiState.exerciseState?.exerciseMetrics?.distance?.div(1000) ?: 0.0).takeIf { it != "0.00" } ?: "--",
+                    unit = "km"
                 )
             }
             item {

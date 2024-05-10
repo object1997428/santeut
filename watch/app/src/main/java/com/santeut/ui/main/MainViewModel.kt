@@ -19,7 +19,9 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            healthServicesRepository.prepareExercise()
+            healthServicesRepository.prepareExercise().let {
+                Log.d("Prepare Success", "Prepare Success")
+            }
         }
     }
 
