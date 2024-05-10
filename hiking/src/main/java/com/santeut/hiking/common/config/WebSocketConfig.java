@@ -13,8 +13,6 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @EnableWebSocket
 @Slf4j
 public class WebSocketConfig implements WebSocketConfigurer {
-    //    private final WebSocketHandler webSocketHandler;
-//private final RoomRepository roomRepository; // RoomRepository 의존성 주입
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(socketTextHandler(), "/chat/rooms/*")
