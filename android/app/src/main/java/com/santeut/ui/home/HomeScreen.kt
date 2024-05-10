@@ -202,12 +202,13 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
             Box(
                 modifier = Modifier
                     .height(100.dp)
-                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
+//                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
                     .clip(shape = RoundedCornerShape(20.dp))
             ) {
                 AsyncImage(
                     model = mountain.image ?: R.drawable.logo,
                     contentDescription = "산 이미지",
+                    modifier = Modifier.width(160.dp).height(100.dp),
                     contentScale = ContentScale.Crop
                 )
             }
