@@ -31,6 +31,8 @@ public class PostReadResponseDto {
 
     private String userNickname;
 
+    private int userId;
+
     private LocalDateTime createdAt;
 
     private int likeCnt;
