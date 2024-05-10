@@ -82,4 +82,11 @@ public class GuildController {
         log.debug("동호회 필터링 검색");
         return new BasicResponse(HttpStatus.OK.value(), guildService.searchGuildList(regionName, gender));
     }
+
+    @GetMapping("/{guildId}/link")
+    public BasicResponse shareLink(@PathVariable int guildId){
+
+        log.debug("링크 공유");
+        return new BasicResponse(HttpStatus.OK.value(), guildService.shareLink(guildId));
+    }
 }

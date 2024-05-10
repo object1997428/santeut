@@ -74,15 +74,9 @@ public class GuildServiceImpl implements GuildService {
 
         char status = 'N';
         if (guildRequestEntity != null){
-
-            if (guildRequestEntity.getStatus() == 'R'){
-                status = 'R';
-            }
-            else if(guildRequestEntity.getStatus() == 'A') {
-                status = 'A';
-            }
+            if (guildRequestEntity.getStatus() == 'R') status = 'R';
+            else if(guildRequestEntity.getStatus() == 'A') status = 'A';
         }
-
         return new GetDetailGuildWithStatusResponse(guildEntity, status);
     }
 
@@ -165,24 +159,20 @@ public class GuildServiceImpl implements GuildService {
         RegionEntity regionEntity = regionRepository.findByRegionName(regionName)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.WRONG_REGION_NAME));
 
-        List<GuildEntity> searchGuildList;
 
-        if(!regionName.equals("전체") && gender.equals("전체")) {
-            log.debug("지역 검색");
-            searchGuildList = guildRepository.searchRegionName(regionEntity.getRegionId());
-        }
-        else if(regionName.equals("전체") && !gender.equals("전체")) {
-            log.debug("성별 검색");
-            searchGuildList = guildRepository.searchGender(gender);
-        }
-        else if(!regionName.equals("전체") && !gender.equals("전체")) {
-            log.debug("지역 검색 & 성별 검색");
-            searchGuildList = guildRepository.searchRegionNameAndGender(regionEntity.getRegionId(), gender);
-        }
-        else {
-            log.debug("전체 검색");
-            searchGuildList = guildRepository.findByAllGuild();
-        }
+        String genderType;
+        if (gender.equals("남성")) genderType = "M";
+        else if(gender.equals("여성")) genderType = "F";
+        else genderType = "A";
+
+        List<GuildEntity> searchGuildList = guildRepository.searchGuild(regionEntity.getRegionId(), genderType);
         return new SearchGuildListResponse(GetDetailGuildResponse.guildList(searchGuildList));
+    }
+
+    @Override
+    public ShareLinkResponse shareLink(int guildId) {
+
+        String url = "https://www.google.com/search?q=%EA%B3%A0%EC%96%91%EC%9D%B4&oq=%EA%B3%A0%EC%96%91%EC%9D%B4&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTM5MzFqMGoxNagCALACAA&sourceid=chrome&ie=UTF-8";
+        return new ShareLinkResponse(url);
     }
 }

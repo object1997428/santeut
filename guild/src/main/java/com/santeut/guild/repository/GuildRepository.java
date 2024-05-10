@@ -25,13 +25,11 @@ public interface GuildRepository extends JpaRepository<GuildEntity, Integer> {
     @Query("SELECT g FROM GuildEntity g ORDER BY g.guildId DESC")
     Optional<GuildEntity> findLastRecord();
 
-    @Query("SELECT g FROM GuildEntity g " +
-            "WHERE ((:regionId = 0 AND (:guildGender IS NULL OR g.guildGender = :guildGender)) OR" +
-            " (:regionId <> 0 AND g.regionId = :regionId AND (:guildGender IS NULL OR g.guildGender = :guildGender))) AND g.isDeleted = false")
-    List<GuildEntity> searchGuildList(
-            @Param("regionId") int regionId,
-            @Param("guildGender") String guildGender
-    );
+    @Query("SELECT g FROM GuildEntity g WHERE " +
+    "(:regionId = 0 OR g.regionId = :regionId) AND " +
+    "(:guildGender = 'A' OR g.guildGender = :guildGender) AND "+
+    "g.isDeleted = false AND g.guildIsPrivate = false")
+    List<GuildEntity> searchGuild(@Param("regionId") Integer regionId, @Param("guildGender") String guildGender);
 
     @Query("SELECT g FROM GuildEntity g WHERE g.regionId = :regionId AND g.isDeleted = false AND g.guildIsPrivate = false")
     List<GuildEntity> searchRegionName(@Param("regionId") int regionId);

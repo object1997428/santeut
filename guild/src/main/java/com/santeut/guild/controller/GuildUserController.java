@@ -84,7 +84,7 @@ public class GuildUserController {
     }
 
     @DeleteMapping("/{guildId}/quit")
-    public BasicResponse guidGuild(@PathVariable int guildId,
+    public BasicResponse quitGuild(@PathVariable int guildId,
                                    HttpServletRequest request){
 
         log.debug("동호회 탈퇴");
