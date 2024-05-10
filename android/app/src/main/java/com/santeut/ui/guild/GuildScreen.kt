@@ -70,7 +70,7 @@ fun GuildScreen(
                 when (page) {
                     0 -> GuildInfoScreen(guild)
                     1 -> GuildCommunityScreen()
-                    2 -> JoinPartyScreen()
+                    2 -> JoinPartyScreen(guildId)
                     3 -> GuildRankingScreen()
                     else -> Text("Unknown page")
                 }
