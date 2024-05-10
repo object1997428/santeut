@@ -42,6 +42,9 @@ dependencies {
 
     //spring schedule
 
+    // Eureka Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
 }
 
 dependencyManagement {
