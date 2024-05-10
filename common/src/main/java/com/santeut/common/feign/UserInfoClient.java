@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Optional;
 
-@FeignClient(name="userInfoClient", url = "${user-service.url}", configuration = FeignConfiguration.class)
+@FeignClient(name="userInfoClient", url = "${user-service.url}")
 public interface UserInfoClient {
     @GetMapping("/user")
     Optional<UserInfoFeignRequestDto> getUserInfo();
