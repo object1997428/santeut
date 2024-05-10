@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +33,8 @@ fun CreatePartyScreen(
     var schedule by remember { mutableStateOf("") }
 
     val selectedCourse = listOf<Int>()
+
+    val partyCreationSuccess by partyViewModel.partyCreationSuccess.observeAsState()
 
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(
@@ -96,6 +99,10 @@ fun CreatePartyScreen(
                 "승학산", maxPeople.toInt(), 1, place,
                 selectedCourse
             )
+
+            if(partyCreationSuccess==true){
+                // 로직 추가
+            }
         }) {
             Text("소모임 생성", fontSize = 18.sp)
         }

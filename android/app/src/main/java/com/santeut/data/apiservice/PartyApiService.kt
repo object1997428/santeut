@@ -11,12 +11,12 @@ import java.time.LocalDate
 
 interface PartyApiService {
 
-    @GET("/api/party")
+    @GET("/api/party/")
     suspend fun getPartyList(
-        @Query("guild") guild: Int,
-        @Query("name") name: String,
-        @Query("start") start: LocalDate,
-        @Query("end") end: LocalDate
+        @Query("guild") guild: Int?,
+        @Query("name") name: String?,
+        @Query("start") start: String?,
+        @Query("end") end: String?
     ): CustomResponse<PartyListResponse>
 
     @POST("/api/party/")

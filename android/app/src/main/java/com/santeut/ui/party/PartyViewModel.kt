@@ -1,10 +1,12 @@
 package com.santeut.ui.party
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.PartyResponse
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,6 +22,25 @@ class PartyViewModel @Inject constructor(
 
     private val _partyCreationSuccess = MutableLiveData<Boolean>()
     val partyCreationSuccess: LiveData<Boolean> = _partyCreationSuccess
+
+    private val _partyList = MutableLiveData<List<PartyResponse>>()
+    val partyList: LiveData<List<PartyResponse>> = _partyList
+
+    fun getPartyList(
+        guildId: Int?,
+        name: String?,
+        start: String?,
+        end: String?
+    ) {
+        viewModelScope.launch{
+            try {
+                Log.d("PartyViewModel", _partyList.value?.size.toString())
+                _partyList.value = partyUseCase.getPartyList(guildId, name, start, end)
+            } catch (e:Exception){
+                _error.value = "소모임 목록 조회 실패: ${e.message}"
+            }
+        }
+    }
 
     fun createParty(
         schedule: String,
@@ -47,7 +68,7 @@ class PartyViewModel @Inject constructor(
                 partyUseCase.createParty(createPartyRequest).collect {
                     _partyCreationSuccess.value = true
                 }
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 _error.value = "파티 생성 실패: ${e.message}"
                 _partyCreationSuccess.value = false
             }
