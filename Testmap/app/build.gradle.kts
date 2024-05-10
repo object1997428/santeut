@@ -40,7 +40,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -79,4 +79,14 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    // stomp
+    implementation ("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+
+    //rx
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.5")
+    implementation ("io.reactivex.rxjava2:rxandroid:2.1.0")
+
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.9.23")
+    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
