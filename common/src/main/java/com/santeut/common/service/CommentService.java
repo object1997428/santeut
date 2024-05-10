@@ -2,10 +2,13 @@ package com.santeut.common.service;
 
 import com.santeut.common.common.exception.*;
 import com.santeut.common.dto.request.AlarmRequestDto;
+import com.santeut.common.dto.request.CommunityFeignDto;
+import com.santeut.common.dto.request.GuildPostFeignDto;
 import com.santeut.common.dto.request.UserInfoFeignRequestDto;
 import com.santeut.common.dto.response.CommentListResponseDto;
 import com.santeut.common.entity.CommentEntity;
 import com.santeut.common.feign.CommunityClient;
+import com.santeut.common.feign.GuildClient;
 import com.santeut.common.feign.UserInfoClient;
 import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.CommentRepository;
@@ -29,8 +32,10 @@ public class CommentService {
     private final AuthServerService authServerService;
     private final AlarmService alarmService;
     private final CommunityClient communityClient;
+    private final GuildClient guildClient;
 
     // 댓글 작성 (CREATE)
+    @Transactional
     public void createComment(int postId, char postType, String commentContent, int userId) {
             CommentEntity comment = commentRepository.save(CommentEntity.builder()
                     .commentReferenceType(postType)
@@ -41,17 +46,19 @@ public class CommentService {
             );
             // 길드 게시판인지 커뮤니티 게시판인지에 따라 다른 서버 서비스 호출
             int postUserId = 0;
+            String commentUserNickname = authServerService.getNickname(userId);
             if(postType == 'G') {
+                postUserId = guildClient.getPostInfo(postId, userId).orElseThrow(() -> new FeignClientException("guild에서 길드게시글 요청 실패")).getData().getUserId();
             }else {
-                postUserId = communityClient.getPostInfo(postId, postType).orElseThrow(()->new FeignClientException("community에 요청 실패")).getData().getUserId();
+                postUserId = communityClient.getPostInfo(postId, postType, userId).orElseThrow(() -> new FeignClientException("community에 요청 실패")).getData().getUserId();
             }
             // 알람 만들 DTO 작성
             AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
                     .userId(postUserId)
                     .referenceId(comment.getCommentReferenceId())
                     .referenceType(comment.getCommentReferenceType())
-                    .alarmTitle("댓글 알림!")
-                    .alarmContent("님이 쓴 게시글에 댓글 달림 ㅋ")
+                    .alarmTitle("✉ 댓글 알림")
+                    .alarmContent(commentUserNickname+"님이 댓글을 남기셨습니다.")
                     .build();
 
 //             알람을 만들어주는 함수 호출

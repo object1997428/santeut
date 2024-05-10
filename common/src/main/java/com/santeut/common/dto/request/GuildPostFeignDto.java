@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommunityFeignDto {
+public class GuildPostFeignDto {
     private int userId;
     private String userNickname;
 }
