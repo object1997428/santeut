@@ -88,9 +88,12 @@ public class PartyUserServiceImpl implements PartyUserService {
   @Override
   public Page<PartyInfoResponseDto> findMyParty(int userId, boolean includeEnd, LocalDate date,
       Pageable pageable) {
+        log.info("내 소모임 찾기");
     Page<PartyWithPartyUserIdResponse> myParties = partyRepository.findMyPartyWithSearchCondition(
         includeEnd, date, userId, pageable);
     return myParties.map(p -> {
+      log.info("owner id: "+p.getParty().getUserId());
+      log.info("guild id: "+p.getParty().getGuildId());
       String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
       String guildName = (p.getParty().getGuildId() == null) ? ""
           : guildAccessUtil.getGuildInfo(p.getParty().getGuildId()).getGuildName();
