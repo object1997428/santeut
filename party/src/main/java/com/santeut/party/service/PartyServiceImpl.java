@@ -84,6 +84,7 @@ public class PartyServiceImpl implements PartyService {
   public Page<PartyInfoResponseDto> findParty(int userId, Integer guildId, String name,
       LocalDate startDate, LocalDate endDate, Pageable pageable
   ) {
+    log.info("소모임 조회 요청: userId, guildId, name"+userId+", "+guildId+", "+name);
     Page<Party> parties = partyRepository.findPartyWithSearchConditions(userId, guildId, name,
         startDate, endDate,
         pageable);
@@ -100,6 +101,7 @@ public class PartyServiceImpl implements PartyService {
 
   @Override
   public PartyInfoResponseDto findPartyById(int userId, int partyId) {
+    log.info("소모임 조회 요청: partyId="+partyId);
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
     String owner = userInfoAccessUtil.getUserInfo(party.getUserId()).getUserNickname();
