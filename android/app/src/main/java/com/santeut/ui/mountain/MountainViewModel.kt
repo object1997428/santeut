@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.CustomResponse
+import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainListResponse
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.domain.usecase.MountainUseCase
@@ -34,10 +35,13 @@ class MountainViewModel @Inject constructor(
     private val _mountains = MutableLiveData<List<MountainResponse>>()
     val mountains: LiveData<List<MountainResponse>> = _mountains
 
-    fun popularMountain(){
+    private val _mountain = MutableLiveData<MountainDetailResponse>()
+    val mountain: LiveData<MountainDetailResponse> = _mountain
+
+    fun popularMountain() {
         viewModelScope.launch {
             try {
-                mountainUseCase.popularMountain().let{
+                mountainUseCase.popularMountain().let {
                     _mountains.postValue(mountainUseCase.popularMountain())
                 }
             } catch (e: Exception) {
@@ -49,11 +53,23 @@ class MountainViewModel @Inject constructor(
     fun searchMountain(name: String, region: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                mountainUseCase.searchMountain(name, region).let{
+                mountainUseCase.searchMountain(name, region).let {
                     _mountains.postValue(mountainUseCase.searchMountain(name, region))
                 }
             } catch (e: Exception) {
                 _error.postValue("산 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun mountainDetail(mountainId: Int) {
+        viewModelScope.launch {
+            try {
+                mountainUseCase.mountainDetail(mountainId).let {
+                    _mountain.postValue(mountainUseCase.mountainDetail(mountainId))
+                }
+            } catch (e: Exception) {
+                _error.postValue("산 상세 정보 조회 실패: ${e.message}")
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.CustomResponse
+import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainListResponse
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.data.repository.MountainRepository
@@ -13,4 +14,7 @@ class MountainUseCase @Inject constructor(
     suspend fun popularMountain(): List<MountainResponse> = mountainRepository.popularMountain()
     suspend fun searchMountain(name: String, region: String?): List<MountainResponse> =
         mountainRepository.searchMountain(name, region)
+
+    suspend fun mountainDetail(mountainId: Int): MountainDetailResponse =
+        mountainRepository.mountainDetail(mountainId)
 }
