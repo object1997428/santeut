@@ -51,10 +51,9 @@ public class SocketTextHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus status) {
-//        Integer roomId = getRoomId(session);
-//        roomRepository.room(roomId).getSessions().remove(session);
-
-        sessions.remove(session);
+        Integer roomId = getRoomId(session);
+        roomRepository.room(roomId).getSessions().remove(session);
+        
         log.info("특정 클라이언트와의 연결이 해제되었습니다.");
     }
 
