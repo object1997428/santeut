@@ -23,7 +23,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session,
                                      TextMessage message) throws IOException {
         System.out.println(message.getPayload());
-
+        log.info("[SocketTextHandler]: 클라이언트에게 메세지 전송");
         for (WebSocketSession connectedSession : sessions) {
             connectedSession.sendMessage(message);
         }
@@ -33,6 +33,6 @@ public class SocketTextHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus status) {
         sessions.remove(session);
-        log.info("[SocketTextHandler]: 특정 클라이언트와의 연결이 해제되었습니다.");
+        log.info("[SocketTextHandler]: 특정 클라이언트와의 연결이 해제되었습니다. status={}",status);
     }
 }
