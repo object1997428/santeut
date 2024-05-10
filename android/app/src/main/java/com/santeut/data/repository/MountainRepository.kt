@@ -7,5 +7,6 @@ import retrofit2.Call
 
 interface MountainRepository {
 
+    suspend fun popularMountain(): List<MountainResponse>
     suspend fun searchMountain(name: String, region: String?): List<MountainResponse>
 }
