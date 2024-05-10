@@ -8,6 +8,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class SearchResultResponse {
 
-  List<MountainSearchResponseDto> result;
+  List<MountainSearchResponseDto> mountainList;
 
 }
