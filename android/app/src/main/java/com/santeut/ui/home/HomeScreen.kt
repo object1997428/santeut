@@ -79,7 +79,7 @@ fun HomeScreen(
             )
         }
         item {
-            PopMountainCard(mountainViewModel)
+            PopMountainCard(mountainViewModel, navController)
         }
         item {
             MyGuildCard()
@@ -155,7 +155,8 @@ fun SearchMountainBar(
 
 @Composable
 fun PopMountainCard(
-    mountainViewModel: MountainViewModel
+    mountainViewModel: MountainViewModel,
+    navController: NavController
 ) {
 
     val mountains by mountainViewModel.mountains.observeAsState(emptyList())
@@ -179,18 +180,19 @@ fun PopMountainCard(
                 .fillMaxWidth(),
         ) {
             items(mountains) { mountain ->
-                MountainCard(mountain)
+                MountainCard(mountain, navController)
             }
         }
     }
 }
 
 @Composable
-fun MountainCard(mountain: MountainResponse) {
+fun MountainCard(mountain: MountainResponse, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
-            .width(160.dp),
+            .width(160.dp)
+            .clickable(onClick = { navController.navigate("mountain/${mountain.mountainId}") }),
     ) {
         Column(
             modifier = Modifier
