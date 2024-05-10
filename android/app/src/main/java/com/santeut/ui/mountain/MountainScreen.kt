@@ -28,6 +28,9 @@ import com.santeut.ui.home.HomeSearchBar
 
 @Composable
 fun MountainScreen(
+    mountainId: Int,
     mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
+    
+    Text(text = "산 상세 정보 페이지")
 }

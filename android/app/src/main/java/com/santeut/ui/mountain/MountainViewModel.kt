@@ -34,6 +34,18 @@ class MountainViewModel @Inject constructor(
     private val _mountains = MutableLiveData<List<MountainResponse>>()
     val mountains: LiveData<List<MountainResponse>> = _mountains
 
+    fun popularMountain(){
+        viewModelScope.launch {
+            try {
+                mountainUseCase.popularMountain().let{
+                    _mountains.postValue(mountainUseCase.popularMountain())
+                }
+            } catch (e: Exception) {
+                _error.postValue("인기 있는 산 조회 실패: ${e.message}")
+            }
+        }
+    }
+
     fun searchMountain(name: String, region: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

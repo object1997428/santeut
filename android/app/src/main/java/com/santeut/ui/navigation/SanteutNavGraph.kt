@@ -8,6 +8,7 @@ import com.santeut.ui.navigation.bottom.CommunityNavGraph
 import com.santeut.ui.navigation.bottom.GuildNavGraph
 import com.santeut.ui.navigation.bottom.HomeNavGraph
 import com.santeut.ui.navigation.bottom.MapNavGraph
+import com.santeut.ui.navigation.bottom.MountainNavGraph
 import com.santeut.ui.navigation.bottom.MyPageNavGraph
 
 @Composable
@@ -25,5 +26,6 @@ fun SanteutNavGraph(
         GuildNavGraph(navController)
         MyPageNavGraph(navController)
         ChatNavGraph(navController)
+        MountainNavGraph(navController)
     }
 }
