@@ -73,10 +73,8 @@ fun HomeScreen(
             .background(color = Color.White)
     ) {
         item {
-            HomeSearchBar(
+            SearchMountainBar(
                 navController,
-                onSearchTextChanged = {},
-                onClickSearch = { },
                 onClickMap = {}
             )
         }
@@ -96,10 +94,8 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeSearchBar(
+fun SearchMountainBar(
     navController: NavController,
-    onSearchTextChanged: (String) -> Unit,
-    onClickSearch: () -> Unit,
     onClickMap: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }

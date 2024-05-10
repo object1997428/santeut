@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +34,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.MountainResponse
-import com.santeut.ui.home.HomeSearchBar
+import com.santeut.ui.home.SearchMountainBar
 
 @Composable
 fun MountainListScreen(
@@ -50,10 +49,8 @@ fun MountainListScreen(
     }
 
     Column {
-        HomeSearchBar(
+        SearchMountainBar(
             navController,
-            onSearchTextChanged = {},
-            onClickSearch = {},
             onClickMap = {}
         )
 
