@@ -131,6 +131,7 @@ public class PostServiceImpl implements PostService {
                 .guildPostTitle(entity.getGuildPostTitle())
                 .guildPostContent(entity.getGuildPostContent())
                 .userNickname(userNickName)
+                .userId(entity.getUserId())
                 .createdAt(entity.getCreatedAt())
                 .likeCnt(likeCnt)
                 .commentCnt(commentCnt)
