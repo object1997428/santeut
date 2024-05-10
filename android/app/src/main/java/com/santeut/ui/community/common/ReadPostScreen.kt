@@ -1,13 +1,13 @@
-package com.santeut.ui.community
+package com.santeut.ui.community.common
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,41 +16,61 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
+import com.santeut.ui.community.CommonViewModel
+import com.santeut.ui.community.PostViewModel
+import com.santeut.ui.community.tips.formatTime
+import com.santeut.ui.navigation.top.TopBar
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ReadPostScreen(
     postId: Int,
     postType: Char,
-    postViewModel: PostViewModel
+    postViewModel: PostViewModel,
+    commonViewModel: CommonViewModel,
+    navController: NavController
 ) {
     val focusManager = LocalFocusManager.current
     var comment by remember { mutableStateOf("") }
-
     val post by postViewModel.post.observeAsState()
 
     LaunchedEffect(key1 = postId) {
         postViewModel.readPost(postId, postType)
     }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column {
-            HeaderSection(post)
-            ContentSection(post)
-            CommentSection(
-                comment,
-                onCommentChange = { comment = it },
-                onSend = { focusManager.clearFocus() })
+    Scaffold(
+
+        topBar = {
+            TopBar(navController, "readPost")
+        },
+
+        content = {innerPadding->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column {
+                    HeaderSection(post)
+                    ContentSection(post)
+                    CommentSection(
+                        postId,
+                        postType,
+                        comment,
+                        onCommentChange = { comment = it },
+                        onSend = { focusManager.clearFocus() },
+                        commonViewModel
+                    )
+                }
+            }
         }
-    }
+    )
 }
+
 
 @Composable
 fun HeaderSection(post: PostResponse?) {
@@ -104,47 +124,43 @@ fun ContentSection(post: PostResponse?) {
 
 @Composable
 fun CommentSection(
+    postId: Int,
+    postType: Char,
     comment: String,
     onCommentChange: (String) -> Unit,
     onSend: () -> Unit,
-    modifier: Modifier = Modifier
+    commonViewModel: CommonViewModel,
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        LazyColumn(
+        CommentScreen(postId, postType, commonViewModel)
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
+        fun onSend() {
+            commonViewModel.createComment(postId, postType, comment)
+        }
+        TextField(
+            value = comment,
+            onValueChange = onCommentChange,
+            placeholder = { Text("내용") },
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = 56.dp)
-        ) {
-            items(30) { PostCommentScreen() }
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            TextField(
-                value = comment,
-                onValueChange = onCommentChange,
-                placeholder = { Text("내용") },
-                modifier = Modifier
-                    .weight(1f)
-                    .background(Color.Transparent),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Text,
-                    autoCorrectEnabled = true  // `autoCorrect` 대신 `autoCorrectEnabled` 사용
-                ),
-                keyboardActions = KeyboardActions(onDone = { onSend() })
+                .background(Color.Transparent),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { onSend() })
+        )
+        IconButton(onClick = { onSend() }) {
+            Icon(
+                imageVector = Icons.Outlined.Send,
+                contentDescription = "Send"
             )
-
-            IconButton(onClick = onSend) {
-                Icon(
-                    imageVector = Icons.Filled.Send,
-                    contentDescription = "Send"
-                )
-            }
         }
     }
 }

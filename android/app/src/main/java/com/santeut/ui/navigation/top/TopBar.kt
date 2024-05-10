@@ -39,24 +39,18 @@ fun TopBar(
     navController: NavController,
     currentTap: String?
 ) {
-    if (currentTap == "home") {
-        HomeTopBar(
-            onClickAlert = { /*TODO*/ },
-            onClickChatting = { /*TODO*/ }
-        )
-    } else if (currentTap == "community") {
-        DefaultTopBar(navController, "커뮤니티")
-    } else if (currentTap == "guild"){
-        DefaultTopBar(navController, "동호회")
-    } else if (currentTap == "mypage"){
-        DefaultTopBar(navController, "마이페이지")
+    when (currentTap) {
+        "home" -> HomeTopBar(navController,onClickAlert = { /*TODO*/ }, onClickChatting = { /*TODO*/ })
+        "community", "readPost" -> DefaultTopBar(navController, "커뮤니티")
+        "guild" -> DefaultTopBar(navController, "동호회")
+        "mypage" -> DefaultTopBar(navController, "마이페이지")
     }
-
-    // TopBar 여기서 수정
 }
+
 
 @Composable
 fun HomeTopBar(
+    navController: NavController,
     onClickAlert: () -> Unit,
     onClickChatting: () -> Unit
 ) {
@@ -92,7 +86,7 @@ fun HomeTopBar(
             contentDescription = "채팅",
             modifier = Modifier
                 .padding(10.dp)
-                .clickable { onClickChatting() }
+                .clickable { navController.navigate("chatList") }
         )
         Spacer(modifier = Modifier.width(4.dp))
         Image(
@@ -122,7 +116,7 @@ fun DefaultTopBar(navController: NavController, pageName:String) {
             }
         },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { navController.navigate("chatList")}) {
                 Icon(
                     imageVector = Icons.Outlined.Message,
                     contentDescription = "Message"

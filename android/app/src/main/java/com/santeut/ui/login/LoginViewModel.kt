@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.MainApplication
+import com.santeut.data.model.request.FCMTokenRequest
 import com.santeut.data.model.request.LoginRequest
+import com.santeut.domain.usecase.FCMTokenUseCase
 import com.santeut.domain.usecase.LoginUseCase
 import com.santeut.ui.landing.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val fcmTokenUseCase: FCMTokenUseCase,
 ) : ViewModel() {
 
     private var _userState = mutableStateOf(UserState())
@@ -65,6 +68,19 @@ class LoginViewModel @Inject constructor(
                         Log.d("Login Success", "Success ${data.accessToken}")
 
                         MainApplication.sharedPreferencesUtil.saveToken(data)
+
+                        val fcmToken = MainApplication.sharedPreferencesUtil.getFcmToken()
+                        if(fcmToken != null){
+                            Log.d("Fcm Token", fcmToken)
+                            fcmTokenUseCase.execute(
+                                FCMTokenRequest(fcmToken)
+                            ).catch {e ->
+                                Log.d("FCM Token 저장 실패", "${e.message}")
+                            }
+                            .collect { result ->
+                                Log.d("FCM Token 저장 성공", "$result")
+                            }
+                        }
 
                         _userState.value.copy(token = data.accessToken, isLoggedIn = true)
                         _uiEvent.value = LoginUiEvent.Login(true);

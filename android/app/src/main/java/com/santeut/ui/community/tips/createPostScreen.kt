@@ -1,4 +1,5 @@
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -81,13 +82,9 @@ fun CreatePostScreen(
                     .fillMaxWidth()
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next,
-                    autoCorrectEnabled = true  // 'autoCorrect'를 'autoCorrectEnabled'로 변경
-                ),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(androidx.compose.ui.focus.FocusDirection.Down) })
             )
-
             TextField(
                 value = content,
                 onValueChange = { content = it },
@@ -97,13 +94,9 @@ fun CreatePostScreen(
                     .height(250.dp)
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
-                    autoCorrectEnabled = true  // 'autoCorrect'를 'autoCorrectEnabled'로 변경
-                ),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
-
             Button(
                 onClick = {
                     postViewModel.createPost(title, content, postType, 1)
@@ -117,6 +110,8 @@ fun CreatePostScreen(
 
     LaunchedEffect(postCreationSuccess) {
         if (postCreationSuccess == true) {
+            // 확인용 로그 추가
+            Log.d("CreatePostScreen", "Navigating to postTips ")
             navController.navigate("postTips")
         }
     }

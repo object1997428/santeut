@@ -15,23 +15,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,18 +47,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.santeut.designsystem.theme.SanteutTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.santeut.R
+import com.santeut.data.model.response.MountainResponse
+import com.santeut.ui.mountain.MountainViewModel
 
 @Composable
 fun HomeScreen(
-
+    navController: NavController,
+    mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
     Log.d("Home Screen", "Loading")
-//    val viewModel = viewModel<HomeViewModel>()
+
+    LaunchedEffect(key1 = null) {
+        mountainViewModel.popularMountain()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -63,13 +74,14 @@ fun HomeScreen(
     ) {
         item {
             HomeSearchBar(
+                navController,
                 onSearchTextChanged = {},
-                onClickSearch = {},
+                onClickSearch = { },
                 onClickMap = {}
             )
         }
         item {
-            PopMountainCard()
+            PopMountainCard(mountainViewModel)
         }
         item {
             MyGuildCard()
@@ -83,21 +95,15 @@ fun HomeScreen(
     }
 }
 
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    SanteutTheme {
-        HomeScreen()
-    }
-}
-
 @Composable
 fun HomeSearchBar(
+    navController: NavController,
     onSearchTextChanged: (String) -> Unit,
     onClickSearch: () -> Unit,
     onClickMap: () -> Unit
 ) {
-    val text = ""
+    var name by remember { mutableStateOf("") }
+    var region by remember { mutableStateOf("") }
 
     Row(
         modifier = Modifier
@@ -110,10 +116,8 @@ fun HomeSearchBar(
             modifier = Modifier
                 .fillMaxWidth(0.9f),
             textStyle = TextStyle(fontSize = 12.sp),
-            value = "",
-            onValueChange = { text ->
-                onSearchTextChanged(text)
-            },
+            value = name,
+            onValueChange = { name = it },
             placeholder = {
                 Text(
                     text = "어느 산을 찾으시나요?"
@@ -135,7 +139,11 @@ fun HomeSearchBar(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
                     tint = Color.Black,
-                    modifier = Modifier.clickable { onClickSearch() }
+                    modifier = Modifier.clickable {
+                        val path =
+                            if (region.isNullOrEmpty()) "mountainList/$name" else "mountainList/$name/$region"
+                        navController.navigate(path)
+                    }
                 )
             }
         )
@@ -151,8 +159,11 @@ fun HomeSearchBar(
 
 @Composable
 fun PopMountainCard(
-
+    mountainViewModel: MountainViewModel
 ) {
+
+    val mountains by mountainViewModel.mountains.observeAsState(emptyList())
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,7 +171,7 @@ fun PopMountainCard(
             .padding(12.dp, 12.dp, 12.dp, 0.dp),
     ) {
         Text(
-            text = "지금 인기있는 산?",
+            text = "산뜻에서 인기 있는 산",
             fontSize = 20.sp,
             fontWeight = FontWeight.ExtraBold,
             modifier = Modifier
@@ -171,17 +182,15 @@ fun PopMountainCard(
                 .fillMaxHeight()
                 .fillMaxWidth(),
         ) {
-            items(4) { index ->
-                MountainCard()
+            items(mountains) { mountain ->
+                MountainCard(mountain)
             }
         }
     }
 }
 
 @Composable
-fun MountainCard(
-
-) {
+fun MountainCard(mountain: MountainResponse) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
@@ -198,10 +207,10 @@ fun MountainCard(
                     .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
                     .clip(shape = RoundedCornerShape(20.dp))
             ) {
-                Image(
-                    painter = painterResource(R.drawable.logo),
-                    contentDescription = "Logo",
-                    contentScale = ContentScale.Crop,
+                AsyncImage(
+                    model = mountain.image ?: R.drawable.logo,
+                    contentDescription = "산 이미지",
+                    contentScale = ContentScale.Crop
                 )
             }
             Row(
@@ -212,19 +221,19 @@ fun MountainCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "한라산",
+                    text = mountain.mountainName,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "1111m 제주",
+                    text = "${mountain.height}m ${mountain.regionName}",
                     fontSize = 12.sp,
                     color = Color.LightGray
                 )
             }
             Text(
-                text = "4개 코스",
+                text = "${mountain.courseCount}개 코스",
                 fontSize = 12.sp,
                 color = Color.LightGray,
                 modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
