@@ -1,6 +1,7 @@
 package com.santeut.ui.mountain
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,19 +59,20 @@ fun MountainListScreen(
 
         LazyColumn {
             items(mountains) { mountain ->
-                MountainCard(mountain)
+                MountainCard(navController, mountain)
             }
         }
     }
 }
 
 @Composable
-fun MountainCard(mountain: MountainResponse) {
+fun MountainCard(navController: NavController, mountain: MountainResponse) {
     Card(
         modifier = Modifier
+            .clickable(onClick = {navController.navigate("mountain/${mountain.mountainId}")})
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
-            .padding(8.dp),  // 카드 주변 여백 추가
+            .padding(8.dp),  // 카드 주변 여백
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
