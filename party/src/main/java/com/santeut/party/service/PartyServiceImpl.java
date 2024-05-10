@@ -58,7 +58,7 @@ public class PartyServiceImpl implements PartyService {
     entity.modifyPartyInfo(requestDto.getPartyName(), requestDto.getSchedule(),
         requestDto.getPlace(), requestDto.getMaxPeople());
     String guildName = (entity.getGuildId() == null) ? ""
-        : guildAccessUtil.getGuildInfo(entity.getGuildId()).getGuildName();
+        : guildAccessUtil.getGuildInfo(entity.getGuildId(), userId).getGuildName();
     return PartyInfoResponseDto.of(
         userInfoAccessUtil.getUserInfo(entity.getUserId()).getUserNickname()
         ,null
@@ -92,7 +92,7 @@ public class PartyServiceImpl implements PartyService {
     return parties.map(party -> {
       boolean isMember = partyUserRepository.existsByUserIdAndPartyId(userId, party.getPartyId());
       String owner = userInfoAccessUtil.getUserInfo(party.getUserId()).getUserNickname();
-      String guildName = (guildId==null)?"":guildAccessUtil.getGuildInfo(guildId).getGuildName();
+      String guildName = (guildId==null)?"":guildAccessUtil.getGuildInfo(guildId, userId).getGuildName();
       log.info("소모임 조회 "+party.getPartyId()+", "+party.getPartyName());
       return PartyInfoResponseDto.of(
           owner, null, party, isMember, guildName);
@@ -106,7 +106,7 @@ public class PartyServiceImpl implements PartyService {
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
     String owner = userInfoAccessUtil.getUserInfo(party.getUserId()).getUserNickname();
     String guildName = (party.getGuildId() == null) ? ""
-        : guildAccessUtil.getGuildInfo(party.getGuildId()).getGuildName();
+        : guildAccessUtil.getGuildInfo(party.getGuildId(), userId).getGuildName();
     boolean isMember = partyUserRepository.existsByUserIdAndPartyId(userId, partyId);
     return PartyInfoResponseDto.of(owner, null, party, isMember, guildName);
   }

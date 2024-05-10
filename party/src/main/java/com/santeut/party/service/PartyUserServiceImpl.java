@@ -4,9 +4,7 @@ import com.santeut.party.common.exception.AccessDeniedException;
 import com.santeut.party.common.exception.AlreadyJoinedException;
 import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.common.util.GeometryUtils;
-import com.santeut.party.dto.request.HikingRecordRequest;
 import com.santeut.party.dto.request.HikingRecordRequestInterface;
-import com.santeut.party.dto.request.LocationData;
 import com.santeut.party.dto.response.HikingRecordResponse;
 import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
@@ -21,8 +19,6 @@ import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
@@ -96,7 +92,7 @@ public class PartyUserServiceImpl implements PartyUserService {
       log.info("guild id: "+p.getParty().getGuildId());
       String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
       String guildName = (p.getParty().getGuildId() == null) ? ""
-          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId()).getGuildName();
+          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId(), userId).getGuildName();
       return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), null, guildName);
     });
   }
@@ -127,7 +123,7 @@ public class PartyUserServiceImpl implements PartyUserService {
 
     return hikingRecord.map(r -> {
       String guildName = (r.getGuildId() == null) ? ""
-          : guildAccessUtil.getGuildInfo(r.getGuildId()).getGuildName();
+          : guildAccessUtil.getGuildInfo(r.getGuildId(), userId).getGuildName();
       return HikingRecordResponse.of(r.getPartyUserId(), r.getPartyName(), guildName,
           r.getMountainName(), r.getSchedule(), r.getDistance(), r.getBestHeight(),
           r.getMoveTime());

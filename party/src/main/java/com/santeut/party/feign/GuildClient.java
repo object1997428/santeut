@@ -6,12 +6,16 @@ import com.santeut.party.feign.dto.response.GuildInfoFeignResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "guildClient", url = "${guild-service.url}", configuration = FeignConfiguration.class)
 public interface GuildClient {
 
   // 동호회 정보 조회
   @GetMapping("/{guildId}")
-  FeignResponseDto<GuildInfoFeignResponseDto> getGuildInfo(@PathVariable("guildId") int guildId);
+  FeignResponseDto<GuildInfoFeignResponseDto> getGuildInfo(
+      @PathVariable("guildId") int guildId,
+      @RequestHeader("userId") int userId
+      );
 
 }
