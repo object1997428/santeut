@@ -13,7 +13,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -32,7 +31,6 @@ fun MountainListScreen(
     navController: NavController,
     mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
-
     val mountains by mountainViewModel.mountains.observeAsState(emptyList())
 
     LaunchedEffect(key1 = name) {
@@ -43,13 +41,17 @@ fun MountainListScreen(
         HomeSearchBar(
             navController,
             onSearchTextChanged = {},
-            onClickSearch = { },
+            onClickSearch = {},
             onClickMap = {}
         )
 
-        LazyColumn {
-            items(mountains) { mountain ->
-                MountainCard(mountain)
+        if (mountains.isEmpty()) {
+            Text(text = "산 검색 결과가 없습니다.")
+        } else {
+            LazyColumn {
+                items(mountains) { mountain ->
+                    MountainCard(mountain)
+                }
             }
         }
     }
