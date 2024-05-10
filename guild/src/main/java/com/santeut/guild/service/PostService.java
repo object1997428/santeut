@@ -12,7 +12,7 @@ public interface PostService {
 
     void createPost(PostCreateRequestDto postCreateRequestDto, List<MultipartFile> images, int userId);
 
-    List<PostListResponseDto> getPosts(int guildId, int categoryId, int lastSeenId);
+    PostListResponseDto getPosts(int guildId, int categoryId, int lastSeenId);
 
     PostReadResponseDto readPost(int guildPostId, int userId);
 

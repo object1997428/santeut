@@ -5,9 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@EnableDiscoveryClient
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableFeignClients
+
 public class GuildApplication {
 
   public static void main(String[] args) {
