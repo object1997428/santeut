@@ -10,7 +10,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableCaching
-@EnableWebSocketMessageBroker
+//@EnableWebSocketMessageBroker
 @SpringBootApplication
 public class HikingApplication {
 
