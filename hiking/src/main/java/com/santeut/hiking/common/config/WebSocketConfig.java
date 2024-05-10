@@ -1,5 +1,6 @@
 package com.santeut.hiking.common.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -15,6 +16,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -38,9 +40,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (accessor != null) {
                     if (accessor.getCommand() == StompCommand.CONNECT) {
-                        System.out.println("[WebSocketConfig]STOMP Connect [sessionId: " + accessor.getSessionId() + "]");
+                        log.info("[WebSocketConfig]STOMP Connect [sessionId: " + accessor.getSessionId() + "]");
                     } else if (accessor.getCommand() == StompCommand.DISCONNECT) {
-                        System.out.println("[WebSocketConfig]STOMP Disconnect [sessionId: " + accessor.getSessionId() + "]");
+                        log.info("[WebSocketConfig]STOMP Disconnect [sessionId: " + accessor.getSessionId() + "]");
                     }
                 }
                 return message;
