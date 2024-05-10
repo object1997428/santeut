@@ -16,13 +16,11 @@ import java.util.Set;
 
 @Slf4j
 public class SocketTextHandler extends TextWebSocketHandler {
-    //    private final Map<WebSocketSession, SocketDto> sessions = new HashMap<>();
-//    private final Set<WebSocketSession> sessions = new HashSet<>();
 
     @Autowired
     private RoomRepository roomRepository;
 
-    private final Set<WebSocketSession> sessions = new HashSet<>();
+//    private final Set<WebSocketSession> sessions = new HashSet<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -51,18 +49,17 @@ public class SocketTextHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus status) {
-//        Integer roomId = getRoomId(session);
-//        roomRepository.room(roomId).getSessions().remove(session);
+        Integer roomId = getRoomId(session);
+        roomRepository.room(roomId).getSessions().remove(session);
 
-        sessions.remove(session);
         log.info("특정 클라이언트와의 연결이 해제되었습니다.");
     }
 
     private Integer getRoomId(WebSocketSession session) {
-        String uri = Objects.requireNonNull(session.getUri())
-                .toString();
-        String[] parts = uri.split("/");
-        String roomId = parts[parts.length - 1];
-        return Integer.parseInt(roomId);
+        return Integer.parseInt(
+                session.getAttributes()
+                        .get("roomId")
+                        .toString()
+        );
     }
 }
