@@ -80,7 +80,7 @@ fun JoinPartyScreen(
 @Composable
 fun PartyCard(party: PartyResponse) {
     Card {
-        Column {
+        Column(Modifier.fillMaxWidth()) {
             Text(text = party.partyName)
             Row {
                 Icon(
@@ -94,7 +94,7 @@ fun PartyCard(party: PartyResponse) {
                     imageVector = Icons.Outlined.LocationOn,
                     contentDescription = "위치"
                 )
-                Text(text = party.schedule)
+                Text(text = party.place)
             }
             Row{
                 Row {

@@ -96,7 +96,7 @@ fun CreatePartyScreen(
         Button(onClick = {
             partyViewModel.createParty(
                 schedule, partyName, 1,
-                "승학산", maxPeople.toInt(), 1, place,
+                "승학산", maxPeople.toInt(), null, place,
                 selectedCourse
             )
 
