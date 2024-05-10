@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
+import com.santeut.data.apiservice.MountainApiService
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.apiservice.PostApiService
 import com.santeut.data.apiservice.UserApiService
@@ -18,6 +19,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Named
@@ -56,6 +58,11 @@ object RemoteModule {
     @Singleton
     fun providePartyApiService(@Named("retrofit") retrofit: Retrofit): PartyApiService =
         retrofit.create(PartyApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providerMountainApiService(@Named("retrofit") retrofit: Retrofit): MountainApiService =
+        retrofit.create(MountainApiService::class.java)
 
     @Provides
     @Singleton
