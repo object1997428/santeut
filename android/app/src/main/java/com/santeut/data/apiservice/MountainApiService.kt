@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface MountainApiService {
 
     @GET("/api/mountain/")
-    fun searchMountain(
+    suspend fun searchMountain(
         @Query("name") name: String,
         @Query("region") region: String?
     ): CustomResponse<MountainListResponse>

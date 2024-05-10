@@ -2,10 +2,7 @@ package com.santeut.data.repository
 
 import android.util.Log
 import com.santeut.data.apiservice.MountainApiService
-import com.santeut.data.model.CustomResponse
-import com.santeut.data.model.response.MountainListResponse
 import com.santeut.data.model.response.MountainResponse
-import retrofit2.Call
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -16,7 +13,7 @@ class MountainRepositoryImpl @Inject constructor(
         return try{
             val response = mountainApiService.searchMountain(name, region)
             if(response.status=="200"){
-                response.data.result?: emptyList()
+                response.data.mountainList?: emptyList()
             } else{
                 Log.e(
                     "MountainRepository",

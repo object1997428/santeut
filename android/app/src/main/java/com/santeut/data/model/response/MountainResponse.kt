@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 
 data class MountainListResponse(
-    @SerializedName("result") val result: List<MountainResponse>
+    @SerializedName("mountainList") val mountainList: List<MountainResponse>
 )
 
 data class MountainResponse(

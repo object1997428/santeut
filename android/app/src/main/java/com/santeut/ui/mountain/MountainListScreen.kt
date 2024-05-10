@@ -45,13 +45,9 @@ fun MountainListScreen(
             onClickMap = {}
         )
 
-        if (mountains.isEmpty()) {
-            Text(text = "산 검색 결과가 없습니다.")
-        } else {
-            LazyColumn {
-                items(mountains) { mountain ->
-                    MountainCard(mountain)
-                }
+        LazyColumn {
+            items(mountains) { mountain ->
+                MountainCard(mountain)
             }
         }
     }
