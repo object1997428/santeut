@@ -1,27 +1,63 @@
 [versions]
 agp = "8.3.0"
 kotlin = "1.9.0"
-playServicesWearable = "18.1.0"
-composeBom = "2023.08.00"
-composeMaterial = "1.2.1"
-composeFoundation = "1.2.1"
-activityCompose = "1.7.2"
-coreSplashscreen = "1.0.1"
+play-services-wearable = "18.1.0"
+compose-bom = "2023.08.00"
+compose-material = "1.3.1"
+compose-foundation = "1.3.1"
+activity-compose = "1.7.2"
+core-splash-screen = "1.0.1"
+
+androidx-lifecycle = "2.7.0"
+health-services = "1.0.0-rc02"
+google-map-compose = "2.11.4"
+gms-service = "18.1.0"
+gms-location = "17.0.0"
+accompanist-permissions = "0.34.0"
+horologist = "0.5.27"
+
+dagger = "2.51.1"
+ksp = "1.9.0-1.0.13"
+mapsplatform = "2.0.1"
 
 [libraries]
-play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "playServicesWearable" }
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "play-services-wearable" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "composeFoundation" }
-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "compose-material" }
+compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "compose-foundation" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splash-screen" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-lifecycle-viewmodel = {module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle"}
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle"}
+androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "androidx-lifecycle"}
+androidx-lifecycle-extensions  = "androidx.lifecycle:lifecycle-extensions:2.2.0"
+androidx-lifecycle-service = {module = "androidx.lifecycle:lifecycle-service", version.ref = "androidx-lifecycle"}
+androidx-lifecycle-runtime-compose = "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splash-screen" }
+androidx-health-services = { module = "androidx.health:health-services-client", version.ref = "health-services" }
+wear-ongoing-activity = "androidx.wear:wear-ongoing:1.0.0"
+guava = "com.google.guava:guava:33.2.0-android"
+androidx-concurrent = "androidx.concurrent:concurrent-futures-ktx:1.1.0"
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger"}
+dagger-hilt-android-compiler = {module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger"}
+hilt-navigation-compose = "androidx.hilt:hilt-navigation-compose:1.2.0"
+google-map-compose = {module = "com.google.maps.android:maps-compose", version.ref = "google-map-compose"}
+android-gms-service-map = { module = "com.google.android.gms:play-services-maps", version.ref = "gms-service"}
+android-gms-service-location = { module = "com.google.android.gms:play-services-location", version.ref = "gms-location"}
+
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions"}
+horologist-health-service = { module = "com.google.android.horologist:horologist-health-service", version.ref = "horologist" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+mapsplatform = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsplatform"}
 

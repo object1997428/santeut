@@ -1,7 +1,8 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
-
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
+    id("dagger.hilt.android.plugin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
@@ -30,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -50,7 +51,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.play.services.wearable)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
@@ -64,28 +64,38 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    // ui
-    implementation("androidx.wear.compose:compose-material:1.3.1")
-    implementation("androidx.wear.compose:compose-navigation:1.3.1")
-    implementation("androidx.wear.compose:compose-foundation:1.3.1")
+    implementation(libs.androidx.material3)
 
     // permission
-    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+    implementation(libs.accompanist.permissions)
 
-    // health-service
-    implementation("androidx.health:health-services-client:1.0.0-rc02")
+    // Ongoing Activity
+    implementation(libs.wear.ongoing.activity)
 
-    // state
-    implementation("com.google.guava:guava:33.2.0-android")
-    implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
+    // Lifecycle
+    implementation (libs.androidx.lifecycle.viewmodel)
+    implementation (libs.androidx.lifecycle.runtime)
+    implementation (libs.androidx.lifecycle.common.java8)
+    implementation (libs.androidx.lifecycle.extensions)
+    implementation (libs.androidx.lifecycle.service)
+    implementation (libs.androidx.lifecycle.runtime.compose)
+    implementation (libs.androidx.core.splashscreen)
 
-    // map
-    implementation("com.google.maps.android:maps-compose:2.11.4")
-    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation (libs.guava)
+    implementation (libs.androidx.concurrent)
 
-//    compileOnly("com.google.android.wearable:wearable:2.9.0")
-//    implementation("com.google.android.support:wearable:2.9.0")
+    // Health Services
+    implementation (libs.androidx.health.services)
 
-    // This dependency is necessary for ambient mode
-//    implementation("androidx.wear:wear:1.3.0")
+    implementation (libs.horologist.health.service)
+
+    // Hilt
+    implementation (libs.hilt.navigation.compose)
+    implementation (libs.dagger.hilt.android)
+    ksp(libs.dagger.hilt.android.compiler)
+
+    // Map
+    implementation(libs.google.map.compose)
+    implementation(libs.android.gms.service.map)
+    implementation(libs.android.gms.service.location)
 }

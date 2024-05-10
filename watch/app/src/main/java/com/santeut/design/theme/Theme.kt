@@ -1,4 +1,4 @@
-package com.santeut.designsystem.theme
+package com.santeut.design.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme
