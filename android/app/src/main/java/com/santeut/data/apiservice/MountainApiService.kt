@@ -1,6 +1,7 @@
 package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
+import com.santeut.data.model.response.HikingCourseListResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainListResponse
 import retrofit2.Call
@@ -23,4 +24,9 @@ interface MountainApiService {
     suspend fun mountainDetail(
         @Path("mountainId") mountainId: Int
     ): CustomResponse<MountainDetailResponse>
+
+    @GET("/api/mountain/v2/{mountainId}/course")
+    suspend fun getHikingCourseList(
+        @Path("mountainId") mountainId: Int
+    ): CustomResponse<HikingCourseListResponse>
 }

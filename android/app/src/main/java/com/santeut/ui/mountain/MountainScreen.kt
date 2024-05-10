@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -20,7 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +36,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.santeut.R
+import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import kotlinx.coroutines.launch
 
@@ -44,61 +49,53 @@ fun MountainScreen(
 ) {
 
     val pages = listOf("등산 코스", "날씨")
-    val pagerState = rememberPagerState(initialPage = 0)
-    val coroutineScope = rememberCoroutineScope()
+    var selectedTab by remember { mutableIntStateOf(0) } // 탭 상태 관리
 
     val mountain by mountainViewModel.mountain.observeAsState()
+    val courseList by mountainViewModel.courseList.observeAsState(emptyList())
 
     LaunchedEffect(key1 = mountainId) {
         mountainViewModel.mountainDetail(mountainId)
+        mountainViewModel.getHikingCourseList(mountainId)
     }
 
-    Scaffold() {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            AsyncImage(
-                model = mountain?.image ?: R.drawable.logo,
-                contentDescription = "산 이미지",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.Crop
-            )
+    Scaffold {
 
-            MountainDetail(mountain)
+        // 전체 스크롤 또는 정보는 고정하고 TabRow Content만 스크롤
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            item {
+                AsyncImage(
+                    model = mountain?.image ?: R.drawable.logo,
+                    contentDescription = "산 이미지",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-                modifier = Modifier.fillMaxWidth()
-                    .background(Color.Black)
-            ) {
-                pages.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(title) },
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        }
-                    )
+            item { MountainDetail(mountain) }
+
+            item {
+                TabRow(
+                    selectedTabIndex = selectedTab
+                ) {
+                    pages.forEachIndexed { index, title ->
+                        Tab(
+                            text = { Text(title) },
+                            selected = selectedTab == index,
+                            onClick = { selectedTab = index }
+                        )
+                    }
                 }
             }
 
-            HorizontalPager(
-                count = pages.size,
-                state = pagerState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            ) { page ->
-                when (page) {
-                    0 -> HikingCourse(mountain)
-                    1 -> MountainWeather(mountain)
-                }
+            when (selectedTab) {
+                0 -> item { HikingCourse(mountain?.courseCount ?: 0, courseList) }
+                1 -> item { MountainWeather(mountain) }
             }
         }
     }
-
 }
 
 @Composable
@@ -107,21 +104,23 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row {
                 Text(
-                    text = mountain.mountainName?:"",
+                    text = mountain.mountainName ?: "",
                     modifier = Modifier.padding(8.dp),
                     style = MaterialTheme.typography.headlineMedium
                 )
                 Text(
-                    text = "${mountain.height?:0}m",
-                    modifier = Modifier.padding(8.dp).align(Alignment.Bottom)
+                    text = "${mountain.height ?: 0}m",
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.Bottom)
                 )
             }
             Text(
-                text = mountain.address?:"",
+                text = mountain.address ?: "",
                 modifier = Modifier.padding(8.dp)
             )
             Text(
-                text = mountain.description?:"",
+                text = mountain.description ?: "",
                 modifier = Modifier.padding(8.dp)
             )
         }
@@ -129,40 +128,40 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
 }
 
 @Composable
-fun HikingCourse(mountain: MountainDetailResponse?) {
+fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>) {
 
     /* 등산 코스 지도 자리 */
-    if (mountain != null) {
-        Column {
-            Row {
-                Text(text = "등산로")
-                Text(text = "${mountain.courseCount?:0}개")
-            }
 
-            LazyColumn() {
-                items(mountain.courseCount) { course ->
-                    CourseItem()
-                }
+    Column {
+        Row {
+            Text(text = "등산로")
+            Text(text = "${courseCount}개")
+        }
+
+        Column {
+            courseList.forEach { course ->
+                CourseItem(course)
             }
         }
+
     }
 }
 
 @Composable
-fun CourseItem() {
+fun CourseItem(course: HikingCourseResponse) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "코스 번호: ")
-            Text(text = "코스 이름: ")
+            Text(text = "${course.courseName?:""} 코스")
+            Text(text = "난이도 ${course.level?:"알 수 없음"}")
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "상행 시간:")
-            Text(text = "하행 시간: ")
-            Text(text = "길이: ")
+            Text(text = "거리 ${course.distance?:"?"}km")
+            Text(text = "등산 시간 ${course.upTime?:"?"}분")
+            Text(text = "하산 시간 ${course.downTime?:"?"}분")
         }
     }
 }

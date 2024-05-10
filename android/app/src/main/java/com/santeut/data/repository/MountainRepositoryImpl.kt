@@ -2,6 +2,7 @@ package com.santeut.data.repository
 
 import android.util.Log
 import com.santeut.data.apiservice.MountainApiService
+import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainResponse
 import java.lang.Exception
@@ -54,6 +55,24 @@ class MountainRepositoryImpl @Inject constructor(
                 response.data
             } else {
                 throw Exception("산 상세 조회 실패: ${response.status} - ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("MountainRepository", "Network error while fetching post: ${e.message}", e)
+            throw e
+        }
+    }
+
+    override suspend fun getHikingCourseList(mountainId: Int): List<HikingCourseResponse> {
+        return try {
+            val response = mountainApiService.getHikingCourseList(mountainId)
+            if (response.status == "200") {
+                response.data.hikingCourseList ?: emptyList()
+            } else {
+                Log.e(
+                    "MountainRepository",
+                    "코스 목록 조회 실패: ${response.status} - ${response.data}"
+                )
+                emptyList()
             }
         } catch (e: Exception) {
             Log.e("MountainRepository", "Network error while fetching post: ${e.message}", e)
