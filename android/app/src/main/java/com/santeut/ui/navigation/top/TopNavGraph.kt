@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.chat.ChatListScreen
 import com.santeut.ui.chat.ChatScreen
+import com.santeut.ui.noti.NotiScreen
 
 fun NavGraphBuilder.TopNavGraph(
     navController: NavController
@@ -26,6 +27,11 @@ fun NavGraphBuilder.TopNavGraph(
         ) {backStackEntry->
             val partyId = backStackEntry.arguments?.getInt("partyId")?:0
             ChatScreen(partyId)
+        }
+        composable(
+            route="noti"
+        ){
+            NotiScreen()
         }
     }
 }
