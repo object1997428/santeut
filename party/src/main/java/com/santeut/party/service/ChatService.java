@@ -1,6 +1,7 @@
 package com.santeut.party.service;
 
 import com.santeut.party.dto.chatting.ChatMessageDto;
+import com.santeut.party.dto.response.ChatMessageListResponse;
 import com.santeut.party.dto.response.ChatRoomListResponse;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -12,4 +13,7 @@ public interface ChatService {
   public void saveMessage(ChatMessageDto messageDto);
 
   ChatRoomListResponse findMyChatRoom(int userId);
+
+  ChatMessageListResponse getAllChatMessage(int userId, int partyId);
+
 }

@@ -3,6 +3,8 @@ package com.santeut.party.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.party.dto.chatting.ChatMessage;
 import com.santeut.party.dto.chatting.ChatMessageDto;
+import com.santeut.party.dto.response.ChatMessageListResponse;
+import com.santeut.party.dto.response.ChatMessageListResponse.ChatMessageInfoDto;
 import com.santeut.party.dto.response.ChatRoomListResponse;
 import com.santeut.party.dto.response.ChatRoomListResponse.ChatRoomInfo;
 import com.santeut.party.entity.Party;
@@ -67,5 +69,17 @@ public class ChatServiceImpl implements ChatService {
               lastSentDate));
     }
     return new ChatRoomListResponse(chatRoomInfoList);
+  }
+
+  @Override
+  public ChatMessageListResponse getAllChatMessage(int userId, int partyId) {
+    List<ChatMessageInfoDto> messageList = new ArrayList<>();
+    List<ChatMessage> messages = chatMessageRepository.findAllBy(partyId);
+    for (ChatMessage message : messages) {
+      messageList.add(
+          ChatMessageInfoDto.of(message.getCreatedAt(), "작성자이름", "프로필사진", message.getContent()));
+    }
+
+    return new ChatMessageListResponse(messageList);
   }
 }
