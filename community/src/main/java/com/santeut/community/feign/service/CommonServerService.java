@@ -1,9 +1,8 @@
 package com.santeut.community.feign.service;
 
 import com.santeut.community.common.exception.FeignClientException;
-import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.feign.CommonClient;
-import feign.Feign;
+import com.santeut.community.feign.dto.CommentListFeignDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
