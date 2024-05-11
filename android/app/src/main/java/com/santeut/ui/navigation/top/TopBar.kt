@@ -17,9 +17,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
@@ -40,9 +38,9 @@ fun TopBar(
     currentTap: String?
 ) {
     when (currentTap) {
-        "home" -> HomeTopBar(navController,onClickAlert = { /*TODO*/ }, onClickChatting = { /*TODO*/ })
+        "home" -> HomeTopBar(navController)
         "community", "readPost" -> DefaultTopBar(navController, "커뮤니티")
-        "guild" -> DefaultTopBar(navController, "동호회")
+        "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
     }
 }
@@ -50,9 +48,7 @@ fun TopBar(
 
 @Composable
 fun HomeTopBar(
-    navController: NavController,
-    onClickAlert: () -> Unit,
-    onClickChatting: () -> Unit
+    navController: NavController
 ) {
     Row(
         modifier = Modifier
@@ -93,14 +89,14 @@ fun HomeTopBar(
             imageVector = Icons.Outlined.Notifications,
             contentDescription = "알림",
             modifier = Modifier
-                .clickable { onClickAlert() }
+                .clickable { navController.navigate("noti") }
         )
         Spacer(modifier = Modifier.width(8.dp))
     }
 }
 
 @Composable
-fun DefaultTopBar(navController: NavController, pageName:String) {
+fun DefaultTopBar(navController: NavController, pageName: String) {
     TopAppBar(
         title = { Text(pageName) },
         contentColor = MaterialTheme.colors.primary,
@@ -116,13 +112,13 @@ fun DefaultTopBar(navController: NavController, pageName:String) {
             }
         },
         actions = {
-            IconButton(onClick = { navController.navigate("chatList")}) {
+            IconButton(onClick = { navController.navigate("chatList") }) {
                 Icon(
                     imageVector = Icons.Outlined.Message,
                     contentDescription = "Message"
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { navController.navigate("noti") }) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications"
