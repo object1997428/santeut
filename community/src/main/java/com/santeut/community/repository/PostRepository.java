@@ -28,4 +28,10 @@ public interface PostRepository extends JpaRepository<PostEntity, Integer> {
 
         // 게시글 작성자인지 조회
         int countAllByIdAndPostTypeAndUserId(int postId, char postType, int userId);
+
+        // 죄회수 1 올리기
+        @Modifying
+        @Transactional
+        @Query("UPDATE PostEntity p SET p.hitCnt = p.hitCnt + 1 WHERE p.id=:postId")
+        void hitCntPlus(int postId);
 }

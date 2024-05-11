@@ -74,6 +74,9 @@ public class CourseService {
         // 댓글 목록 받아오기
         List<CommentListFeignDto.Comment> commentList = commonServerService.getCommentList(postId, postType).getCommentList();
 
+        // 조회수 올리기
+        postRepository.hitCntPlus(postEntity.getId());
+
         return CourseReadResponseDto.builder()
                 .postId(postIdToSend)
                 .userPartyId(partyUserIdToSend)
