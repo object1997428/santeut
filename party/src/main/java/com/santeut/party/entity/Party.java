@@ -70,6 +70,7 @@ public class Party extends BaseEntity {
     public static Party createEntity(int userId, CreatePartyRequestDto requestDto, String selectedCourse) {
         return Party.builder()
             .userId(userId)
+            .isLinked(requestDto.getGuildId() != null)
             .selectedCourse(selectedCourse)
             .guildId(requestDto.getGuildId())
             .mountainId(requestDto.getMountainId())

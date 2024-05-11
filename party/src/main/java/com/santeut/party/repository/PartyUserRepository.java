@@ -1,7 +1,7 @@
 package com.santeut.party.repository;
 
-import com.santeut.party.dto.request.HikingRecordRequest;
 import com.santeut.party.dto.request.HikingRecordRequestInterface;
+import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,5 +38,11 @@ public interface PartyUserRepository extends JpaRepository<PartyUser, Integer> {
     @Query(nativeQuery = true,
         value="SELECT pu.party_user_id as partyUserId, p.party_name as partyName, p.guild_id as guildId, p.party_mountain_name as mountainName, p.party_schedule as schedule, pu.party_user_distance as distance, pu.party_user_best_height as bestHeight, pu.party_user_move_time as moveTime FROM party_user pu JOIN party p on pu.user_id=:userId and pu.party_id = p.party_id WHERE pu.party_user_status like 'E'")
     Page<HikingRecordRequestInterface> findMyHikingRecord(@Param("userId") int userId, Pageable pageable);
+
+    @Query("SELECT p FROM PartyUser pu JOIN Party p ON pu.partyId = p.partyId AND pu.userId = :userId WHERE (p.status like 'B' OR p.status like 'P') AND p.isDeleted = false")
+    List<Party> findMyPartyForChat(@Param("userId") int userId);
+
+    @Query("SELECT pu.userId FROM PartyUser pu WHERE pu.partyId = :partyId AND pu.isDeleted = false")
+    List<Integer> findAllMemberByPartyId(@Param("partyId") int partyId);
 
 }
