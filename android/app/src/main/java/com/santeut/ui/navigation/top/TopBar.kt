@@ -18,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
@@ -43,6 +44,10 @@ fun TopBar(
         "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
         "chatList" -> SimpleTopBar(navController, "채팅방")
+        "noti" -> SimpleTopBar(navController, "알림")
+        "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
+        "createParty" -> SimpleTopBar(navController, "소모임 만들기")
+        "chatRoom/{partyId}" -> MenuTopBar(navController, "소모임 제목")
     }
 }
 
@@ -136,7 +141,29 @@ fun SimpleTopBar(navController: NavController, pageName: String) {
 
 @Composable
 fun MenuTopBar(navController: NavController, pageName: String) {
-
+    TopAppBar(
+        title = { Text(pageName) },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Back"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* 클릭 시 메뉴 열림 */ }) {
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "추가 메뉴"
+                )
+            }
+        }
+    )
 }
 
 @Composable
