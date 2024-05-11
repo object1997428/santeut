@@ -1,8 +1,6 @@
 package com.santeut.community.service;
 
-import com.santeut.community.common.exception.AccessDeniedException;
-import com.santeut.community.common.exception.FeignClientException;
-import com.santeut.community.common.exception.JpaQueryException;
+import com.santeut.community.common.exception.*;
 import com.santeut.community.dto.request.PostCreateRequestDto;
 import com.santeut.community.dto.request.PostUpdateRequestDto;
 import com.santeut.community.feign.dto.CommentListFeignDto;
@@ -89,7 +87,7 @@ public class PostService {
     // 게시글 읽기 (READ)
     public PostReadResponseDto readPost(int postId, char postType, int userId) {
 
-        PostEntity postEntity = postRepository.findByIdAndPostType(postId, postType).orElseThrow(() -> new JpaQueryException("게시글 디테일 읽기중 DB 오류 발생"));
+        PostEntity postEntity = postRepository.findByIdAndPostType(postId, postType).orElseThrow(()->new ZeroDataException("데이터가 없습니다."));
 
         // 작성자인지 체크
         boolean isWriter = (postRepository.countAllByIdAndPostTypeAndUserId(postId,postType,userId) > 0);
@@ -99,9 +97,15 @@ public class PostService {
 
         // 게시글 이미지들 불러오기
         List<String> images = commonServerService.getImages(postEntity.getId(), postEntity.getPostType());
+        log.info("images : {}", images);
 
         // 댓글 리스트 불러오기
-        CommentListFeignDto commentListFeignDto = commonServerService.getCommentList(postId, postType);
+        CommentListFeignDto commentListFeignDto = commonServerService.getCommentList(postId, postType) ;
+        log.info("commentListFeignDto : {}", commentListFeignDto.toString());
+        List<CommentListFeignDto.Comment> commentList = commentListFeignDto.getCommentList() == null ? null : commentListFeignDto.getCommentList();
+
+        // 닉네임 받아오기
+        String userNickName = authServerService.getNickname(postEntity.getUserId());
 
         // 알맞은 Dto로 묶어서 반환
         return PostReadResponseDto.builder()
@@ -110,10 +114,11 @@ public class PostService {
                 .postTitle(postEntity.getPostTitle())
                 .postContent(postEntity.getPostContent())
                 .userNickname(authServerService.getNickname(postEntity.getUserId()))
+                .userId(postEntity.getUserId())
                 .hitCnt(postEntity.getHitCnt())
                 .isLike(isLike)
                 .isWriter(isWriter)
-                .commentList(commentListFeignDto.getCommentList())
+                .commentList(commentList)
                 .images(images)
                 .createdAt(postEntity.getCreatedAt())
                 .build();
