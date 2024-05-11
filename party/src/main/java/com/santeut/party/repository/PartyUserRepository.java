@@ -42,4 +42,7 @@ public interface PartyUserRepository extends JpaRepository<PartyUser, Integer> {
     @Query("SELECT p FROM PartyUser pu JOIN Party p ON pu.partyId = p.partyId AND pu.userId = :userId WHERE (p.status like 'B' OR p.status like 'P') AND p.isDeleted = false")
     List<Party> findMyPartyForChat(@Param("userId") int userId);
 
+    @Query("SELECT pu.userId FROM PartyUser pu WHERE pu.partyId = :partyId AND pu.isDeleted = false")
+    List<Integer> findAllMemberByPartyId(@Param("partyId") int partyId);
+
 }

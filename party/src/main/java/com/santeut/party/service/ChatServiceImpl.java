@@ -9,13 +9,21 @@ import com.santeut.party.dto.response.ChatRoomListResponse;
 import com.santeut.party.dto.response.ChatRoomListResponse.ChatRoomInfo;
 import com.santeut.party.entity.Party;
 import com.santeut.party.feign.GuildAccessUtil;
+import com.santeut.party.feign.UserInfoAccessUtil;
+import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse;
+import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse.PartyMemberInfo;
 import com.santeut.party.repository.ChatMessageRepository;
 import com.santeut.party.repository.PartyUserRepository;
+import com.santeut.party.repository.UserIdOnly;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +39,7 @@ public class ChatServiceImpl implements ChatService {
   private final ChatMessageRepository chatMessageRepository;
   private final ObjectMapper mapper;
   private final GuildAccessUtil guildAccessUtil;
+  private final UserInfoAccessUtil userInfoAccessUtil;
 
   @Override
   public <T> void sendMessage(WebSocketSession session, T message) {
@@ -73,11 +82,38 @@ public class ChatServiceImpl implements ChatService {
 
   @Override
   public ChatMessageListResponse getAllChatMessage(int userId, int partyId) {
+    List<Integer> memberIdList = partyUserRepository.findAllMemberByPartyId(partyId); // partyId에 소속된 모든 사람 찾기
+
+    System.out.println(Arrays.toString(memberIdList.toArray()));
+    GetPartyMemberInfoResponse memberInfoList = userInfoAccessUtil.getPartyMemberInfo(partyId,
+        userId, memberIdList);
+    // map에 넣기
+    Map<Integer, PartyMemberInfo> partyMemberInfoMap = new HashMap<>();
+    for(PartyMemberInfo memberInfo : memberInfoList.getPartyMembers()) {
+      partyMemberInfoMap.put(memberInfo.getUserId(), memberInfo);
+    }
+
     List<ChatMessageInfoDto> messageList = new ArrayList<>();
     List<ChatMessage> messages = chatMessageRepository.findAllBy(partyId);
     for (ChatMessage message : messages) {
-      messageList.add(
-          ChatMessageInfoDto.of(message.getCreatedAt(), "작성자이름", "프로필사진", message.getContent()));
+      PartyMemberInfo sender = partyMemberInfoMap.getOrDefault(message.getUserId(), null);
+      ChatMessageInfoDto chatMessage = null;
+      if(sender==null) {
+        chatMessage = ChatMessageInfoDto.of(
+            message.getCreatedAt(),
+            "나간 사용자",
+            null,
+            message.getContent()
+        );
+      } else {
+        chatMessage = ChatMessageInfoDto.of(
+            message.getCreatedAt(),
+            sender.getUserNickname(),
+            sender.getUserProfile(),
+            message.getContent()
+        );
+      }
+      messageList.add(chatMessage);
     }
 
     return new ChatMessageListResponse(messageList);

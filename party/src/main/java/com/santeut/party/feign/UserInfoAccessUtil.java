@@ -1,10 +1,15 @@
 package com.santeut.party.feign;
 
 import com.santeut.party.common.exception.FeignException;
+import com.santeut.party.feign.dto.request.GetPartyMemberInfoRequest;
 import com.santeut.party.feign.dto.response.FeignResponseDto;
+import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse;
+import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse.PartyMemberInfo;
 import com.santeut.party.feign.dto.response.UserInfoFeignResponseDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +35,17 @@ public class UserInfoAccessUtil {
       throw new FeignException("[party->auth] userId로 유저 정보를 불러오는 데 실패했습니다");
     }
     return response.getData();
+  }
+
+  public GetPartyMemberInfoResponse getPartyMemberInfo(int partyId, int userId, List<Integer> memberIdList) {
+    ResponseEntity<FeignResponseDto<GetPartyMemberInfoResponse>> memberResp = userInfoClient.getPartyMemberInfo(userId,
+        new GetPartyMemberInfoRequest(partyId, memberIdList));
+    if(!memberResp.getStatusCode().is2xxSuccessful()) {
+      log.error("[party->auth] 소모임 유저 정보를 불러오는 데 실패했습니다/userId {}",userId);
+      throw new FeignException("[party->auth] 소모임 유저 정보를 불러오는 데 실패했습니다");
+    }
+    FeignResponseDto res = memberResp.getBody();
+    return (GetPartyMemberInfoResponse) res.getData();
   }
 
 
