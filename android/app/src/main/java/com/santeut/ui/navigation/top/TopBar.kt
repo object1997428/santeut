@@ -42,6 +42,7 @@ fun TopBar(
         "community", "readPost" -> DefaultTopBar(navController, "커뮤니티")
         "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
+        "chatList" -> SimpleTopBar(navController, "채팅방")
     }
 }
 
@@ -85,7 +86,7 @@ fun HomeTopBar(
 fun DefaultTopBar(navController: NavController, pageName: String) {
     TopAppBar(
         title = { Text(pageName) },
-        contentColor = MaterialTheme.colors.primary,
+        contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
             IconButton(onClick = {
@@ -116,7 +117,21 @@ fun DefaultTopBar(navController: NavController, pageName: String) {
 
 @Composable
 fun SimpleTopBar(navController: NavController, pageName: String) {
-
+    TopAppBar (
+        title = { Text(pageName) },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Back"
+                )
+            }
+        }
+    )
 }
 
 @Composable
