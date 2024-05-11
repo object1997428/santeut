@@ -107,6 +107,9 @@ public class PostService {
         // 닉네임 받아오기
         String userNickName = authServerService.getNickname(postEntity.getUserId());
 
+        // 조회수 1 증가시키기
+        postRepository.hitCntPlus(postEntity.getId());
+
         // 알맞은 Dto로 묶어서 반환
         return PostReadResponseDto.builder()
                 .postId(postEntity.getId())
