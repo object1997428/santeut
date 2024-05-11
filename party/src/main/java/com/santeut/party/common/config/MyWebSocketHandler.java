@@ -67,8 +67,11 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     if(chatMessage.getType().equals(ChatMessageDto.MessageType.ENTER)) {
       log.info("{}님이 {}번 방에 입장", chatMessage.getUserNickname(), chatMessage.getPartyId());
       chatRoomSession.add(session);
+    } else {
+      sendMessageToChatRoom(chatMessage, chatRoomSession);
+      chatService.saveMessage(chatMessage);
     }
-    sendMessageToChatRoom(chatMessage, chatRoomSession);
+
   }
 
   // 소켓 종료 확인
