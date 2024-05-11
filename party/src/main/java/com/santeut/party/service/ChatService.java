@@ -1,6 +1,7 @@
 package com.santeut.party.service;
 
 import com.santeut.party.dto.chatting.ChatMessageDto;
+import com.santeut.party.dto.response.ChatRoomListResponse;
 import org.springframework.web.socket.WebSocketSession;
 
 public interface ChatService {
@@ -10,7 +11,5 @@ public interface ChatService {
 
   public void saveMessage(ChatMessageDto messageDto);
 
-  // 가장 최신 메시지 조회
-  String getLatestMessageByPartyId(int partyId);
-
+  ChatRoomListResponse findMyChatRoom(int userId);
 }
