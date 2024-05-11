@@ -1,4 +1,4 @@
-package com.santeut.ui.navigation.bottom
+package com.santeut.ui.navigation.top
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -7,10 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.chat.ChatListScreen
-import com.santeut.ui.chat.ChatRoom
 import com.santeut.ui.chat.ChatScreen
 
-fun NavGraphBuilder.ChatNavGraph(
+fun NavGraphBuilder.TopNavGraph(
     navController: NavController
 ) {
     navigation(
