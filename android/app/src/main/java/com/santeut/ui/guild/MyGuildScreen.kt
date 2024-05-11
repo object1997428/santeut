@@ -32,7 +32,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
-import com.santeut.ui.party.PartyListScreen
+import com.santeut.ui.party.MyPartyListScreen
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -84,7 +84,7 @@ fun MyGuildScreen(
             ) { page ->
                 when (page) {
                     0 -> MyGuildListScreen(navController)
-                    1 -> PartyListScreen()
+                    1 -> MyPartyListScreen()
                     else -> Text("Unknown page")
                 }
             }

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalNaverMapApi::class)
-
 package com.example.testmap
 
 import android.content.Context
@@ -26,19 +24,17 @@ import android.util.Log
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import okhttp3.*
+import com.google.gson.Gson
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.core.content.ContextCompat.getSystemService
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.compose.material3.Button
-import kotlinx.coroutines.delay
-
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 
 // API 인터페이스 정의
 interface MountainService {
@@ -89,55 +85,81 @@ fun createMountainService(token: String): MountainService {
         .create(MountainService::class.java)
 }
 
+@ExperimentalNaverMapApi
 class MainActivity : ComponentActivity() {
+    private var webSocket: WebSocket? = null
+    private val webSocketUrl = "ws://k10e201.p.ssafy.io:52715/api/hiking/chat/rooms/1"
+
     companion object {
         private const val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), REQUEST_CODE_ACTIVITY_RECOGNITION)
-        }
-
         setContent {
             TestmapTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen(context = this@MainActivity, token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDAxIiwiaWF0IjoxNzE0NzA2MTEwLCJleHAiOjE3NDYyMzYxMTB9.c0bRrGh0NGA8HPd_oCMCUPfmQaAwzswftvHdv8xulzg")
+                    MapScreen(context = this@MainActivity, token = "your_token_here", ::startWebSocket, ::stopWebSocket)
                 }
             }
         }
     }
+
+    fun startWebSocket(updateLocation: (Double, Double, String) -> Unit) {
+        try {
+            val request = Request.Builder().url(webSocketUrl).build()
+            val listener = object : WebSocketListener() {
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    Log.d("WebSocket", "Received message: $text")
+                    val message = Gson().fromJson(text, WebSocketMessage::class.java)
+                    updateLocation(message.lat.toDouble(), message.lng.toDouble(), message.userNickname)
+                }
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    Log.e("WebSocket", "Error on websocket connection: ${t.message}", t)
+                }
+            }
+            webSocket = OkHttpClient().newWebSocket(request, listener)
+        } catch (e: Exception) {
+            Log.e("WebSocket", "Exception in starting WebSocket: ${e.message}", e)
+        }
+    }
+
+    fun stopWebSocket() {
+        webSocket?.close(1000, "Activity Ended")
+        webSocket = null
+        Log.d("WebSocket", "Disconnect")
+    }
 }
+
 @ExperimentalNaverMapApi
 @Composable
-fun MapScreen(context: Context, token: String) {
+fun MapScreen(
+    context: Context,
+    token: String,
+    startWebSocket: (updateLocation: (Double, Double, String) -> Unit) -> Unit,
+    stopWebSocket: () -> Unit
+) {
     val mountainService = remember { createMountainService(token) }
     var mountainData by remember { mutableStateOf<MountainData?>(null) }
-    var stepCount by remember { mutableIntStateOf(0) }
-    var distanceMoved by remember { mutableFloatStateOf(0f) }
+    var userPositions by remember { mutableStateMapOf<String, LatLng>() }
+    var stepCount by remember { mutableStateOf(0) }
+    var distanceMoved by remember { mutableStateOf(0f) }
     var timerRunning by remember { mutableStateOf(false) }
-    var elapsedTime by remember { mutableStateOf(0) } // 초 단위로 경과 시간을 저장합니다.
-    val scope = rememberCoroutineScope()
+    var elapsedTime by remember { mutableStateOf(0) }
 
-    // 센서 관리자와 걸음 수 센서 초기화
-    val sensorManager = getSystemService(context, SensorManager::class.java)
+    val sensorManager = ContextCompat.getSystemService(context, SensorManager::class.java)
     val stepDetectorSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
-    // 센서 리스너 등록
     DisposableEffect(Unit) {
         val sensorEventListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
                 if (event.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
                     stepCount += event.values[0].toInt()
-                    Log.d("StepDetector", "Step detected: Total steps = $stepCount")
                 }
             }
-
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
@@ -150,36 +172,24 @@ fun MapScreen(context: Context, token: String) {
         }
     }
 
-    LaunchedEffect(key1 = true) {
-        mountainData = withContext(Dispatchers.IO) {
-            try {
-                val response = mountainService.getMountainData()
-                response.data
-            } catch (e: Exception) {
-                Log.e("MapScreen", "Error fetching mountain data", e)
-                null
+    LaunchedEffect(timerRunning) {
+        if (timerRunning) {
+            startWebSocket { lat, lng, nickname ->
+                val newLocation = LatLng(lat, lng)
+                userPositions.put(nickname, newLocation) // Using indexing operator instead of put
             }
-        }
-    }
-
-    // 타이머 로직
-    if (timerRunning) {
-        LaunchedEffect(key1 = timerRunning) {
             while (timerRunning) {
-                delay(1000) // 1초 대기
-                elapsedTime += 1 // 경과 시간 1초 증가
+                delay(1000)
+                elapsedTime += 1
             }
+        } else {
+            elapsedTime = 0
+            stopWebSocket()
         }
     }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(LatLng(35.8447943443487, 127.11199020254), 16.0)
-    }
-
-    LaunchedEffect(key1 = mountainData) {
-        mountainData?.let {
-            cameraPositionState.position = CameraPosition(LatLng(it.lat, it.lng), 16.0)
-        }
     }
 
     val uiSettings = remember {
@@ -211,20 +221,21 @@ fun MapScreen(context: Context, token: String) {
                         captionMinZoom = 12.0
                     )
                 }
+                userPositions.forEach { (nickname, position) ->
+                    Marker(
+                        state = rememberMarkerState(position = position),
+                        captionText = nickname,
+                        captionTextSize = 14.sp,
+                        captionMinZoom = 12.0
+                    )
+                }
             }
-            // "등산 시작" 및 "중지" 버튼
+
             Button(
                 onClick = {
-                    if (timerRunning) {
-                        timerRunning = false
-                        elapsedTime = 0 // 타이머가 중지될 때 경과 시간을 초기화합니다.
-                    } else {
-                        timerRunning = true
-                    }
+                    timerRunning = !timerRunning
                 },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
+                modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)
             ) {
                 Text(if (timerRunning) "중지" else "등산 시작")
             }
@@ -234,6 +245,9 @@ fun MapScreen(context: Context, token: String) {
         }
     }
 }
+
+
+
 @Composable
 fun InfoPanel(elevation: Int, steps: Int, distance: Float, timeInSeconds: Int) {
     val hours = timeInSeconds / 3600
@@ -241,17 +255,13 @@ fun InfoPanel(elevation: Int, steps: Int, distance: Float, timeInSeconds: Int) {
     val seconds = timeInSeconds % 60
 
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium,
         shadowElevation = 4.dp
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             InfoItem(title = "고도", value = "$elevation m")
@@ -265,11 +275,19 @@ fun InfoPanel(elevation: Int, steps: Int, distance: Float, timeInSeconds: Int) {
 @Composable
 fun InfoItem(title: String, value: String) {
     Column(
-        modifier = Modifier
-            .padding(8.dp),
+        modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = title, style = MaterialTheme.typography.titleMedium)
         Text(text = value, style = MaterialTheme.typography.bodyLarge)
     }
 }
+
+data class WebSocketMessage(
+    val type: String,
+    val partyId: Int,
+    val userId : Int,
+    val userNickname: String,
+    val lat: String,
+    val lng: String
+)

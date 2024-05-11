@@ -3,6 +3,7 @@ package com.santeut.data.repository
 import android.util.Log
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.PartyListResponse
 import com.santeut.data.model.response.PartyResponse
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,26 @@ class PartyRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e("PartyRepository", "소모임 목록 조회 실패: ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun getMyPartyList(
+        date: String?,
+        includeEnd: Boolean,
+        page: Int?,
+        size: Int?
+    ): List<MyPartyResponse> {
+        return try {
+            val response = partyApiService.getMyPartyList(date, includeEnd, page, size)
+            if (response.status == "200") {
+                response.data.partyList?: emptyList()
+            } else {
+                Log.e("PartyRepository", "내 소모임 목록 조회 실패: ${response.status} - ${response.data}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("PartyRepository", "내 소모임 목록 조회 실패: ${e.message}")
             throw e
         }
     }

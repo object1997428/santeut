@@ -34,7 +34,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.MountainResponse
-import com.santeut.ui.home.HomeSearchBar
+import com.santeut.ui.home.SearchMountainBar
 
 @Composable
 fun MountainListScreen(
@@ -49,10 +49,8 @@ fun MountainListScreen(
     }
 
     Column {
-        HomeSearchBar(
+        SearchMountainBar(
             navController,
-            onSearchTextChanged = {},
-            onClickSearch = {},
             onClickMap = {}
         )
 

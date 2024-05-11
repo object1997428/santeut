@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,9 @@ class PartyViewModel @Inject constructor(
     private val _partyList = MutableLiveData<List<PartyResponse>>()
     val partyList: LiveData<List<PartyResponse>> = _partyList
 
+    private val _myPartyList = MutableLiveData<List<MyPartyResponse>>()
+    val myPartyList: LiveData<List<MyPartyResponse>> = _myPartyList
+
     fun getPartyList(
         guildId: Int?,
         name: String?,
@@ -38,6 +42,22 @@ class PartyViewModel @Inject constructor(
                 _partyList.value = partyUseCase.getPartyList(guildId, name, start, end)
             } catch (e:Exception){
                 _error.value = "소모임 목록 조회 실패: ${e.message}"
+            }
+        }
+    }
+
+    fun getMyPartyList(
+        date: String?,
+        includeEnd: Boolean,
+        page: Int?,
+        size: Int?
+    ){
+        viewModelScope.launch{
+            try {
+                Log.d("PartyViewModel", _myPartyList.value?.size.toString())
+                _myPartyList.value = partyUseCase.getMyPartyList(date, includeEnd, page, size)
+            } catch (e:Exception){
+                _error.value = "내 소모임 목록 조회 실패: ${e.message}"
             }
         }
     }

@@ -19,7 +19,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
-import com.santeut.ui.party.PartyListScreen
+import com.santeut.ui.community.party.JoinPartyScreen
+import com.santeut.ui.party.MyPartyListScreen
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -69,7 +70,7 @@ fun GuildScreen(
                 when (page) {
                     0 -> GuildInfoScreen(guild)
                     1 -> GuildCommunityScreen()
-                    2 -> PartyListScreen()
+                    2 -> JoinPartyScreen()
                     3 -> GuildRankingScreen()
                     else -> Text("Unknown page")
                 }
