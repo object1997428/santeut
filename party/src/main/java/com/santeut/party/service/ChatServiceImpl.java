@@ -14,16 +14,13 @@ import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse;
 import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse.PartyMemberInfo;
 import com.santeut.party.repository.ChatMessageRepository;
 import com.santeut.party.repository.PartyUserRepository;
-import com.santeut.party.repository.UserIdOnly;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -82,40 +79,32 @@ public class ChatServiceImpl implements ChatService {
 
   @Override
   public ChatMessageListResponse getAllChatMessage(int userId, int partyId) {
-    List<Integer> memberIdList = partyUserRepository.findAllMemberByPartyId(partyId); // partyId에 소속된 모든 사람 찾기
 
-    System.out.println(Arrays.toString(memberIdList.toArray()));
-    GetPartyMemberInfoResponse memberInfoList = userInfoAccessUtil.getPartyMemberInfo(partyId,
-        userId, memberIdList);
-    // map에 넣기
-    Map<Integer, PartyMemberInfo> partyMemberInfoMap = new HashMap<>();
-    for(PartyMemberInfo memberInfo : memberInfoList.getPartyMembers()) {
-      partyMemberInfoMap.put(memberInfo.getUserId(), memberInfo);
-    }
+    Map<Integer, PartyMemberInfo> partyMemberInfoMap = findMemberInParty(userId, partyId);
 
     List<ChatMessageInfoDto> messageList = new ArrayList<>();
-    List<ChatMessage> messages = chatMessageRepository.findAllBy(partyId);
-    for (ChatMessage message : messages) {
+    for (ChatMessage message : chatMessageRepository.findAllBy(partyId)) {
       PartyMemberInfo sender = partyMemberInfoMap.getOrDefault(message.getUserId(), null);
-      ChatMessageInfoDto chatMessage = null;
-      if(sender==null) {
-        chatMessage = ChatMessageInfoDto.of(
-            message.getCreatedAt(),
-            "나간 사용자",
-            null,
-            message.getContent()
-        );
-      } else {
-        chatMessage = ChatMessageInfoDto.of(
-            message.getCreatedAt(),
-            sender.getUserNickname(),
-            sender.getUserProfile(),
-            message.getContent()
-        );
-      }
-      messageList.add(chatMessage);
+      messageList.add(ChatMessageInfoDto.of(
+          message.getCreatedAt(),
+          (sender == null) ? "나간 사용자" : sender.getUserNickname(),
+          (sender == null) ? null : sender.getUserProfile(),
+          message.getContent()
+      ));
     }
 
     return new ChatMessageListResponse(messageList);
+  }
+
+  private Map<Integer, PartyMemberInfo> findMemberInParty(int userId, int partyId) {
+    GetPartyMemberInfoResponse memberInfoList = userInfoAccessUtil.getPartyMemberInfo(partyId,
+        userId, partyUserRepository.findAllMemberByPartyId(partyId));
+
+    Map<Integer, PartyMemberInfo> partyMemberInfoMap = new HashMap<>();
+    for (PartyMemberInfo memberInfo : memberInfoList.getPartyMembers()) {
+      log.info("{}번: {}",memberInfo.getUserId(), memberInfo.getUserNickname());
+      partyMemberInfoMap.put(memberInfo.getUserId(), memberInfo);
+    }
+    return partyMemberInfoMap;
   }
 }

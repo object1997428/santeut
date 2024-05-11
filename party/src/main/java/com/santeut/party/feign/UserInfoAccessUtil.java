@@ -7,6 +7,7 @@ import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse;
 import com.santeut.party.feign.dto.response.GetPartyMemberInfoResponse.PartyMemberInfo;
 import com.santeut.party.feign.dto.response.UserInfoFeignResponseDto;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -44,8 +45,7 @@ public class UserInfoAccessUtil {
       log.error("[party->auth] 소모임 유저 정보를 불러오는 데 실패했습니다/userId {}",userId);
       throw new FeignException("[party->auth] 소모임 유저 정보를 불러오는 데 실패했습니다");
     }
-    FeignResponseDto res = memberResp.getBody();
-    return (GetPartyMemberInfoResponse) res.getData();
+    return Objects.requireNonNull(memberResp.getBody()).getData();
   }
 
 
