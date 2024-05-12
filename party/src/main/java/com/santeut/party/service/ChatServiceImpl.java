@@ -59,7 +59,7 @@ public class ChatServiceImpl implements ChatService {
 
     for (Party p : partyList) {
       String guildName = p.getGuildId() == null ? ""
-          : guildAccessUtil.getGuildInfo(p.getGuildId()).getGuildName(); // 동호회 이름
+          : guildAccessUtil.getGuildInfo(p.getGuildId(), userId).getGuildName(); // 동호회 이름
       String lastMessage = null;
       LocalDateTime lastSentDate = null;
 
