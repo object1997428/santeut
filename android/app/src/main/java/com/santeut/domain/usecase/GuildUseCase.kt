@@ -1,6 +1,7 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
@@ -40,5 +41,8 @@ class GuildUseCase @Inject constructor(
 
     suspend fun getGuildPost(guildPostId: Int): GuildPostDetailResponse =
         guildRepository.getGuildPost(guildPostId)
+
+    suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse> =
+        guildRepository.getGuildMemberList(guildId)
 
 }

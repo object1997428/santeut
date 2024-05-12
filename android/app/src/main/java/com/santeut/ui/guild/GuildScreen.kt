@@ -22,7 +22,6 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.santeut.ui.community.party.JoinPartyScreen
 import com.santeut.ui.navigation.top.GuildTopBar
-import com.santeut.ui.party.MyPartyListScreen
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -45,7 +44,7 @@ fun GuildScreen(
 
     Scaffold() {
         Column(modifier = Modifier.fillMaxWidth()) {
-            GuildTopBar(navController, guild?.guildName ?: "")
+            guild?.let { it1 -> GuildTopBar(navController, it1) }
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 indicator = { tabPositions ->

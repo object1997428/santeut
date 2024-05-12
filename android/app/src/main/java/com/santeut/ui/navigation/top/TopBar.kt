@@ -15,7 +15,13 @@ import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -23,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.santeut.R
+import com.santeut.data.model.response.GuildResponse
 
 @Composable
 fun TopBar(
@@ -185,9 +192,12 @@ fun CreateTopBar(navController: NavController, pageName: String, onWriteClick: (
 }
 
 @Composable
-fun GuildTopBar(navController: NavController, pageName: String) {
+fun GuildTopBar(navController: NavController, guild: GuildResponse) {
+
+    var showMenu by remember { mutableStateOf(false) }
+
     TopAppBar(
-        title = { Text(pageName) },
+        title = { Text(guild.guildName) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -207,11 +217,26 @@ fun GuildTopBar(navController: NavController, pageName: String) {
                     contentDescription = "링크 공유"
                 )
             }
-            IconButton(onClick = { /* 클릭 시 메뉴 열림 */ }) {
+            IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "추가 메뉴"
                 )
+            }
+
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text(text = "회원 목록 보기") },
+                    onClick = { navController.navigate("guildMemberList/${guild.guildId}") })
+                DropdownMenuItem(text = { Text(text = "소모임 만들기") }, onClick = { /*TODO*/ })
+                DropdownMenuItem(text = { Text(text = "가입 요청 보기") }, onClick = { /*TODO*/ })
+                DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
+                DropdownMenuItem(
+                    text = { Text(text = "동호회 탈퇴하기", color = Color.Red) },
+                    onClick = { /*TODO*/ })
             }
         }
     )

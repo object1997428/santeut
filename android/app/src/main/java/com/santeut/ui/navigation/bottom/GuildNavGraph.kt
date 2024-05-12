@@ -6,8 +6,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.CreateGuildPostScreen
 import com.santeut.ui.guild.GuildCommunityScreen
+import com.santeut.ui.guild.GuildMemberListScreen
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.MyGuildScreen
@@ -21,9 +23,13 @@ fun NavGraphBuilder.GuildNavGraph(
         startDestination = "guild",
         route = "guild_graph"
     ) {
+
+        // 나의 모임 페이지
         composable("guild") {
             MyGuildScreen(navController)
         }
+
+        // 동호회 상세 페이지
         composable(
             route = "getGuild/{guildId}",
             arguments = listOf(
@@ -34,6 +40,7 @@ fun NavGraphBuilder.GuildNavGraph(
             GuildScreen(guildId, navController)
         }
 
+        // 동호회 게시판
         composable(
             route = "guildCommunity/{guildId}",
             arguments = listOf(navArgument("guildId") { type = NavType.IntType })
@@ -42,6 +49,7 @@ fun NavGraphBuilder.GuildNavGraph(
             GuildCommunityScreen(guildId, navController)
         }
 
+        // 동호회 게시판 글쓰기
         composable(
             route = "createGuildPost/{guildId}",
             arguments = listOf(
@@ -50,6 +58,17 @@ fun NavGraphBuilder.GuildNavGraph(
         ) { backStackEntry ->
             val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
             CreateGuildPostScreen(guildId, navController)
+        }
+
+        // 동호회 회원 조회
+        composable(
+            route = "guildMemberList/{guildId}",
+            arguments = listOf(
+                navArgument("guildId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            GuildMemberListScreen(guildId, navController)
         }
 
         composable("createParty") {

@@ -56,4 +56,14 @@ data class GuildPostDetailResponse(
     @SerializedName("writer") val writer: Boolean,
     @SerializedName("like") val like: Boolean,
 
+    )
+
+data class GuildMemberListResponse(
+    @SerializedName("memberList") val memberList: List<GuildMemberResponse>
+)
+
+data class GuildMemberResponse(
+    @SerializedName("userId") val userId: Int,
+    @SerializedName("userProfile") val userProfile: String,
+    @SerializedName("userNickname") val userNickname: String
 )

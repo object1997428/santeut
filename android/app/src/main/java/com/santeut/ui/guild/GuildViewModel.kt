@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
@@ -34,6 +35,9 @@ class GuildViewModel @Inject constructor(
 
     private val _post = MutableLiveData<GuildPostDetailResponse>()
     val post: LiveData<GuildPostDetailResponse> = _post
+
+    private val _memberList = MutableLiveData<List<GuildMemberResponse>>(emptyList())
+    val memberList: LiveData<List<GuildMemberResponse>> = _memberList
 
     fun getGuilds() {
         viewModelScope.launch {
@@ -103,12 +107,22 @@ class GuildViewModel @Inject constructor(
         }
     }
 
-    fun getGuildPost(guildPostId: Int){
+    fun getGuildPost(guildPostId: Int) {
         viewModelScope.launch {
             try {
                 _post.postValue(guildUseCase.getGuildPost(guildPostId))
             } catch (e: Exception) {
                 _error.postValue("게시글 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getGuildMemberList(guildId: Int) {
+        viewModelScope.launch {
+            try {
+                _memberList.postValue(guildUseCase.getGuildMemberList(guildId))
+            } catch (e: Exception) {
+                _error.postValue("동호회 회원 조회 실패: ${e.message}")
             }
         }
     }

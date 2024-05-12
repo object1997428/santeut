@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
@@ -89,7 +90,8 @@ class GuildRepositoryImpl @Inject constructor(
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = flow {
         Log.d("Repository", "접근 성공")
-        val response = guildApiService.createGuildPost(images, createGuildPostPart(createGuildPostRequest))
+        val response =
+            guildApiService.createGuildPost(images, createGuildPostPart(createGuildPostRequest))
         if (response.status == "200") {
             Log.d("Guild Repository", "동호회 게시글 작성 성공")
             emit(response.data)
@@ -104,7 +106,7 @@ class GuildRepositoryImpl @Inject constructor(
         return MultipartBody.Part.createFormData("postCreateRequestDto", null, requestBody)
     }
 
-    override suspend fun getGuildPost(guildPostId:Int): GuildPostDetailResponse{
+    override suspend fun getGuildPost(guildPostId: Int): GuildPostDetailResponse {
         return try {
             val response = guildApiService.getGuildPost(guildPostId)
             if (response.status == "200") {
@@ -115,6 +117,21 @@ class GuildRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("GuildRepository", "Network error while fetching post: ${e.message}", e)
             throw e
+        }
+    }
+
+    override suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse> {
+        return try {
+            val response = guildApiService.getGuildMemberList(guildId)
+            if (response.status == "200") {
+                Log.d("GuildRepository", "동호회 회원 목록 조회 성공")
+                response.data.memberList ?: emptyList()
+            } else {
+                throw Exception("동호회 회원 목록 조회 실패: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
         }
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildListResponse
+import com.santeut.data.model.response.GuildMemberListResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostListResponse
 import com.santeut.data.model.response.GuildResponse
@@ -53,4 +54,8 @@ interface GuildApiService {
         @Path("guildPostId") guildPostId: Int
     ): CustomResponse<GuildPostDetailResponse>
 
+    @GET("/api/guild/user/{guildId}/member-list")
+    suspend fun getGuildMemberList(
+        @Path("guildId") guildId: Int
+    ): CustomResponse<GuildMemberListResponse>
 }
