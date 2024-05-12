@@ -18,6 +18,8 @@ data class GuildResponse(
     @SerializedName("guildMinAge") val guildMinAge: Int,
     @SerializedName("guildMaxAge") val guildMaxAge: Int,
     @SerializedName("createdAt") val createdAt: LocalDateTime,
+    @SerializedName("joinStatus") val joinStatus: Char,
+    @SerializedName("isPresident") val isPresident: Boolean
 )
 
 data class GuildPostListResponse(
@@ -54,9 +56,8 @@ data class GuildPostDetailResponse(
     @SerializedName("commentList") val commentList: List<CommentResponse>,
     @SerializedName("images") val images: List<String>,
     @SerializedName("writer") val writer: Boolean,
-    @SerializedName("like") val like: Boolean,
-
-    )
+    @SerializedName("like") val like: Boolean
+)
 
 data class GuildMemberListResponse(
     @SerializedName("memberList") val memberList: List<GuildMemberResponse>

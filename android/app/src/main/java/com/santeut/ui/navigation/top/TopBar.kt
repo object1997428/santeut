@@ -232,8 +232,12 @@ fun GuildTopBar(navController: NavController, guild: GuildResponse) {
                     text = { Text(text = "회원 목록 보기") },
                     onClick = { navController.navigate("guildMemberList/${guild.guildId}") })
                 DropdownMenuItem(text = { Text(text = "소모임 만들기") }, onClick = { /*TODO*/ })
-                DropdownMenuItem(text = { Text(text = "가입 요청 보기") }, onClick = { /*TODO*/ })
-                DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
+
+                if (guild.isPresident) {
+                    DropdownMenuItem(text = { Text(text = "가입 요청 보기") }, onClick = { /*TODO*/ })
+                    DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
+                }
+
                 DropdownMenuItem(
                     text = { Text(text = "동호회 탈퇴하기", color = Color.Red) },
                     onClick = { /*TODO*/ })

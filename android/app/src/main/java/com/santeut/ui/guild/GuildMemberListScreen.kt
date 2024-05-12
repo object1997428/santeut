@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,7 +83,7 @@ fun GuildMemberListScreen(
                 }
                 LazyColumn(modifier = Modifier.padding(padding)) {
                     items(memberList) { member ->
-                        MemberRow(member)
+                        guild?.let { MemberRow(it, member) }
                     }
                 }
             }
@@ -89,7 +93,14 @@ fun GuildMemberListScreen(
 }
 
 @Composable
-fun MemberRow(member: GuildMemberResponse) {
+fun MemberRow(
+    guild: GuildResponse,
+    member: GuildMemberResponse,
+    guildViewModel: GuildViewModel = hiltViewModel()
+) {
+
+    var showDialog by remember { mutableStateOf(false) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,10 +127,38 @@ fun MemberRow(member: GuildMemberResponse) {
                 modifier = Modifier.weight(1f)
             )
 
-            Button(onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(Color.Red)) {
-                // 회원 추방
-                Text(text = "추방하기", color = Color.White)
+            // 동호회 회장인 경우 추방하기 버튼 활성화
+            if (guild.isPresident) {
+                Button(
+                    onClick = { showDialog = true },
+                    colors = ButtonDefaults.buttonColors(Color.Red)
+                ) {
+                    // 회원 추방
+                    Text(text = "추방하기", color = Color.White)
+                }
             }
+        }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                text = { Text(text = "${member.userNickname}님을 추방할까요?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            guildViewModel.exileMember(guild.guildId, member.userId)
+                            showDialog = false
+                        }
+                    ) {
+                        Text("추방")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("취소")
+                    }
+                }
+            )
         }
     }
 }
