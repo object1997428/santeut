@@ -100,7 +100,7 @@ class GuildRepositoryImpl @Inject constructor(
         }
     }
 
-    fun createGuildPostPart(createGuildPostPart: CreateGuildPostRequest): MultipartBody.Part {
+    private fun createGuildPostPart(createGuildPostPart: CreateGuildPostRequest): MultipartBody.Part {
         val json = Gson().toJson(createGuildPostPart)
         val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("postCreateRequestDto", null, requestBody)
@@ -132,6 +132,36 @@ class GuildRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("GuildRepository", "Network error: ${e.message}", e)
             emptyList()
+        }
+    }
+
+    override suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit> = flow {
+        val response = guildApiService.exileMember(guildId, userId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "회원 추방 성공")
+            emit(response.data)
+        } else {
+            throw Exception("회원 추방 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun changeLeader(guildId: Int, newLeaderId: Int): Flow<Unit> = flow {
+        val response = guildApiService.changeLeader(guildId, newLeaderId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "회장 위임 성공")
+            emit(response.data)
+        } else {
+            throw Exception("회장 위임 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun quitGuild(guildId: Int): Flow<Unit> = flow {
+        val response = guildApiService.quitGuild(guildId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "동호회 탈퇴 성공")
+            emit(response.data)
+        } else {
+            throw Exception("동호회 탈퇴 실패: ${response.status} ${response.data}")
         }
     }
 }

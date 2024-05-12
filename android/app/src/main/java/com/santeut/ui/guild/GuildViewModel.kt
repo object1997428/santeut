@@ -12,6 +12,7 @@ import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -126,4 +127,40 @@ class GuildViewModel @Inject constructor(
             }
         }
     }
+
+     fun exileMember(guildId: Int, userId: Int){
+         viewModelScope.launch {
+             try {
+                 guildUseCase.exileMember(guildId, userId).collect {
+                     Log.d("GuildViewModel", "회원 추방 요청 성공")
+                 }
+             } catch (e: Exception) {
+                 _error.postValue("회원 추방 요청 실패: ${e.message}")
+             }
+         }
+     }
+
+     fun changeLeader(guildId: Int, newLeaderId: Int) {
+         viewModelScope.launch {
+             try {
+                 guildUseCase.changeLeader(guildId, newLeaderId).collect {
+                     Log.d("GuildViewModel", "회장 위임 요청 성공")
+                 }
+             } catch (e: Exception) {
+                 _error.postValue("회장 위임 요청 실패: ${e.message}")
+             }
+         }
+     }
+
+     fun quitGuild(guildId: Int){
+         viewModelScope.launch {
+             try {
+                 guildUseCase.quitGuild(guildId).collect {
+                     Log.d("GuildViewModel", "동호회 탈퇴 요청 성공")
+                 }
+             } catch (e: Exception) {
+                 _error.postValue("동호회 탈퇴 요청 실패: ${e.message}")
+             }
+         }
+     }
 }

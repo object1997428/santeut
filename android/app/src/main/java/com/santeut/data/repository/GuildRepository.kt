@@ -28,4 +28,11 @@ interface GuildRepository {
     suspend fun getGuildPost(guildPostId: Int): GuildPostDetailResponse
 
     suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse>
+
+    suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit>
+
+    suspend fun changeLeader(guildId: Int, newLeaderId: Int): Flow<Unit>
+
+    suspend fun quitGuild(guildId: Int): Flow<Unit>
+
 }

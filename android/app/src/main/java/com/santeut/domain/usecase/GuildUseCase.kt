@@ -45,4 +45,13 @@ class GuildUseCase @Inject constructor(
     suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse> =
         guildRepository.getGuildMemberList(guildId)
 
+
+    suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit> =
+        guildRepository.exileMember(guildId, userId)
+
+    suspend fun changeLeader(guildId: Int, newLeaderId: Int): Flow<Unit> =
+        guildRepository.changeLeader(guildId, newLeaderId)
+
+    suspend fun quitGuild(guildId: Int): Flow<Unit> = guildRepository.quitGuild(guildId)
+
 }
