@@ -44,11 +44,6 @@ fun GuildScreen(
     }
 
     Scaffold() {
-<<<<<<< android/app/src/main/java/com/santeut/ui/guild/GuildScreen.kt
-
-=======
-        GuildTopBar(navController, guild!!.guildName)
->>>>>>> android/app/src/main/java/com/santeut/ui/guild/GuildScreen.kt
         Column(modifier = Modifier.fillMaxWidth()) {
             GuildTopBar(navController, guild?.guildName ?: "")
             TabRow(

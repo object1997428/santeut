@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.guild.CreateGuildPostScreen
+import com.santeut.ui.guild.GuildCommunityScreen
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.MyGuildScreen
@@ -32,17 +33,27 @@ fun NavGraphBuilder.GuildNavGraph(
             val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
             GuildScreen(guildId, navController)
         }
-        composable("createParty") {
-            CreatePartyScreen(navController)
+
+        composable(
+            route = "guildCommunity/{guildId}",
+            arguments = listOf(navArgument("guildId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            GuildCommunityScreen(guildId, navController)
         }
+
         composable(
             route = "createGuildPost/{guildId}",
             arguments = listOf(
                 navArgument("guildId") { type = NavType.IntType },
             )
-        ) {backStackEntry ->
+        ) { backStackEntry ->
             val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
             CreateGuildPostScreen(guildId, navController)
+        }
+
+        composable("createParty") {
+            CreatePartyScreen(navController)
         }
     }
 }
