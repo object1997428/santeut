@@ -11,34 +11,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testmap.ui.theme.TestmapTheme
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Response
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
+import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import android.util.Log
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.*
-import okhttp3.*
-import com.google.gson.Gson
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.core.content.ContextCompat.getSystemService
+import android.util.Log
 import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.FusedLocationProviderClient
-import kotlinx.coroutines.tasks.await
+import androidx.core.content.ContextCompat.getSystemService
+import com.google.gson.Gson
 
 // API 인터페이스 정의
 interface MountainService {
@@ -93,6 +90,8 @@ fun createMountainService(token: String): MountainService {
 class MainActivity : ComponentActivity() {
     private var webSocket: WebSocket? = null
     private val webSocketUrl = "ws://k10e201.p.ssafy.io:52715/api/hiking/chat/rooms/1"
+    var userMarkerStates = mutableMapOf<String, MarkerState>()
+    var userPositions = mutableMapOf<String, LatLng>()
 
     companion object {
         private const val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
@@ -106,13 +105,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen(context = this@MainActivity, token = "your_token_here", ::startWebSocket, ::stopWebSocket)
+                    MapScreen(context = this@MainActivity, token = "your_token_here", ::startWebSocket, ::stopWebSocket, userMarkerStates, userPositions)
                 }
             }
         }
     }
 
-    fun startWebSocket(updateLocation: (Double, Double) -> Unit, context: Context) {
+    fun startWebSocket(updateLocation: (String, Double, Double) -> Unit, context: Context) {
         val request = Request.Builder().url(webSocketUrl).build()
         var locationSendingJob: Job? = null  // 위치 전송 코루틴 작업을 참조하기 위한 변수
 
@@ -121,7 +120,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("WebSocket", "Received message: $text")
                 try {
                     val message = Gson().fromJson(text, WebSocketMessage::class.java)
-                    updateLocation(message.lat.toDouble(), message.lng.toDouble())
+                    updateLocation(message.userNickname, message.lat.toDouble(), message.lng.toDouble())
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
                 }
@@ -140,8 +139,8 @@ class MainActivity : ComponentActivity() {
                             val locationJson = Gson().toJson(WebSocketMessage(
                                 type = "message",
                                 partyId = 1,
-                                userId = 3,
-                                userNickname = "하이",
+                                userId = 1,
+                                userNickname = "My",
                                 lat = it.latitude.toString(),
                                 lng = it.longitude.toString()
                             ))
@@ -166,13 +165,11 @@ class MainActivity : ComponentActivity() {
         webSocket = OkHttpClient().newWebSocket(request, listener)
     }
 
-
-
-
-
     fun stopWebSocket() {
         webSocket?.close(1000, "Activity Ended")
         webSocket = null
+        userMarkerStates.clear()
+        userPositions.clear()
     }
 }
 
@@ -181,23 +178,27 @@ class MainActivity : ComponentActivity() {
 fun MapScreen(
     context: Context,
     token: String,
-    startWebSocket: (updateLocation: (Double, Double) -> Unit, Context) -> Unit,
-    stopWebSocket: () -> Unit
+    startWebSocket: (updateLocation: (String, Double, Double) -> Unit, Context) -> Unit,
+    stopWebSocket: () -> Unit,
+    userMarkerStates: MutableMap<String, MarkerState>,
+    userPositions: MutableMap<String, LatLng>
 ) {
     val mountainService = remember { createMountainService(token) }
     var mountainData by remember { mutableStateOf<MountainData?>(null) }
-    var otherUserPosition by remember { mutableStateOf<LatLng?>(null) }
+    var userPositions by remember { mutableStateOf<Map<String, LatLng>>(mapOf()) }
 
     var stepCount by remember { mutableStateOf(0) }
     var distanceMoved by remember { mutableStateOf(0f) }
     var timerRunning by remember { mutableStateOf(false) }
     var elapsedTime by remember { mutableStateOf(0) }
 
-    // 사용자 위치 마커 상태 관리
-    val otherUserMarkerState = rememberMarkerState()
-    LaunchedEffect(otherUserPosition) {
-        otherUserPosition?.let {
-            otherUserMarkerState.position = it
+    // 사용자 위치 마커 상태를 관리하기 위해 MutableMap을 사용
+    val userMarkerStates by remember { mutableStateOf<MutableMap<String, MarkerState>>(mutableMapOf()) }
+
+    // userPositions가 변경될 때마다 마커 상태를 업데이트
+    LaunchedEffect(userPositions) {
+        userPositions.forEach { (nickname, position) ->
+            userMarkerStates[nickname] = MarkerState(position = position)
         }
     }
 
@@ -225,8 +226,10 @@ fun MapScreen(
 
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
-            startWebSocket({ lat, lng ->
-                otherUserPosition = LatLng(lat, lng)
+            startWebSocket({ nickname, lat, lng ->
+                userPositions = userPositions.toMutableMap().apply {
+                    this[nickname] = LatLng(lat, lng)
+                }
             }, context)
             while (timerRunning) {
                 delay(1000)
@@ -271,12 +274,14 @@ fun MapScreen(
                         captionMinZoom = 12.0
                     )
                 }
-                Marker(
-                    state = otherUserMarkerState,
-                    captionText = "다른 등산객",
-                    captionTextSize = 14.sp,
-                    captionMinZoom = 12.0
-                )
+                userMarkerStates.forEach { (nickname, markerState) ->
+                    Marker(
+                        state = markerState,
+                        captionText = nickname,
+                        captionTextSize = 14.sp,
+                        captionMinZoom = 12.0
+                    )
+                }
             }
 
             Button(
@@ -333,7 +338,7 @@ fun InfoItem(title: String, value: String) {
 data class WebSocketMessage(
     val type: String,
     val partyId: Int,
-    val userId : Int,
+    val userId: Int,
     val userNickname: String,
     val lat: String,
     val lng: String
