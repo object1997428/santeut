@@ -15,6 +15,8 @@ import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
@@ -217,6 +219,9 @@ fun GuildTopBar(
             }
         },
         actions = {
+
+            var showDialog by remember { mutableStateOf(false) }
+
             IconButton(onClick = { /* 클릭 시 링크 공유 */ }) {
                 Icon(
                     imageVector = Icons.Outlined.Share,
@@ -246,7 +251,29 @@ fun GuildTopBar(
 
                 DropdownMenuItem(
                     text = { Text(text = "동호회 탈퇴하기", color = Color.Red) },
-                    onClick = { guildViewModel.quitGuild(guild.guildId) })
+                    onClick = { showDialog = true })
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    text = { Text(text = "${guild.guildName}을 탈퇴할까요?") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                guildViewModel.quitGuild(guild.guildId)
+                                showDialog = false
+                            }
+                        ) {
+                            Text("탈퇴")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { showDialog = false }) {
+                            Text("취소")
+                        }
+                    }
+                )
             }
         }
     )
