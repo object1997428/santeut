@@ -34,6 +34,9 @@ class PartyViewModel @Inject constructor(
     private val _myRecordList = MutableLiveData<List<MyRecordResponse>>()
     val myRecordList: LiveData<List<MyRecordResponse>> = _myRecordList
 
+    private val _myScheduleList = MutableLiveData<List<String>>()
+    val myScheduleList: LiveData<List<String>> = _myScheduleList
+
     fun getPartyList(
         guildId: Int?,
         name: String?,
@@ -106,6 +109,17 @@ class PartyViewModel @Inject constructor(
                 Log.d("PartyViewModel", "내 산행 목록 조회 시도")
             } catch (e: Exception) {
                 _error.postValue("내 산행 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getMyScheduleList(year: Int, month: Int) {
+        viewModelScope.launch {
+            try {
+                _myScheduleList.postValue(partyUseCase.getMyScheduleList(year, month))
+                Log.d("PartyViewModel", "날짜별 소모임 조회 시도")
+            } catch (e: Exception) {
+                _error.postValue("날짜별 소모임 조회 실패: ${e.message}")
             }
         }
     }

@@ -30,4 +30,7 @@ class PartyUseCase @Inject constructor(
         partyRepository.createParty(createPartyRequest)
 
     suspend fun getMyRecordList(): List<MyRecordResponse> = partyRepository.getMyRecordList()
+
+    suspend fun getMyScheduleList(year: Int, month: Int): List<String> =
+        partyRepository.getMyScheduleList(year, month)
 }

@@ -4,12 +4,12 @@ import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MyPartyListResponse
 import com.santeut.data.model.response.MyRecordListResponse
+import com.santeut.data.model.response.MyScheduleList
 import com.santeut.data.model.response.PartyListResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-import java.time.LocalDate
 
 interface PartyApiService {
 
@@ -36,5 +36,11 @@ interface PartyApiService {
 
     @GET("/api/party/user/record")
     suspend fun getMyRecordList(): CustomResponse<MyRecordListResponse>
+
+    @GET("/api/party/user/schedule")
+    suspend fun getMyScheduleList(
+        @Query("year") year: Int,
+        @Query("month") month: Int
+    ): CustomResponse<MyScheduleList>
 
 }

@@ -89,3 +89,7 @@ data class MyRecordResponse(
     @SerializedName("height") val height: Int?,
     @SerializedName("duration") val duration: Int?
 )
+
+data class MyScheduleList(
+    @SerializedName("date") val date: List<String>
+)
