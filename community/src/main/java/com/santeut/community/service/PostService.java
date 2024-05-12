@@ -56,6 +56,7 @@ public class PostService {
                                     .postTitle(post.getPostTitle())
                                     .postContent(post.getPostContent())
                                     .likeCnt(likeCnt)
+                                    .userPartyId(post.getUserPartyId())
                                     .commentCnt(commentCnt)
                                     .createdAt(post.getCreatedAt())
                                     .postType(post.getPostType())

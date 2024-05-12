@@ -28,6 +28,8 @@ public class PostListResponseDto {
 
         private String userNickname; // 작성자 닉네임
 
+        private Integer userPartyId;
+
         private LocalDateTime createdAt;
 
         private Integer likeCnt;
