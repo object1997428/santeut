@@ -1,6 +1,7 @@
 package com.santeut.data.repository
 
 import com.santeut.data.model.response.GuildListResponse
+import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import kotlinx.coroutines.flow.Flow
 
@@ -13,4 +14,6 @@ interface GuildRepository {
     suspend fun getGuild(guildId: Int): GuildResponse
 
     suspend fun applyGuild(guildId: Int): Flow<Unit>
+
+    suspend fun getGuildPostList(guildId:Int, categoryId:Int): List<GuildPostResponse>
 }

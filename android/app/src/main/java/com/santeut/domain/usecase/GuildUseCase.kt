@@ -1,6 +1,7 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.response.GuildListResponse
+import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.repository.GuildRepository
 import kotlinx.coroutines.flow.Flow
@@ -24,5 +25,9 @@ class GuildUseCase @Inject constructor(
 
     suspend fun applyGuild(guildId: Int): Flow<Unit> {
         return guildRepository.applyGuild(guildId)
+    }
+
+    suspend fun getGuildPostList(guildId: Int, categoryId: Int): List<GuildPostResponse> {
+        return guildRepository.getGuildPostList(guildId, categoryId)
     }
 }

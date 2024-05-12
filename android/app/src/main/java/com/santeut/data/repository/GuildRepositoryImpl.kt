@@ -3,6 +3,7 @@ package com.santeut.data.repository
 import android.util.Log
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.response.GuildListResponse
+import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -60,6 +61,21 @@ class GuildRepositoryImpl @Inject constructor(
             emit(response.data)
         } else {
             throw Exception("가입 요청 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun getGuildPostList(guildId: Int, categoryId: Int): List<GuildPostResponse> {
+        return try {
+            val response = guildApiService.getGuildPostList(guildId, categoryId)
+            if (response.status == "200") {
+                Log.d("GuildRepository", "동호회 게시글 목록 조회 성공")
+                response.data.postList ?: emptyList()
+            } else {
+                throw Exception("동호회 게시글 목록 조회 실패: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
         }
     }
 }
