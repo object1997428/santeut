@@ -11,7 +11,6 @@ import org.springframework.web.socket.WebSocketSession;
 @NoArgsConstructor
 @Builder
 public class SocketDto {
-    private int partyId;
     private int userId;
     private String userNickname;
     private WebSocketSession session;
