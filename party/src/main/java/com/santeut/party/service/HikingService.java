@@ -220,7 +220,7 @@ public class HikingService {
         //3. 최장거리
         String key3 = "guild/" + hikingExitRequest.getPartyId() + "/bestDistance";
         Double currentDistance=redisTemplate.opsForZSet().score(key3, value);
-        Double newDistance= partyUser.getBestHeight()+((currentDistance==null)?0:currentDistance);
+        Double newDistance= partyUser.getDistance()+((currentDistance==null)?0:currentDistance);
         redisTemplate.opsForZSet().add(key3, value, newDistance);
     }
 
