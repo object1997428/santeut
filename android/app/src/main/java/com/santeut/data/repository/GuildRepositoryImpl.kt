@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import kotlinx.coroutines.flow.Flow
@@ -101,5 +102,19 @@ class GuildRepositoryImpl @Inject constructor(
         val json = Gson().toJson(createGuildPostPart)
         val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("postCreateRequestDto", null, requestBody)
+    }
+
+    override suspend fun getGuildPost(guildPostId:Int): GuildPostDetailResponse{
+        return try {
+            val response = guildApiService.getGuildPost(guildPostId)
+            if (response.status == "200") {
+                response.data
+            } else {
+                throw Exception("Failed to load post: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error while fetching post: ${e.message}", e)
+            throw e
+        }
     }
 }

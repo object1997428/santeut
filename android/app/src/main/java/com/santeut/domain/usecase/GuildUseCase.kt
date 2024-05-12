@@ -1,6 +1,7 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.repository.GuildRepository
@@ -36,4 +37,8 @@ class GuildUseCase @Inject constructor(
         images: List<MultipartBody.Part>,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = guildRepository.createGuildPost(images, createGuildPostRequest)
+
+    suspend fun getGuildPost(guildPostId: Int): GuildPostDetailResponse =
+        guildRepository.getGuildPost(guildPostId)
+
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildListResponse
+import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostListResponse
 import com.santeut.data.model.response.GuildResponse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -46,5 +47,10 @@ interface GuildApiService {
         @Part images: List<MultipartBody.Part>,
         @Part createGuildPostRequest: MultipartBody.Part
     ): CustomResponse<Unit>
+
+    @GET("/api/guild/post/{guildPostId}/")
+    suspend fun getGuildPost(
+        @Path("guildPostId") guildPostId: Int
+    ): CustomResponse<GuildPostDetailResponse>
 
 }
