@@ -68,7 +68,16 @@ fun GuildCommunityScreen(
         floatingActionButtonPosition = FabPosition.Center,
     ) {
         if (postList.isEmpty()) {
-            Text(text = "게시글이 없습니다")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                androidx.compose.material3.Text(
+                    text = "게시글이 없습니다.",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         } else {
             LazyColumn() {
                 items(postList) { post ->

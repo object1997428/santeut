@@ -113,6 +113,7 @@ fun CreateGuildPostScreen(
                             content
                         )
                     )
+                    navController.navigate("guildCommunity/$guildId")
                 }
             )
             CategoryRadioButtons(

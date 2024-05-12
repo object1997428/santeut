@@ -6,11 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -34,6 +36,9 @@ class GuildViewModel @Inject constructor(
 
     private val _post = MutableLiveData<GuildPostDetailResponse>()
     val post: LiveData<GuildPostDetailResponse> = _post
+
+    private val _memberList = MutableLiveData<List<GuildMemberResponse>>(emptyList())
+    val memberList: LiveData<List<GuildMemberResponse>> = _memberList
 
     fun getGuilds() {
         viewModelScope.launch {
@@ -103,7 +108,7 @@ class GuildViewModel @Inject constructor(
         }
     }
 
-    fun getGuildPost(guildPostId: Int){
+    fun getGuildPost(guildPostId: Int) {
         viewModelScope.launch {
             try {
                 _post.postValue(guildUseCase.getGuildPost(guildPostId))
@@ -112,4 +117,50 @@ class GuildViewModel @Inject constructor(
             }
         }
     }
+
+    fun getGuildMemberList(guildId: Int) {
+        viewModelScope.launch {
+            try {
+                _memberList.postValue(guildUseCase.getGuildMemberList(guildId))
+            } catch (e: Exception) {
+                _error.postValue("동호회 회원 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+     fun exileMember(guildId: Int, userId: Int){
+         viewModelScope.launch {
+             try {
+                 guildUseCase.exileMember(guildId, userId).collect {
+                     Log.d("GuildViewModel", "회원 추방 요청 성공")
+                 }
+             } catch (e: Exception) {
+                 _error.postValue("회원 추방 요청 실패: ${e.message}")
+             }
+         }
+     }
+
+     fun changeLeader(guildId: Int, newLeaderId: Int) {
+         viewModelScope.launch {
+             try {
+                 guildUseCase.changeLeader(guildId, newLeaderId).collect {
+                     Log.d("GuildViewModel", "회장 위임 요청 성공")
+                 }
+             } catch (e: Exception) {
+                 _error.postValue("회장 위임 요청 실패: ${e.message}")
+             }
+         }
+     }
+
+     fun quitGuild(guildId: Int){
+         viewModelScope.launch {
+             try {
+                 guildUseCase.quitGuild(guildId).collect {
+                     Log.d("GuildViewModel", "동호회 탈퇴 요청 성공")
+                 }
+             } catch (e: Exception) {
+                 _error.postValue("동호회 탈퇴 요청 실패: ${e.message}")
+             }
+         }
+     }
 }
