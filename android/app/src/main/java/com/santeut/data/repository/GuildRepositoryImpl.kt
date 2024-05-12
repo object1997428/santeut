@@ -2,11 +2,12 @@ package com.santeut.data.repository
 
 import android.util.Log
 import com.santeut.data.apiservice.GuildApiService
-import com.santeut.data.model.response.GuildListResponse
+import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class GuildRepositoryImpl @Inject constructor(
@@ -76,6 +77,19 @@ class GuildRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("GuildRepository", "Network error: ${e.message}", e)
             emptyList()
+        }
+    }
+
+    override suspend fun createGuildPost(
+        images: List<MultipartBody.Part>,
+        createGuildPostRequest: CreateGuildPostRequest
+    ): Flow<Unit> = flow {
+        val response = guildApiService.createGuildPost(images, createGuildPostRequest)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "동호회 게시글 작성 성공")
+            emit(response.data)
+        } else {
+            throw Exception("동호회 게시글 작성 실패: ${response.status} ${response.data}")
         }
     }
 }

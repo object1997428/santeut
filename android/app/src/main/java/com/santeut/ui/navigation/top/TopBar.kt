@@ -173,7 +173,7 @@ fun MenuTopBar(navController: NavController, pageName: String) {
 }
 
 @Composable
-fun CreateTopBar(navController: NavController, pageName: String) {
+fun CreateTopBar(navController: NavController, pageName: String, onWriteClick: () -> Unit) {
     TopAppBar(
         title = { Text(pageName) },
         contentColor = Color.Black,
@@ -189,7 +189,7 @@ fun CreateTopBar(navController: NavController, pageName: String) {
             }
         },
         actions = {
-            IconButton(onClick = { /* 글 작성 기능 연결 */ }) {
+            IconButton(onClick = onWriteClick) {
                 Icon(
                     imageVector = Icons.Outlined.Create,
                     contentDescription = "글쓰기"

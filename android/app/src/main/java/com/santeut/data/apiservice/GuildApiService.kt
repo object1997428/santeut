@@ -1,11 +1,16 @@
 package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
+import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildPostListResponse
 import com.santeut.data.model.response.GuildResponse
+import okhttp3.MultipartBody
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface GuildApiService {
@@ -28,8 +33,15 @@ interface GuildApiService {
 
     @GET("/api/guild/post/{guildId}/{categoryId}")
     suspend fun getGuildPostList(
-        @Path("guildId") guildId:Int,
+        @Path("guildId") guildId: Int,
         @Path("categoryId") categoryId: Int
     ): CustomResponse<GuildPostListResponse>
+
+    @POST("/api/guild/post")
+    @Multipart
+    suspend fun createGuildPost(
+        @Part images: List<MultipartBody.Part>,
+        @Body createGuildPostRequest: CreateGuildPostRequest
+    ): CustomResponse<Unit>
 
 }

@@ -1,7 +1,6 @@
 package com.santeut.data.model.response
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class GuildListResponse(
