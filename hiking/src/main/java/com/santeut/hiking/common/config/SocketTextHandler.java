@@ -8,23 +8,16 @@ import com.santeut.hiking.repository.RoomRepository;
 import com.santeut.hiking.service.HikingDataScheduler;
 import com.santeut.hiking.service.LocationSaveService;
 import com.santeut.hiking.vo.Room;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Slf4j
 public class SocketTextHandler extends TextWebSocketHandler {
-    //    private final Map<WebSocketSession, SocketDto> sessions = new HashMap<>();
-//    private final Set<WebSocketSession> sessions = new HashSet<>();
-
     @Autowired
     private RoomRepository roomRepository;
     @Autowired
@@ -64,7 +57,6 @@ public class SocketTextHandler extends TextWebSocketHandler {
                     hikingDataScheduler.stopTascking(quitDto.getPartyId().toString(),quitDto.getUserId().toString());
                     break;
                 case "message":
-
                     MessageLocationDto locationDto = om.treeToValue(jsonNode, MessageLocationDto.class);
                     locationSaveService.locationSave(locationDto);
                     for (WebSocketSession connectedSession : room.getSessions()) {

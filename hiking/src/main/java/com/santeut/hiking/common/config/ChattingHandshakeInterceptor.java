@@ -25,6 +25,5 @@ public class ChattingHandshakeInterceptor implements HandshakeInterceptor {
                                ServerHttpResponse response,
                                WebSocketHandler wsHandler,
                                Exception exception) {
-        // do nothing
     }
 }

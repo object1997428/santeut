@@ -50,18 +50,18 @@ public class HikingDataScheduler {
 
         //Redis에 스케줄러에서 처리할 유저 등록(파티 시작)
         String key = "party:" + partyId;
-        String RedisKey = "partyId:"+partyId+":user:" + userId+":location";
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
-        setOps.add(key, userId); //party:{} <- userId
+        boolean isMember = setOps.isMember(key, userId);
+        if(!isMember) setOps.add(key, userId); //party:{} <- userId
     }
 
     public void stopTascking(String partyId,String userId) throws JsonProcessingException {
         log.info("[Scheduler]: stopTascking -- partyId={}, userId={}",partyId,userId);
         //Redis에 스케줄러에서 유저 해제(파티 끝)
         String key = "party:" + partyId;
-        String RedisKey = "partyId:"+partyId+":user:" + userId+":location";
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
-        setOps.remove(key,userId);
+        boolean isMember = setOps.isMember(key, userId);
+        if(isMember) setOps.remove(key,userId);
 
         //Redis가 비었으면 스케줄러에서 지우기
         if(!redisTemplate.hasKey(partyId)) {

@@ -23,6 +23,6 @@ public class RoomRepository {
     }
 
     public Room room(int id) {
-        return rooms.get(id);
+        return rooms.computeIfAbsent(id, Room::create);
     }
 }
