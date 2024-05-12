@@ -152,7 +152,7 @@ fun CreateGuildPostScreen(
 
 @Composable
 fun CategoryRadioButtons(selectedCategoryId: Int, onCategorySelected: (Int) -> Unit) {
-    val categoryIds = listOf(1 to "공지", 2 to "자유")
+    val categoryIds = listOf(0 to "공지", 1 to "자유")
     Row(verticalAlignment = Alignment.CenterVertically) {
         categoryIds.forEach { (categoryId, categoryName) ->
             Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -187,12 +187,17 @@ fun ImagePreviewSection(images: List<Uri>) {
 fun createMultiPartBody(uriList: List<Uri>, context: Context): List<MultipartBody.Part> {
     val multipartList = mutableListOf<MultipartBody.Part>()
     for (uri in uriList) {
-        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        inputStream?.let { stream ->
-            val byteArray = stream.readBytes()
-            val requestBody = byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull())
-            val part = MultipartBody.Part.createFormData("images", "file.jpg", requestBody)
-            multipartList.add(part)
+        try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
+                val fileName = uri.lastPathSegment ?: "upload.file"
+                val byteArray = inputStream.readBytes()
+                val requestBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("images", fileName, requestBody)
+                multipartList.add(part)
+            }
+        } catch (e: Exception) {
+            Log.e("MultiPart", "Error processing file Uri: $uri", e)
         }
     }
     return multipartList

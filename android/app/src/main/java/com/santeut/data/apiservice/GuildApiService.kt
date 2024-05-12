@@ -1,11 +1,14 @@
 package com.santeut.data.apiservice
 
+import com.google.gson.Gson
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildPostListResponse
 import com.santeut.data.model.response.GuildResponse
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -41,7 +44,7 @@ interface GuildApiService {
     @Multipart
     suspend fun createGuildPost(
         @Part images: List<MultipartBody.Part>,
-        @Body createGuildPostRequest: CreateGuildPostRequest
+        @Part createGuildPostRequest: MultipartBody.Part
     ): CustomResponse<Unit>
 
 }

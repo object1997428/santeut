@@ -1,13 +1,16 @@
 package com.santeut.data.repository
 
 import android.util.Log
+import com.google.gson.Gson
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class GuildRepositoryImpl @Inject constructor(
@@ -84,12 +87,19 @@ class GuildRepositoryImpl @Inject constructor(
         images: List<MultipartBody.Part>,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = flow {
-        val response = guildApiService.createGuildPost(images, createGuildPostRequest)
+        Log.d("Repository", "접근 성공")
+        val response = guildApiService.createGuildPost(images, createGuildPostPart(createGuildPostRequest))
         if (response.status == "200") {
             Log.d("Guild Repository", "동호회 게시글 작성 성공")
             emit(response.data)
         } else {
             throw Exception("동호회 게시글 작성 실패: ${response.status} ${response.data}")
         }
+    }
+
+    fun createGuildPostPart(createGuildPostPart: CreateGuildPostRequest): MultipartBody.Part {
+        val json = Gson().toJson(createGuildPostPart)
+        val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("postCreateRequestDto", null, requestBody)
     }
 }
