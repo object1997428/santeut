@@ -128,7 +128,7 @@ fun DefaultTopBar(navController: NavController, pageName: String) {
 
 @Composable
 fun SimpleTopBar(navController: NavController, pageName: String) {
-    TopAppBar (
+    TopAppBar(
         title = { Text(pageName) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
