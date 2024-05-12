@@ -1,6 +1,8 @@
 package com.example.testmap
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,10 +33,12 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.compose.material3.Button
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.FusedLocationProviderClient
+import kotlinx.coroutines.tasks.await
 
 // API 인터페이스 정의
 interface MountainService {
@@ -108,29 +112,67 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun startWebSocket(updateLocation: (Double, Double, String) -> Unit) {
-        try {
-            val request = Request.Builder().url(webSocketUrl).build()
-            val listener = object : WebSocketListener() {
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    Log.d("WebSocket", "Received message: $text")
+    fun startWebSocket(updateLocation: (Double, Double) -> Unit, context: Context) {
+        val request = Request.Builder().url(webSocketUrl).build()
+        var locationSendingJob: Job? = null  // 위치 전송 코루틴 작업을 참조하기 위한 변수
+
+        val listener = object : WebSocketListener() {
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                Log.d("WebSocket", "Received message: $text")
+                try {
                     val message = Gson().fromJson(text, WebSocketMessage::class.java)
-                    updateLocation(message.lat.toDouble(), message.lng.toDouble(), message.userNickname)
-                }
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    Log.e("WebSocket", "Error on websocket connection: ${t.message}", t)
+                    updateLocation(message.lat.toDouble(), message.lng.toDouble())
+                } catch (e: Exception) {
+                    Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
                 }
             }
-            webSocket = OkHttpClient().newWebSocket(request, listener)
-        } catch (e: Exception) {
-            Log.e("WebSocket", "Exception in starting WebSocket: ${e.message}", e)
+
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                // 웹소켓 연결이 성공하면 초기 메시지를 보내고 위치 정보를 주기적으로 보내기 시작
+                webSocket.send("{\"hello\"}")
+                Log.d("WebSocket", "WebSocket opened and initial message sent.")
+
+                locationSendingJob = CoroutineScope(Dispatchers.IO).launch {
+                    while (isActive) {
+                        delay(5000)  // 5초마다 반복
+                        val currentLocation = getCurrentLocation(context)
+                        currentLocation?.let {
+                            val locationJson = Gson().toJson(WebSocketMessage(
+                                type = "message",
+                                partyId = 1,
+                                userId = 3,
+                                userNickname = "하이",
+                                lat = it.latitude.toString(),
+                                lng = it.longitude.toString()
+                            ))
+                            webSocket.send(locationJson)
+                            Log.d("WebSocket", "Location sent: $locationJson")
+                        }
+                    }
+                }
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                Log.d("WebSocket", "WebSocket is closing: $reason")
+                locationSendingJob?.cancel()  // 위치 전송 코루틴 작업 취소
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                Log.e("WebSocket", "WebSocket connection failure: ${t.localizedMessage}", t)
+                locationSendingJob?.cancel()  // 실패 시 위치 전송 코루틴 작업 취소
+            }
         }
+
+        webSocket = OkHttpClient().newWebSocket(request, listener)
     }
+
+
+
+
 
     fun stopWebSocket() {
         webSocket?.close(1000, "Activity Ended")
         webSocket = null
-        Log.d("WebSocket", "Disconnect")
     }
 }
 
@@ -139,18 +181,27 @@ class MainActivity : ComponentActivity() {
 fun MapScreen(
     context: Context,
     token: String,
-    startWebSocket: (updateLocation: (Double, Double, String) -> Unit) -> Unit,
+    startWebSocket: (updateLocation: (Double, Double) -> Unit, Context) -> Unit,
     stopWebSocket: () -> Unit
 ) {
     val mountainService = remember { createMountainService(token) }
     var mountainData by remember { mutableStateOf<MountainData?>(null) }
-    var userPositions by remember { mutableStateMapOf<String, LatLng>() }
+    var otherUserPosition by remember { mutableStateOf<LatLng?>(null) }
+
     var stepCount by remember { mutableStateOf(0) }
     var distanceMoved by remember { mutableStateOf(0f) }
     var timerRunning by remember { mutableStateOf(false) }
     var elapsedTime by remember { mutableStateOf(0) }
 
-    val sensorManager = ContextCompat.getSystemService(context, SensorManager::class.java)
+    // 사용자 위치 마커 상태 관리
+    val otherUserMarkerState = rememberMarkerState()
+    LaunchedEffect(otherUserPosition) {
+        otherUserPosition?.let {
+            otherUserMarkerState.position = it
+        }
+    }
+
+    val sensorManager = getSystemService(context, SensorManager::class.java)
     val stepDetectorSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
     DisposableEffect(Unit) {
@@ -174,17 +225,16 @@ fun MapScreen(
 
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
-            startWebSocket { lat, lng, nickname ->
-                val newLocation = LatLng(lat, lng)
-                userPositions.put(nickname, newLocation) // Using indexing operator instead of put
-            }
+            startWebSocket({ lat, lng ->
+                otherUserPosition = LatLng(lat, lng)
+            }, context)
             while (timerRunning) {
                 delay(1000)
                 elapsedTime += 1
             }
         } else {
-            elapsedTime = 0
             stopWebSocket()
+            elapsedTime = 0
         }
     }
 
@@ -221,14 +271,12 @@ fun MapScreen(
                         captionMinZoom = 12.0
                     )
                 }
-                userPositions.forEach { (nickname, position) ->
-                    Marker(
-                        state = rememberMarkerState(position = position),
-                        captionText = nickname,
-                        captionTextSize = 14.sp,
-                        captionMinZoom = 12.0
-                    )
-                }
+                Marker(
+                    state = otherUserMarkerState,
+                    captionText = "다른 등산객",
+                    captionTextSize = 14.sp,
+                    captionMinZoom = 12.0
+                )
             }
 
             Button(
@@ -245,7 +293,6 @@ fun MapScreen(
         }
     }
 }
-
 
 
 @Composable
@@ -291,3 +338,31 @@ data class WebSocketMessage(
     val lat: String,
     val lng: String
 )
+
+data class LocationData(
+    val latitude: Double,
+    val longitude: Double
+)
+
+// 위치 정보를 비동기적으로 가져오는 함수
+suspend fun getCurrentLocation(context: Context): LocationData? {
+    val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+
+    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        // 권한 요청 로직 필요
+        return null
+    }
+
+    return try {
+        val location = fusedLocationProviderClient.lastLocation.await()
+        if (location != null) {
+            LocationData(location.latitude, location.longitude)
+        } else {
+            null
+        }
+    } catch (e: Exception) {
+        Log.e("LocationError", "Error getting location", e)
+        null
+    }
+}

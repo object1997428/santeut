@@ -17,9 +17,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
@@ -40,70 +38,55 @@ fun TopBar(
     currentTap: String?
 ) {
     when (currentTap) {
-        "home" -> HomeTopBar(navController,onClickAlert = { /*TODO*/ }, onClickChatting = { /*TODO*/ })
+        "home" -> HomeTopBar(navController)
         "community", "readPost" -> DefaultTopBar(navController, "커뮤니티")
-        "guild" -> DefaultTopBar(navController, "동호회")
+        "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
+        "chatList" -> SimpleTopBar(navController, "채팅방")
     }
 }
 
-
 @Composable
 fun HomeTopBar(
-    navController: NavController,
-    onClickAlert: () -> Unit,
-    onClickChatting: () -> Unit
+    navController: NavController
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .padding(12.dp)
-            .background(color = Color.White),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Spacer(modifier = Modifier.width(6.dp))
-        Box(
-            modifier = Modifier
-                .size(50.dp),
-            contentAlignment = Alignment.Center
-        ) {
+    TopAppBar(
+        title = { Text(text = "산뜻") },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
             Image(
                 painter = painterResource(R.drawable.logo),
                 contentDescription = "Logo",
                 contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(start = 16.dp)
+                    .clickable(onClick = { navController.navigate("home") })
             )
+        },
+        actions = {
+            IconButton(onClick = { navController.navigate("chatList") }) {
+                Icon(
+                    imageVector = Icons.Outlined.Message,
+                    contentDescription = "Message"
+                )
+            }
+            IconButton(onClick = { navController.navigate("noti") }) {
+                Icon(
+                    imageVector = Icons.Outlined.Notifications,
+                    contentDescription = "Notifications"
+                )
+            }
         }
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = "산뜻",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.Outlined.Message,
-            contentDescription = "채팅",
-            modifier = Modifier
-                .padding(10.dp)
-                .clickable { navController.navigate("chatList") }
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Image(
-            imageVector = Icons.Outlined.Notifications,
-            contentDescription = "알림",
-            modifier = Modifier
-                .clickable { onClickAlert() }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-    }
+    )
 }
 
 @Composable
-fun DefaultTopBar(navController: NavController, pageName:String) {
+fun DefaultTopBar(navController: NavController, pageName: String) {
     TopAppBar(
         title = { Text(pageName) },
-        contentColor = MaterialTheme.colors.primary,
+        contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
             IconButton(onClick = {
@@ -116,13 +99,13 @@ fun DefaultTopBar(navController: NavController, pageName:String) {
             }
         },
         actions = {
-            IconButton(onClick = { navController.navigate("chatList")}) {
+            IconButton(onClick = { navController.navigate("chatList") }) {
                 Icon(
                     imageVector = Icons.Outlined.Message,
                     contentDescription = "Message"
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { navController.navigate("noti") }) {
                 Icon(
                     imageVector = Icons.Outlined.Notifications,
                     contentDescription = "Notifications"
@@ -130,4 +113,38 @@ fun DefaultTopBar(navController: NavController, pageName:String) {
             }
         }
     )
+}
+
+@Composable
+fun SimpleTopBar(navController: NavController, pageName: String) {
+    TopAppBar (
+        title = { Text(pageName) },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Back"
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun MenuTopBar(navController: NavController, pageName: String) {
+
+}
+
+@Composable
+fun CreateTopBar(navController: NavController, pageName: String) {
+
+}
+
+@Composable
+fun GuildTopBar(navController: NavController, pageName: String) {
+
 }

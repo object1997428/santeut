@@ -66,7 +66,7 @@ fun MountainListScreen(
 fun MountainCard(navController: NavController, mountain: MountainResponse) {
     Card(
         modifier = Modifier
-            .clickable(onClick = {navController.navigate("mountain/${mountain.mountainId}")})
+            .clickable(onClick = { navController.navigate("mountain/${mountain.mountainId}") })
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
             .padding(8.dp),  // 카드 주변 여백
