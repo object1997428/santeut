@@ -53,7 +53,6 @@ fun TopBar(
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
         "chatRoom/{partyId}" -> MenuTopBar(navController, "소모임 제목")
-
     }
 }
 
