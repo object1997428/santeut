@@ -44,8 +44,9 @@ fun GuildScreen(
     }
 
     Scaffold() {
-        GuildTopBar(navController, guild!!.guildName)
+
         Column(modifier = Modifier.fillMaxWidth()) {
+            GuildTopBar(navController, guild?.guildName?:"")
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 indicator = { tabPositions ->
@@ -73,7 +74,7 @@ fun GuildScreen(
             ) { page ->
                 when (page) {
                     0 -> GuildInfoScreen(guild)
-                    1 -> GuildCommunityScreen()
+                    1 -> GuildCommunityScreen(guildId)
                     2 -> JoinPartyScreen(guildId)
                     3 -> GuildRankingScreen()
                     else -> Text("Unknown page")

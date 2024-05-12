@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -28,14 +29,24 @@ import com.santeut.ui.community.tips.formatTime
 
 @Composable
 fun GuildCommunityScreen(
+    guildId:Int,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
 
     val postList by guildViewModel.postList.observeAsState(emptyList())
 
-    LazyColumn {
-        items(postList) { post ->
-            GuildPost(post)
+    LaunchedEffect(key1 = null) {
+        guildViewModel.getGuildPostList(guildId, 1)
+        guildViewModel.getGuildPostList(guildId, 2)
+    }
+
+    if(postList.isEmpty()){
+        Text(text = "게시글이 없습니다")
+    } else {
+        LazyColumn {
+            items(postList) { post ->
+                GuildPost(post)
+            }
         }
     }
 }
