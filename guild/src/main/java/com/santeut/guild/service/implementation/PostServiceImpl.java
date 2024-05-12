@@ -83,6 +83,7 @@ public class PostServiceImpl implements PostService {
                             .categoryId(post.getCategoryId())
                             .guildId(post.getGuildId())
                             .userId(post.getUserId())
+                            .userNickName(userNickName)
                             .guildPostTitle(post.getGuildPostTitle())
                             .guildPostContent(post.getGuildPostContent())
                             .createdAt(post.getCreatedAt())
