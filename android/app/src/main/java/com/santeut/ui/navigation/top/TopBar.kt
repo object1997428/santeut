@@ -53,6 +53,7 @@ fun TopBar(
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
         "chatRoom/{partyId}" -> MenuTopBar(navController, "소모임 제목")
+
     }
 }
 
@@ -128,7 +129,7 @@ fun DefaultTopBar(navController: NavController, pageName: String) {
 
 @Composable
 fun SimpleTopBar(navController: NavController, pageName: String) {
-    TopAppBar(
+    TopAppBar (
         title = { Text(pageName) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
