@@ -1,17 +1,14 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-
-    id("dagger.hilt.android.plugin")
-    id("com.google.devtools.ksp")
 }
 
 android {
-    namespace = "com.example.testpositions"
+    namespace = "com.example.testcourse"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.testpositions"
+        applicationId = "com.example.testcourse"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -33,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -62,7 +59,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,27 +71,10 @@ dependencies {
     implementation ("io.github.fornewid:naver-map-compose:1.7.0")
     implementation ("io.github.fornewid:naver-map-location:21.0.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.naver.maps:map-sdk:3.18.0")
+
     implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
 
-    // hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-    implementation ("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
-
-    //rx
-    implementation ("io.reactivex.rxjava2:rxjava:2.2.5")
-    implementation ("io.reactivex.rxjava2:rxandroid:2.1.0")
-
-    implementation ("org.springframework:spring-websocket:5.3.18")
-    implementation ("org.springframework:spring-messaging:5.3.18")
-
-    // LiveData
-    implementation ("androidx.compose.runtime:runtime-livedata:1.2.0")
-
-    implementation("com.naver.maps:map-sdk:3.18.0")
-    
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
