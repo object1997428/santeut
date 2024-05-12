@@ -19,6 +19,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Message
@@ -170,7 +171,7 @@ fun MenuTopBar(navController: NavController, pageName: String) {
 }
 
 @Composable
-fun CreateTopBar(navController: NavController, pageName: String) {
+fun CreateTopBar(navController: NavController, pageName: String, onWriteClick: () -> Unit) {
     TopAppBar(
         title = { Text(pageName) },
         contentColor = Color.Black,
@@ -186,7 +187,7 @@ fun CreateTopBar(navController: NavController, pageName: String) {
             }
         },
         actions = {
-            IconButton(onClick = { /* 글 작성 기능 연결 */ }) {
+            IconButton(onClick = onWriteClick) {
                 Icon(
                     imageVector = Icons.Outlined.Create,
                     contentDescription = "글쓰기"

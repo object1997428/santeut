@@ -38,8 +38,12 @@ fun CreatePostScreen(
 
     val postCreationSuccess by postViewModel.postCreationSuccess.observeAsState()
 
-    Scaffold(    ) {
-        CreateTopBar(navController, "글 작성")
+    Scaffold() {
+        CreateTopBar(navController, "글쓰기",
+            onWriteClick = {
+                postViewModel.createPost(title, content, postType, 1)
+            }
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -70,14 +74,6 @@ fun CreatePostScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
-            Button(
-                onClick = {
-                    postViewModel.createPost(title, content, postType, 1)
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("작성하기")
-            }
         }
     }
 

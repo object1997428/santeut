@@ -44,8 +44,13 @@ fun GuildScreen(
     }
 
     Scaffold() {
+<<<<<<< android/app/src/main/java/com/santeut/ui/guild/GuildScreen.kt
+
+=======
         GuildTopBar(navController, guild!!.guildName)
+>>>>>>> android/app/src/main/java/com/santeut/ui/guild/GuildScreen.kt
         Column(modifier = Modifier.fillMaxWidth()) {
+            GuildTopBar(navController, guild?.guildName ?: "")
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 indicator = { tabPositions ->
@@ -73,8 +78,8 @@ fun GuildScreen(
             ) { page ->
                 when (page) {
                     0 -> GuildInfoScreen(guild)
-                    1 -> GuildCommunityScreen()
-                    2 -> JoinPartyScreen()
+                    1 -> GuildCommunityScreen(guildId, navController)
+                    2 -> JoinPartyScreen(guildId)
                     3 -> GuildRankingScreen()
                     else -> Text("Unknown page")
                 }
