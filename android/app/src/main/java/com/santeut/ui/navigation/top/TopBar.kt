@@ -19,10 +19,13 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +46,7 @@ fun TopBar(
     when (currentTap) {
         "home" -> HomeTopBar(navController)
         "community", "readPost" -> DefaultTopBar(navController, "커뮤니티")
-        "guild" -> DefaultTopBar(navController, "동호회")
+        "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
         "chatList" -> SimpleTopBar(navController, "채팅방")
         "noti" -> SimpleTopBar(navController, "알림")
@@ -125,7 +128,7 @@ fun DefaultTopBar(navController: NavController, pageName: String) {
 
 @Composable
 fun SimpleTopBar(navController: NavController, pageName: String) {
-    TopAppBar (
+    TopAppBar(
         title = { Text(pageName) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
@@ -171,10 +174,60 @@ fun MenuTopBar(navController: NavController, pageName: String) {
 
 @Composable
 fun CreateTopBar(navController: NavController, pageName: String) {
-
+    TopAppBar(
+        title = { Text(pageName) },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Back"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* 글 작성 기능 연결 */ }) {
+                Icon(
+                    imageVector = Icons.Outlined.Create,
+                    contentDescription = "글쓰기"
+                )
+            }
+        }
+    )
 }
 
 @Composable
 fun GuildTopBar(navController: NavController, pageName: String) {
-
+    TopAppBar(
+        title = { Text(pageName) },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Back"
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = { /* 클릭 시 링크 공유 */ }) {
+                Icon(
+                    imageVector = Icons.Outlined.Share,
+                    contentDescription = "링크 공유"
+                )
+            }
+            IconButton(onClick = { /* 클릭 시 메뉴 열림 */ }) {
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "추가 메뉴"
+                )
+            }
+        }
+    )
 }

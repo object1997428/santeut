@@ -30,7 +30,7 @@ fun NavGraphBuilder.GuildNavGraph(
             val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
             GuildScreen(guildId)
         }
-        composable("createParty"){
+        composable("createParty") {
             CreatePartyScreen(navController)
         }
     }

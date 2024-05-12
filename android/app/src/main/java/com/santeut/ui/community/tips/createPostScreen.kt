@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.santeut.ui.community.PostViewModel
+import com.santeut.ui.navigation.top.CreateTopBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -37,36 +38,8 @@ fun CreatePostScreen(
 
     val postCreationSuccess by postViewModel.postCreationSuccess.observeAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "글쓰기",
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        ),
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .fillMaxWidth()
-                            .wrapContentSize(Alignment.Center)
-                    )
-                },
-                actions = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = "Close"
-                        )
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.primarySurface,
-                contentColor = Color.White
-            )
-        }
-    ) {
+    Scaffold(    ) {
+        CreateTopBar(navController, "글 작성")
         Column(
             modifier = Modifier
                 .fillMaxSize()

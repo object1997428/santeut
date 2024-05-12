@@ -15,11 +15,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.santeut.ui.community.party.JoinPartyScreen
+import com.santeut.ui.navigation.top.GuildTopBar
 import com.santeut.ui.party.MyPartyListScreen
 import kotlinx.coroutines.launch
 
@@ -28,6 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun GuildScreen(
     guildId: Int,
+    navController: NavController,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val pages = listOf("정보", "게시판", "소모임", "랭킹")
@@ -41,6 +44,7 @@ fun GuildScreen(
     }
 
     Scaffold() {
+        GuildTopBar(navController, guild!!.guildName)
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
