@@ -26,7 +26,7 @@ interface GuildApiService {
         @Path("guildId") guildId: Int
     ): CustomResponse<Unit>
 
-    @GET("/api/guild/{guildId}/{categoryId}")
+    @GET("/api/guild/post/{guildId}/{categoryId}")
     suspend fun getGuildPostList(
         @Path("guildId") guildId:Int,
         @Path("categoryId") categoryId: Int
