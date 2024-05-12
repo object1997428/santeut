@@ -27,9 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
+import com.santeut.ui.guild.GuildViewModel
 
 @Composable
 fun TopBar(
@@ -192,7 +194,11 @@ fun CreateTopBar(navController: NavController, pageName: String, onWriteClick: (
 }
 
 @Composable
-fun GuildTopBar(navController: NavController, guild: GuildResponse) {
+fun GuildTopBar(
+    navController: NavController,
+    guild: GuildResponse,
+    guildViewModel: GuildViewModel = hiltViewModel()
+) {
 
     var showMenu by remember { mutableStateOf(false) }
 
@@ -240,7 +246,7 @@ fun GuildTopBar(navController: NavController, guild: GuildResponse) {
 
                 DropdownMenuItem(
                     text = { Text(text = "동호회 탈퇴하기", color = Color.Red) },
-                    onClick = { /*TODO*/ })
+                    onClick = { guildViewModel.quitGuild(guild.guildId) })
             }
         }
     )
