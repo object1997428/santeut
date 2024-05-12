@@ -42,7 +42,8 @@ fun CreatePostScreen(
         CreateTopBar(navController, "글쓰기",
             onWriteClick = {
                 postViewModel.createPost(title, content, postType, 1)
-            })
+            }
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()

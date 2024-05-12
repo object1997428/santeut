@@ -17,7 +17,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Comment
@@ -55,7 +54,6 @@ fun TopBar(
         "chatRoom/{partyId}" -> MenuTopBar(navController, "소모임 제목")
     }
 }
-
 
 @Composable
 fun HomeTopBar(
