@@ -3,6 +3,7 @@ package com.santeut.data.apiservice
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MyPartyListResponse
+import com.santeut.data.model.response.MyRecordListResponse
 import com.santeut.data.model.response.PartyListResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -33,5 +34,7 @@ interface PartyApiService {
         @Body createPartyRequest: CreatePartyRequest
     ): CustomResponse<Unit>
 
+    @GET("/api/party/user/record")
+    suspend fun getMyRecordList(): CustomResponse<MyRecordListResponse>
 
 }

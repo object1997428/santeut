@@ -1,20 +1,25 @@
 package com.santeut.ui.mypage
 
 import android.annotation.SuppressLint
+import android.graphics.fonts.FontStyle
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import com.santeut.ui.community.party.JoinPartyScreen
 import com.santeut.ui.community.tips.PostTipsScreen
 import kotlinx.coroutines.launch
+import java.time.format.TextStyle
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -38,7 +43,7 @@ fun MyPageScreen(
             ) {
                 pages.forEachIndexed { index, title ->
                     Tab(
-                        text = { androidx.compose.material.Text(text = title) },
+                        text = { Text(text = title, color = Color.White) },
                         selected = pagerState.currentPage == index,
                         onClick = {
                             coroutineScope.launch {
@@ -57,7 +62,7 @@ fun MyPageScreen(
                     0 -> MyProfileScreen()
                     1 -> MyHikingScreen()
                     2 -> MyScheduleScreen()
-                    else -> androidx.compose.material.Text("Unknown page")
+                    else -> Text("Unknown page")
                 }
             }
         }
