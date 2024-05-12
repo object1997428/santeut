@@ -28,6 +28,8 @@ public class PostListResponseDto {
 
         private int userId;
 
+        private String userNickName;
+
         private String guildPostTitle;
 
         private String guildPostContent;
