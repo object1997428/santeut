@@ -6,14 +6,15 @@ import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.common.util.GeometryUtils;
 import com.santeut.party.dto.request.HikingRecordRequestInterface;
 import com.santeut.party.dto.response.HikingRecordResponse;
+import com.santeut.party.dto.response.HikingRecordResponse.HikingRecord;
 import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
+import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
 import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
 import com.santeut.party.feign.GuildAccessUtil;
-import com.santeut.party.feign.UserInfoAccessUtil;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
@@ -25,8 +26,6 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +35,6 @@ public class PartyUserServiceImpl implements PartyUserService {
 
   private final PartyRepository partyRepository;
   private final PartyUserRepository partyUserRepository;
-  private final UserInfoAccessUtil userInfoAccessUtil;
   private final GuildAccessUtil guildAccessUtil;
 
   @Override
@@ -82,19 +80,23 @@ public class PartyUserServiceImpl implements PartyUserService {
   }
 
   @Override
-  public Page<PartyInfoResponseDto> findMyParty(int userId, boolean includeEnd, LocalDate date,
-      Pageable pageable) {
+  public PartyInfoResponseDto findMyParty(int userId, boolean includeEnd, LocalDate date) {
         log.info("내 소모임 찾기");
-    Page<PartyWithPartyUserIdResponse> myParties = partyRepository.findMyPartyWithSearchCondition(
-        includeEnd, date, userId, pageable);
-    return myParties.map(p -> {
-      log.info("owner id: "+p.getParty().getUserId());
-      log.info("guild id: "+p.getParty().getGuildId());
-      String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
-      String guildName = (p.getParty().getGuildId() == null) ? ""
-          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId(), userId).getGuildName();
-      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), null, guildName);
-    });
+    List<PartyWithPartyUserIdResponse> myParties = partyRepository.findMyPartyWithSearchCondition(
+        includeEnd, date, userId);
+
+    return new PartyInfoResponseDto(
+        myParties.stream().map(
+            p -> PartyInfo.of(
+                p.getParty().getUserId()==userId,//userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname(),
+                p.getPartyUserId(),
+                p.getParty(),
+                null,
+                (p.getParty().getGuildId() == null) ? ""
+          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId(), userId).getGuildName()
+            )
+        ).toList()
+    );
   }
 
   @Override
@@ -117,17 +119,22 @@ public class PartyUserServiceImpl implements PartyUserService {
   }
 
   @Override
-  public Page<HikingRecordResponse> findMyEndedHikingRecord(int userId, Pageable pageable) {
-    Page<HikingRecordRequestInterface> hikingRecord = partyUserRepository.findMyHikingRecord(userId,
-        pageable);
+  public HikingRecordResponse findMyEndedHikingRecord(int userId) {
+    List<HikingRecordRequestInterface> hikingRecord = partyUserRepository.findMyHikingRecord(
+        userId);
 
-    return hikingRecord.map(r -> {
-      String guildName = (r.getGuildId() == null) ? ""
-          : guildAccessUtil.getGuildInfo(r.getGuildId(), userId).getGuildName();
-      return HikingRecordResponse.of(r.getPartyUserId(), r.getPartyName(), guildName,
-          r.getMountainName(), r.getSchedule(), r.getDistance(), r.getBestHeight(),
-          r.getMoveTime());
-
-    });
+    return new HikingRecordResponse(hikingRecord.stream()
+        .map(r -> HikingRecord.of(
+            r.getPartyUserId(),
+            r.getPartyName(),
+            (r.getGuildId() == null) ? ""
+                : guildAccessUtil.getGuildInfo(r.getGuildId(), userId).getGuildName(),
+            r.getMountainName(),
+            r.getSchedule(),
+            r.getDistance(),
+            r.getBestHeight(),
+            r.getMoveTime())
+        )
+        .toList());
   }
 }
