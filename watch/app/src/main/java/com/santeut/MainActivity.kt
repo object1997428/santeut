@@ -6,29 +6,34 @@
 
 package com.santeut
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import com.santeut.design.theme.SanteutTheme
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.Wearable
+import com.santeut.ui.HealthDataViewModel
+import com.santeut.ui.HealthDataViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val dataClient by lazy { Wearable.getDataClient(this) }
+    private val messageClient by lazy { Wearable.getMessageClient(this) }
+    private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
+
+    private val healthDataViewModel: HealthDataViewModel by viewModels {
+        HealthDataViewModelFactory(
+            application = application,
+            dataClient = Wearable.getDataClient(this),
+            messageClient = Wearable.getMessageClient(this),
+            capabilityClient = Wearable.getCapabilityClient(this)
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -47,35 +52,22 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-}
 
-@Composable
-fun WearApp(greetingName: String) {
-    SanteutTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            TimeText()
-            Greeting(greetingName = greetingName)
-        }
+    override fun onResume() {
+        super.onResume()
+        dataClient.addListener(healthDataViewModel)
+        messageClient.addListener(healthDataViewModel)
+        capabilityClient.addListener(
+            healthDataViewModel,
+            Uri.parse("wear://"),
+            CapabilityClient.FILTER_REACHABLE
+        )
     }
-}
 
-@Composable
-fun Greeting(greetingName: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
-    )
-}
-
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
+    override fun onPause() {
+        super.onPause()
+        dataClient.removeListener(healthDataViewModel)
+        messageClient.removeListener(healthDataViewModel)
+        capabilityClient.removeListener(healthDataViewModel)
+    }
 }

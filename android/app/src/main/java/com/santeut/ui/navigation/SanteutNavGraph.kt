@@ -8,16 +8,20 @@ import com.santeut.ui.navigation.bottom.GuildNavGraph
 import com.santeut.ui.navigation.bottom.HomeNavGraph
 import com.santeut.ui.navigation.bottom.MapNavGraph
 import com.santeut.ui.navigation.bottom.MyPageNavGraph
+import com.santeut.ui.wearable.WearableViewModel
 
 @Composable
 fun SanteutNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    wearableViewModel: WearableViewModel
 ) {
     NavHost(
         navController = navController,
         startDestination = "auth_graph"
     ) {
-        UnAuthNavGraph(navController)
+        UnAuthNavGraph(
+            navController = navController
+        )
         HomeNavGraph(navController)
         CommunityNavGraph(navController)
         MapNavGraph(navController)

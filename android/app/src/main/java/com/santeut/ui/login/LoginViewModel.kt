@@ -5,8 +5,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.wearable.Wearable
 import com.santeut.MainApplication
 import com.santeut.data.model.request.FCMTokenRequest
 import com.santeut.data.model.request.LoginRequest
@@ -27,7 +29,6 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val fcmTokenUseCase: FCMTokenUseCase,
 ) : ViewModel() {
-
     private var _userState = mutableStateOf(UserState())
     val userState = _userState
 

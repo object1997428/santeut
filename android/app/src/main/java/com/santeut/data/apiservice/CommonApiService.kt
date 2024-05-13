@@ -22,5 +22,4 @@ interface CommonApiService {
         @Path("postId") postId: Int,
         @Path("postType") postType: String,
     ): CustomResponse<CommentListResponse>
-
 }
