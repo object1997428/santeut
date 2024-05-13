@@ -11,11 +11,11 @@ import java.util.List;
 public interface GuildService {
 
     void createGuild(CreateGuildRequest request, String userId, MultipartFile multipartFile);
-    GetDetailGuildWithStatusResponse getDetailGuild(int guildId, int userId);
+    GetDetailGuildResponse getDetailGuild(int guildId, int userId);
     void patchGuild(int guildId, PatchGuildInfoRequest request, MultipartFile multipartFile, String userId);
     void deleteGuild(int guildId, String userId);
-    GetGuildListResponse getGuildList();
-    GetMyGuildResponse myGuildList(String userId);
-    SearchGuildListResponse searchGuildList(String regionName, String gender);
+    GetGuildListResponse getGuildList(int userId);
+    GetMyGuildResponse myGuildList(int userId);
+    SearchGuildListResponse searchGuildList(String regionName, String gender, int userId);
     ShareLinkResponse shareLink(int guildId);
 }

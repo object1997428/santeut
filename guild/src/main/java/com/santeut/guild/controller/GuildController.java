@@ -62,25 +62,29 @@ public class GuildController {
     }
 
     @GetMapping("/list")
-    public BasicResponse getGuildList(){
+    public BasicResponse getGuildList(HttpServletRequest request){
 
         log.debug("동호회 목록 조회");
-        return new BasicResponse(HttpStatus.OK.value(), guildService.getGuildList());
+        int userId = Integer.parseInt(request.getHeader("userId"));
+        return new BasicResponse(HttpStatus.OK.value(), guildService.getGuildList(userId));
     }
 
     @GetMapping("/myguild")
-    public BasicResponse myGuildList(HttpServletRequest httpServletRequest){
+    public BasicResponse myGuildList(HttpServletRequest request){
 
         log.debug("내 동호회 목록 조회");
-        return new BasicResponse(HttpStatus.OK.value(), guildService.myGuildList(httpServletRequest.getHeader("userId")));
+        int userId = Integer.parseInt(request.getHeader("userId"));
+        return new BasicResponse(HttpStatus.OK.value(), guildService.myGuildList(userId));
     }
 
     @GetMapping("/search")
     public BasicResponse searchGuild(@RequestParam String regionName,
-                                     @RequestParam String gender){
+                                     @RequestParam String gender,
+                                     HttpServletRequest httpServletRequest){
 
         log.debug("동호회 필터링 검색");
-        return new BasicResponse(HttpStatus.OK.value(), guildService.searchGuildList(regionName, gender));
+        int userId = Integer.parseInt(httpServletRequest.getHeader("userId"));
+        return new BasicResponse(HttpStatus.OK.value(), guildService.searchGuildList(regionName, gender, userId));
     }
 
     @GetMapping("/{guildId}/link")

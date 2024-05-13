@@ -59,12 +59,15 @@ public class GuildServiceImpl implements GuildService {
 
         GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(guildEntity.getUserId(), guildEntity.getGuildId());
 
+        GuildRequestEntity guildRequestEntity =
+                GuildRequestEntity.requestGuild(guildEntity.getGuildId(), Integer.parseInt(userId), 'A');
         regionRepository.save(regionEntity);
         guildUserRepository.save(guildUserEntity);
+        guildRequestRepository.save(guildRequestEntity);
     }
 
     @Override
-    public GetDetailGuildWithStatusResponse getDetailGuild(int guildId, int userId) {
+    public GetDetailGuildResponse getDetailGuild(int guildId, int userId) {
 
         GuildEntity guildEntity = guildRepository.findByGuildId(guildId)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
@@ -78,10 +81,10 @@ public class GuildServiceImpl implements GuildService {
             else if(guildRequestEntity.getStatus() == 'A') status = 'A';
         }
 
-        boolean flag = false;
-        if (guildEntity.getUserId() == userId) flag = true;
+        boolean isPresident = false;
+        if (guildEntity.getUserId() == userId) isPresident = true;
 
-        return new GetDetailGuildWithStatusResponse(guildEntity, status, flag);
+        return new GetDetailGuildResponse(guildEntity, status, isPresident);
     }
 
     @Override
@@ -97,6 +100,7 @@ public class GuildServiceImpl implements GuildService {
 
         if (request != null) {
             guildEntity = GuildEntity.patchGuild(request, guildEntity);
+            guildRepository.save(guildEntity);
         }
 
         if (multipartFile != null) {
@@ -140,25 +144,45 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
-    public GetGuildListResponse getGuildList() {
+    public GetGuildListResponse getGuildList(int userId) {
 
         List<GuildEntity> guildList = guildRepository.findByAllGuild();
         if(guildList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        return new GetGuildListResponse(GetDetailGuildResponse.guildList(guildList));
+        List<GuildRequestEntity> guildRequestList = new ArrayList<>();
+        for (GuildEntity guildEntity : guildList){
+
+            // Entity마다 값 변경 메서드 호출 VS List 2개 넣어서 메서드 호출 1회만 하기
+            GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
+                    .orElse(null);
+            if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
+            else guildRequestList.add(null);
+        }
+
+        return new GetGuildListResponse(GetDetailGuildResponse.guildList(guildList, guildRequestList, userId));
     }
 
     @Override
-    public GetMyGuildResponse myGuildList(String userId) {
+    public GetMyGuildResponse myGuildList(int userId) {
 
-        List<GuildEntity> myguildList = guildRepository.findByMyGuild(Integer.parseInt(userId));
+        List<GuildEntity> myguildList = guildRepository.findByMyGuild(userId);
         if (myguildList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
 
-        return new GetMyGuildResponse(GetDetailGuildResponse.guildList(myguildList));
+        List<GuildRequestEntity> guildRequestList = new ArrayList<>();
+        for (GuildEntity guildEntity : myguildList){
+
+            // Entity마다 값 변경 메서드 호출 VS List 2개 넣어서 메서드 호출 1회만 하기
+            GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
+                    .orElse(null);
+            if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
+            else guildRequestList.add(null);
+        }
+
+        return new GetMyGuildResponse(GetDetailGuildResponse.guildList(myguildList, guildRequestList, userId));
     }
 
     @Override
-    public SearchGuildListResponse searchGuildList(String regionName, String gender) {
+    public SearchGuildListResponse searchGuildList(String regionName, String gender, int userId) {
 
         RegionEntity regionEntity = regionRepository.findByRegionName(regionName)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.WRONG_REGION_NAME));
@@ -170,7 +194,19 @@ public class GuildServiceImpl implements GuildService {
         else genderType = "A";
 
         List<GuildEntity> searchGuildList = guildRepository.searchGuild(regionEntity.getRegionId(), genderType);
-        return new SearchGuildListResponse(GetDetailGuildResponse.guildList(searchGuildList));
+
+        List<GuildRequestEntity> guildRequestList = new ArrayList<>();
+        for (GuildEntity guildEntity : searchGuildList){
+
+            // Entity마다 값 변경 메서드 호출 VS List 2개 넣어서 메서드 호출 1회만 하기
+            GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
+                    .orElse(null);
+            if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
+            else guildRequestList.add(null);
+
+        }
+
+        return new SearchGuildListResponse(GetDetailGuildResponse.guildList(searchGuildList, guildRequestList, userId));
     }
 
     @Override

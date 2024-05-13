@@ -31,13 +31,13 @@ public class GuildRequestEntity {
     @NotNull
     private LocalDateTime modifiedAt;
 
-    public static GuildRequestEntity requestGuild(int guildId, int userId){
+    public static GuildRequestEntity requestGuild(int guildId, int userId, char status){
 
         GuildRequestEntity guildRequestEntity = new GuildRequestEntity();
         guildRequestEntity.setGuildId(guildId);
         guildRequestEntity.setUserId(userId);
         guildRequestEntity.setCreatedAt(LocalDateTime.now());
-        guildRequestEntity.setStatus('R');
+        guildRequestEntity.setStatus(status);
         guildRequestEntity.setModifiedAt(LocalDateTime.now());
 
         return guildRequestEntity;
