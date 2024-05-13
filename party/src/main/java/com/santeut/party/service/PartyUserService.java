@@ -7,6 +7,7 @@ import com.santeut.party.dto.response.PartyInfoResponseDto;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,5 +26,5 @@ public interface PartyUserService {
 
   PartyByYearMonthResponse findMyPartyByYearMonth(int userId, int year, int month);
 
-  Page<HikingRecordResponse> findMyEndedHikingRecord(int userId, Pageable pageable);
+  List<HikingRecordResponse> findMyEndedHikingRecord(int userId);
 }

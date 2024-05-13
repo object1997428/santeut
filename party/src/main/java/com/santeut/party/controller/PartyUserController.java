@@ -79,13 +79,11 @@ public class PartyUserController {
   }
 
   @GetMapping("/user/record")
-  public ResponseEntity getMyHikingRecord(
-      HttpServletRequest request,
-      @PageableDefault(page = 0, size = 10, sort = "mountain_id", direction = Sort.Direction.DESC) Pageable pageable
+  public ResponseEntity<BasicResponse> getMyHikingRecord(
+      HttpServletRequest request
   ) {
-    Page<HikingRecordResponse> hikingRecord = partyUserService.findMyEndedHikingRecord(
-        Integer.parseInt(request.getHeader("userId")), pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, hikingRecord, true, false, false);
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK, partyUserService.findMyEndedHikingRecord(
+        Integer.parseInt(request.getHeader("userId"))));
   }
 
 }

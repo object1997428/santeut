@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -117,17 +118,23 @@ public class PartyUserServiceImpl implements PartyUserService {
   }
 
   @Override
-  public Page<HikingRecordResponse> findMyEndedHikingRecord(int userId, Pageable pageable) {
-    Page<HikingRecordRequestInterface> hikingRecord = partyUserRepository.findMyHikingRecord(userId,
-        pageable);
+  public List<HikingRecordResponse> findMyEndedHikingRecord(int userId) {
+    List<HikingRecordRequestInterface> hikingRecord = partyUserRepository.findMyHikingRecord(
+        userId);
 
-    return hikingRecord.map(r -> {
-      String guildName = (r.getGuildId() == null) ? ""
-          : guildAccessUtil.getGuildInfo(r.getGuildId(), userId).getGuildName();
-      return HikingRecordResponse.of(r.getPartyUserId(), r.getPartyName(), guildName,
-          r.getMountainName(), r.getSchedule(), r.getDistance(), r.getBestHeight(),
-          r.getMoveTime());
+    return hikingRecord.stream()
+        .map(r -> HikingRecordResponse.of(
+            r.getPartyUserId(),
+            r.getPartyName(),
+            (r.getGuildId() == null) ? ""
+                : guildAccessUtil.getGuildInfo(r.getGuildId(), userId).getGuildName(),
+            r.getMountainName(),
+            r.getSchedule(),
+            r.getDistance(),
+            r.getBestHeight(),
+            r.getMoveTime())
+        )
+        .collect(Collectors.toList());
 
-    });
   }
 }
