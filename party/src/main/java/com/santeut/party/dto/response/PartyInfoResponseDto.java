@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
 public class PartyInfoResponseDto {
 
   public List<PartyInfo> partyList;
 
   @Data
   @Builder
+  @JsonInclude(JsonInclude.Include.NON_NULL) // Null 값인 필드 제외
   public static class PartyInfo {
 
     public int partyId;
@@ -31,7 +31,7 @@ public class PartyInfoResponseDto {
     public String place;
     public int maxPeople;
     public int curPeople;
-    public boolean isOwner;
+    public Boolean isOwner;
     public char status;
     public Boolean isMember;
 

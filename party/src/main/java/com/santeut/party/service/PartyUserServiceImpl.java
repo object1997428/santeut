@@ -15,7 +15,6 @@ import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
 import com.santeut.party.feign.GuildAccessUtil;
-import com.santeut.party.feign.UserInfoAccessUtil;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
@@ -36,7 +35,6 @@ public class PartyUserServiceImpl implements PartyUserService {
 
   private final PartyRepository partyRepository;
   private final PartyUserRepository partyUserRepository;
-  private final UserInfoAccessUtil userInfoAccessUtil;
   private final GuildAccessUtil guildAccessUtil;
 
   @Override
