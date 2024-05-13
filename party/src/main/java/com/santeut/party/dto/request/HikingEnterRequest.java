@@ -8,7 +8,5 @@ import java.time.LocalDateTime;
 public class HikingEnterRequest {
     int partyId;
 //    int userId;
-    int distance;
-    int bestHeight;
     LocalDateTime startTime;
 }

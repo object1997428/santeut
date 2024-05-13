@@ -15,11 +15,13 @@ import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
 import com.santeut.party.feign.HikingAuthClient;
 import com.santeut.party.feign.HikingMountainClient;
+import com.santeut.party.feign.dto.request.HikingRecordRequest;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,8 @@ public class HikingService {
     private final HikingAuthClient hikingAuthClient;
     private final HikingCommonClient hikingCommonClient;
     private final ObjectMapper om;
+    private final RedisTemplate<String, Object> redisTemplate;
+
     private GeometryFactory geometryFactory = new GeometryFactory();
 
     @Transactional
@@ -148,12 +151,8 @@ public class HikingService {
             partyRepository.save(party);
             //소모임 회원들한테 알림보내기 요청
             alertHikingEnd(hikingExitRequest,party);
-
             //소모임장 퇴장 처리
             exitHiking(hikingExitRequest,userId);
-
-            //redis 갱신
-            //1시간마다 갱신할거면, 여기서 처리하는 거 아님
         }
         //P인데 파티원이 그냥 먼저 퇴장하거나, E라서 알림받고 파티원이 나가거나
         else {
@@ -163,7 +162,7 @@ public class HikingService {
     }
 
     private void alertHikingEnd(HikingExitRequest hikingExitRequest, Party party) {
-        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingExitRequest.getPartyId(), 'B');
+        List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingExitRequest.getPartyId(), 'P');
         CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
                 .type("HIKING END")
                 .targetUserIds(partyMembers)
@@ -182,25 +181,47 @@ public class HikingService {
         PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), userId)
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
         if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
-        partyUser.setStatus('E', hikingExitRequest.getEndTime());
+        partyUser.setStatus('E', hikingExitRequest.getEndTime()); //moveTime 갱신
         partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight());
-
+        partyUserRepository.save(partyUser);
         //Auth한테 포인트, 등산기록 정규화 요청
         boolean isFirstMountain = partyUserRepository.existsByUserIdAndMountainIdAndStatus(userId, partyUser.getMountainId(), 'E');
-        MountainHikingRecordUpdateFeignRequest authDto= MountainHikingRecordUpdateFeignRequest.builder()
+        HikingRecordRequest authDto= HikingRecordRequest.builder()
                 .userId(userId)
                 .distance(partyUser.getDistance())
                 .moveTime(partyUser.getMoveTime())
                 .isFirstMountain(isFirstMountain)
                 .build();
         log.info("[Auth Server] Auth 한테 등산 기록 업데이트 요청");
-        ResponseEntity<?> authResp = hikingAuthClient.updateHikingRecord(authDto);
+        ResponseEntity<?> authResp = hikingAuthClient.patchRecord(authDto);
         if (authResp.getStatusCode().is2xxSuccessful()) {
             log.info("[Auth Server] Auth 한테 등산 기록 업데이트 요청 성공 authResp={}",authResp);
         }
         else{
             log.error("[Auth Server] Auth 한테 등산 기록 업데이트 요청 실패 authResp={}",authResp);
         }
+        
+        //랭킹 갱신
+        updateRank(hikingExitRequest, userId, partyUser);
+    }
+
+    private void updateRank(HikingExitRequest hikingExitRequest, int userId, PartyUser partyUser) {
+        //1. 최다등반
+        String key1 = "guild/" + hikingExitRequest.getPartyId() + "/mostHiking";
+        String value=Integer.toString(userId);
+        redisTemplate.opsForZSet().incrementScore(key1, value, 1);
+        //2. 최고고도
+        String key2 = "guild/" + hikingExitRequest.getPartyId() + "/bestHeight";
+        Integer newHeight= partyUser.getBestHeight();
+        Double currentHeight = redisTemplate.opsForZSet().score(key2, value);
+        if (currentHeight == null || currentHeight < newHeight) {
+            redisTemplate.opsForZSet().add(key2, value, newHeight);
+        }
+        //3. 최장거리
+        String key3 = "guild/" + hikingExitRequest.getPartyId() + "/bestDistance";
+        Double currentDistance=redisTemplate.opsForZSet().score(key3, value);
+        Double newDistance= partyUser.getDistance()+((currentDistance==null)?0:currentDistance);
+        redisTemplate.opsForZSet().add(key3, value, newDistance);
     }
 
     @Transactional
@@ -246,16 +267,53 @@ public class HikingService {
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다."));
 
         List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyId(hikingSafetyRequest.getPartyId());
-        CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
-                .type(hikingSafetyRequest.getType())
-                .targetUserIds(partyMembers)
-                .title("소모임 위험 알림!!")
-                .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 위험 신호를 보냈습니다.")
-                .partyId(party.getPartyId())
-                .dataSource("safety_alert")
-                .alamType("POPUP")
-                .build();
-        log.info("[Party Server][Common Request] Alarm 한테 Party 종료 요청");
+        CommonHikingStartFeignRequest commonRequestDto=null;
+
+        if ("off_course".equals(hikingSafetyRequest.getType())) {
+            commonRequestDto=CommonHikingStartFeignRequest.builder()
+                    .type(hikingSafetyRequest.getType())
+                    .targetUserIds(partyMembers)
+                    .title("소모임 위험 알림!!")
+                    .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 경로 이탈 신호를 보냈습니다.")
+                    .partyId(party.getPartyId())
+                    .dataSource("null")
+                    .alamType("POPUP")
+                    .lat(hikingSafetyRequest.getLat())
+                    .lng(hikingSafetyRequest.getLng())
+                    .build();
+        }
+        else if ("health_risk".equals(hikingSafetyRequest.getType())){
+            commonRequestDto=CommonHikingStartFeignRequest.builder()
+                    .type(hikingSafetyRequest.getType())
+                    .targetUserIds(partyMembers)
+                    .title("소모임 위험 알림!!")
+                    .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 건강위험 신호를 보냈습니다.")
+                    .partyId(party.getPartyId())
+                    .dataSource("safety_alert")
+                    .alamType("POPUP")
+                    .lat(hikingSafetyRequest.getLat())
+                    .lng(hikingSafetyRequest.getLng())
+                    .build();
+        }
+        else if ("fall_detection".equals(hikingSafetyRequest.getType())) {
+            commonRequestDto=CommonHikingStartFeignRequest.builder()
+                    .type(hikingSafetyRequest.getType())
+                    .targetUserIds(partyMembers)
+                    .title("소모임 위험 알림!!")
+                    .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님에게서 낙상이 감지 되었습니다.")
+                    .partyId(party.getPartyId())
+                    .dataSource("safety_alert")
+                    .alamType("POPUP")
+                    .lat(hikingSafetyRequest.getLat())
+                    .lng(hikingSafetyRequest.getLng())
+                    .build();
+        }
+        else {
+            throw new IllegalArgumentException("해당 타입은 존재하지 않습니다.");
+        }
+
+
+        log.info("[Party Server][Common Request] Alarm 한테 위험감지 알림 요청");
         ResponseEntity<?> responseEntity = hikingCommonClient.alertHiking(commonRequestDto);
         log.info("[Party Server][Common response ={}",responseEntity);
     }

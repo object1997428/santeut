@@ -32,7 +32,7 @@ public class Party extends BaseEntity {
     private String selectedCourse;
 
     @Column(name = "guild_id")
-    private int guildId;
+    private Integer guildId;
 
     @Column(name = "user_id", nullable = false)
     private int userId;
@@ -70,8 +70,10 @@ public class Party extends BaseEntity {
     public static Party createEntity(int userId, CreatePartyRequestDto requestDto, String selectedCourse) {
         return Party.builder()
             .userId(userId)
+            .isLinked(requestDto.getGuildId() != null)
             .selectedCourse(selectedCourse)
             .guildId(requestDto.getGuildId())
+            .mountainId(requestDto.getMountainId())
             .mountainName(requestDto.getMountainName())
             .partyName(requestDto.getPartyName())
             .schedule(LocalDateTime.parse(requestDto.getSchedule(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))

@@ -5,10 +5,9 @@ package com.santeut.party.common.util;
 import com.santeut.party.common.response.BasicResponse;
 import com.santeut.party.common.response.ErrorResponse;
 import com.santeut.party.common.response.PagingResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 public class ResponseUtil {
 
@@ -29,26 +28,14 @@ public class ResponseUtil {
 
     public static ResponseEntity<PagingResponse> buildPagingResponse(
             HttpStatus status,
-            List<?> data,
-            boolean isFirst,
-            boolean isLast,
-            int page,
-            int totalPage,
-            Long totalElements,
-            int size,
+            Page<?> page,
             boolean sorted,
             boolean asc,
             boolean filtered) {
 
         PagingResponse pagingResponse = new PagingResponse(
                 status.value(),
-                data,
-                isFirst,
-                isLast,
                 page,
-                totalPage,
-                totalElements,
-                size,
                 sorted,
                 asc,
                 filtered

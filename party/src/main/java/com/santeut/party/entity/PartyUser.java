@@ -53,31 +53,31 @@ public class PartyUser extends BaseEntity {
     @Column(name = "party_user_started_at")
     private LocalDateTime started_at;
 
-    /** 비즈니스 로직 **/
-    public void setStatus(char status, LocalDateTime time){
-        if(status=='P'){
-            this.started_at=time;
-        }
-        else if(status=='E'){
+    /**
+     * 비즈니스 로직
+     **/
+    public void setStatus(char status, LocalDateTime time) {
+        if (status == 'P') {
+            this.started_at = time;
+        } else if (status == 'E') {
             setDeleted(true);
-            this.moveTime= (int)Duration.between(this.started_at,time).getSeconds()/60;
-        } else if(status=='I') {
+            this.moveTime = (int) Duration.between(this.started_at, time).getSeconds() / 60;
+        } else if (status == 'I') {
             setDeleted(true);
         }
-        this.status=status;
+        this.status = status;
     }
 
-    public void setStatus(char status){
-        if(status=='P'){
-            this.started_at=LocalDateTime.now();
-        }
-        else if(status=='E'){
+    public void setStatus(char status) {
+        if (status == 'P') {
+            this.started_at = LocalDateTime.now();
+        } else if (status == 'E') {
             setDeleted(true);
-            this.moveTime= (int)Duration.between(this.started_at,LocalDateTime.now()).getSeconds()/60;
-        } else if(status=='I') {
+            this.moveTime = (int) Duration.between(this.started_at, LocalDateTime.now()).getSeconds() / 60;
+        } else if (status == 'I') {
             setDeleted(true);
         }
-        this.status=status;
+        this.status = status;
     }
 
     public void addHikingRecord(int distance, int bestHeight) {
@@ -85,15 +85,16 @@ public class PartyUser extends BaseEntity {
         this.bestHeight = bestHeight;
     }
 
-    public static PartyUser of(int userId, int partyId) {
+    public static PartyUser of(int userId, int partyId, int mountainId) {
         return PartyUser.builder()
                 .userId(userId)
                 .partyId(partyId)
+                .mountainId(mountainId)
                 .status('B')
                 .build();
     }
 
-    public void addTrackPoints(Geometry points){
-        this.points=points;
+    public void addTrackPoints(Geometry points) {
+        this.points = points;
     }
 }

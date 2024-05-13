@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,4 +17,6 @@ public class CommonHikingStartFeignRequest {
     private int partyId;
     private String dataSource;
     private String alamType; //POPUP, PUSH
+    private Double lat;
+    private Double lng;
 }

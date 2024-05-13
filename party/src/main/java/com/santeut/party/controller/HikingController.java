@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HikingController {
     private final HikingService hikingService;
 
-    @GetMapping("/")
+    @GetMapping("/hello")
     public String hello(){
         return "hello";
     }
