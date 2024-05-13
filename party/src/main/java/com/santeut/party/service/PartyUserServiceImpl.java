@@ -7,7 +7,6 @@ import com.santeut.party.common.util.GeometryUtils;
 import com.santeut.party.dto.request.HikingRecordRequestInterface;
 import com.santeut.party.dto.response.HikingRecordResponse;
 import com.santeut.party.dto.response.HikingRecordResponse.HikingRecord;
-import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
@@ -15,6 +14,7 @@ import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
 import com.santeut.party.feign.GuildAccessUtil;
+import com.santeut.party.feign.dto.response.HikingTrackResponse;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
@@ -100,11 +100,11 @@ public class PartyUserServiceImpl implements PartyUserService {
   }
 
   @Override
-  public HikingStartResponse findMyHikingTrailByPartyUserId(int partyUserId) {
+  public HikingTrackResponse findMyHikingTrailByPartyUserId(int partyUserId) {
     log.info("partyUserId: "+partyUserId+"/등산 경로 조회");
     PartyUser partyUser = partyUserRepository.findById(partyUserId)
         .orElseThrow(() -> new DataNotFoundException("사용자-소모임이 존재하지 않습니다"));
-    return new HikingStartResponse(GeometryUtils.convertGeometryToListLocationData(
+    return new HikingTrackResponse(GeometryUtils.convertGeometryToListLocationData(
         partyUser.getPoints()));
   }
 

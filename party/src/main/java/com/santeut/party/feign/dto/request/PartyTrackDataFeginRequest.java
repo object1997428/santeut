@@ -14,5 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PartyTrackDataFeginRequest {
+    public double distance;
     private List<LocationData> locationDataList;
 }

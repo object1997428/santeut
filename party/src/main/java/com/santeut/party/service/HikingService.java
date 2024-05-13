@@ -120,13 +120,12 @@ public class HikingService {
         log.info("[Party Server] Mountain 한테 등산로 좌표 조회 요청");
         ResponseEntity<?> mountainResp = hikingMountainClient.getCourse(mounainDto);
         if (mountainResp.getStatusCode().is2xxSuccessful()) {
-
             BasicResponse basicResponse = om.convertValue(mountainResp.getBody(), BasicResponse.class);
             if (basicResponse != null && basicResponse.getData() != null) {
-                PartyTrackDataFeginRequest partyTrackDataFeginRequest = om.convertValue(basicResponse.getData(), PartyTrackDataFeginRequest.class);
-                List<LocationData> locationDataList = partyTrackDataFeginRequest.getLocationDataList();
+                PartyTrackDataFeginRequest feignResp = om.convertValue(basicResponse.getData(), PartyTrackDataFeginRequest.class);
+                List<LocationData> locationDataList = feignResp.getLocationDataList();
                 log.info("[Party Server] Mountain 한테 등산로 좌표 조회 응답 받음 locationDataList={}", locationDataList);
-                return new HikingStartResponse(locationDataList);
+                return new HikingStartResponse(feignResp.getDistance(),locationDataList);
             }
         } else {
             log.error("[Party Server] Mountain 한테 등산로 좌표 조회 요청 실패 mountainResp={}",mountainResp);
