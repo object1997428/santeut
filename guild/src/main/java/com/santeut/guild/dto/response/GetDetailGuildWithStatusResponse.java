@@ -22,8 +22,9 @@ public class GetDetailGuildWithStatusResponse {
     int guildMaxAge;
     LocalDateTime createdAt;
     char joinStatus;
+    Boolean isPresident;
 
-    public GetDetailGuildWithStatusResponse(GuildEntity guildEntity, char status){
+    public GetDetailGuildWithStatusResponse(GuildEntity guildEntity, char status, boolean isPresident){
         this.guildId = guildEntity.getGuildId();
         this.guildName = guildEntity.getGuildName();
         this.guildProfile = guildEntity.getGuildProfile();
@@ -35,5 +36,6 @@ public class GetDetailGuildWithStatusResponse {
         this.guildMaxAge = guildEntity.getGuildMaxAge();
         this.createdAt = guildEntity.getCreatedAt();
         this.joinStatus = status;
+        this.isPresident = isPresident;
     }
 }

@@ -77,7 +77,11 @@ public class GuildServiceImpl implements GuildService {
             if (guildRequestEntity.getStatus() == 'R') status = 'R';
             else if(guildRequestEntity.getStatus() == 'A') status = 'A';
         }
-        return new GetDetailGuildWithStatusResponse(guildEntity, status);
+
+        boolean flag = false;
+        if (guildEntity.getUserId() == userId) flag = true;
+
+        return new GetDetailGuildWithStatusResponse(guildEntity, status, flag);
     }
 
     @Override

@@ -55,7 +55,7 @@ public class GuildUserEntity {
 //        return  guildUserEntity;
 //    }
 
-    public static GuildUserEntity createGuildUser(int guildId, int userId){
+    public static GuildUserEntity createGuildUser(int userId, int guildId){
 
         GuildUserEntity guildUserEntity = new GuildUserEntity();
         guildUserEntity.setGuildId(guildId);
