@@ -56,12 +56,11 @@ public class MountainController {
   }
 
   @GetMapping("/v2/{mountainId}/course")
-  public ResponseEntity<PagingResponse> getCourseListInMountain(
-      @PathVariable("mountainId") int mountainId,
-      @PageableDefault(page = 0, size = 5) Pageable pageable
+  public ResponseEntity<BasicResponse> getCourseListInMountain(
+      @PathVariable("mountainId") int mountainId
   ) {
-    Page<CourseInfoResponseDto> page = courseService.findCourseByMountainId(mountainId, pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, page, false, false, false);
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        courseService.findCourseByMountainId(mountainId));
   }
 
   @GetMapping("/v2/course/{courseId}")

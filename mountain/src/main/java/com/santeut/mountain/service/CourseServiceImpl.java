@@ -8,6 +8,7 @@ import com.santeut.mountain.dto.response.AllCourseResponse.CourseSummary;
 import com.santeut.mountain.dto.response.CourseCoordResponseDto;
 import com.santeut.mountain.dto.response.CourseCoordResponseDto.Coord;
 import com.santeut.mountain.dto.response.CourseInfoResponseDto;
+import com.santeut.mountain.dto.response.CourseInfoResponseDto.CourseInfo;
 import com.santeut.mountain.dto.response.LocationData;
 import com.santeut.mountain.dto.response.PartyCourseResponse;
 import com.santeut.mountain.entity.CourseEntity;
@@ -16,14 +17,13 @@ import com.santeut.mountain.repository.CourseRepository;
 import com.santeut.mountain.repository.MountainRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,11 +35,12 @@ public class CourseServiceImpl implements CourseService {
   private final MountainRepository mountainRepository;
 
   @Override
-  public Page<CourseInfoResponseDto> findCourseByMountainId(int mountainId, Pageable pageable) {
+  public CourseInfoResponseDto findCourseByMountainId(int mountainId) {
     MountainEntity mountain = mountainRepository.findById(mountainId)
         .orElseThrow(() -> new NotFoundException("해당 산은 존재하지 않습니다"));
-    return courseRepository.findAllByMountainId(mountain, pageable)
-        .map(CourseInfoResponseDto::from);
+
+    return new CourseInfoResponseDto(courseRepository.findAllByMountainId(mountain)
+        .stream().map(CourseInfo::from).collect(Collectors.toList()));
   }
 
   @Override
