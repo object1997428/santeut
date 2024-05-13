@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Room {
-    private int id;
+    private int id; //partyId
 
     private Map<Integer, SocketDto> sessions;  // Key: userId
 

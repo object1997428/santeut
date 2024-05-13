@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EnterandQuitRequestMessage {
     private String type;
-    private Integer partyId;
 }

@@ -2,10 +2,9 @@ package com.santeut.hiking.common.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.santeut.hiking.common.response.BasicResponse;
 import com.santeut.hiking.dto.response.GetUserInfoResponse;
-import com.santeut.hiking.dto.websocket.LocationRequestMessage;
 import com.santeut.hiking.dto.websocket.LocationResponseMessage;
+import com.santeut.hiking.dto.websocket.LocationRequestMessage;
 import com.santeut.hiking.dto.websocket.EnterandQuitRequestMessage;
 import com.santeut.hiking.dto.websocket.SocketDto;
 import com.santeut.hiking.feign.FeignResponseDto;
@@ -20,7 +19,6 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -39,8 +37,6 @@ public class SocketTextHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         int userId = Integer.parseInt(session.getHandshakeHeaders().get("userId").get(0));
-//        String roomId = session.getAttributes().get("roomId").toString();
-//        log.info("userId={}", userId);
         Integer roomId = getRoomId(session);
         log.info("roomId={}",roomId);
 
@@ -80,11 +76,11 @@ public class SocketTextHandler extends TextWebSocketHandler {
             switch (messageType) {
                 case "enter":
                     EnterandQuitRequestMessage enterDto = om.treeToValue(jsonNode, EnterandQuitRequestMessage.class);
-                    hikingDataScheduler.startTracking(enterDto.getPartyId().toString(), userId);
+                    hikingDataScheduler.startTracking(roomId.toString(), userId);
                     break;
                 case "quit":
                     EnterandQuitRequestMessage quitDto = om.treeToValue(jsonNode, EnterandQuitRequestMessage.class);
-                    hikingDataScheduler.stopTascking(quitDto.getPartyId().toString(), userId);
+                    hikingDataScheduler.stopTascking(roomId.toString(), userId);
                     break;
                 case "message":
                     sendMessage(jsonNode, userId, room);
@@ -99,10 +95,10 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
     private void sendMessage(JsonNode jsonNode, String userId, Room room) throws IOException {
         SocketDto fromDto = room.getSessionByUserId(Integer.parseInt(userId));
-
-        LocationResponseMessage locationDto = om.treeToValue(jsonNode, LocationResponseMessage.class);
-        LocationRequestMessage locationRspDto = LocationRequestMessage.fromRequestDto(locationDto,Integer.parseInt(userId),fromDto.getUserNickname());
-        locationSaveService.locationSave(locationRspDto);
+        log.info("partyId={}",room.getId());
+        LocationRequestMessage locationDto = om.treeToValue(jsonNode, LocationRequestMessage.class);
+        LocationResponseMessage locationRspDto = LocationResponseMessage.fromRequestDto(locationDto,Integer.parseInt(userId),fromDto.getUserNickname());
+        locationSaveService.locationSave(locationRspDto,room.getId());
         String responsePayload = om.writeValueAsString(locationRspDto);
         TextMessage textMessage = new TextMessage(responsePayload);
 

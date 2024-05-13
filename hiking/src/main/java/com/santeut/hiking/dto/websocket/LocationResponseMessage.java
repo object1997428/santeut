@@ -11,8 +11,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LocationResponseMessage {
     private String type;
-    private Integer partyId;
+    private Integer userId;
+    private String userNickname;
     private Double lat;
     private Double lng;
 
+    public static LocationResponseMessage fromRequestDto(LocationRequestMessage requestDto, Integer userId, String userNickname) {
+        return LocationResponseMessage.builder()
+                .type(requestDto.getType())
+                .userId(userId)
+                .userNickname(userNickname)
+                .lat(requestDto.getLat())
+                .lng(requestDto.getLng())
+                .build();
+    }
 }
