@@ -24,7 +24,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,12 +39,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.santeut.data.model.response.ChatMessage
 import com.santeut.designsystem.theme.DarkGreen
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ChatScreen(partyId: Int) {
+fun ChatScreen(
+    partyId: Int,
+    chatViewModel: ChatViewModel = hiltViewModel()
+) {
+
+    val chatmessages by chatViewModel.chatmessages.observeAsState(emptyList())
+
+    LaunchedEffect(key1 = partyId) {
+            chatViewModel.getChatMessageList(partyId)
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize(),
         content = {
             Column(
@@ -58,8 +72,10 @@ fun ChatScreen(partyId: Int) {
                         reverseLayout = true,
                         state = LazyListState(firstVisibleItemIndex = 0)
                     ) {
-                        items(100) {
-                            ChatMessage()
+                        chatmessages.forEach {
+                            item {
+                                ChatMessage(message = it)
+                            }
                         }
                     }
                 }
@@ -70,13 +86,13 @@ fun ChatScreen(partyId: Int) {
 }
 
 @Composable
-fun ChatMessage() {
+fun ChatMessage(message: ChatMessage) {
     Row(
         modifier = Modifier.padding(16.dp, 8.dp)
     ) {
 
         AsyncImage(
-            model = "이미지" ?: R.drawable.logo,
+            model = message.senderProfile ?: R.drawable.logo,
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .width(20.dp)
@@ -86,7 +102,7 @@ fun ChatMessage() {
 
         Column() {
             Text(
-                "닉네임",
+                message.senderNickname,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
             )
@@ -107,13 +123,14 @@ fun ChatMessage() {
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지메시지",
+                    text = message.content,
                     color = Color.White,
                     softWrap = true
                 )
             }
             Text(
-                "yyyy-mm-dd hh:mm", color = Color.LightGray,
+                message.createdAt,
+                color = Color.LightGray,
                 modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp)
             )
         }
