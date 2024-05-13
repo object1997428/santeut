@@ -93,7 +93,7 @@ class GuildViewModel @Inject constructor(
     }
 
     fun createGuildPost(
-        images: List<MultipartBody.Part>,
+        images: List<MultipartBody.Part>?,
         createGuildPostRequest: CreateGuildPostRequest
     ) {
         viewModelScope.launch {

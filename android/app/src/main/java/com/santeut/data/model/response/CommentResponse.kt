@@ -9,6 +9,7 @@ data class CommentListResponse(
 )
 
 data class CommentResponse(
+    @SerializedName("commentId") val commentId: Int,
     @SerializedName("userNickname") val userNickname: String,
     @SerializedName("commentContent") val commentContent: String,
     @SerializedName("createdAt") val createdAt: LocalDateTime,

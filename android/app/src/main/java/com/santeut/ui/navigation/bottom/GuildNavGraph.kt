@@ -10,6 +10,7 @@ import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.CreateGuildPostScreen
 import com.santeut.ui.guild.GuildCommunityScreen
 import com.santeut.ui.guild.GuildMemberListScreen
+import com.santeut.ui.guild.GuildPostDetailScreen
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.MyGuildScreen
@@ -58,6 +59,17 @@ fun NavGraphBuilder.GuildNavGraph(
         ) { backStackEntry ->
             val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
             CreateGuildPostScreen(guildId, navController)
+        }
+
+        // 동호회 게시글 상세조회
+        composable(
+            route = "getGuildPost/{guildPostId}",
+            arguments = listOf(
+                navArgument("guildPostId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val guildPostId = backStackEntry.arguments?.getInt("guildPostId") ?: 0
+            GuildPostDetailScreen(guildPostId, navController)
         }
 
         // 동호회 회원 조회

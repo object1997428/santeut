@@ -35,7 +35,7 @@ class GuildUseCase @Inject constructor(
 
 
     suspend fun createGuildPost(
-        images: List<MultipartBody.Part>,
+        images: List<MultipartBody.Part>?,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = guildRepository.createGuildPost(images, createGuildPostRequest)
 

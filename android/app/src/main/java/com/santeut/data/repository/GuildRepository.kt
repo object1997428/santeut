@@ -21,7 +21,7 @@ interface GuildRepository {
     suspend fun getGuildPostList(guildId: Int, categoryId: Int): List<GuildPostResponse>
 
     suspend fun createGuildPost(
-        images: List<MultipartBody.Part>,
+        images: List<MultipartBody.Part>?,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit>
 

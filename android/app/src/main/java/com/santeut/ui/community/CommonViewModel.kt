@@ -39,13 +39,4 @@ class CommonViewModel @Inject constructor(
         }
     }
 
-    fun getComment(postId: Int, postType: Char) {
-        viewModelScope.launch {
-            try {
-                _comments.value = commonUseCase.getComments(postId, postType)
-            } catch (e: Exception) {
-                _error.value = "Failed to load posts: ${e.message}"
-            }
-        }
-    }
 }

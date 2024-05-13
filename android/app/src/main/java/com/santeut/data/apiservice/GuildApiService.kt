@@ -47,7 +47,7 @@ interface GuildApiService {
     @POST("/api/guild/post")
     @Multipart
     suspend fun createGuildPost(
-        @Part images: List<MultipartBody.Part>,
+        @Part images: List<MultipartBody.Part>?,
         @Part createGuildPostRequest: MultipartBody.Part
     ): CustomResponse<Unit>
 

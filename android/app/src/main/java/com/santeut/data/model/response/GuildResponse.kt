@@ -42,7 +42,7 @@ data class GuildPostResponse(
 data class GuildPostDetailResponse(
     @SerializedName("guildPostId") val guildPostId: Int,
     @SerializedName("guildId") val guildId: Int,
-    @SerializedName("postType") val postType: Char,
+    @SerializedName("postType") val postType: Int,
     @SerializedName("categoryId") val categoryId: Int,
     @SerializedName("categoryName") val categoryName: String,
     @SerializedName("guildPostTitle") val guildPostTitle: String,
@@ -53,7 +53,7 @@ data class GuildPostDetailResponse(
     @SerializedName("likeCnt") val likeCnt: Int,
     @SerializedName("commentCnt") val commentCnt: Int,
     @SerializedName("hitCnt") val hitCnt: Int,
-    @SerializedName("commentList") val commentList: List<CommentResponse>,
+    @SerializedName("commentList") val commentList: CommentListResponse,
     @SerializedName("images") val images: List<String>,
     @SerializedName("writer") val writer: Boolean,
     @SerializedName("like") val like: Boolean

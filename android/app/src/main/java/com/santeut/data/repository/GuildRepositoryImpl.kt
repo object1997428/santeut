@@ -86,7 +86,7 @@ class GuildRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createGuildPost(
-        images: List<MultipartBody.Part>,
+        images: List<MultipartBody.Part>?,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = flow {
         Log.d("Repository", "접근 성공")

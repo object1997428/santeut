@@ -47,8 +47,8 @@ fun GuildCommunityScreen(
     val postList by guildViewModel.postList.observeAsState(emptyList())
 
     LaunchedEffect(key1 = null) {
+        guildViewModel.getGuildPostList(guildId, 0)
         guildViewModel.getGuildPostList(guildId, 1)
-        guildViewModel.getGuildPostList(guildId, 2)
     }
 
     Scaffold(
@@ -93,7 +93,7 @@ fun GuildPost(post: GuildPostResponse, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { navController.navigate(" ") })
+            .clickable(onClick = { navController.navigate("getGuildPost/${post.guildPostId}") })
     ) {
         Text(text = post.guildPostTitle)
         Text(text = post.guildPostContent)
