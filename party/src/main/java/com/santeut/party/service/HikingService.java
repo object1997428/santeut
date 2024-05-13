@@ -21,6 +21,7 @@ import com.santeut.party.repository.PartyUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,8 @@ public class HikingService {
     private final HikingAuthClient hikingAuthClient;
     private final HikingCommonClient hikingCommonClient;
     private final ObjectMapper om;
+    private final RedisTemplate<String, Object> redisTemplate;
+
     private GeometryFactory geometryFactory = new GeometryFactory();
 
     @Transactional
@@ -148,12 +151,8 @@ public class HikingService {
             partyRepository.save(party);
             //소모임 회원들한테 알림보내기 요청
             alertHikingEnd(hikingExitRequest,party);
-
             //소모임장 퇴장 처리
             exitHiking(hikingExitRequest,userId);
-
-            //redis 갱신
-            //1시간마다 갱신할거면, 여기서 처리하는 거 아님
         }
         //P인데 파티원이 그냥 먼저 퇴장하거나, E라서 알림받고 파티원이 나가거나
         else {
@@ -201,6 +200,28 @@ public class HikingService {
         else{
             log.error("[Auth Server] Auth 한테 등산 기록 업데이트 요청 실패 authResp={}",authResp);
         }
+        
+        //랭킹 갱신
+        updateRank(hikingExitRequest, userId, partyUser);
+    }
+
+    private void updateRank(HikingExitRequest hikingExitRequest, int userId, PartyUser partyUser) {
+        //1. 최다등반
+        String key1 = "guild/" + hikingExitRequest.getPartyId() + "/mostHiking";
+        String value=Integer.toString(userId);
+        redisTemplate.opsForZSet().incrementScore(key1, value, 1);
+        //2. 최고고도
+        String key2 = "guild/" + hikingExitRequest.getPartyId() + "/bestHeight";
+        Integer newHeight= partyUser.getBestHeight();
+        Double currentHeight = redisTemplate.opsForZSet().score(key2, value);
+        if (currentHeight == null || currentHeight < newHeight) {
+            redisTemplate.opsForZSet().add(key2, value, newHeight);
+        }
+        //3. 최장거리
+        String key3 = "guild/" + hikingExitRequest.getPartyId() + "/bestDistance";
+        Double currentDistance=redisTemplate.opsForZSet().score(key3, value);
+        Double newDistance= partyUser.getDistance()+((currentDistance==null)?0:currentDistance);
+        redisTemplate.opsForZSet().add(key3, value, newDistance);
     }
 
     @Transactional
