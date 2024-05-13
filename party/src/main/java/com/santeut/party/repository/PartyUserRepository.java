@@ -36,8 +36,8 @@ public interface PartyUserRepository extends JpaRepository<PartyUser, Integer> {
     int year, @Param("month") int month);
 
     @Query(nativeQuery = true,
-        value="SELECT pu.party_user_id as partyUserId, p.party_name as partyName, p.guild_id as guildId, p.party_mountain_name as mountainName, p.party_schedule as schedule, pu.party_user_distance as distance, pu.party_user_best_height as bestHeight, pu.party_user_move_time as moveTime FROM party_user pu JOIN party p on pu.user_id=:userId and pu.party_id = p.party_id WHERE pu.party_user_status like 'E'")
-    Page<HikingRecordRequestInterface> findMyHikingRecord(@Param("userId") int userId, Pageable pageable);
+        value="SELECT pu.party_user_id as partyUserId, p.party_name as partyName, p.guild_id as guildId, p.party_mountain_name as mountainName, p.party_schedule as schedule, pu.party_user_distance as distance, pu.party_user_best_height as bestHeight, pu.party_user_move_time as moveTime FROM party_user pu JOIN party p on pu.user_id=:userId and pu.party_id = p.party_id WHERE pu.party_user_status like 'E' ORDER BY pu.party_user_started_at DESC")
+    List<HikingRecordRequestInterface> findMyHikingRecord(@Param("userId") int userId);
 
     @Query("SELECT p FROM PartyUser pu JOIN Party p ON pu.partyId = p.partyId AND pu.userId = :userId WHERE (p.status like 'B' OR p.status like 'P') AND p.isDeleted = false")
     List<Party> findMyPartyForChat(@Param("userId") int userId);
