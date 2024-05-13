@@ -26,5 +26,5 @@ public interface PartyUserService {
 
   PartyByYearMonthResponse findMyPartyByYearMonth(int userId, int year, int month);
 
-  List<HikingRecordResponse> findMyEndedHikingRecord(int userId);
+  HikingRecordResponse findMyEndedHikingRecord(int userId);
 }

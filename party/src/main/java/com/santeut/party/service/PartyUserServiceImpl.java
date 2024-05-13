@@ -6,6 +6,7 @@ import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.common.util.GeometryUtils;
 import com.santeut.party.dto.request.HikingRecordRequestInterface;
 import com.santeut.party.dto.response.HikingRecordResponse;
+import com.santeut.party.dto.response.HikingRecordResponse.HikingRecord;
 import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
@@ -20,6 +21,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -118,12 +120,12 @@ public class PartyUserServiceImpl implements PartyUserService {
   }
 
   @Override
-  public List<HikingRecordResponse> findMyEndedHikingRecord(int userId) {
+  public HikingRecordResponse findMyEndedHikingRecord(int userId) {
     List<HikingRecordRequestInterface> hikingRecord = partyUserRepository.findMyHikingRecord(
         userId);
 
-    return hikingRecord.stream()
-        .map(r -> HikingRecordResponse.of(
+    return new HikingRecordResponse(hikingRecord.stream()
+        .map(r -> HikingRecord.of(
             r.getPartyUserId(),
             r.getPartyName(),
             (r.getGuildId() == null) ? ""
@@ -134,7 +136,6 @@ public class PartyUserServiceImpl implements PartyUserService {
             r.getBestHeight(),
             r.getMoveTime())
         )
-        .collect(Collectors.toList());
-
+        .toList());
   }
 }
