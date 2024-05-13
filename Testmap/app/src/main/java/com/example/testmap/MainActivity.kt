@@ -3,16 +3,23 @@ package com.example.testmap
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.testmap.ui.theme.TestmapTheme
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -25,16 +32,6 @@ import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
-import android.util.Log
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.google.gson.Gson
 
 // API 인터페이스 정의
@@ -191,6 +188,7 @@ fun MapScreen(
     var distanceMoved by remember { mutableStateOf(0f) }
     var timerRunning by remember { mutableStateOf(false) }
     var elapsedTime by remember { mutableStateOf(0) }
+    var altitude by remember { mutableStateOf(0f) }  // 고도 상태를 저장하는 변수
 
     // 사용자 위치 마커 상태를 관리하기 위해 MutableMap을 사용
     val userMarkerStates by remember { mutableStateOf<MutableMap<String, MarkerState>>(mutableMapOf()) }
@@ -224,6 +222,28 @@ fun MapScreen(
         }
     }
 
+    // 기압 센서 리스너 설정 및 고도 계산
+    DisposableEffect(Unit) {
+        val pressureSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_PRESSURE)
+        val sensorEventListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                if (event.sensor.type == Sensor.TYPE_PRESSURE) {
+                    val pressure = event.values[0]  // 기압값 읽기
+                    altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure)
+                }
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+
+        pressureSensor?.let {
+            sensorManager?.registerListener(sensorEventListener, it, SensorManager.SENSOR_DELAY_UI)
+        }
+
+        onDispose {
+            sensorManager?.unregisterListener(sensorEventListener)
+        }
+    }
+
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
             startWebSocket({ nickname, lat, lng ->
@@ -238,6 +258,8 @@ fun MapScreen(
         } else {
             stopWebSocket()
             elapsedTime = 0
+            userMarkerStates.clear() // 사용자 마커 상태 초기화
+            userPositions = mapOf()
         }
     }
 
@@ -274,6 +296,7 @@ fun MapScreen(
                         captionMinZoom = 12.0
                     )
                 }
+                // 사용자 마커 렌더링
                 userMarkerStates.forEach { (nickname, markerState) ->
                     Marker(
                         state = markerState,
@@ -283,7 +306,6 @@ fun MapScreen(
                     )
                 }
             }
-
             Button(
                 onClick = {
                     timerRunning = !timerRunning
@@ -294,14 +316,13 @@ fun MapScreen(
             }
         }
         Box(modifier = Modifier.weight(2f)) {
-            InfoPanel(mountainData?.height ?: 0, stepCount, distanceMoved, elapsedTime)
+            InfoPanel(mountainData?.height ?: 0, stepCount, distanceMoved, elapsedTime, altitude.toInt())
         }
     }
 }
 
-
 @Composable
-fun InfoPanel(elevation: Int, steps: Int, distance: Float, timeInSeconds: Int) {
+fun InfoPanel(elevation: Int, steps: Int, distance: Float, timeInSeconds: Int, altitude: Int) {
     val hours = timeInSeconds / 3600
     val minutes = (timeInSeconds % 3600) / 60
     val seconds = timeInSeconds % 60
@@ -316,7 +337,7 @@ fun InfoPanel(elevation: Int, steps: Int, distance: Float, timeInSeconds: Int) {
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            InfoItem(title = "고도", value = "$elevation m")
+            InfoItem(title = "고도", value = "$altitude m")
             InfoItem(title = "걸음 수", value = "$steps 걸음")
             InfoItem(title = "움직인 거리", value = String.format("%.2f km", distance))
             InfoItem(title = "경과 시간", value = String.format("%02d시 %02d분 %02d초", hours, minutes, seconds))
