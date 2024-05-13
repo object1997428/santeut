@@ -19,8 +19,7 @@ public interface PartyUserService {
 
   void withdrawUserFromParty(int userId, Integer partyId);
 
-  Page<PartyInfoResponseDto> findMyParty(int userId, boolean includeEnd, LocalDate date,
-      Pageable pageable);
+  PartyInfoResponseDto findMyParty(int userId, boolean includeEnd, LocalDate date);
 
   HikingStartResponse findMyHikingTrailByPartyUserId(int partyUserId);
 

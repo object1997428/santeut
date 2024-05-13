@@ -10,6 +10,7 @@ import com.santeut.party.dto.response.HikingRecordResponse.HikingRecord;
 import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyByYearMonthResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
+import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
 import com.santeut.party.dto.response.PartyWithPartyUserIdResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.entity.PartyUser;
@@ -21,15 +22,11 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -85,19 +82,23 @@ public class PartyUserServiceImpl implements PartyUserService {
   }
 
   @Override
-  public Page<PartyInfoResponseDto> findMyParty(int userId, boolean includeEnd, LocalDate date,
-      Pageable pageable) {
+  public PartyInfoResponseDto findMyParty(int userId, boolean includeEnd, LocalDate date) {
         log.info("내 소모임 찾기");
-    Page<PartyWithPartyUserIdResponse> myParties = partyRepository.findMyPartyWithSearchCondition(
-        includeEnd, date, userId, pageable);
-    return myParties.map(p -> {
-      log.info("owner id: "+p.getParty().getUserId());
-      log.info("guild id: "+p.getParty().getGuildId());
-      String owner = userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname();
-      String guildName = (p.getParty().getGuildId() == null) ? ""
-          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId(), userId).getGuildName();
-      return PartyInfoResponseDto.of(owner, p.getPartyUserId(), p.getParty(), null, guildName);
-    });
+    List<PartyWithPartyUserIdResponse> myParties = partyRepository.findMyPartyWithSearchCondition(
+        includeEnd, date, userId);
+
+    return new PartyInfoResponseDto(
+        myParties.stream().map(
+            p -> PartyInfo.of(
+                p.getParty().getUserId()==userId,//userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname(),
+                p.getPartyUserId(),
+                p.getParty(),
+                null,
+                (p.getParty().getGuildId() == null) ? ""
+          : guildAccessUtil.getGuildInfo(p.getParty().getGuildId(), userId).getGuildName()
+            )
+        ).toList()
+    );
   }
 
   @Override

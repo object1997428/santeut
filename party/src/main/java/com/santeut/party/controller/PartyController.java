@@ -1,19 +1,13 @@
 package com.santeut.party.controller;
 
 import com.santeut.party.common.response.BasicResponse;
-import com.santeut.party.common.response.PagingResponse;
 import com.santeut.party.common.util.ResponseUtil;
 import com.santeut.party.dto.request.CreatePartyRequestDto;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
-import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.service.PartyService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,18 +48,18 @@ public class PartyController {
   }
 
   @GetMapping("")
-  public ResponseEntity<PagingResponse> findParty(
+  public ResponseEntity<BasicResponse> findParty(
       HttpServletRequest request,
       @RequestParam(name = "guild", required = false) Integer guildId,
       @RequestParam(name = "name", required = false) String name,
       @RequestParam(name = "start", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-      @RequestParam(name = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-      @PageableDefault(page = 0, size = 5, sort = "schedule", direction = Sort.Direction.ASC) Pageable pageable) {
+      @RequestParam(name = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
+  ) {
 
-    Page<PartyInfoResponseDto> party = partyService.findParty(Integer.parseInt(request.getHeader("userId")), guildId, name, startDate,
-        endDate, pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, party, true, true, true);
-
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        partyService.findParty(Integer.parseInt(request.getHeader("userId")), guildId, name,
+            startDate,
+            endDate));
   }
 
   @GetMapping("/{partyId}")

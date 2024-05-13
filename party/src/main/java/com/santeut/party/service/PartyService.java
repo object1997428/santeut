@@ -3,21 +3,20 @@ package com.santeut.party.service;
 import com.santeut.party.dto.request.CreatePartyRequestDto;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
+import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
 import java.time.LocalDate;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface PartyService {
 
   void createParty(int userId, CreatePartyRequestDto requestDto);
 
-  PartyInfoResponseDto modifyParty(int userId, int partyId, ModifyPartyRequestDto requestDto);
+  PartyInfo modifyParty(int userId, int partyId, ModifyPartyRequestDto requestDto);
 
   void deleteParty(int userId, int partyId);
 
-  Page<PartyInfoResponseDto> findParty(int userId, Integer guildId, String name, LocalDate startDate,
-      LocalDate endDate, Pageable pageable);
+  PartyInfoResponseDto findParty(int userId, Integer guildId, String name, LocalDate startDate,
+      LocalDate endDate);
 
-  PartyInfoResponseDto findPartyById(int userId, int partyId);
+  PartyInfo findPartyById(int userId, int partyId);
 
 }

@@ -47,15 +47,12 @@ public class PartyUserController {
 
 
   @GetMapping("/user")
-  public ResponseEntity<PagingResponse> findMyParty(
+  public ResponseEntity<BasicResponse> findMyParty(
       HttpServletRequest request,
       @RequestParam(name = "includeEnd") boolean includeEnd,
-      @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-      @PageableDefault(page = 0, size = 10, sort = "schedule", direction = Sort.Direction.ASC) Pageable pageable) {
-    Page<PartyInfoResponseDto> myParty = partyUserService.findMyParty(
-        Integer.parseInt(request.getHeader("userId")), includeEnd, date, pageable);
-    return ResponseUtil.buildPagingResponse(HttpStatus.OK, myParty, true, true, true);
-
+      @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK, partyUserService.findMyParty(
+        Integer.parseInt(request.getHeader("userId")), includeEnd, date));
   }
 
   @GetMapping("/user/{partyUserId}")

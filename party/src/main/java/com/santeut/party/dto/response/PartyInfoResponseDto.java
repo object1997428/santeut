@@ -31,11 +31,11 @@ public class PartyInfoResponseDto {
     public String place;
     public int maxPeople;
     public int curPeople;
-    public String owner;
+    public boolean isOwner;
     public char status;
     public Boolean isMember;
 
-    public static PartyInfo of(String nickname, Integer partyUserId, Party entity,
+    public static PartyInfo of(Boolean isOwner, Integer partyUserId, Party entity,
         Boolean isMember, String guildName) {
       return PartyInfo.builder()
           .partyId(entity.getPartyId())
@@ -47,7 +47,7 @@ public class PartyInfoResponseDto {
           .place(entity.getPlace())
           .maxPeople(entity.getMaxParticipants())
           .curPeople(entity.getParticipants())
-          .owner(nickname)
+          .isOwner(isOwner)
           .status(entity.getStatus())
           .isMember(isMember)
           .build();
