@@ -14,6 +14,7 @@ public class MountainSearchResponseDto {
   public int height;
   public int courseCount;
   public boolean isTop100;
+  public String image;
 
   public static MountainSearchResponseDto from(MountainEntity m) {
     return MountainSearchResponseDto.builder()
@@ -23,6 +24,7 @@ public class MountainSearchResponseDto {
         .height(m.getHeight())
         .courseCount(m.getCourseEntityList().size())
         .isTop100(m.isTop100())
+        .image(m.getImage())
         .build();
   }
 
