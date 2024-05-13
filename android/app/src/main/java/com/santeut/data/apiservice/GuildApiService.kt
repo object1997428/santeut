@@ -51,7 +51,7 @@ interface GuildApiService {
         @Part createGuildPostRequest: MultipartBody.Part
     ): CustomResponse<Unit>
 
-    @GET("/api/guild/post/{guildPostId}/")
+    @GET("/api/guild/post/{guildPostId}")
     suspend fun getGuildPost(
         @Path("guildPostId") guildPostId: Int
     ): CustomResponse<GuildPostDetailResponse>

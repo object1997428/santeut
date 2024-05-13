@@ -6,10 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.request.CreatePostRequest
-import com.santeut.data.model.response.CommentListResponse
 import com.santeut.data.model.response.CommentResponse
-import com.santeut.data.model.response.PostListResponse
 import com.santeut.domain.usecase.CommonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

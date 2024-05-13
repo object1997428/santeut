@@ -1,6 +1,5 @@
 package com.santeut.ui.guild
 
-import android.content.ClipData.Item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.santeut.data.model.response.CommentResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.common.CommentScreen
@@ -71,6 +69,12 @@ fun GuildPostDetailScreen(
             DefaultTopBar(navController, "커뮤니티")
         },
 
+        bottomBar = {
+            if (post != null) {
+                CommentSection(guildPostId)
+            }
+        },
+
         content = { innerPadding ->
             Surface(
                 modifier = Modifier
@@ -79,12 +83,11 @@ fun GuildPostDetailScreen(
                 color = MaterialTheme.colorScheme.background
             ) {
                 Column {
-                    GuildPostTitle(post!!)
-                    GuildPostContent(post!!)
-                    CommentSection(
-                        guildPostId,
-                        commentList?.commentList!!
-                    )
+                    post?.let { GuildPostTitle(it) }
+                    post?.let { GuildPostContent(it) }
+                    commentList?.let {
+                        CommentScreen(commentList)
+                    }
                 }
             }
         }
@@ -94,7 +97,7 @@ fun GuildPostDetailScreen(
 
 @Composable
 fun GuildPostTitle(post: GuildPostDetailResponse) {
-    val category = when (post.postType) {
+    val category = when (post.categoryId) {
         0 -> "공지"
         1 -> "자유"
         else -> "기타"
@@ -113,7 +116,7 @@ fun GuildPostTitle(post: GuildPostDetailResponse) {
                 modifier = Modifier.size(24.dp)
             )
         }
-        Text(text = post.userNickName, style = MaterialTheme.typography.bodyMedium)
+        Text(text = post.userNickName ?: "", style = MaterialTheme.typography.bodyMedium)
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -172,41 +175,39 @@ fun GuildPostContent(post: GuildPostDetailResponse) {
 @Composable
 fun CommentSection(
     postId: Int,
-    commentList: List<CommentResponse>,
     commonViewModel: CommonViewModel = hiltViewModel()
 ) {
 
     var comment by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        CommentScreen(commentList)
-    }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        fun onSend() {
-            commonViewModel.createComment(postId, 'G', comment)
-        }
-        TextField(
-            value = comment,
-            onValueChange = { comment = it },
-            placeholder = { Text("내용") },
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(1f)
-                .background(Color.Transparent),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onSend() })
-        )
-        IconButton(onClick = { onSend() }) {
-            Icon(
-                imageVector = Icons.Outlined.Send,
-                contentDescription = "Send"
+                .padding(16.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            fun onSend() {
+                commonViewModel.createComment(postId, 'G', comment)
+            }
+            TextField(
+                value = comment,
+                onValueChange = { comment = it },
+                placeholder = { Text("내용") },
+                modifier = Modifier
+                    .weight(1f)
+                    .background(Color.Transparent),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { onSend() })
             )
+            IconButton(onClick = { onSend() }) {
+                Icon(
+                    imageVector = Icons.Outlined.Send,
+                    contentDescription = "Send"
+                )
+            }
         }
     }
 }

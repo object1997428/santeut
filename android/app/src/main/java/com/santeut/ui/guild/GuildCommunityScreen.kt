@@ -1,6 +1,7 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
@@ -28,6 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -43,12 +48,12 @@ fun GuildCommunityScreen(
     navController: NavController,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
-
     val postList by guildViewModel.postList.observeAsState(emptyList())
+    var selectedCategoryId by remember { mutableStateOf(0) }  // Default to '공지' category
 
-    LaunchedEffect(key1 = null) {
-        guildViewModel.getGuildPostList(guildId, 0)
-        guildViewModel.getGuildPostList(guildId, 1)
+    LaunchedEffect(key1 = guildId, key2 = selectedCategoryId) {
+        Log.d("GuildScreen", "Fetching posts for guildId: $guildId with categoryId $selectedCategoryId")
+        guildViewModel.getGuildPostList(guildId, selectedCategoryId)
     }
 
     Scaffold(
@@ -67,26 +72,50 @@ fun GuildCommunityScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) {
-        if (postList.isEmpty()) {
-            Box(
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Row of buttons for category selection
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                androidx.compose.material3.Text(
-                    text = "게시글이 없습니다.",
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                Button(
+                    onClick = { selectedCategoryId = 0 },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("공지")
+                }
+                Button(
+                    onClick = { selectedCategoryId = 1 },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("자유")
+                }
             }
-        } else {
-            LazyColumn() {
-                items(postList) { post ->
-                    GuildPost(post, navController)
+            // Content area
+            if (postList.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    androidx.compose.material3.Text(
+                        text = "게시글이 없습니다.",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            } else {
+                LazyColumn() {
+                    items(postList.filter { it.categoryId == selectedCategoryId }) { post ->
+                        GuildPost(post, navController)
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun GuildPost(post: GuildPostResponse, navController: NavController) {
