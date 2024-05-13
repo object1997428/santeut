@@ -7,11 +7,10 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name=".MainApplication"
@@ -46,10 +45,18 @@
             </intent-filter>
         </service>
         <!--        <meta-data-->
+<<<<<<< HEAD
         <!--            android:name="firebase_messaging_auto_init_enabled"-->
         <!--            android:value="false" />-->
         <!--        <meta-data-->
         <!--            android:name="firebase_analytics_collection_enabled"-->
         <!--            android:value="false" />-->
+=======
+<!--            android:name="firebase_messaging_auto_init_enabled"-->
+<!--            android:value="false" />-->
+<!--        <meta-data-->
+<!--            android:name="firebase_analytics_collection_enabled"-->
+<!--            android:value="false" />-->
+>>>>>>> anroid-feat/watch-connect
     </application>
 </manifest>

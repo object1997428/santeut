@@ -7,7 +7,11 @@ import androidx.compose.ui.Modifier
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.santeut.designsystem.theme.SanteutTheme
 import com.santeut.ui.community.guild.JoinGuildScreen
 import com.santeut.ui.community.party.JoinPartyScreen
 import com.santeut.ui.community.course.PostCourseScreen
