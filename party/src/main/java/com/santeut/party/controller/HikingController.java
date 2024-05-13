@@ -30,6 +30,7 @@ public class HikingController {
     @PostMapping("/hiking/start")
     public ResponseEntity<?> startHiking(@RequestBody HikingEnterRequest hikingEnterRequest, HttpServletRequest request){
         String userId = request.getHeader("userId");
+        log.info("userId={}",userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,hikingService.hikingStart(Integer.parseInt(userId),hikingEnterRequest));
     }
 
@@ -43,6 +44,7 @@ public class HikingController {
     @PostMapping("/hiking/end")
     public ResponseEntity<?> endHiking(@RequestBody HikingExitRequest hikingExitRequest, HttpServletRequest request){
         String userId = request.getHeader("userId");
+        log.info("userId={}",userId);
         hikingService.hikingEnd(Integer.parseInt(userId),hikingExitRequest);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,"등산 퇴장 처리에 성공했습니다.");
     }
@@ -50,6 +52,7 @@ public class HikingController {
     @PostMapping("/hiking/safety")
     public ResponseEntity<?> safetyAlert(@RequestBody HikingSafetyRequest hikingSafetyRequest, HttpServletRequest request){
         String userId = request.getHeader("userId");
+        log.info("userId={}",userId);
         hikingService.hikingSafety(Integer.parseInt(userId),hikingSafetyRequest);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK,"등산 위험 알림에 성공했습니다.");
     }
