@@ -2,7 +2,9 @@ package com.santeut.ui.chat
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.designsystem.theme.DarkGreen
+import com.santeut.designsystem.theme.Green
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -54,7 +57,7 @@ fun ChatScreen(
     val chatmessages by chatViewModel.chatmessages.observeAsState(emptyList())
 
     LaunchedEffect(key1 = partyId) {
-            chatViewModel.getChatMessageList(partyId)
+        chatViewModel.getChatMessageList(partyId)
     }
 
     Scaffold(modifier = Modifier.fillMaxSize(),
@@ -95,12 +98,20 @@ fun ChatMessage(message: ChatMessage) {
             model = message.senderProfile ?: R.drawable.logo,
             contentDescription = "프로필 이미지",
             modifier = Modifier
-                .width(20.dp)
-                .height(20.dp),
+                .width(40.dp)
+                .height(40.dp)
+                .clip(CircleShape)
+                .border(BorderStroke(1.dp, Green),
+                    CircleShape
+                )
+            ,
             contentScale = ContentScale.Crop
         )
 
-        Column() {
+        Column(
+            modifier = Modifier
+                .padding(8.dp, 0.dp, 0.dp, 0.dp)
+        ) {
             Text(
                 message.senderNickname,
                 fontWeight = FontWeight.SemiBold,
@@ -131,7 +142,7 @@ fun ChatMessage(message: ChatMessage) {
             Text(
                 message.createdAt,
                 color = Color.LightGray,
-                modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp)
+                modifier = Modifier.padding(4.dp, 4.dp, 0.dp, 0.dp)
             )
         }
 
