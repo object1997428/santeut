@@ -66,6 +66,8 @@ dependencies {
 
     implementation(libs.androidx.material3)
 
+    implementation(libs.kotlinx.coroutines)
+
     // permission
     implementation(libs.accompanist.permissions)
 

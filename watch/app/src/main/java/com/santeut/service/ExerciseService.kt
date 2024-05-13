@@ -11,20 +11,28 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.PutDataMapRequest
 import com.santeut.data.ExerciseClientManager
 import com.santeut.data.isExerciseInProgress
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.Duration
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
-
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
+
+    @Inject
+    lateinit var dataClient: DataClient
 
     @Inject
     lateinit var exerciseClientManager: ExerciseClientManager
@@ -34,6 +42,8 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var exerciseServiceMonitor: ExerciseServiceMonitor
+
+    private var periodicSendJob: Job? = null
 
     private var isBound = false
     private var isStarted = false
@@ -50,9 +60,28 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
-        Log.d("로그 체크 3","찍힘")
-        postOngoingActivityNotification()
+        if (!serviceRunningInForeground) {
+            postOngoingActivityNotification()
+        }
+
         exerciseClientManager.startExercise()
+        startPeriodicDataSend()
+    }
+
+    private fun startPeriodicDataSend() {
+        periodicSendJob = lifecycleScope.launch(Dispatchers.IO) {
+            while (isActive) {
+                try {
+                    val exerciseMetrics = exerciseServiceMonitor.exerciseServiceState.value.exerciseMetrics
+                    toSend(exerciseMetrics)
+                    Log.d("To Send Heart Rate", exerciseMetrics.heartRate.toString())
+                    delay(2000)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error sending data: ${e.localizedMessage}")
+                    delay(1000)
+                }
+            }
+        }
     }
 
     suspend fun pauseExercise() {
@@ -66,7 +95,14 @@ class ExerciseService : LifecycleService() {
     suspend fun endExercise() {
         exerciseClientManager.endExercise()
         removeOngoingActivityNotification()
+        stopPeriodicDataSend()
     }
+
+    private fun stopPeriodicDataSend() {
+        periodicSendJob?.cancel()
+        periodicSendJob = null
+    }
+
 
     fun markLap() {
         lifecycleScope.launch {
@@ -85,6 +121,7 @@ class ExerciseService : LifecycleService() {
             if (!isBound) {
                 stopSelfIfNotRunning()
             }
+
             lifecycleScope.launch(Dispatchers.Default) {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     exerciseServiceMonitor.monitor()
@@ -92,6 +129,30 @@ class ExerciseService : LifecycleService() {
             }
         }
         return START_STICKY
+    }
+
+    suspend fun toSend(exerciseMetrics: ExerciseMetrics) {
+        try {
+            val request = PutDataMapRequest.create("/health").apply {
+                dataMap.apply {
+                    exerciseMetrics.heartRate?.let { putDouble("heartRate", it) }
+                    exerciseMetrics.distance?.let { putDouble("distance", it) }
+                    exerciseMetrics.stepsTotal?.let { putLong("stepsTotal", it) }
+                    exerciseMetrics.calories?.let { putDouble("calories", it) }
+                    exerciseMetrics.heartRateAverage?.let { putDouble("heartRateAverage", it) }
+                    exerciseMetrics.absoluteElevation?.let { putDouble("absoluteElevation", it) }
+                    exerciseMetrics.elevationGainTotal?.let { putDouble("elevationGainTotal", it) }
+                }
+            }.asPutDataRequest().setUrgent()
+
+            val result = dataClient.putDataItem(request).await()
+
+            Log.d("toSend ", "DataItem saved: $result")
+        } catch (cancellationException: CancellationException) {
+            throw cancellationException
+        } catch (exception: Exception) {
+            Log.d("toSend ", "Saving DataItem failed: $exception")
+        }
     }
 
     private fun stopSelfIfNotRunning() {
@@ -158,6 +219,8 @@ class ExerciseService : LifecycleService() {
                     serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
                 )
             )
+        } else {
+            Log.d(TAG, "Service is already running in foreground")
         }
     }
 
