@@ -20,6 +20,7 @@ import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -38,8 +39,10 @@ public class SocketTextHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         int userId = Integer.parseInt(session.getHandshakeHeaders().get("userId").get(0));
-        log.info("userId={}", userId);
+//        String roomId = session.getAttributes().get("roomId").toString();
+//        log.info("userId={}", userId);
         Integer roomId = getRoomId(session);
+        log.info("roomId={}",roomId);
 
         //Auth서버한테 유저 정보 요청
         String userNickname="";
@@ -124,6 +127,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
         log.info("특정 클라이언트와의 연결이 해제되었습니다. partyId={}, userId={}",roomId,userId);
     }
 
+    //세션 url에서 roomId가져옴
     private Integer getRoomId(WebSocketSession session) {
         return Integer.parseInt(
                 session.getAttributes()
