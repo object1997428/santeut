@@ -45,18 +45,10 @@
             </intent-filter>
         </service>
         <!--        <meta-data-->
-<<<<<<< HEAD
         <!--            android:name="firebase_messaging_auto_init_enabled"-->
         <!--            android:value="false" />-->
         <!--        <meta-data-->
         <!--            android:name="firebase_analytics_collection_enabled"-->
         <!--            android:value="false" />-->
-=======
-<!--            android:name="firebase_messaging_auto_init_enabled"-->
-<!--            android:value="false" />-->
-<!--        <meta-data-->
-<!--            android:name="firebase_analytics_collection_enabled"-->
-<!--            android:value="false" />-->
->>>>>>> anroid-feat/watch-connect
     </application>
 </manifest>
