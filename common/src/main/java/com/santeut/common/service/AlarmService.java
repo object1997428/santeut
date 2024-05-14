@@ -67,6 +67,11 @@ public class AlarmService {
     public void sendAlarm(CommonHikingStartFeignRequest alertRequest) {
         List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(alertRequest.getTargetUserIds());
         log.info("[Alarm Server][sendAlarm()-- alertRequest.getMessage()={}]", alertRequest.getMessage());
+        log.info("getAlamType={}",alertRequest.getAlamType());
+        for (Integer targetUserId : alertRequest.getTargetUserIds()) {
+            log.info("targetUserId={}",targetUserId);
+        }
+
         for (AlarmTokenEntity alarmToken : alarmTokenList) {
 
             //20일 지난 토큰은 비활성화하고 보내지 않음
