@@ -8,6 +8,7 @@ import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
+import com.santeut.data.model.response.RankingResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -162,6 +163,21 @@ class GuildRepositoryImpl @Inject constructor(
             emit(response.data)
         } else {
             throw Exception("동호회 탈퇴 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun getRanking(type: Char): List<RankingResponse> {
+        return try {
+            val response = guildApiService.getRanking(type)
+            if (response.status == "200") {
+                Log.d("GuildRepository", "랭킹 조회 성공")
+                response.data.partyMembers?: emptyList()
+            } else {
+                throw Exception("랭킹 조회 실패: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
         }
     }
 }

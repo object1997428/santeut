@@ -5,6 +5,7 @@ import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
 import com.santeut.data.model.response.GuildResponse
+import com.santeut.data.model.response.RankingResponse
 import com.santeut.data.repository.GuildRepository
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -53,5 +54,7 @@ class GuildUseCase @Inject constructor(
         guildRepository.changeLeader(guildId, newLeaderId)
 
     suspend fun quitGuild(guildId: Int): Flow<Unit> = guildRepository.quitGuild(guildId)
+
+    suspend fun getRanking(type: Char): List<RankingResponse> = guildRepository.getRanking(type)
 
 }
