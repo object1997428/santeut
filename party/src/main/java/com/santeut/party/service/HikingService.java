@@ -140,7 +140,7 @@ public class HikingService {
         if (party.getStatus() == 'B' || party.getStatus() == 'I')
             throw new PartyExpiredException("해당 소모임은 시작된 적이 없습니다.");
         if (party.getStatus() == 'E' && userId == party.getUserId()) {
-            log.error("[Party Server][hikingEnd()]이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
+            log.error("[Party Server][hikingEnd()]이미 끝난 소모임인데 소모임장이 퇴장 요청을 함 userId={}",userId);
             throw new DataMismatchException("이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
         }
         //소모임장이 hiking을 비활성화
@@ -151,12 +151,12 @@ public class HikingService {
             //소모임 회원들한테 알림보내기 요청
             alertHikingEnd(hikingExitRequest,party);
             //소모임장 퇴장 처리
-            exitHiking(hikingExitRequest,userId);
+            exitHiking(hikingExitRequest,userId,party.isLinked());
         }
         //P인데 파티원이 그냥 먼저 퇴장하거나, E라서 알림받고 파티원이 나가거나
         else {
             //파티원 퇴장 처리
-            exitHiking(hikingExitRequest,userId);
+            exitHiking(hikingExitRequest,userId,party.isLinked());
         }
     }
 
@@ -176,11 +176,12 @@ public class HikingService {
         log.info("[Party Server][Common response ={}",responseEntity);
     }
 
-    private void exitHiking(HikingExitRequest hikingExitRequest,int userId) {
+    private void exitHiking(HikingExitRequest hikingExitRequest,int userId,boolean isLinked) {
         PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), userId)
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
         if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
-        partyUser.setStatus('E', hikingExitRequest.getEndTime()); //moveTime 갱신
+        //moveTime 갱신
+        partyUser.setStatus('E', hikingExitRequest.getEndTime());
         partyUser.addHikingRecord(hikingExitRequest.getDistance(), hikingExitRequest.getBestHeight());
         partyUserRepository.save(partyUser);
         //Auth한테 포인트, 등산기록 정규화 요청
@@ -199,9 +200,11 @@ public class HikingService {
         else{
             log.error("[Auth Server] Auth 한테 등산 기록 업데이트 요청 실패 authResp={}",authResp);
         }
-        
+
         //랭킹 갱신
-        updateRank(hikingExitRequest, userId, partyUser);
+        if(isLinked){
+            updateRank(hikingExitRequest, userId, partyUser);
+        }
     }
 
     private void updateRank(HikingExitRequest hikingExitRequest, int userId, PartyUser partyUser) {
