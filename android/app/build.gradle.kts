@@ -119,6 +119,9 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // Accompanist Pager
+    implementation ("com.google.accompanist:accompanist-pager:<version>")
+
     // Wear
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
 }
