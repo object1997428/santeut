@@ -23,6 +23,10 @@ public class RoomRepository {
     }
 
     public Room room(int id) {
+<<<<<<< HEAD
         return rooms.computeIfAbsent(id, Room::create);
+=======
+       return rooms.computeIfAbsent(id, Room::create);
+>>>>>>> cdadf4f51500638822f3300e5c7c71b5268b06ca
     }
 }
