@@ -1,7 +1,5 @@
-package com.santeut.guild.feign.dto;
+package com.santeut.guild.dto.response;
 
-
-import com.santeut.guild.dto.response.PartyMemberInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +10,6 @@ import java.util.List;
 @Data @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PartyMemberInfoResponse {
-    List<PartyMemberInfo> partyMembers;
-
+public class RankMembersInfoResponse {
+    List<RankUserInfo> partyMembers;
 }
