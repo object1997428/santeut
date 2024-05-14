@@ -68,13 +68,13 @@ public class LikeService {
         AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
                 .userId(postUserId)
                 .referenceId(likeEntity.getLikeReferenceId())
-                .referenceType(likeEntity.getLikeReferenceType())
+                .referenceType(likeEntity.getLikeReferenceType() + "L")
                 .alarmTitle("👍 좋아요 알림")
                 .alarmContent(commentUserNickname+"님이 좋아요를 누르셨습니다.")
                 .build();
 
 //             알람을 만들어주는 함수 호출
-        alarmService.createAlarm(likeEntity.getLikeReferenceId(), likeEntity.getLikeReferenceType(), alarmRequestDto);
+        alarmService.createAlarm(likeEntity.getLikeReferenceId(), alarmRequestDto.getReferenceType(), alarmRequestDto);
     }
 
     // 좋아요 했는지 체크해주기

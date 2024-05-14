@@ -56,13 +56,13 @@ public class CommentService {
             AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
                     .userId(postUserId)
                     .referenceId(comment.getCommentReferenceId())
-                    .referenceType(comment.getCommentReferenceType())
+                    .referenceType(comment.getCommentReferenceType() + "C")
                     .alarmTitle("✉ 댓글 알림")
                     .alarmContent(commentUserNickname+"님이 댓글을 남기셨습니다.")
                     .build();
 
 //             알람을 만들어주는 함수 호출
-            alarmService.createAlarm(comment.getCommentReferenceId(), comment.getCommentReferenceType(), alarmRequestDto);
+            alarmService.createAlarm(comment.getCommentReferenceId(), alarmRequestDto.getReferenceType(), alarmRequestDto);
 
     }
 

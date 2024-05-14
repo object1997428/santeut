@@ -21,7 +21,7 @@ public class AlarmController {
 
     // 알람 작성 하기 ( CREATE )
     @PostMapping("/{referenceId}/{referenceType}")
-    public ResponseEntity<BasicResponse> createAlarm(@PathVariable Integer referenceId, @PathVariable Character referenceType, @RequestBody AlarmRequestDto alarmRequestDto) {
+    public ResponseEntity<BasicResponse> createAlarm(@PathVariable Integer referenceId, @PathVariable String referenceType, @RequestBody AlarmRequestDto alarmRequestDto) {
         alarmService.createAlarm(referenceId, referenceType, alarmRequestDto);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "알람이 성공적으로 생성되었습니다.");
     }

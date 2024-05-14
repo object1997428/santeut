@@ -35,7 +35,7 @@ public class AlarmService {
     private final SafetyAlertRepository safetyAlertRepository;
     private final FcmUtils fcmUtils;
 
-    public void createAlarm(Integer referenceId, Character referenceType, AlarmRequestDto alarmRequestDto) {
+    public void createAlarm(Integer referenceId, String referenceType, AlarmRequestDto alarmRequestDto) {
         AlarmEntity alarmEntity = AlarmEntity.builder()
                 .userId(alarmRequestDto.getUserId())
                 .referenceType(referenceType)
@@ -47,9 +47,10 @@ public class AlarmService {
         //알람 보내기
         AlarmTokenEntity alarmToken = alarmTokenRepository.findById(alarmRequestDto.getUserId()).orElseThrow();
         log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]",alarmToken.getId());
-        fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(alarmRequestDto.getAlarmTitle(),
+        boolean a = fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(alarmRequestDto.getAlarmTitle(),
                 String.format(alarmRequestDto.getAlarmContent()),
                 FCMCategory.HIKING_START));
+        log.info(" : {}", a);
     }
 
     public void deleteAlarm(int alarmId) {
@@ -91,7 +92,7 @@ public class AlarmService {
             else if(alertRequest.getDataSource().equals("alarm")){
                 AlarmEntity alarm=AlarmEntity.builder()
                         .userId(alarmToken.getId())
-                        .referenceType('P')
+                        .referenceType("P")
                         .referenceId(alertRequest.getPartyId())
                         .alarmTitle(alertRequest.getTitle())
                         .alarmContent(alertRequest.getMessage())
