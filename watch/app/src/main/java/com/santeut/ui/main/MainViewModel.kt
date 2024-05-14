@@ -26,7 +26,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun startExercise() {
-        Log.d("로그 체크 1","찍힘")
         healthServicesRepository.startExercise()
         _state.value = true
     }

@@ -1,8 +1,22 @@
-package com.santeut.ui
+package com.santeut.ui.map
 
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -19,44 +33,62 @@ import com.santeut.ui.health.HealthScreenState
 
 @Composable
 fun MapScreen(
+    state: Boolean,
     uiState: HealthScreenState
 ) {
-    val latitude = uiState.exerciseState?.exerciseMetrics?.location?.latitude
-    val longitude = uiState.exerciseState?.exerciseMetrics?.location?.longitude
+    val latitude = uiState.exerciseState?.exerciseMetrics?.location?.latitude ?: 0.0
+    val longitude = uiState.exerciseState?.exerciseMetrics?.location?.longitude ?: 0.0
 
-//        val singapore = LatLng(latitude, longitude)
-        val singapore = LatLng(35.093655296844, 128.85567741474)
+    val markerState = remember { MarkerState(position = LatLng(latitude, longitude)) }
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(latitude, longitude), 15f)
+    }
 
-        val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(singapore, 12f)
+    LaunchedEffect(key1 = latitude, key2 = longitude) {
+        markerState.position = LatLng(latitude, longitude)
+        cameraPositionState.position =
+            CameraPosition.fromLatLngZoom(LatLng(latitude, longitude), 15f)
+        Log.d("Map Screen LatLng : ", "$latitude / $longitude")
+    }
+
+    val mapProperties = MapProperties(
+        mapType = MapType.TERRAIN,
+        mapStyleOptions = MapStyleOptions(mapStyleJson)
+    )
+
+    if (!state || latitude == 0.0 || longitude == 0.0) {
+        Column (
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xFF335C49)),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Spacer(modifier = Modifier.height(24.dp))
+            androidx.wear.compose.material.Text(
+                text = "지도",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.weight(0.4f))
+            androidx.wear.compose.material.Text(text = "등산을")
+            androidx.wear.compose.material.Text(text = "시작해 주세요.")
+            Spacer(modifier = Modifier.weight(0.6f))
         }
-
-        val mapProperties = MapProperties(
-            mapType = MapType.TERRAIN,
-            mapStyleOptions = MapStyleOptions(mapStyleJson)
-        )
-
+    } else {
         GoogleMap(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+            .background(color = Color(0xFF335C49)),
             cameraPositionState = cameraPositionState,
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
             properties = mapProperties
         ) {
             Marker(
-                state = MarkerState(position = singapore),
+                state = markerState,
                 title = "Me",
                 icon = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_blue)
             )
         }
-
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize(),
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Text(text = "등산을 시작해 주세요!")
-//    }
+    }
 }
 
 val mapStyleJson = """

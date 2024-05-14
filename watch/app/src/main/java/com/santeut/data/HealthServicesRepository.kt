@@ -56,20 +56,16 @@ class HealthServicesRepository @Inject constructor(
     fun prepareExercise() = serviceCall { prepareExercise() }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
-        Log.d("로그 체크 2","찍힘")
         binderConnection.runWhenConnected {
-            Log.d("로그 체크 3","안찍힘")
             function(it.getService())
         }
     }
 
     fun startExercise() = serviceCall {
         try {
-            Log.d("로그 체크 6","안찍힘")
             errorState.value = null
             startExercise()
         } catch (e: Exception) {
-            Log.d("로그 체크 6-2","안찍힘")
             errorState.value = e.message
             logger.error("Error starting exercise", e.fillInStackTrace())
         }

@@ -22,7 +22,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.santeut.ui.HealthScreen
 import com.santeut.ui.MainScreen
-import com.santeut.ui.MapScreen
+import com.santeut.ui.map.MapScreen
 import com.santeut.ui.health.HealthViewModel
 import com.santeut.ui.main.MainViewModel
 import kotlinx.coroutines.delay
@@ -83,6 +83,7 @@ fun SanteutApp(
                     uiState = uiState
                 )
                 2 -> MapScreen(
+                    state = state,
                     uiState = uiState
                 )
             }
