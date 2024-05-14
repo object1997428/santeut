@@ -22,8 +22,8 @@ public class FirebaseConfig {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @Value("${firebase.config.path}")
-    private String firebaseConfigPath;
+//    @Value("${firebase.config.path}")
+//    private String firebaseConfigPath;
 
 
     @Bean
@@ -32,10 +32,10 @@ public class FirebaseConfig {
         try {
             FirebaseApp firebaseApp = null;
 
-//            Resource resource = resourceLoader.getResource("classpath:santeutFirebaseAccountKey.json");
-//            InputStream serviceAccount = resource.getInputStream();
+            Resource resource = resourceLoader.getResource("classpath:santeutFirebaseAccountKey.json");
+            InputStream serviceAccount = resource.getInputStream();
 
-            InputStream serviceAccount = new FileInputStream(firebaseConfigPath);
+//            InputStream serviceAccount = new FileInputStream(firebaseConfigPath);
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
