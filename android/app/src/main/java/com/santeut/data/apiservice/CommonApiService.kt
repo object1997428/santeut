@@ -2,7 +2,9 @@ package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateCommentRequest
+import com.santeut.data.model.response.NotificationListResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -13,5 +15,8 @@ interface CommonApiService {
         @Path("postType") postType: String,
         @Body createCommentRequest: CreateCommentRequest
     ): CustomResponse<Unit>
+
+    @GET("/api/common/alarm")
+    suspend fun getNotificationList(): CustomResponse<NotificationListResponse>
 
 }
