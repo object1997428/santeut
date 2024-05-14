@@ -4,10 +4,17 @@ import com.santeut.common.common.exception.AccessDeniedException;
 import com.santeut.common.common.exception.DataNotFoundException;
 import com.santeut.common.common.exception.FeignClientException;
 import com.santeut.common.common.exception.RepositorySaveException;
+import com.santeut.common.dto.FCMCategory;
+import com.santeut.common.dto.FCMRequestDto;
+import com.santeut.common.dto.request.AlarmRequestDto;
 import com.santeut.common.dto.response.CommentListResponseDto;
+import com.santeut.common.entity.AlarmTokenEntity;
 import com.santeut.common.entity.CommentEntity;
 import com.santeut.common.entity.LikeEntity;
+import com.santeut.common.feign.CommunityClient;
+import com.santeut.common.feign.GuildClient;
 import com.santeut.common.feign.service.AuthServerService;
+import com.santeut.common.repository.AlarmTokenRepository;
 import com.santeut.common.repository.CommentRepository;
 import com.santeut.common.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +34,10 @@ public class LikeService {
 
     private final LikeRepository likeRepository;
     private final AuthServerService authServerService;
+    private final AlarmTokenRepository alarmTokenRepository;
+    private final GuildClient guildClient;
+    private final CommunityClient communityClient;
+    private final AlarmService alarmService;
 
     // 좋아요 개수 가져오기
     public int getLikeCnt(Integer postId, Character postType) {
@@ -43,6 +54,27 @@ public class LikeService {
                 .likeReferenceType(postType)
                 .userId(userId).build();
         likeRepository.save(likeEntity);
+
+        // 길드 게시판인지 커뮤니티 게시판인지에 따라 다른 서버 서비스 호출
+        int postUserId = 0;
+        String commentUserNickname = authServerService.getNickname(userId);
+        if(postType == 'G') {
+            postUserId = guildClient.getPostInfo(postId, userId).orElseThrow(() -> new FeignClientException("guild에서 길드게시글 요청 실패")).getData().getUserId();
+        }else {
+            postUserId = communityClient.getPostInfo(postId, postType, userId).orElseThrow(() -> new FeignClientException("community에 요청 실패")).getData().getUserId();
+        }
+
+        // 알람 만들 DTO 작성
+        AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
+                .userId(postUserId)
+                .referenceId(likeEntity.getLikeReferenceId())
+                .referenceType(likeEntity.getLikeReferenceType() + "L")
+                .alarmTitle("👍 좋아요 알림")
+                .alarmContent(commentUserNickname+"님이 좋아요를 누르셨습니다.")
+                .build();
+
+//             알람을 만들어주는 함수 호출
+        alarmService.createAlarm(likeEntity.getLikeReferenceId(), alarmRequestDto.getReferenceType(), alarmRequestDto);
     }
 
     // 좋아요 했는지 체크해주기

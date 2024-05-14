@@ -22,8 +22,8 @@ public class AlarmEntity extends BaseEntity {
     private int userId;
 
     @NotNull
-    @Column(name = "reference_type", length = 255)
-    private Character referenceType;
+    @Column(name = "reference_type", length = 2)
+    private String referenceType;
 
     @NotNull
     @Column(name = "reference_id")

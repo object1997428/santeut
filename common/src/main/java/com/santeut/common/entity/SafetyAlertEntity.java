@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table(name = "safety_alert")
+@EntityListeners(AuditingEntityListener.class)
 public class SafetyAlertEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

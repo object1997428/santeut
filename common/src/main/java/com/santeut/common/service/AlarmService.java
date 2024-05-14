@@ -7,6 +7,7 @@ import com.santeut.common.dto.FCMCategory;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.dto.request.AlarmRequestDto;
 import com.santeut.common.dto.request.CommonHikingStartFeignRequest;
+import com.santeut.common.dto.response.AlarmListResponseDto;
 import com.santeut.common.entity.AlarmEntity;
 import com.santeut.common.entity.AlarmTokenEntity;
 import com.santeut.common.entity.SafetyAlertEntity;
@@ -15,12 +16,17 @@ import com.santeut.common.repository.AlarmTokenRepository;
 import com.santeut.common.repository.SafetyAlertRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,7 +39,7 @@ public class AlarmService {
     private final SafetyAlertRepository safetyAlertRepository;
     private final FcmUtils fcmUtils;
 
-    public void createAlarm(Integer referenceId, Character referenceType, AlarmRequestDto alarmRequestDto) {
+    public void createAlarm(Integer referenceId, String referenceType, AlarmRequestDto alarmRequestDto) {
         AlarmEntity alarmEntity = AlarmEntity.builder()
                 .userId(alarmRequestDto.getUserId())
                 .referenceType(referenceType)
@@ -41,11 +47,19 @@ public class AlarmService {
                 .alarmTitle(alarmRequestDto.getAlarmTitle())
                 .alarmContent(alarmRequestDto.getAlarmContent()).build();
         alarmRepository.save(alarmEntity);
+
+        //알람 보내기
+        AlarmTokenEntity alarmToken = alarmTokenRepository.findById(alarmRequestDto.getUserId()).orElseThrow();
+        log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]",alarmToken.getId());
+        boolean a = fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of(alarmRequestDto.getAlarmTitle(),
+                String.format(alarmRequestDto.getAlarmContent()),
+                FCMCategory.HIKING_START));
+        log.info(" : {}", a);
     }
 
     public void deleteAlarm(int alarmId) {
         try {
-            alarmRepository.deleteById(alarmId);
+            alarmRepository.deleteAlarmDirectly(alarmId, LocalDateTime.now());
         }catch (Exception e) {
             log.error("delete alarm error", e);
             throw new AccessDeniedException("삭제할 수 없습니다.");
@@ -82,7 +96,7 @@ public class AlarmService {
             else if(alertRequest.getDataSource().equals("alarm")){
                 AlarmEntity alarm=AlarmEntity.builder()
                         .userId(alarmToken.getId())
-                        .referenceType('P')
+                        .referenceType("P")
                         .referenceId(alertRequest.getPartyId())
                         .alarmTitle(alertRequest.getTitle())
                         .alarmContent(alertRequest.getMessage())
@@ -90,5 +104,20 @@ public class AlarmService {
                 alarmRepository.save(alarm);
             }
         }
+    }
+
+    public AlarmListResponseDto getAlarms(int userId) {
+
+        List<AlarmEntity> alarmEntities = alarmRepository.findAlarmDirectly(userId).orElseThrow(null);
+        return new AlarmListResponseDto(alarmEntities.stream()
+                .map(alarm ->
+                     AlarmListResponseDto.Alarm.builder()
+                            .alarmTitle(alarm.getAlarmTitle())
+                            .alarmContent(alarm.getAlarmContent())
+                            .referenceId(alarm.getReferenceId())
+                            .referenceType(alarm.getReferenceType())
+                            .createdAt(alarm.getCreatedAt())
+                            .build()
+                ).collect(Collectors.toList()));
     }
 }

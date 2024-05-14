@@ -49,6 +49,9 @@ dependencies {
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
     implementation group: 'org.hibernate.orm', name: 'hibernate-spatial', version: '7.0.0.Alpha1'
 
+    // Eureka Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
 }
 
 dependencyManagement {
