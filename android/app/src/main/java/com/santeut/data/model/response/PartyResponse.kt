@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 
 data class PartyListResponse(
-    @SerializedName("content") val partyList: List<PartyResponse>
+    @SerializedName("partyList") val partyList: List<PartyResponse>
 )
 
 data class PartyResponse(
@@ -24,7 +24,7 @@ data class PartyResponse(
 )
 
 data class MyPartyListResponse(
-    @SerializedName("content") val partyList: List<MyPartyResponse>
+    @SerializedName("partyList") val partyList: List<MyPartyResponse>
 )
 
 data class MyPartyResponse(
@@ -37,7 +37,7 @@ data class MyPartyResponse(
     @SerializedName("place") val place: String,
     @SerializedName("maxPeople") val maxPeople: Int,
     @SerializedName("curPeople") val curPeople: Int,
-    @SerializedName("owner") val owner: String,
+    @SerializedName("isOwner") val isOwner: Boolean,
     @SerializedName("status") val status: String,
 )
 
