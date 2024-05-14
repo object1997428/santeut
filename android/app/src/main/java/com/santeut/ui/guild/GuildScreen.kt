@@ -1,8 +1,10 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -14,6 +16,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -47,15 +52,35 @@ fun GuildScreen(
             guild?.let { it1 -> GuildTopBar(navController, it1) }
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
+                backgroundColor = Color.White,
+                divider = {},
                 indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-                    )
+                    Canvas(
+                        modifier = Modifier
+                            .pagerTabIndicatorOffset(pagerState, tabPositions)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                    ) {
+                        drawRoundRect(
+                            color = Color(0xff678C40),
+                            cornerRadius = CornerRadius(
+                                x = 10.dp.toPx(),
+                                y = 10.dp.toPx()
+                            )
+                        )
+                    }
                 }
             ) {
                 pages.forEachIndexed { index, title ->
                     Tab(
-                        text = { Text(text = title) },
+                        text = {
+                            Text(
+                                text = title,
+                                color = if (pagerState.currentPage == index) Color(0xff678C40) else Color(
+                                    0xff666E7A
+                                ),
+                            )
+                        },
                         selected = pagerState.currentPage == index,
                         onClick = {
                             coroutineScope.launch {
