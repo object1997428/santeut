@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "alarm")
 public class AlarmEntity extends BaseEntity {
 
     @Id
@@ -23,8 +22,8 @@ public class AlarmEntity extends BaseEntity {
     private int userId;
 
     @NotNull
-    @Column(name = "reference_type", length = 1)
-    private Character referenceType;
+    @Column(name = "reference_type", length = 2)
+    private String referenceType;
 
     @NotNull
     @Column(name = "reference_id")

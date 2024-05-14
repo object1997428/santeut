@@ -6,6 +6,8 @@ import com.santeut.common.common.exception.FirebaseSettingFailException;
 import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.entity.AlarmTokenEntity;
 import com.santeut.common.repository.AlarmTokenRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,16 +23,32 @@ public class FcmUtils {
 
     @Transactional
     public boolean sendNotificationByToken(AlarmTokenEntity receiver, FCMRequestDto reqDto) {
-        Notification notification = Notification.builder()
-                .setTitle(reqDto.getTitle())
-                .setBody(reqDto.getContent())
-                .build();
 
-        Message message = Message.builder()
-                .setToken(receiver.getFcmToken())
-                .setNotification(notification)
-                .putData("category", reqDto.getCategory())
-                .build();
+
+        Message message = null;
+        if(reqDto.getType().equals("PUSH")){
+            Notification notification = Notification.builder()
+                    .setTitle(reqDto.getTitle())
+                    .setBody(reqDto.getContent())
+                    .build();
+            message = Message.builder()
+                    .setToken(receiver.getFcmToken())
+                    .setNotification(notification)
+                    .putData("category", reqDto.getCategory())
+                    .build();
+        }
+        else if(reqDto.getType().equals("POPUP")){
+            AlarmData alarmData = new AlarmData(reqDto.getTitle(), reqDto.getContent());
+            message = Message.builder()
+                    .setNotification(null)
+                    .setToken(receiver.getFcmToken())
+                    .putData("data",alarmData.toString())
+                    .build();
+        }
+        else{
+            log.info("해당 AlarmType이 존재하지 않습니다.");
+            return false;
+        }
 
         try {
             firebaseMessaging.send(message);
@@ -45,5 +63,11 @@ public class FcmUtils {
                 throw new FirebaseSettingFailException("Firebase 설정이 잘못되었습니다.");
             }
         }
+    }
+
+    @Data @AllArgsConstructor
+    public class AlarmData{
+        public String title;
+        public String body;
     }
 }

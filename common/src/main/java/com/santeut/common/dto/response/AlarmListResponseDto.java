@@ -20,7 +20,7 @@ public class AlarmListResponseDto {
     public static class Alarm {
         private String alarmTitle;
         private String alarmContent;
-        private Character referenceType;
+        private String referenceType;
         private int referenceId;
         private LocalDateTime createdAt;
     }

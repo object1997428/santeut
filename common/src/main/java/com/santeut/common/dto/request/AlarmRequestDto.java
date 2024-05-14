@@ -12,7 +12,7 @@ public class AlarmRequestDto {
 
     private int userId;
 
-    private char referenceType;
+    private String referenceType;
 
     private int referenceId;
 
