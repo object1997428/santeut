@@ -1,5 +1,7 @@
 package com.santeut.common.common.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.ErrorCode;
 import com.google.firebase.messaging.*;
 import com.santeut.common.common.exception.FirebaseSettingFailException;
@@ -20,9 +22,10 @@ public class FcmUtils {
 
     private final FirebaseMessaging firebaseMessaging;
     private final AlarmTokenRepository alarmTokenRepository;
+    private final ObjectMapper om;
 
     @Transactional
-    public boolean sendNotificationByToken(AlarmTokenEntity receiver, FCMRequestDto reqDto) {
+    public boolean sendNotificationByToken(AlarmTokenEntity receiver, FCMRequestDto reqDto) throws JsonProcessingException {
 
 
         Message message = null;
@@ -39,10 +42,11 @@ public class FcmUtils {
         }
         else if(reqDto.getType().equals("POPUP")){
             AlarmData alarmData = new AlarmData(reqDto.getTitle(), reqDto.getContent());
+            String alarmDataJson = om.writeValueAsString(alarmData);
             message = Message.builder()
                     .setNotification(null)
                     .setToken(receiver.getFcmToken())
-                    .putData("data",alarmData.toString())
+                    .putData("data",alarmDataJson)
                     .build();
             log.info("alarmData.toString()={}, userId={}, token={}",alarmData.toString(),receiver.getId(),receiver.getFcmToken());
         }
