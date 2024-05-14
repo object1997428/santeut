@@ -67,6 +67,10 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     if(chatMessage.getType().equals(ChatMessageDto.MessageType.ENTER)) {
       log.info("{}님이 {}번 방에 입장", chatMessage.getUserNickname(), chatMessage.getPartyId());
       chatRoomSession.add(session);
+    } else if(chatMessage.getType().equals(ChatMessageDto.MessageType.OUT)) {
+      log.info("{}님이 {}번 방에서 퇴장", chatMessage.getUserId(), chatMessage.getPartyId());
+      chatRoomSession.remove(session);
+      removeClosedSession(chatRoomSession);
     } else {
       sendMessageToChatRoom(chatMessage, chatRoomSession);
       chatService.saveMessage(chatMessage);
