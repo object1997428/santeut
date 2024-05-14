@@ -176,7 +176,7 @@ fun JoinGuildScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
+fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel = hiltViewModel()) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -212,7 +212,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                     .weight(1f),  // 남은 공간 모두 사용
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                androidx.compose.material3.Text(
+                Text(
                     text = guild.guildName,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
@@ -227,7 +227,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                         tint = Color(0xff76797D),
                     )
                     Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
-                    androidx.compose.material3.Text(
+                    Text(
                         text = "${guild.guildMember ?: 0} 명",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xff76797D)

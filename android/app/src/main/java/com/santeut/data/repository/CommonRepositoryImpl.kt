@@ -26,7 +26,7 @@ class CommonRepositoryImpl @Inject constructor(
     override suspend fun getNotificationList(): List<NotificationResponse> {
         return try {
             val response = commonApiService.getNotificationList()
-            if (response.status == "200") {
+            if (response.status == "201") {
                 Log.d("CommonRepository", "알림 목록 조회 성공")
                 response.data.notiList ?: emptyList()
             } else {
@@ -37,5 +37,4 @@ class CommonRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
-
 }
