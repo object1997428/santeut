@@ -122,5 +122,6 @@ dependencies {
     // Accompanist Pager
     implementation ("com.google.accompanist:accompanist-pager:<version>")
 
-
+    // Wear
+    implementation("com.google.android.gms:play-services-wearable:18.1.0")
 }

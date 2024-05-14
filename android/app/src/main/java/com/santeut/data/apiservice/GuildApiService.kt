@@ -1,17 +1,13 @@
 package com.santeut.data.apiservice
 
-import com.google.gson.Gson
 import com.santeut.data.model.CustomResponse
-import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildMemberListResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostListResponse
 import com.santeut.data.model.response.GuildResponse
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import com.santeut.data.model.response.RankingListResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -47,11 +43,11 @@ interface GuildApiService {
     @POST("/api/guild/post")
     @Multipart
     suspend fun createGuildPost(
-        @Part images: List<MultipartBody.Part>,
+        @Part images: List<MultipartBody.Part>?,
         @Part createGuildPostRequest: MultipartBody.Part
     ): CustomResponse<Unit>
 
-    @GET("/api/guild/post/{guildPostId}/")
+    @GET("/api/guild/post/{guildPostId}")
     suspend fun getGuildPost(
         @Path("guildPostId") guildPostId: Int
     ): CustomResponse<GuildPostDetailResponse>
@@ -77,5 +73,11 @@ interface GuildApiService {
     suspend fun quitGuild(
         @Path("guildId") guildId: Int
     ): CustomResponse<Unit>
+
+    @GET("/api/guild/rank/{type}")
+    suspend fun getRanking(
+        @Path("type") type: Char
+    ): CustomResponse<RankingListResponse>
+
 
 }

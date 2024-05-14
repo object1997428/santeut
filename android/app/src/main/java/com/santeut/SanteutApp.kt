@@ -9,14 +9,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.santeut.ui.navigation.SanteutNavGraph
 import com.santeut.ui.navigation.bottom.BottomNavBar
 import com.santeut.ui.navigation.top.TopBar
+import com.santeut.ui.wearable.WearableViewModel
 
 @Composable
 fun SanteutApp(
+    wearableViewModel: WearableViewModel
 ) {
     val navController = rememberNavController()
 
@@ -42,7 +45,10 @@ fun SanteutApp(
             Box(
                 modifier = Modifier.padding(padding)
             ) {
-                SanteutNavGraph(navController)
+                SanteutNavGraph(
+                    navController = navController,
+                    wearableViewModel = wearableViewModel
+                )
             }
         }
     )
