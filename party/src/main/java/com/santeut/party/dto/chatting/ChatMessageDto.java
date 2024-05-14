@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,7 +17,6 @@ public class ChatMessageDto {
     JOIN, ENTER, OUT, TALK
   }
 
-  private LocalDateTime createdAt; // 전송시각
   private int partyId;    // 소모임 id
   private int userId;     // 전송자 유저 id
   private String userNickname; // 전송자 유저 닉네임

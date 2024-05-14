@@ -94,7 +94,7 @@ public class HikingService {
     private void alertHikingStart(HikingEnterRequest hikingEnterRequest, Party party) {
         List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingEnterRequest.getPartyId(), 'B');
         CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
-                .type("HIKING START")
+                .type("hiking_start")
                 .targetUserIds(partyMembers)
                 .title("소모임 시작 알림")
                 .message("'"+party.getPartyName()+"'"+" 소모임이 시작되었습니다. 입장해주세요!")
@@ -163,7 +163,7 @@ public class HikingService {
     private void alertHikingEnd(HikingExitRequest hikingExitRequest, Party party) {
         List<Integer> partyMembers = partyUserRepository.findUserIdsByPartyIdAndStatus(hikingExitRequest.getPartyId(), 'P');
         CommonHikingStartFeignRequest commonRequestDto=CommonHikingStartFeignRequest.builder()
-                .type("HIKING END")
+                .type("hiking_end")
                 .targetUserIds(partyMembers)
                 .title("소모임 종료 알림")
                 .message("'"+party.getPartyName()+"'"+" 소모임이 종료되었습니다. 즐거운 등반되셨나요?")
@@ -279,7 +279,7 @@ public class HikingService {
                     .message("'"+party.getPartyName()+"'"+" 소모임의 '"+userId+"님이 경로 이탈 신호를 보냈습니다.")
                     .partyId(party.getPartyId())
                     .dataSource("null")
-                    .alamType("POPUP")
+                    .alamType("PUSH")
                     .lat(hikingSafetyRequest.getLat())
                     .lng(hikingSafetyRequest.getLng())
                     .build();
