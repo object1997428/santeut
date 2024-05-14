@@ -122,6 +122,7 @@ fun MyGuildScreen(
                     Column {
                         TextButton(onClick = {
                             // 동호회 생성 로직
+                            navController.navigate("createGuild")
                             coroutineScope.launch { sheetState.hide() }
                         }) {
                             Text("동호회 만들기", style = MaterialTheme.typography.titleMedium)

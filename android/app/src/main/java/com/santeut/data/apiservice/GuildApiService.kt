@@ -1,6 +1,7 @@
 package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
+import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildMemberListResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
@@ -20,6 +21,12 @@ interface GuildApiService {
 
     @GET("/api/guild/list")
     suspend fun getGuilds(): CustomResponse<GuildListResponse>
+
+    @POST("/api/guild/create")
+    suspend fun createGuild(
+        @Part guildProfile: MultipartBody.Part?,
+        @Part request: MultipartBody.Part
+    ): CustomResponse<Unit>
 
     @GET("/api/guild/myguild")
     suspend fun myGuilds(): CustomResponse<GuildListResponse>

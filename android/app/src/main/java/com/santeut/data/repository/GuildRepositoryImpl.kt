@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -32,6 +33,29 @@ class GuildRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = flow {
+        Log.d("", "레포짇토리 ")
+        val response =
+            guildApiService.createGuild(guildProfile, createGuildPart(createGuildRequest))
+        Log.d("response status", response.status)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "동호회 생성 성공")
+            emit(response.data)
+        } else {
+            throw Exception("동호회 생성 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    private fun createGuildPart(createGuildPostPart: CreateGuildRequest): MultipartBody.Part {
+        val json = Gson().toJson(createGuildPostPart)
+        val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("request", null, requestBody)
+    }
+
 
     override suspend fun myGuilds(): List<GuildResponse> {
         return try {
@@ -90,7 +114,6 @@ class GuildRepositoryImpl @Inject constructor(
         images: List<MultipartBody.Part>?,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = flow {
-        Log.d("Repository", "접근 성공")
         val response =
             guildApiService.createGuildPost(images, createGuildPostPart(createGuildPostRequest))
         if (response.status == "200") {
@@ -171,7 +194,7 @@ class GuildRepositoryImpl @Inject constructor(
             val response = guildApiService.getRanking(type)
             if (response.status == "200") {
                 Log.d("GuildRepository", "랭킹 조회 성공")
-                response.data.partyMembers?: emptyList()
+                response.data.partyMembers ?: emptyList()
             } else {
                 throw Exception("랭킹 조회 실패: ${response.status} ${response.data}")
             }

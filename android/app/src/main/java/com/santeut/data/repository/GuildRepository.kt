@@ -1,6 +1,7 @@
 package com.santeut.data.repository
 
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -12,6 +13,11 @@ import okhttp3.MultipartBody
 interface GuildRepository {
 
     suspend fun getGuilds(): List<GuildResponse>
+
+    suspend fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ): Flow<Unit>
 
     suspend fun myGuilds(): List<GuildResponse>
 
