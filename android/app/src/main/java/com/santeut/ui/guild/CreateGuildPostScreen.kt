@@ -185,21 +185,24 @@ fun ImagePreviewSection(images: List<Uri>) {
     }
 }
 
-fun createMultiPartBody(uriList: List<Uri>, context: Context): List<MultipartBody.Part> {
+fun createMultiPartBody(uriList: List<Uri>?, context: Context): List<MultipartBody.Part>? {
     val multipartList = mutableListOf<MultipartBody.Part>()
-    for (uri in uriList) {
-        try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
-                val fileName = uri.lastPathSegment ?: "upload.file"
-                val byteArray = inputStream.readBytes()
-                val requestBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull())
-                val part = MultipartBody.Part.createFormData("images", fileName, requestBody)
-                multipartList.add(part)
+    if (uriList != null) {
+        for (uri in uriList) {
+            try {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
+                    val fileName = uri.lastPathSegment ?: "upload.file"
+                    val byteArray = inputStream.readBytes()
+                    val requestBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull())
+                    val part = MultipartBody.Part.createFormData("images", fileName, requestBody)
+                    multipartList.add(part)
+                }
+            } catch (e: Exception) {
+                Log.e("MultiPart", "Error processing file Uri: $uri", e)
             }
-        } catch (e: Exception) {
-            Log.e("MultiPart", "Error processing file Uri: $uri", e)
         }
+        return multipartList
     }
-    return multipartList
+    return null
 }

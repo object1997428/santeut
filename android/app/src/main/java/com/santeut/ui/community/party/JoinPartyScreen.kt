@@ -51,7 +51,7 @@ fun JoinPartyScreen(
 
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
 
-    LaunchedEffect(key1 = null) {
+    LaunchedEffect(key1 = guildId) {
         partyViewModel.getPartyList(guildId = guildId, name = null, start = null, end = null)
     }
 

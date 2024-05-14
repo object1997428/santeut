@@ -1,7 +1,6 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.response.CommentResponse
 import com.santeut.data.repository.CommonRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -17,10 +16,4 @@ class CommonUseCase @Inject constructor(
         return commonRepository.createComment(postId, postType, createCommentRequest)
     }
 
-    suspend fun getComments(
-        postId: Int,
-        postType: Char
-    ): List<CommentResponse> {
-        return commonRepository.getComments(postId, postType)
-    }
 }

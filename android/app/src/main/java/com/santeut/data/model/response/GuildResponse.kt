@@ -68,3 +68,15 @@ data class GuildMemberResponse(
     @SerializedName("userProfile") val userProfile: String,
     @SerializedName("userNickname") val userNickname: String
 )
+
+data class RankingListResponse(
+    @SerializedName("partyMembers") val partyMembers: List<RankingResponse>
+)
+
+data class RankingResponse(
+    @SerializedName("order") val order: Int,
+    @SerializedName("score") val score: String,
+    @SerializedName("userId") val userId: Int,
+    @SerializedName("userNickname") val userNickname: String,
+    @SerializedName("userProfile") val userProfile: String
+)
