@@ -3,12 +3,11 @@ package com.santeut.hiking.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.hiking.dto.request.LocationData;
-import com.santeut.hiking.dto.request.MessageLocationDto;
+import com.santeut.hiking.dto.websocket.LocationResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,14 +19,14 @@ public class LocationSaveService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
-    public void locationSave(MessageLocationDto locationDto
+    public void locationSave(LocationResponseMessage locationDto, Integer partyId
                              ) throws JsonProcessingException {
         LocationData locationData = LocationData.builder()
                 .lat(locationDto.getLat())
                 .lng(locationDto.getLng())
                 .build();
         String locationJson = objectMapper.writeValueAsString(locationData);
-        String redisKey = "partyId:"+locationDto.getPartyId()+":user:" + locationDto.getUserId()+":location";
+        String redisKey = "partyId:"+partyId+":user:" + locationDto.getUserId()+":location";
 
         ListOperations<String, String> listOps = redisTemplate.opsForList();
         listOps.rightPush(redisKey, locationJson);
