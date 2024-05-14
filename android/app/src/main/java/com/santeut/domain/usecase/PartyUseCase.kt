@@ -20,10 +20,8 @@ class PartyUseCase @Inject constructor(
 
     suspend fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean,
-        page: Int?,
-        size: Int?
-    ): List<MyPartyResponse> = partyRepository.getMyPartyList(date, includeEnd, page, size)
+        includeEnd: Boolean
+    ): List<MyPartyResponse> = partyRepository.getMyPartyList(date, includeEnd)
 
     suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit> =
         partyRepository.createParty(createPartyRequest)

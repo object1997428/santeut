@@ -36,11 +36,11 @@ class PartyViewModel @Inject constructor(
         start: String?,
         end: String?
     ) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             try {
                 Log.d("PartyViewModel", _partyList.value?.size.toString())
                 _partyList.value = partyUseCase.getPartyList(guildId, name, start, end)
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 _error.value = "소모임 목록 조회 실패: ${e.message}"
             }
         }
@@ -48,15 +48,13 @@ class PartyViewModel @Inject constructor(
 
     fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean,
-        page: Int?,
-        size: Int?
-    ){
-        viewModelScope.launch{
+        includeEnd: Boolean
+    ) {
+        viewModelScope.launch {
             try {
                 Log.d("PartyViewModel", _myPartyList.value?.size.toString())
-                _myPartyList.value = partyUseCase.getMyPartyList(date, includeEnd, page, size)
-            } catch (e:Exception){
+                _myPartyList.value = partyUseCase.getMyPartyList(date, includeEnd)
+            } catch (e: Exception) {
                 _error.value = "내 소모임 목록 조회 실패: ${e.message}"
             }
         }

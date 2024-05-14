@@ -34,7 +34,7 @@ fun MyPartyListScreen(
     val myPartyList by partyViewModel.myPartyList.observeAsState(emptyList())
 
     LaunchedEffect(key1 = null) {
-        partyViewModel.getMyPartyList(date=null, includeEnd = false, page = null, size = null)
+        partyViewModel.getMyPartyList(date = null, includeEnd = false)
     }
 
     Column {
@@ -45,11 +45,11 @@ fun MyPartyListScreen(
             onClickFilter = {}
         )
 
-        if(myPartyList.isEmpty()){
+        if (myPartyList.isEmpty()) {
             Text(text = "가입된 소모임이 없습니다")
-        }else{
+        } else {
             LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
-                items(myPartyList){party ->
+                items(myPartyList) { party ->
                     MyPartyCard(party)
                 }
             }
@@ -65,7 +65,7 @@ fun MyPartyCard(party: MyPartyResponse) {
             Row {
                 Text(text = party.partyName)
                 Text(text = party.guildName)
-                if(party.status=="P") {
+                if (party.status == "P") {
                     Icon(
                         imageVector = Icons.Outlined.FastForward,
                         contentDescription = "진행 중"
@@ -86,7 +86,7 @@ fun MyPartyCard(party: MyPartyResponse) {
                 )
                 Text(text = party.place)
             }
-            Row{
+            Row {
                 Row {
                     Icon(
                         imageVector = Icons.Outlined.KeyboardDoubleArrowUp,
@@ -101,7 +101,7 @@ fun MyPartyCard(party: MyPartyResponse) {
                     )
                     Text(text = "${party.curPeople} / ${party.maxPeople} 명")
                 }
-                Button(onClick = {/* 소모임 시작 버튼 로직 추가 */}) {
+                Button(onClick = {/* 소모임 시작 버튼 로직 추가 */ }) {
                     Icon(
                         imageVector = Icons.Outlined.NotStarted,
                         contentDescription = "시작 버튼"

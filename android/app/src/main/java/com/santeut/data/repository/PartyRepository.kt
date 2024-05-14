@@ -17,9 +17,7 @@ interface PartyRepository {
 
     suspend fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean,
-        page: Int?,
-        size: Int?
+        includeEnd: Boolean
     ): List<MyPartyResponse>
 
     suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit>

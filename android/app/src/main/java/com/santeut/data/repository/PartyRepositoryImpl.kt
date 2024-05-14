@@ -36,14 +36,12 @@ class PartyRepositoryImpl @Inject constructor(
 
     override suspend fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean,
-        page: Int?,
-        size: Int?
+        includeEnd: Boolean
     ): List<MyPartyResponse> {
         return try {
-            val response = partyApiService.getMyPartyList(date, includeEnd, page, size)
+            val response = partyApiService.getMyPartyList(date, includeEnd)
             if (response.status == "200") {
-                response.data.partyList?: emptyList()
+                response.data.partyList ?: emptyList()
             } else {
                 Log.e("PartyRepository", "내 소모임 목록 조회 실패: ${response.status} - ${response.data}")
                 emptyList()
