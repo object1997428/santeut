@@ -44,6 +44,7 @@ public class FcmUtils {
                     .setToken(receiver.getFcmToken())
                     .putData("data",alarmData.toString())
                     .build();
+            log.info("alarmData.toString()={}, userId={}, token={}",alarmData.toString(),receiver.getId(),receiver.getFcmToken());
         }
         else{
             log.info("해당 AlarmType이 존재하지 않습니다.");
