@@ -140,7 +140,7 @@ public class HikingService {
         if (party.getStatus() == 'B' || party.getStatus() == 'I')
             throw new PartyExpiredException("해당 소모임은 시작된 적이 없습니다.");
         if (party.getStatus() == 'E' && userId == party.getUserId()) {
-            log.error("[Party Server][hikingEnd()]이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
+            log.error("[Party Server][hikingEnd()]이미 끝난 소모임인데 소모임장이 퇴장 요청을 함 userId={}",userId);
             throw new DataMismatchException("이미 끝난 소모임인데 소모임장이 퇴장 요청을 함");
         }
         //소모임장이 hiking을 비활성화
