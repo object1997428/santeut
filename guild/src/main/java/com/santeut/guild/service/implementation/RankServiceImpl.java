@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -33,35 +34,39 @@ public class RankServiceImpl implements RankService {
     public RankMembersInfoResponse getRankList(int loginUserId, int partyId, char type) {
         List<Integer> userList = new ArrayList<>();
         List<RankUserInfo> rankList = new ArrayList<>();
-        List<ZSetOperations.TypedTuple<String>> rankHikers=new ArrayList<>();
-        String scoreTail="";
+        List<ZSetOperations.TypedTuple<String>> rankHikers = new ArrayList<>();
+        String scoreTail = "";
         switch (type) {
             case 'C':
                 // 최다등반
                 String key = "guild/" + partyId + "/mostHiking";
                 rankHikers = getTopUsersFromSortedSetWithScores(key, 5);
-                scoreTail="번";
+                scoreTail = "번";
                 break;
             case 'H':
                 // 최고고도
                 String bestHeightKey = "guild/" + partyId + "/bestHeight";
                 rankHikers = getTopUsersFromSortedSetWithScores(bestHeightKey, 5);
-               scoreTail="m";
+                scoreTail = "m";
                 break;
             case 'D':
                 // 최장거리
                 String bestDistanceKey = "guild/" + partyId + "/bestDistance";
                 rankHikers = getTopUsersFromSortedSetWithScores(bestDistanceKey, 5);
-                scoreTail="km";
+                scoreTail = "km";
                 break;
             default:
                 break;
         }
+        DecimalFormat formatter = new DecimalFormat("#,###");
         for (int i = 0; i < rankHikers.size(); i++) {
+
             ZSetOperations.TypedTuple<String> typedTuple = rankHikers.get(i);
+            String formattedScore = (type=='C')?Math.floor(typedTuple.getScore())+"":formatter.format(typedTuple.getScore());
+            String finalScore = formattedScore + scoreTail;
             RankUserInfo rankUserInfo = RankUserInfo.builder()
-                    .order(i+1)
-                    .score((int)Math.floor(typedTuple.getScore())+scoreTail)
+                    .order(i + 1)
+                    .score(finalScore)
                     .userId(parseUserId(typedTuple.getValue()))
                     .build();
             rankList.add(rankUserInfo);
@@ -82,7 +87,7 @@ public class RankServiceImpl implements RankService {
             rankList.get(i).setUserNickname(feinResp.getPartyMembers().get(i).getUserNickname());
             rankList.get(i).setUserProfile(feinResp.getPartyMembers().get(i).getUserProfile());
         }
-        RankMembersInfoResponse resp= RankMembersInfoResponse.builder()
+        RankMembersInfoResponse resp = RankMembersInfoResponse.builder()
                 .partyMembers(rankList)
                 .build();
         return resp;
