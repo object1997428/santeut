@@ -51,7 +51,7 @@ public class GuildUserServiceImpl implements GuildUserService {
 //        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, Integer.parseInt(userId))
 //                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
 
-        guildRequestEntity = GuildRequestEntity.requestGuild(guildId, Integer.parseInt(userId));
+        guildRequestEntity = GuildRequestEntity.requestGuild(guildId, Integer.parseInt(userId), 'R');
         guildRequestRepository.save(guildRequestEntity);
     }
 

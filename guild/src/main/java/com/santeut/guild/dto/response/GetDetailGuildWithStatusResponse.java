@@ -24,7 +24,7 @@ public class GetDetailGuildWithStatusResponse {
     char joinStatus;
     Boolean isPresident;
 
-    public GetDetailGuildWithStatusResponse(GuildEntity guildEntity, char status, boolean isPresident){
+    public GetDetailGuildWithStatusResponse(GuildEntity guildEntity, char status, Boolean isPresident){
         this.guildId = guildEntity.getGuildId();
         this.guildName = guildEntity.getGuildName();
         this.guildProfile = guildEntity.getGuildProfile();

@@ -42,19 +42,6 @@ public class GuildUserEntity {
 
     private LocalDateTime deletedAt;
 
-//    public static GuildUserEntity createGuildUser(GuildEntity guildEntity){
-//
-//        GuildUserEntity guildUserEntity = new GuildUserEntity();
-//        guildUserEntity.userId = guildEntity.getUserId();
-//        guildUserEntity.guildId = guildEntity.getGuildId();
-//        guildUserEntity.visitedAt = LocalDateTime.now();
-//        guildUserEntity.createdAt = LocalDateTime.now();
-//        guildUserEntity.modifiedAt = LocalDateTime.now();
-//        guildUserEntity.isDeleted = false;
-//
-//        return  guildUserEntity;
-//    }
-
     public static GuildUserEntity createGuildUser(int userId, int guildId){
 
         GuildUserEntity guildUserEntity = new GuildUserEntity();
