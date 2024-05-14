@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MyPartyResponse
+import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,18 +31,24 @@ class PartyViewModel @Inject constructor(
     private val _myPartyList = MutableLiveData<List<MyPartyResponse>>()
     val myPartyList: LiveData<List<MyPartyResponse>> = _myPartyList
 
+    private val _myRecordList = MutableLiveData<List<MyRecordResponse>>()
+    val myRecordList: LiveData<List<MyRecordResponse>> = _myRecordList
+
+    private val _myScheduleList = MutableLiveData<List<String>>()
+    val myScheduleList: LiveData<List<String>> = _myScheduleList
+
     fun getPartyList(
         guildId: Int?,
         name: String?,
         start: String?,
         end: String?
     ) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             try {
                 Log.d("PartyViewModel", _partyList.value?.size.toString())
-                _partyList.value = partyUseCase.getPartyList(guildId, name, start, end)
-            } catch (e:Exception){
-                _error.value = "소모임 목록 조회 실패: ${e.message}"
+                _partyList.postValue(partyUseCase.getPartyList(guildId, name, start, end))
+            } catch (e: Exception) {
+                _error.postValue("소모임 목록 조회 실패: ${e.message}")
             }
         }
     }
@@ -51,13 +58,13 @@ class PartyViewModel @Inject constructor(
         includeEnd: Boolean,
         page: Int?,
         size: Int?
-    ){
-        viewModelScope.launch{
+    ) {
+        viewModelScope.launch {
             try {
                 Log.d("PartyViewModel", _myPartyList.value?.size.toString())
-                _myPartyList.value = partyUseCase.getMyPartyList(date, includeEnd, page, size)
-            } catch (e:Exception){
-                _error.value = "내 소모임 목록 조회 실패: ${e.message}"
+                _myPartyList.postValue(partyUseCase.getMyPartyList(date, includeEnd, page, size))
+            } catch (e: Exception) {
+                _error.postValue("내 소모임 목록 조회 실패: ${e.message}")
             }
         }
     }
@@ -95,4 +102,25 @@ class PartyViewModel @Inject constructor(
         }
     }
 
+    fun getMyRecordList() {
+        viewModelScope.launch {
+            try {
+                _myRecordList.postValue(partyUseCase.getMyRecordList())
+                Log.d("PartyViewModel", "내 산행 목록 조회 시도")
+            } catch (e: Exception) {
+                _error.postValue("내 산행 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getMyScheduleList(year: Int, month: Int) {
+        viewModelScope.launch {
+            try {
+                _myScheduleList.postValue(partyUseCase.getMyScheduleList(year, month))
+                Log.d("PartyViewModel", "날짜별 소모임 조회 시도")
+            } catch (e: Exception) {
+                _error.postValue("날짜별 소모임 조회 실패: ${e.message}")
+            }
+        }
+    }
 }

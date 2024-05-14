@@ -14,6 +14,7 @@ import com.santeut.ui.community.tips.PostTipsScreen
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.common.ReadPostScreen
 import com.santeut.ui.community.party.JoinPartyScreen
+import com.santeut.ui.guild.CreateGuildPostScreen
 import com.santeut.ui.navigation.top.TopBar
 import com.santeut.ui.party.PartyViewModel
 

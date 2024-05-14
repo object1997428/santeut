@@ -8,21 +8,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.santeut.ui.community.PostViewModel
+import com.santeut.ui.navigation.top.CreateTopBar
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -37,36 +32,12 @@ fun CreatePostScreen(
 
     val postCreationSuccess by postViewModel.postCreationSuccess.observeAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "글쓰기",
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        ),
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .fillMaxWidth()
-                            .wrapContentSize(Alignment.Center)
-                    )
-                },
-                actions = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = "Close"
-                        )
-                    }
-                },
-                backgroundColor = MaterialTheme.colors.primarySurface,
-                contentColor = Color.White
-            )
-        }
-    ) {
+    Scaffold() {
+        CreateTopBar(navController, "글쓰기",
+            onWriteClick = {
+                postViewModel.createPost(title, content, postType, 1)
+            }
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,14 +68,6 @@ fun CreatePostScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
-            Button(
-                onClick = {
-                    postViewModel.createPost(title, content, postType, 1)
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("작성하기")
-            }
         }
     }
 

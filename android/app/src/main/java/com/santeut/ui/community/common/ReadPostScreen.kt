@@ -22,6 +22,7 @@ import com.santeut.data.model.response.PostResponse
 import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.tips.formatTime
+import com.santeut.ui.navigation.top.DefaultTopBar
 import com.santeut.ui.navigation.top.TopBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,10 +45,10 @@ fun ReadPostScreen(
     Scaffold(
 
         topBar = {
-            TopBar(navController, "readPost")
+            DefaultTopBar(navController, "커뮤니티")
         },
 
-        content = {innerPadding->
+        content = { innerPadding ->
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
@@ -57,14 +58,7 @@ fun ReadPostScreen(
                 Column {
                     HeaderSection(post)
                     ContentSection(post)
-                    CommentSection(
-                        postId,
-                        postType,
-                        comment,
-                        onCommentChange = { comment = it },
-                        onSend = { focusManager.clearFocus() },
-                        commonViewModel
-                    )
+
                 }
             }
         }
@@ -122,45 +116,3 @@ fun ContentSection(post: PostResponse?) {
     }
 }
 
-@Composable
-fun CommentSection(
-    postId: Int,
-    postType: Char,
-    comment: String,
-    onCommentChange: (String) -> Unit,
-    onSend: () -> Unit,
-    commonViewModel: CommonViewModel,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        CommentScreen(postId, postType, commonViewModel)
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        fun onSend() {
-            commonViewModel.createComment(postId, postType, comment)
-        }
-        TextField(
-            value = comment,
-            onValueChange = onCommentChange,
-            placeholder = { Text("내용") },
-            modifier = Modifier
-                .weight(1f)
-                .background(Color.Transparent),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onSend() })
-        )
-        IconButton(onClick = { onSend() }) {
-            Icon(
-                imageVector = Icons.Outlined.Send,
-                contentDescription = "Send"
-            )
-        }
-    }
-}

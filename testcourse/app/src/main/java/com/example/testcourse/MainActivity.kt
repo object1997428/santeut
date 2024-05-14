@@ -148,11 +148,11 @@ fun MapScreen() {
             )
         ) {
             PathOverlay(
-                coords = COORDS_2,
+                coords = pathData.value,
                 width = 5.dp,
                 color = Color.Red
             )
-            Log.d("경로", "${COORDS_2}")
+            Log.d("경로", "${pathData.value}")
 //            // 지도에 경로를 그리는 PathOverlay 설정, 동적으로 업데이트된 데이터 사용
 //            if (pathData.value.isNotEmpty()) {
 //                PathOverlay().apply {
@@ -171,6 +171,7 @@ fun MapScreen() {
         }
     }
 }
+
 private val COORDS_2 = listOf(
     LatLng(35.21523156865972, 126.33359543068424),
     LatLng(35.21511628487386, 126.33370499990868),
@@ -181,47 +182,3 @@ private val COORDS_2 = listOf(
     LatLng(35.21500797899812, 126.33399010208622),
     LatLng(35.21493036347349, 126.3340039310333)
 )
-
-//@ExperimentalNaverMapApi
-//@Composable
-//fun MapScreen() {
-//    val cameraPositionState = rememberCameraPositionState {
-//        position = CameraPosition(LatLng(35.21523156865972, 126.33359543068424), 15.0)
-//    }
-//    val pathData = remember { mutableStateOf<List<LatLng>>(listOf()) }
-//    val isDataLoaded = remember { mutableStateOf(false) }  // 데이터 로드 완료 상태
-//
-//    LaunchedEffect(true) {
-//        try {
-//            val response = RetrofitInstance.api.getAllCourses()
-//            if (response.status == 200 && response.data.course.isNotEmpty()) {
-//                pathData.value = response.data.course.first().locationDataList.map {
-//                    LatLng(it.lat, it.lng)
-//                }
-//                isDataLoaded.value = true  // 데이터 로드 완료 플래그 설정
-//            }
-//        } catch (e: Exception) {
-//            Log.e("MapScreen", "Error fetching courses", e)
-//        }
-//    }
-//
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        if (isDataLoaded.value && pathData.value.size >= 2) {  // 데이터가 로드되고, 충분한 좌표가 있는지 확인
-//            NaverMap(
-//                modifier = Modifier.fillMaxSize(),
-//                cameraPositionState = cameraPositionState,
-//                properties = MapProperties(
-//                    locationTrackingMode = LocationTrackingMode.Follow,
-//                    mapType = MapType.Terrain,
-//                    isMountainLayerGroupEnabled = true
-//                )
-//            ) {
-//                PathOverlay(
-//                    coords = pathData.value,
-//                    width = 5.dp,
-//                    color = Color.Red
-//                )
-//            }
-//        }
-//    }
-//}

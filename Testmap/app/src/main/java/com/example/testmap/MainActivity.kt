@@ -86,9 +86,7 @@ fun createMountainService(token: String): MountainService {
 @ExperimentalNaverMapApi
 class MainActivity : ComponentActivity() {
     private var webSocket: WebSocket? = null
-    private val webSocketUrl = "ws://k10e201.p.ssafy.io:52715/api/hiking/chat/rooms/1"
-    var userMarkerStates = mutableMapOf<String, MarkerState>()
-    var userPositions = mutableMapOf<String, LatLng>()
+    private val webSocketUrl = "wss://k10e201.p.ssafy.io/api/hiking/chat/rooms/1"
 
     companion object {
         private const val REQUEST_CODE_ACTIVITY_RECOGNITION = 1
@@ -102,14 +100,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MapScreen(context = this@MainActivity, token = "your_token_here", ::startWebSocket, ::stopWebSocket, userMarkerStates, userPositions)
+                    MapScreen(
+                        context = this@MainActivity,
+                        token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMyIsInVzZXJOaWNrbmFtZSI6IuydvOyaqeyXhOuLiCIsImlhdCI6MTcxNTY2OTYzNSwiZXhwIjoxNzQ3MTk5NjM1fQ.i-IwBgZAjlqmltlvRX4l6cyCp-qTg2fl0GJesAVND4g",
+                        ::startWebSocket,
+                        ::stopWebSocket,
+                    )
                 }
             }
         }
     }
 
-    fun startWebSocket(updateLocation: (String, Double, Double) -> Unit, context: Context) {
-        val request = Request.Builder().url(webSocketUrl).build()
+    fun startWebSocket(updateLocation: (String, Double, Double) -> Unit, context: Context, token: String) {
+        val request = Request.Builder()
+            .url(webSocketUrl)
+            .addHeader("Authorization", "Bearer $token") // 헤더에 토큰 추가
+            .build()
+
         var locationSendingJob: Job? = null  // 위치 전송 코루틴 작업을 참조하기 위한 변수
 
         val listener = object : WebSocketListener() {
@@ -133,11 +140,8 @@ class MainActivity : ComponentActivity() {
                         delay(5000)  // 5초마다 반복
                         val currentLocation = getCurrentLocation(context)
                         currentLocation?.let {
-                            val locationJson = Gson().toJson(WebSocketMessage(
+                            val locationJson = Gson().toJson(WebSocketSendMessage(
                                 type = "message",
-                                partyId = 1,
-                                userId = 1,
-                                userNickname = "My",
                                 lat = it.latitude.toString(),
                                 lng = it.longitude.toString()
                             ))
@@ -165,8 +169,6 @@ class MainActivity : ComponentActivity() {
     fun stopWebSocket() {
         webSocket?.close(1000, "Activity Ended")
         webSocket = null
-        userMarkerStates.clear()
-        userPositions.clear()
     }
 }
 
@@ -175,10 +177,8 @@ class MainActivity : ComponentActivity() {
 fun MapScreen(
     context: Context,
     token: String,
-    startWebSocket: (updateLocation: (String, Double, Double) -> Unit, Context) -> Unit,
+    startWebSocket: (updateLocation: (String, Double, Double) -> Unit, Context, String) -> Unit,
     stopWebSocket: () -> Unit,
-    userMarkerStates: MutableMap<String, MarkerState>,
-    userPositions: MutableMap<String, LatLng>
 ) {
     val mountainService = remember { createMountainService(token) }
     var mountainData by remember { mutableStateOf<MountainData?>(null) }
@@ -250,7 +250,7 @@ fun MapScreen(
                 userPositions = userPositions.toMutableMap().apply {
                     this[nickname] = LatLng(lat, lng)
                 }
-            }, context)
+            }, context, token) // 토큰 전달
             while (timerRunning) {
                 delay(1000)
                 elapsedTime += 1
@@ -365,6 +365,11 @@ data class WebSocketMessage(
     val lng: String
 )
 
+data class WebSocketSendMessage(
+    val type: String,
+    val lat: String,
+    val lng: String
+)
 data class LocationData(
     val latitude: Double,
     val longitude: Double
