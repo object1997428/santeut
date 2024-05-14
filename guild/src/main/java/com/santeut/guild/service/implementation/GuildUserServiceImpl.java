@@ -75,8 +75,9 @@ public class GuildUserServiceImpl implements GuildUserService {
 
         if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
             responseList.add(response);
-
         }
+        guildEntity.setGuildMember(guildEntity.getGuildMember()+1);
+        guildRepository.save(guildEntity);
         return new ApplyGuildListResponse(ApplyGuildListResponse.applyGuildList(responseList, requestEntityList));
     }
 
@@ -162,6 +163,8 @@ public class GuildUserServiceImpl implements GuildUserService {
         guildUserEntity.setModifiedAt(LocalDateTime.now());
         guildUserEntity.setDeletedAt(LocalDateTime.now());
         guildUserRepository.save(guildUserEntity);
+        guildEntity.setGuildMember(guildEntity.getGuildMember()-1);
+        guildRepository.save(guildEntity);
     }
 
     @Override
@@ -203,5 +206,8 @@ public class GuildUserServiceImpl implements GuildUserService {
         guildUserEntity.setModifiedAt(LocalDateTime.now());
         guildUserEntity.setDeletedAt(LocalDateTime.now());
         guildUserRepository.save(guildUserEntity);
+
+        guildEntity.setGuildMember(guildEntity.getGuildMember()-1);
+        guildRepository.save(guildEntity);
     }
 }

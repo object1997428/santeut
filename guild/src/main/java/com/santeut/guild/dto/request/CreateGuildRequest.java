@@ -8,7 +8,6 @@ public class CreateGuildRequest {
     String guildName;
     String guildInfo;
     boolean guildIsPrivate;
-    int guildMember;
     int regionId;
     char guildGender;
     int guildMinAge;
