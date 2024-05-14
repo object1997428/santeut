@@ -27,7 +27,7 @@ public class CourseInfoResponseDto {
       return CourseInfo.builder()
           .courseId(c.getCourseId())
           .courseName(c.getCourseName())
-          .distance(c.getDistance())
+          .distance(Math.round(c.getDistance() * 100) / 100.0)
           .level(c.getCourseLevel())
           .upTime(c.getUpTime())
           .downTime(c.getDownTime())

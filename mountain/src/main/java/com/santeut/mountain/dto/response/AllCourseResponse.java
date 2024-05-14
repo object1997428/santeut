@@ -13,7 +13,6 @@ public class AllCourseResponse {
   public List<CourseSummary> course;
 
   @Data
-  @AllArgsConstructor
   @NoArgsConstructor
   public static class CourseSummary {
 
@@ -21,6 +20,11 @@ public class AllCourseResponse {
     public double distance;
     public List<LocationData> locationDataList;
 
+    public CourseSummary(int courseId, double distance, List<LocationData> locationDataList) {
+      this.courseId = courseId;
+      this.distance = Math.round(distance * 100) / 100.0;
+      this.locationDataList = locationDataList;
+    }
   }
 
 }

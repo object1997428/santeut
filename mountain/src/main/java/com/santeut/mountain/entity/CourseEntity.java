@@ -37,7 +37,7 @@ public class CourseEntity {
   @Column(name = "course_level", columnDefinition = "varchar(9)")
   private String courseLevel;
 
-  @Column(name = "course_distance", columnDefinition = "float")
+  @Column(name = "course_distance", columnDefinition = "decimal(5,2)")
   private float distance;
 
   @Column(name = "course_uptime", columnDefinition = "int")
@@ -49,7 +49,7 @@ public class CourseEntity {
   @Column(name = "course_points", columnDefinition = "geometry")
   private Geometry coursePoints;
 
-  @Column(name="MNTN_CODE")
+  @Column(name="mountain_code")
   private String mountain_code;
 
 }

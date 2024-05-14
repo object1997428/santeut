@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 @Builder
-@AllArgsConstructor
 public class CourseCoordResponseDto {
 
   public int coordCnt;
@@ -19,5 +18,11 @@ public class CourseCoordResponseDto {
   public static class Coord {
     public double lat;
     public double lng;
+  }
+
+  public CourseCoordResponseDto(int coordCnt, double distance, List<Coord> coordPoints) {
+    this.coordCnt = coordCnt;
+    this.distance = Math.round(distance * 100) / 100.0;
+    this.coordPoints = coordPoints;
   }
 }
