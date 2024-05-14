@@ -1,26 +1,16 @@
 package com.santeut.ui.mountain
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.santeut.data.model.CustomResponse
-import com.santeut.data.model.response.MountainListResponse
+import com.santeut.data.model.response.HikingCourseResponse
+import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.domain.usecase.MountainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,10 +24,16 @@ class MountainViewModel @Inject constructor(
     private val _mountains = MutableLiveData<List<MountainResponse>>()
     val mountains: LiveData<List<MountainResponse>> = _mountains
 
-    fun popularMountain(){
+    private val _mountain = MutableLiveData<MountainDetailResponse>()
+    val mountain: LiveData<MountainDetailResponse> = _mountain
+
+    private val _courseList = MutableLiveData<List<HikingCourseResponse>>()
+    val courseList: LiveData<List<HikingCourseResponse>> = _courseList
+
+    fun popularMountain() {
         viewModelScope.launch {
             try {
-                mountainUseCase.popularMountain().let{
+                mountainUseCase.popularMountain().let {
                     _mountains.postValue(mountainUseCase.popularMountain())
                 }
             } catch (e: Exception) {
@@ -49,11 +45,35 @@ class MountainViewModel @Inject constructor(
     fun searchMountain(name: String, region: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                mountainUseCase.searchMountain(name, region).let{
+                mountainUseCase.searchMountain(name, region).let {
                     _mountains.postValue(mountainUseCase.searchMountain(name, region))
                 }
             } catch (e: Exception) {
                 _error.postValue("산 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun mountainDetail(mountainId: Int) {
+        viewModelScope.launch {
+            try {
+                mountainUseCase.mountainDetail(mountainId).let {
+                    _mountain.postValue(mountainUseCase.mountainDetail(mountainId))
+                }
+            } catch (e: Exception) {
+                _error.postValue("산 상세 정보 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getHikingCourseList(mountainId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                mountainUseCase.getHikingCourseList(mountainId).let {
+                    _courseList.postValue(mountainUseCase.getHikingCourseList(mountainId))
+                }
+            } catch (e: Exception) {
+                _error.postValue("코스 목록 조회 실패: ${e.message}")
             }
         }
     }

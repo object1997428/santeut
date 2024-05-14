@@ -6,10 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.request.CreatePostRequest
-import com.santeut.data.model.response.CommentListResponse
 import com.santeut.data.model.response.CommentResponse
-import com.santeut.data.model.response.PostListResponse
+import com.santeut.data.model.response.NotificationResponse
 import com.santeut.domain.usecase.CommonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -26,6 +24,9 @@ class CommonViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    private val _notiList = MutableLiveData<List<NotificationResponse>>()
+    val notiList: LiveData<List<NotificationResponse>> = _notiList
+
     fun createComment(postId: Int, postType: Char, commentContent: String) {
         viewModelScope.launch {
             try {
@@ -39,13 +40,14 @@ class CommonViewModel @Inject constructor(
         }
     }
 
-    fun getComment(postId: Int, postType: Char) {
+    fun getNotificationList(){
         viewModelScope.launch {
-            try {
-                _comments.value = commonUseCase.getComments(postId, postType)
-            } catch (e: Exception) {
-                _error.value = "Failed to load posts: ${e.message}"
+            try{
+                _notiList.postValue(commonUseCase.getNotificationList())
+            } catch (e:Exception){
+                _error.postValue("알림 목록 조회 실패: ${e.message}")
             }
         }
     }
+
 }

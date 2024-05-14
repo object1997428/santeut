@@ -2,6 +2,7 @@ package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MyPartyResponse
+import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.data.repository.PartyRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,4 +26,9 @@ class PartyUseCase @Inject constructor(
 
     suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit> =
         partyRepository.createParty(createPartyRequest)
+
+    suspend fun getMyRecordList(): List<MyRecordResponse> = partyRepository.getMyRecordList()
+
+    suspend fun getMyScheduleList(year: Int, month: Int): List<String> =
+        partyRepository.getMyScheduleList(year, month)
 }

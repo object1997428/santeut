@@ -13,30 +13,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.santeut.data.model.response.CommentResponse
-import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.tips.formatTime
 
 @Composable
 fun CommentScreen(
-    postId: Int, postType: Char,
-    commonViewModel: CommonViewModel
+    comments: List<CommentResponse>
 ) {
-
-    val comments by commonViewModel.comments.observeAsState(initial = emptyList())
-
-    LaunchedEffect(key1 = postId, key2 = postType) {
-        commonViewModel.getComment(postId, postType)
-    }
-
     LazyColumn(
         modifier = Modifier
             .padding(16.dp)

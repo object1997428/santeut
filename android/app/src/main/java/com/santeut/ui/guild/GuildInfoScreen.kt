@@ -30,13 +30,13 @@ fun GuildInfoScreen(guild: GuildResponse?) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = guild.guildName,
+                text = guild.guildName?:"",
                 style = MaterialTheme.typography.headlineMedium, // 크기와 스타일 조정
                 modifier = Modifier.padding(bottom = 4.dp)
             )
 
             Text(
-                text = guild.guildInfo,
+                text = guild.guildInfo?:"",
                 style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
                 modifier = Modifier.padding(bottom = 8.dp)
             )

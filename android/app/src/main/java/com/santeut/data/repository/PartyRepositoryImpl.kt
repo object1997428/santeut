@@ -4,7 +4,7 @@ import android.util.Log
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MyPartyResponse
-import com.santeut.data.model.response.PartyListResponse
+import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -57,6 +57,36 @@ class PartyRepositoryImpl @Inject constructor(
         val response = partyApiService.createParty(createPartyRequest)
         if (response.status == "201") {
             emit(response.data)
+        }
+    }
+
+    override suspend fun getMyRecordList(): List<MyRecordResponse> {
+        return try {
+            val response = partyApiService.getMyRecordList()
+            if (response.status == "200") {
+                response.data.recordList ?: emptyList()
+            } else {
+                Log.e("PartyRepository", "내 산행 기록 조회 실패: ${response.status} - ${response.data}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("PartyRepository", "내 산행 기록 조회 실패: ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun getMyScheduleList(year: Int, month: Int): List<String> {
+        return try {
+            val response = partyApiService.getMyScheduleList(year, month)
+            if (response.status == "200") {
+                response.data.date ?: emptyList()
+            } else {
+                Log.e("PartyRepository", "날짜별 소모임 조회 실패: ${response.status} - ${response.data}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("PartyRepository", "날짜별 소모임 조회 실패: ${e.message}")
+            throw e
         }
     }
 }

@@ -1,8 +1,7 @@
 package com.santeut.data.repository
 
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.response.CommentListResponse
-import com.santeut.data.model.response.CommentResponse
+import com.santeut.data.model.response.NotificationResponse
 import kotlinx.coroutines.flow.Flow
 
 interface CommonRepository {
@@ -12,5 +11,6 @@ interface CommonRepository {
         commentRequest: CreateCommentRequest
     ): Flow<Unit>
 
-    suspend fun getComments(postId: Int, postType: Char): List<CommentResponse>
+    suspend fun getNotificationList(): List<NotificationResponse>
+
 }

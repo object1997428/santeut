@@ -45,13 +45,14 @@ import com.santeut.ui.party.PartyViewModel
 
 @Composable
 fun JoinPartyScreen(
+    guildId:Int?,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
 
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
 
-    LaunchedEffect(key1 = null) {
-        partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
+    LaunchedEffect(key1 = guildId) {
+        partyViewModel.getPartyList(guildId = guildId, name = null, start = null, end = null)
     }
 
     Column {
