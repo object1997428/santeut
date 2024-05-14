@@ -6,6 +6,7 @@ import com.santeut.hiking.dto.request.HikingTrackSaveReignRequestDto;
 import com.santeut.hiking.dto.request.LocationData;
 import com.santeut.hiking.dto.request.TrackData;
 import com.santeut.hiking.feign.HikingPartyClient;
+import jakarta.ws.rs.HEAD;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ListOperations;
@@ -52,13 +53,8 @@ public class HikingDataScheduler {
         String key = "party:" + partyId;
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
         boolean isMember = setOps.isMember(key, userId);
-<<<<<<< HEAD
-        if(!isMember) setOps.add(key, userId); //party:{} <- userId
-=======
         if (!isMember) setOps.add(key, userId); //party:{} <- userId
         else log.info("[Scheduler]: 이미 partyId({}),에 userId({})는 존재합니다",partyId,userId);
-
->>>>>>> cdadf4f51500638822f3300e5c7c71b5268b06ca
     }
 
     public void stopTascking(String partyId,String userId) throws JsonProcessingException {
@@ -67,13 +63,8 @@ public class HikingDataScheduler {
         String key = "party:" + partyId;
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
         boolean isMember = setOps.isMember(key, userId);
-<<<<<<< HEAD
-        if(isMember) setOps.remove(key,userId);
-=======
         if (isMember) setOps.remove(key,userId);
         else log.info("[Scheduler]: partyId({}),에 userId({})가 존재하지 않습니다.",partyId,userId);
-
->>>>>>> cdadf4f51500638822f3300e5c7c71b5268b06ca
 
         //Redis가 비었으면 스케줄러에서 지우기
         if(!redisTemplate.hasKey(partyId)) {
