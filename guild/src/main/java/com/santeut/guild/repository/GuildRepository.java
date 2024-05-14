@@ -19,7 +19,7 @@ public interface GuildRepository extends JpaRepository<GuildEntity, Integer> {
     List<GuildEntity> findByAllGuild();
     @Query("SELECT g FROM GuildEntity g " +
             "JOIN GuildUserEntity gu ON g.guildId = gu.guildId " +
-            "WHERE gu.userId = :userId AND g.isDeleted = false")
+            "WHERE gu.userId = :userId AND gu.isDeleted = false")
     List<GuildEntity> findByMyGuild(@Param("userId") int userId);
 
     @Query("SELECT g FROM GuildEntity g ORDER BY g.guildId DESC")
