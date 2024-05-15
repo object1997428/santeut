@@ -37,7 +37,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
   public ServletServerContainerFactoryBean createWebSocketContainer() {
     ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
     container.setMaxTextMessageBufferSize(20000);
-    container.setMaxSessionIdleTimeout(120000L); // set the timeout to 2min
+    //container.setMaxSessionIdleTimeout(120000L); // set the timeout to 2min
     container.setMaxSessionIdleTimeout(TimeUnit.MINUTES.convert(30, TimeUnit.MILLISECONDS)); // 웹 소켓 세션 유지 시간 설정
     container.setAsyncSendTimeout(TimeUnit.SECONDS.convert(5, TimeUnit.MILLISECONDS)); // 응답을 보내기 위해 시도하는 시간 설정.
     return container;
