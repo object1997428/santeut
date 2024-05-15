@@ -3,12 +3,14 @@ package com.example.testmap
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.Bundle
+import android.util.Log
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -33,6 +36,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import com.google.gson.Gson
+import com.naver.maps.map.overlay.OverlayImage
+import java.io.ByteArrayOutputStream
 
 // API 인터페이스 정의
 interface MountainService {
@@ -289,12 +294,15 @@ fun MapScreen(
                 ),
                 uiSettings = uiSettings
             ) {
+                val context = LocalContext.current
+                val resizedIcon = remember { resizeMarkerIcon(context, R.drawable.custom_marker, 100, 100) }
                 mountainData?.let {
                     Marker(
                         state = rememberMarkerState(position = LatLng(it.lat, it.lng)),
                         captionText = it.mountainName,
                         captionTextSize = 14.sp,
-                        captionMinZoom = 12.0
+                        captionMinZoom = 12.0,
+                        icon = resizedIcon  // 마커 이미지 설정
                     )
                 }
                 // 사용자 마커 렌더링
@@ -303,7 +311,8 @@ fun MapScreen(
                         state = markerState,
                         captionText = nickname,
                         captionTextSize = 14.sp,
-                        captionMinZoom = 12.0
+                        captionMinZoom = 12.0,
+                        icon = resizedIcon  // 마커 이미지 설정
                     )
                 }
             }
@@ -320,6 +329,19 @@ fun MapScreen(
             InfoPanel(mountainData?.height ?: 0, stepCount, distanceMoved, elapsedTime, altitude.toInt())
         }
     }
+}
+
+fun resizeMarkerIcon(context: Context, drawableResId: Int, width: Int, height: Int): OverlayImage {
+    val bitmap = BitmapFactory.decodeResource(context.resources, drawableResId)
+    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false)
+
+    // Bitmap을 ByteArray로 변환하여 OverlayImage.fromBitmap()에 전달
+    val stream = ByteArrayOutputStream()
+    resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    val byteArray = stream.toByteArray()
+    val bitmapResized = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+
+    return OverlayImage.fromBitmap(bitmapResized)
 }
 
 @Composable

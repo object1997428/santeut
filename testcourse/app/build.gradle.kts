@@ -81,4 +81,7 @@ dependencies {
     // rx
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation ("org.locationtech.jts:jts-core:1.18.2")
+
 }

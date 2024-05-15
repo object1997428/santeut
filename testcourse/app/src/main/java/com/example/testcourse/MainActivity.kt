@@ -1,6 +1,9 @@
 package com.example.testcourse
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,11 +11,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.testcourse.ui.theme.TestcourseTheme
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
@@ -26,6 +36,10 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.LineString
+import org.locationtech.jts.geom.Point
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -111,7 +125,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TestcourseTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MapScreen()
+                    MapScreen(this)
                 }
             }
         }
@@ -119,36 +133,31 @@ class MainActivity : ComponentActivity() {
 }
 
 @ExperimentalNaverMapApi
+@SuppressLint("MissingPermission")
 @Composable
-fun MapScreen() {
+fun MapScreen(context: Context) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(LatLng(35.1229, 129.0017), 15.0)
     }
 
-    // MutableState를 사용하여 동적으로 데이터를 관리
     val pathData = remember { mutableStateOf<List<CourseDetail>>(listOf()) }
     val mountainDetailData = remember { mutableStateOf<MountainDetailData?>(null) }
+    val currentLocation = remember { mutableStateOf<LatLng?>(null) }
 
-    // API 요청 및 데이터 로드
     LaunchedEffect(true) {
         try {
-            // 산 상세 정보 요청
             val mountainResponse = RetrofitInstance.api.getMountainDetail()
             if (mountainResponse.status == 200) {
                 mountainDetailData.value = mountainResponse.data
                 cameraPositionState.position = CameraPosition(LatLng(mountainResponse.data.lat, mountainResponse.data.lng), 13.0)
                 Log.d("MapScreen", "Received mountain detail: ${mountainResponse.data}")
-                Log.d("카메라","${cameraPositionState.position}")
             } else {
                 Log.d("MapScreen", "Failed to load mountain detail: Status ${mountainResponse.status}")
             }
 
-            // 경로 정보 요청
             val pathResponse = RetrofitInstance.api.getAllCourses()
             if (pathResponse.status == 200 && pathResponse.data.course.isNotEmpty()) {
-                // API 응답 데이터를 CourseDetail 리스트로 변환하여 저장
                 pathData.value = pathResponse.data.course
-                // 로그로 확인
                 Log.d("MapScreen", "Received courses: ${pathResponse.data.course}")
             } else {
                 Log.d("MapScreen", "Failed to load courses or empty list: Status ${pathResponse.status}")
@@ -156,6 +165,32 @@ fun MapScreen() {
         } catch (e: Exception) {
             Log.e("MapScreen", "Error fetching data", e)
         }
+    }
+
+    // 위치 요청 설정
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    val locationRequest = LocationRequest.create().apply {
+        interval = 10000 // 10초마다 위치 업데이트
+        fastestInterval = 5000 // 5초마다 위치 업데이트
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    // 위치 업데이트 콜백
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            for (location in locationResult.locations) {
+                currentLocation.value = LatLng(location.latitude, location.longitude)
+                Log.d("MapScreen", "Current location: ${location.latitude}, ${location.longitude}")
+
+                // 경로 이탈 여부 확인
+                checkRouteDeviation(location.latitude, location.longitude, pathData.value)
+            }
+        }
+    }
+
+    // 위치 업데이트 시작
+    LaunchedEffect(true) {
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -168,7 +203,6 @@ fun MapScreen() {
                 isMountainLayerGroupEnabled = true
             )
         ) {
-            // 각 경로를 순회하며 PathOverlay를 그리기
             pathData.value.forEach { courseDetail ->
                 val path = courseDetail.locationDataList.map { LatLng(it.lat, it.lng) }
                 if (path.size >= 2) {
@@ -180,9 +214,27 @@ fun MapScreen() {
                         outlineColor = Color.Red,
                         tag = courseDetail.courseId
                     )
-                    Log.d("확인용","${pathData.value}")
+                    Log.d("확인용", "${pathData.value}")
                 }
             }
+        }
+    }
+}
+
+fun checkRouteDeviation(latitude: Double, longitude: Double, pathData: List<CourseDetail>) {
+    val geometryFactory = GeometryFactory()
+    val userLocation: Point = geometryFactory.createPoint(Coordinate(longitude, latitude))
+
+    pathData.forEach { courseDetail ->
+        val coordinates = courseDetail.locationDataList.map { Coordinate(it.lng, it.lat) }.toTypedArray()
+        val predefinedRoute: LineString = geometryFactory.createLineString(coordinates)
+
+        val distance = userLocation.distance(predefinedRoute)
+        val isDeviated = distance > 20.0
+
+        if (isDeviated) {
+            Log.d("RouteDeviation", "User has deviated from the path: ${courseDetail.courseId}")
+            // 사용자에게 경로 이탈 알림 (Toast, Dialog 등)
         }
     }
 }
