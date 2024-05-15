@@ -36,8 +36,7 @@ fun MyPartyListScreen(
     val myPartyList by partyViewModel.myPartyList.observeAsState(emptyList())
 
     LaunchedEffect(key1 = null) {
-        partyViewModel.getMyPartyList(date = null, includeEnd = false)
-
+        partyViewModel.getMyPartyList(date = null, includeEnd = false, page = null, size = null)
     }
 
     Column {

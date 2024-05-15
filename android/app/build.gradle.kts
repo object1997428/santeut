@@ -36,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -124,4 +124,10 @@ dependencies {
 
     // Wear
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
+
+    // navermap
+    implementation ("io.github.fornewid:naver-map-compose:1.7.0")
+    implementation ("io.github.fornewid:naver-map-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
 }
