@@ -80,7 +80,7 @@ fun ChatScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        reverseLayout = true,
+                        reverseLayout = false,
                         state = LazyListState(firstVisibleItemIndex = 0)
                     ) {
                         chatmessages.forEach {
