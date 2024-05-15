@@ -10,7 +10,7 @@ import com.santeut.MainApplication
 import com.santeut.data.di.RemoteModule
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.data.model.response.ChatRoomInfo
-import com.santeut.domain.usecase.ChatUseCase
+import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor (
-    private val chatUseCase: ChatUseCase
+    private val chatUseCase: PartyUseCase
 ) : ViewModel() {
 
     private val _error= MutableLiveData<String>()
