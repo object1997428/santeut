@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.santeut.data.apiservice.AuthApiService
-import com.santeut.data.apiservice.ChatApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.apiservice.MountainApiService
@@ -105,12 +104,6 @@ object RemoteModule {
     fun provideInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     }
-
-    @Provides
-    @Singleton
-    fun provideChatApiService(@Named("retrofit") retrofit: Retrofit) =
-        retrofit.create(ChatApiService::class.java)
-
 
     @Provides
     @Singleton

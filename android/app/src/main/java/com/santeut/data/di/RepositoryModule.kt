@@ -2,8 +2,6 @@ package com.santeut.data.di
 
 import com.santeut.data.repository.AuthRepository
 import com.santeut.data.repository.AuthRepositoryImpl
-import com.santeut.data.repository.ChatRepository
-import com.santeut.data.repository.ChatRepositoryImpl
 import com.santeut.data.repository.CommonRepository
 import com.santeut.data.repository.CommonRepositoryImpl
 import com.santeut.data.repository.GuildRepository
@@ -45,6 +43,4 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindMountainRepository(impl: MountainRepositoryImpl): MountainRepository
 
-    @Binds
-    abstract fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 }
