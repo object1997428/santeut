@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MapScreen(
                         context = this@MainActivity,
-                        token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMyIsInVzZXJOaWNrbmFtZSI6IuydvOyaqeyXhOuLiCIsImlhdCI6MTcxNTY2OTYzNSwiZXhwIjoxNzQ3MTk5NjM1fQ.i-IwBgZAjlqmltlvRX4l6cyCp-qTg2fl0GJesAVND4g",
+                        token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNSIsInVzZXJOaWNrbmFtZSI6IuyCvOyInOydtCIsImlhdCI6MTcxNTY2OTYxNCwiZXhwIjoxNzQ3MTk5NjE0fQ.M6OTeo4i3Hvw214Nsur6ATOfXU2EvNl8mZWkWjDvMI8",
                         ::startWebSocket,
                         ::stopWebSocket,
                     )
@@ -132,7 +132,7 @@ class MainActivity : ComponentActivity() {
 
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 // 웹소켓 연결이 성공하면 초기 메시지를 보내고 위치 정보를 주기적으로 보내기 시작
-                webSocket.send("{\"hello\"}")
+                webSocket.send("{\"type\": \"enter\"}")
                 Log.d("WebSocket", "WebSocket opened and initial message sent.")
 
                 locationSendingJob = CoroutineScope(Dispatchers.IO).launch {
@@ -167,6 +167,7 @@ class MainActivity : ComponentActivity() {
     }
 
     fun stopWebSocket() {
+        webSocket?.send("{\"type\": \"quit\"}")
         webSocket?.close(1000, "Activity Ended")
         webSocket = null
     }
