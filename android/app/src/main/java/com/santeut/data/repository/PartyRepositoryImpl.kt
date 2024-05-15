@@ -3,6 +3,7 @@ package com.santeut.data.repository
 import android.util.Log
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.request.PartyIdRequest
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.data.model.response.MyPartyResponse
@@ -64,6 +65,28 @@ class PartyRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteParty(partyId: Int): Flow<Unit> = flow {
+        val response = partyApiService.deleteParty(PartyIdRequest(partyId))
+        if (response.status == "200") {
+            emit(response.data)
+        }
+    }
+
+    override suspend fun joinParty(partyId: Int): Flow<Unit> = flow {
+        val response = partyApiService.joinParty(PartyIdRequest(partyId))
+        if (response.status == "200") {
+            emit(response.data)
+        }
+    }
+
+    override suspend fun quitParty(partyId: Int): Flow<Unit> = flow {
+        val response = partyApiService.quitParty(partyId)
+        if (response.status == "200") {
+            emit(response.data)
+        }
+    }
+
+
     override suspend fun getMyRecordList(): List<MyRecordResponse> {
         return try {
             val response = partyApiService.getMyRecordList()
@@ -97,7 +120,7 @@ class PartyRepositoryImpl @Inject constructor(
     override suspend fun getChatList(): List<ChatRoomInfo> {
         return try {
             val response = partyApiService.getMyChatList()
-            if(response.status=="200") {
+            if (response.status == "200") {
                 response.data.chatRoomList ?: emptyList()
             } else {
                 Log.e(
@@ -116,7 +139,7 @@ class PartyRepositoryImpl @Inject constructor(
     override suspend fun getChatMessageList(partyId: Int): MutableList<ChatMessage> {
         return try {
             val response = partyApiService.getChatMessageList(partyId)
-            if(response.status=="200") {
+            if (response.status == "200") {
                 response.data.chatMessageList.toMutableList() ?: mutableListOf()
             } else {
                 Log.e(
