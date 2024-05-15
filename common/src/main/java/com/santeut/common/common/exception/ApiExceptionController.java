@@ -1,6 +1,7 @@
 package com.santeut.common.common.exception;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -83,6 +84,13 @@ public class ApiExceptionController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleFirebaseSettingFailException(FirebaseSettingFailException e) {
         return constructErrorResponse(e,HttpStatus.INTERNAL_SERVER_ERROR, "FirebaseSettingFailException");
+    }
+
+    // Firebase 알림 객체를 json화하는 과정에서 발생하는 오류
+    @ExceptionHandler(JsonProcessingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleJsonProcessingException(JsonProcessingException e) {
+        return constructErrorResponse(e,HttpStatus.INTERNAL_SERVER_ERROR, "JsonProcessingException");
     }
 
 
