@@ -73,8 +73,9 @@ public class ChatServiceImpl implements ChatService {
     for (ChatMessage message : chatMessageRepository.findAllBy(partyId)) {
       PartyMemberInfo sender = partyMemberInfoMap.getOrDefault(message.getUserId(), null);
       messageList.add(ChatMessageInfoDto.of(
+          message.getUserId(),
           message.getCreatedAt(),
-          (sender == null) ? "나간 사용자" : sender.getUserNickname(),
+          (sender == null) ? "(나간 사용자)" : sender.getUserNickname(),
           (sender == null) ? null : sender.getUserProfile(),
           message.getContent()
       ));
