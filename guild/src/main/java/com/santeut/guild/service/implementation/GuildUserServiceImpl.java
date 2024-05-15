@@ -45,14 +45,24 @@ public class GuildUserServiceImpl implements GuildUserService {
         if (guildRequestEntity != null){
             if(guildRequestEntity.getStatus() == 'R') throw new DataNotFoundException(ResponseCode.ALREADY_REQUEST);
             else if(guildRequestEntity.getStatus() == 'A') throw new DataNotFoundException(ResponseCode.ALREADY_APPROVE);
+            else if(guildRequestEntity.getStatus() == 'D'){
+                guildRequestEntity.setStatus('R');
+            }
+            else if(guildRequestEntity.getStatus() == 'C'){
+                guildRequestEntity.setStatus('R');
+            }
+            guildRequestRepository.save(guildRequestEntity);
+        }
+        else {
+
+        guildRequestEntity = GuildRequestEntity.requestGuild(guildId, Integer.parseInt(userId), 'R');
+        guildRequestRepository.save(guildRequestEntity);
         }
 
         // 동호회장을 위임하고 가입 요청을 보내는 경우 방지
 //        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, Integer.parseInt(userId))
 //                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
 
-        guildRequestEntity = GuildRequestEntity.requestGuild(guildId, Integer.parseInt(userId), 'R');
-        guildRequestRepository.save(guildRequestEntity);
     }
 
     @Override
@@ -99,7 +109,7 @@ public class GuildUserServiceImpl implements GuildUserService {
         guildRequestEntity.setStatus('A');
         guildRequestRepository.save(guildRequestEntity);
 
-        GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(guildId, userId);
+        GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(userId, guildId);
         guildUserRepository.save(guildUserEntity);
     }
 
