@@ -41,7 +41,7 @@ class GuildRepositoryImpl @Inject constructor(
         Log.d("", "레포짇토리 ")
         val response =
             guildApiService.createGuild(guildProfile, createGuildPart(createGuildRequest))
-        Log.d("response status", response.status)
+        Log.d("response status", response?.status ?: "Response is null")
         if (response.status == "200") {
             Log.d("Guild Repository", "동호회 생성 성공")
             emit(response.data)

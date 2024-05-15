@@ -60,14 +60,13 @@ class GuildViewModel @Inject constructor(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
     ) {
-        Log.d("", "뷰모델")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 guildUseCase.createGuild(guildProfile, createGuildRequest).collect {
                     Log.d("GuildViewModel", "동호회 생성 성공")
                 }
             } catch (e: Exception) {
-                _error.postValue("동호회 생성 성공: ${e.message}")
+                _error.postValue("동호회 생성 실패: ${e.message}")
             }
         }
     }

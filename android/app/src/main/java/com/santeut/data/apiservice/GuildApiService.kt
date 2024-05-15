@@ -23,6 +23,7 @@ interface GuildApiService {
     suspend fun getGuilds(): CustomResponse<GuildListResponse>
 
     @POST("/api/guild/create")
+    @Multipart
     suspend fun createGuild(
         @Part guildProfile: MultipartBody.Part?,
         @Part request: MultipartBody.Part

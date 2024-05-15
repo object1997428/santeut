@@ -66,6 +66,7 @@ fun CreateGuildScreen(
     var guildIsPrivate by remember { mutableStateOf(true) }
     var guildGender by remember { mutableStateOf('A') }
     var regionId by remember { mutableIntStateOf(0) }
+    var selectedRegion by remember { mutableStateOf("전체") }
     var guildMinAge by remember { mutableStateOf("0") }
     var guildMaxAge by remember { mutableStateOf("100") }
     var isDropdownExpanded by remember { mutableStateOf(false) }
@@ -178,6 +179,7 @@ fun CreateGuildScreen(
                 }
                 .padding(16.dp)
         ) {
+            Text(selectedRegion, modifier = Modifier.align(Alignment.CenterStart))
             DropdownMenu(
                 expanded = isDropdownExpanded,
                 onDismissRequest = { isDropdownExpanded = false }
@@ -186,6 +188,7 @@ fun CreateGuildScreen(
                     DropdownMenuItem(
                         text = { Text(text = region) },
                         onClick = {
+                            selectedRegion = region
                             regionId = index
                             isDropdownExpanded = false
                         }
@@ -221,7 +224,7 @@ fun CreateGuildScreen(
 
         Button(
             onClick = {
-                Toast.makeText(context, "동호회를 생성했습니다!", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(context, "동호회를 생성했습니다!", Toast.LENGTH_SHORT).show()
                 guildViewModel.createGuild(
                     multipartImage, CreateGuildRequest(
                         guildName,
