@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.santeut.data.model.request.CreatePartyRequest
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -139,9 +140,17 @@ fun CreatePartyScreen(
 
         Button(onClick = {
             partyViewModel.createParty(
-                schedule, partyName, 1,
-                "승학산", maxPeople.toInt(), null, place,
-                selectedCourse
+
+                CreatePartyRequest(
+                    schedule,
+                    partyName,
+                    1, // mountainId,
+                    "승학산", //mountainName,
+                    maxPeople.toInt(),
+                    null, // guildId,
+                    place,
+                    selectedCourse
+                )
             )
 
             if (partyCreationSuccess == true) {
@@ -155,5 +164,5 @@ fun CreatePartyScreen(
 
 @Composable
 fun SelectedMountainBar(navController: NavController) {
-Text(text = "산 선택하기")
+    Text(text = "산 선택하기")
 }

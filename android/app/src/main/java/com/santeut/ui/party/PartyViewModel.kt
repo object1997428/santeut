@@ -70,28 +70,10 @@ class PartyViewModel @Inject constructor(
     }
 
     fun createParty(
-        schedule: String,
-        partyName: String,
-        mountainId: Int,
-        mountainName: String,
-        maxPeople: Int,
-        guildId: Int?,
-        place: String,
-        selectedCourse: List<Int>
+        createPartyRequest: CreatePartyRequest
     ) {
         viewModelScope.launch {
             try {
-                val createPartyRequest = CreatePartyRequest(
-                    schedule,
-                    partyName,
-                    mountainId,
-                    mountainName,
-                    maxPeople,
-                    guildId,
-                    place,
-                    selectedCourse
-                )
-
                 partyUseCase.createParty(createPartyRequest).collect {
                     _partyCreationSuccess.value = true
                 }
@@ -101,6 +83,10 @@ class PartyViewModel @Inject constructor(
             }
         }
     }
+
+
+
+
 
     fun getMyRecordList() {
         viewModelScope.launch {
