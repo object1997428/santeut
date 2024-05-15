@@ -1,21 +1,24 @@
 package com.santeut.party.common.config;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.santeut.party.dto.chatting.ChatMessageDto;
+import com.santeut.party.dto.chatting.ChatMessageRequest;
+import com.santeut.party.dto.chatting.ChatMessageResponse;
+import com.santeut.party.dto.chatting.SocketDto;
+import com.santeut.party.feign.UserInfoAccessUtil;
+import com.santeut.party.feign.dto.response.UserInfoFeignResponseDto;
+import com.santeut.party.repository.RoomRepository;
 import com.santeut.party.service.ChatService;
+import com.santeut.party.vo.Room;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -24,82 +27,102 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
-  private final ObjectMapper objectMapper;
+  private final RoomRepository roomRepository;
+  private final UserInfoAccessUtil userInfoAccessUtil;
   private final ChatService chatService;
-  private final Set<WebSocketSession> sessions = new HashSet<>();
-  private final Map<Integer, Set<WebSocketSession>> chatRoomSessionMap = new HashMap<>();
+  private ObjectMapper om = new ObjectMapper();
 
   @Override
-  protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
-    super.handleBinaryMessage(session, message);
+  public void afterConnectionEstablished(WebSocketSession session) {
+    int userId = Integer.parseInt(session.getHandshakeHeaders().get("userId").get(0));
+    Integer roomId = getRoomId(session);
+    log.info("roomId={}",roomId);
+
+    //Auth서버한테 유저 정보 요청
+    String userNickname="";
+    String userProfile="";
+    log.info("[Party Server][Auth request url: /api/auth/user/{userId}");
+    UserInfoFeignResponseDto responseEntity = userInfoAccessUtil.getUserInfo(userId);
+    log.info("[Party Server][Auth response ={}",responseEntity);
+    if (responseEntity != null) {
+      userNickname = responseEntity.getUserNickname();
+      userProfile = responseEntity.getUserProfile();
+      log.info("[Party Server] Auth 한테 유저 정보 응답 받음 userInfo={}", userNickname);
+    }
+
+    SocketDto socketDto = SocketDto.builder()
+        .userId(userId)
+        .userNickname(userNickname)
+        .userProfile(userProfile)
+        .session(session)
+        .build();
+    //이미 userId가 존재하면 제거하고 새로 넣기
+    roomRepository.room(roomId).addSession(socketDto);
+    log.info("새 클라이언트와 연결되었습니다. partyId={}, socketDto={}",roomId,socketDto);
   }
 
-  // 소켓 연결 확인
   @Override
-  public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-    log.info("{} 연결됨", session.getId());
-    sessions.add(session);
-  }
-
-  @Override
-  public void handleMessage(WebSocketSession session, WebSocketMessage<?> message)
-      throws Exception {
-    super.handleMessage(session, message);
-  }
-
-  // 메시지 전송
-  @Override
-  protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+  protected void handleTextMessage(WebSocketSession session,
+      TextMessage message) throws IOException {
+    String userId = session.getHandshakeHeaders().get("userId").get(0);
+    Integer roomId = getRoomId(session);
+    Room room = roomRepository.room(roomId);
     String payload = message.getPayload();
-    log.info("payload {}", payload);
+    log.info("Received message: {}", payload);
 
-    // payload -> chatMessage
-    ChatMessageDto chatMessage = objectMapper.readValue(payload, ChatMessageDto.class);
-    int chatRoomId = chatMessage.getPartyId();
-    // 채팅방 세션없으면 생성
-    if(!chatRoomSessionMap.containsKey(chatRoomId)) {
-      log.info("{}번 방 세션 생성", chatRoomId);
-      chatRoomSessionMap.put(chatRoomId, new HashSet<>());
-    }
-    Set<WebSocketSession> chatRoomSession = chatRoomSessionMap.get(chatRoomId);
-
-    // message 타입 확인
-    if(chatMessage.getType().equals(ChatMessageDto.MessageType.ENTER)) {
-      log.info("{}님이 {}번 방에 입장", chatMessage.getUserNickname(), chatMessage.getPartyId());
-      chatRoomSession.add(session);
-    } else if(chatMessage.getType().equals(ChatMessageDto.MessageType.OUT)) {
-      log.info("{}님이 {}번 방에서 퇴장", chatMessage.getUserId(), chatMessage.getPartyId());
-      chatRoomSession.remove(session);
-      removeClosedSession(chatRoomSession);
-    } else {
-      sendMessageToChatRoom(chatMessage, chatRoomSession);
-      chatService.saveMessage(chatMessage);
-    }
-
-  }
-
-  // 소켓 종료 확인
-  @Override
-  public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-    log.info("{} 연결 끊김", session.getId());
-    sessions.remove(session);
-  }
-
-  // 채팅 관련 메소드
-  private void removeClosedSession(Set<WebSocketSession> chatRoomSession) {
-    chatRoomSession.removeIf(session -> !sessions.contains(session));
-  }
-
-  private void sendMessageToChatRoom(ChatMessageDto chatMessageDto, Set<WebSocketSession> chatRoomSession) {
-    chatRoomSession.parallelStream().forEach(s -> sendMessage(s, chatMessageDto));
-  }
-
-  private <T> void sendMessage(WebSocketSession session, T message) {
     try {
-      session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-    } catch(IOException e) {
-      log.error(e.getMessage(), e);
+      JsonNode jsonNode = om.readTree(payload);
+      String messageType = jsonNode.get("type").asText();
+      if (messageType.equals("message")) {
+        sendMessage(jsonNode, userId, room);
+      } else {
+        log.warn("Unknown message type received: {}", messageType);
+      }
+    } catch (Exception e) {
+      log.error("Error processing message: ", e);
     }
+  }
+
+  private void sendMessage(JsonNode jsonNode, String userId, Room room) throws IOException {
+    SocketDto fromDto = room.getSessionByUserId(Integer.parseInt(userId));
+    log.info("partyId={}", room.getId());
+
+    ChatMessageRequest request = om.treeToValue(jsonNode, ChatMessageRequest.class);
+    LocalDateTime now = LocalDateTime.now();
+    ChatMessageResponse response = ChatMessageResponse.of(request, now, Integer.parseInt(userId),
+        fromDto.getUserNickname(), fromDto.getUserProfile());
+    TextMessage textMessage = new TextMessage(om.writeValueAsString(response));
+    // 메시지 저장
+    chatService.saveMessage(now, room.getId(), response);
+
+    room.getSessions().forEach((integer, socketDto) -> {
+      WebSocketSession connectedSession=socketDto.getSession();
+      log.info("message={}",textMessage);
+      try {
+        connectedSession.sendMessage(textMessage);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  @Override
+  public void afterConnectionClosed(WebSocketSession session,
+      CloseStatus status) throws JsonProcessingException {
+    int userId = Integer.parseInt(session.getHandshakeHeaders().get("userId").get(0));
+    Integer roomId = getRoomId(session);
+
+    roomRepository.room(roomId).removeSessionByUserId(userId);
+    log.info("특정 클라이언트와의 연결이 해제되었습니다. partyId={}, userId={}",roomId,userId);
+  }
+
+  //세션 url에서 roomId가져옴
+  private Integer getRoomId(WebSocketSession session) {
+    return Integer.parseInt(
+        session.getAttributes()
+            .get("roomId")
+            .toString()
+    );
   }
 
 }
