@@ -44,7 +44,6 @@ public class FcmUtils {
             AlarmData alarmData = new AlarmData(reqDto.getTitle(), reqDto.getContent());
             String alarmDataJson = om.writeValueAsString(alarmData);
             message = Message.builder()
-                    .setNotification(null)
                     .setToken(receiver.getFcmToken())
                     .putData("data",alarmDataJson)
                     .build();
