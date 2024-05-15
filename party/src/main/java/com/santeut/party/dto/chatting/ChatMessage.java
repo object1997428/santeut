@@ -27,16 +27,6 @@ public class ChatMessage {
   private String content;  // 메시지 내용
   private LocalDateTime createdAt; // 전송 시각
 
-
-  public static ChatMessage from(ChatMessageDto chatMessageDto) {
-    return ChatMessage.builder()
-        .partyId(chatMessageDto.getPartyId())
-        .userId(chatMessageDto.getUserId())
-        .content(chatMessageDto.getContent())
-        .createdAt(LocalDateTime.now())
-        .build();
-  }
-
   public static ChatMessage of(LocalDateTime time, int partyId, int userId, String content) {
     return ChatMessage.builder()
         .partyId(partyId)
