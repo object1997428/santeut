@@ -1,5 +1,6 @@
 package com.santeut.common.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.response.BasicResponse;
 import com.santeut.common.common.util.ResponseUtil;
 import com.santeut.common.dto.response.CommentListResponseDto;
@@ -42,7 +43,7 @@ public class LikeController {
 
     // 좋아요 누르기 ( CREATE )
     @GetMapping("/{postId}/{postType}")
-    public ResponseEntity<BasicResponse> hitLike(@PathVariable Integer postId, @PathVariable Character postType, @RequestHeader int userId) {
+    public ResponseEntity<BasicResponse> hitLike(@PathVariable Integer postId, @PathVariable Character postType, @RequestHeader int userId) throws JsonProcessingException {
         likeService.hitLike(postId, postType, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "성공적으로 좋아요를 눌렀습니다.");
     }

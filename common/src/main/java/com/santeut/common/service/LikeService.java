@@ -1,5 +1,6 @@
 package com.santeut.common.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.exception.AccessDeniedException;
 import com.santeut.common.common.exception.DataNotFoundException;
 import com.santeut.common.common.exception.FeignClientException;
@@ -45,7 +46,7 @@ public class LikeService {
     }
 
     // 좋아요 누르기
-    public void hitLike(Integer postId, Character postType, int userId) {
+    public void hitLike(Integer postId, Character postType, int userId) throws JsonProcessingException {
 
         if(likeRepository.countByUserIdAndLikeReferenceIdAndLikeReferenceType(userId,postId,postType) > 0) throw new AccessDeniedException("이미 좋아요를 눌렀습니다.");
 

@@ -1,5 +1,6 @@
 package com.santeut.common.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.response.BasicResponse;
 import com.santeut.common.common.util.ResponseUtil;
 import com.santeut.common.dto.request.AlarmRequestDto;
@@ -21,7 +22,7 @@ public class AlarmController {
 
     // 알람 작성 하기 ( CREATE )
     @PostMapping("/{referenceId}/{referenceType}")
-    public ResponseEntity<BasicResponse> createAlarm(@PathVariable Integer referenceId, @PathVariable String referenceType, @RequestBody AlarmRequestDto alarmRequestDto) {
+    public ResponseEntity<BasicResponse> createAlarm(@PathVariable Integer referenceId, @PathVariable String referenceType, @RequestBody AlarmRequestDto alarmRequestDto) throws JsonProcessingException {
         alarmService.createAlarm(referenceId, referenceType, alarmRequestDto);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "알람이 성공적으로 생성되었습니다.");
     }
@@ -42,7 +43,7 @@ public class AlarmController {
 
     //알림 생성하기
     @PostMapping
-    ResponseEntity<?> alertHiking(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest){
+    ResponseEntity<?> alertHiking(@RequestBody CommonHikingStartFeignRequest hikingStartFeignRequest) throws JsonProcessingException {
         alarmService.sendAlarm(hikingStartFeignRequest);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "알람이 성공적으로 생성되었습니다.");
     }

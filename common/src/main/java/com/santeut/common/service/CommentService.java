@@ -1,5 +1,6 @@
 package com.santeut.common.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.exception.*;
 import com.santeut.common.dto.request.AlarmRequestDto;
 import com.santeut.common.dto.request.CommunityFeignDto;
@@ -36,7 +37,7 @@ public class CommentService {
 
     // 댓글 작성 (CREATE)
     @Transactional
-    public void createComment(int postId, char postType, String commentContent, int userId) {
+    public void createComment(int postId, char postType, String commentContent, int userId) throws JsonProcessingException {
             CommentEntity comment = commentRepository.save(CommentEntity.builder()
                     .commentReferenceType(postType)
                     .commentReferenceId(postId)

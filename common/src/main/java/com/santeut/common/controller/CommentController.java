@@ -1,5 +1,6 @@
 package com.santeut.common.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.response.BasicResponse;
 import com.santeut.common.common.util.ResponseUtil;
 import com.santeut.common.dto.response.CommentListResponseDto;
@@ -36,7 +37,7 @@ public class CommentController {
             @RequestBody Map<String,String> commentContent,
             @PathVariable Integer postId, @PathVariable Character postType,
             @RequestHeader int userId
-            ) {
+            ) throws JsonProcessingException {
         commentService.createComment(postId, postType, commentContent.get("commentContent"), userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.CREATED, "댓글 작성 성공적으로 수행됨.");
     }

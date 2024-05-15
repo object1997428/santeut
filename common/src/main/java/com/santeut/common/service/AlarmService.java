@@ -1,5 +1,6 @@
 package com.santeut.common.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.exception.AccessDeniedException;
 import com.santeut.common.common.util.FcmUtils;
 import com.santeut.common.common.util.GeoUtils;
@@ -36,7 +37,7 @@ public class AlarmService {
     private final SafetyAlertRepository safetyAlertRepository;
     private final FcmUtils fcmUtils;
 
-    public void createAlarm(Integer referenceId, String referenceType, AlarmRequestDto alarmRequestDto) {
+    public void createAlarm(Integer referenceId, String referenceType, AlarmRequestDto alarmRequestDto) throws JsonProcessingException {
         AlarmEntity alarmEntity = AlarmEntity.builder()
                 .userId(alarmRequestDto.getUserId())
                 .referenceType(referenceType)
@@ -64,7 +65,7 @@ public class AlarmService {
     }
 
     @Transactional
-    public void sendAlarm(CommonHikingStartFeignRequest alertRequest) {
+    public void sendAlarm(CommonHikingStartFeignRequest alertRequest) throws JsonProcessingException {
         List<AlarmTokenEntity> alarmTokenList = alarmTokenRepository.findByIdIn(alertRequest.getTargetUserIds());
         log.info("[Alarm Server][sendAlarm()-- alertRequest.getMessage()={}]", alertRequest.getMessage());
         log.info("getAlamType={}",alertRequest.getAlamType());
