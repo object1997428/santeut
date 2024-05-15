@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.santeut.MainApplication
+import com.santeut.data.di.RemoteModule
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.domain.usecase.ChatUseCase
@@ -14,7 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -74,7 +74,7 @@ class ChatViewModel @Inject constructor (
     }
 
     // web socket
-    private val okHttpClient = OkHttpClient()
+    private val okHttpClient = RemoteModule.provideWebSocketClient()
     private var webSocket: WebSocket? = null
 
     private val _isConnected = MutableStateFlow(false)

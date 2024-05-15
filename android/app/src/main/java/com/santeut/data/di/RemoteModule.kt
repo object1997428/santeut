@@ -20,9 +20,9 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -110,4 +110,15 @@ object RemoteModule {
     @Singleton
     fun provideChatApiService(@Named("retrofit") retrofit: Retrofit) =
         retrofit.create(ChatApiService::class.java)
+
+
+    @Provides
+    @Singleton
+    @WebSocketClient
+    fun provideWebSocketClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .pingInterval(30, TimeUnit.SECONDS)
+            .build()
 }
