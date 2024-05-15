@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -58,6 +59,13 @@ fun ChatScreen(
 
     LaunchedEffect(key1 = partyId) {
         chatViewModel.getChatMessageList(partyId)
+        chatViewModel.connect(partyId)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            chatViewModel.disconnect()
+        }
     }
 
     Scaffold(modifier = Modifier.fillMaxSize(),
@@ -82,7 +90,7 @@ fun ChatScreen(
                         }
                     }
                 }
-                ChatBox()
+                ChatBox(chatViewModel)
             }
         }
     )
@@ -101,7 +109,8 @@ fun ChatMessage(message: ChatMessage) {
                 .width(40.dp)
                 .height(40.dp)
                 .clip(CircleShape)
-                .border(BorderStroke(1.dp, Green),
+                .border(
+                    BorderStroke(1.dp, Green),
                     CircleShape
                 )
             ,
@@ -151,12 +160,15 @@ fun ChatMessage(message: ChatMessage) {
 }
 
 @Composable
-fun ChatBox() {
+fun ChatBox(
+    chatViewModel: ChatViewModel
+) {
     var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
     var chatBoxValueHasValue = chatBoxValue.text.isNotEmpty()
 
     OutlinedTextField(
-        modifier = Modifier.padding(8.dp, 4.dp)
+        modifier = Modifier
+            .padding(8.dp, 4.dp)
             .fillMaxWidth(),
         value = chatBoxValue,
         onValueChange = { chatBoxValue = it },
@@ -167,7 +179,14 @@ fun ChatBox() {
                     onClick = {
                         // send
                         Log.d("SEND", chatBoxValue.text)
-                        chatBoxValue = TextFieldValue("") // 채팅창 내용 초기화
+                        chatViewModel.sendMessage(
+                            Message(
+                                chatBoxValue.text,
+                                "message"
+                            )
+                        )
+                        // 채팅창 내용 초기화
+                        chatBoxValue = TextFieldValue("")
                     }
                 ) {
                     Icon(

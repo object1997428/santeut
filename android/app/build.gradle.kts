@@ -119,4 +119,8 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+
 }
