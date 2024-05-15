@@ -16,17 +16,19 @@ public class ChatMessageListResponse {
   @Data
   @Builder
   public static class ChatMessageInfoDto {
+    public int userId;
     public String createdAt;
-    public String senderNickname;
-    public String senderProfile;
+    public String userNickname;
+    public String userProfile;
     public String content;
 
-    public static ChatMessageInfoDto of(LocalDateTime createdAt, String senderNickname,
-        String senderProfile, String content) {
+    public static ChatMessageInfoDto of(int userId, LocalDateTime createdAt, String userNickname,
+        String userProfile, String content) {
       return ChatMessageInfoDto.builder()
+          .userId(userId)
           .createdAt(createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-          .senderNickname(senderNickname)
-          .senderProfile(senderProfile)
+          .userNickname(userNickname)
+          .userProfile(userProfile)
           .content(content)
           .build();
     }
