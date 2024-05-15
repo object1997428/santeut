@@ -101,9 +101,11 @@ fun ChatMessage(message: ChatMessage) {
     Row(
         modifier = Modifier.padding(16.dp, 8.dp)
     ) {
-
+        if(message.userProfile != null &&message.userProfile.equals("null")) {
+            message.userProfile.let { message.userProfile = null}
+        }
         AsyncImage(
-            model = message.senderProfile ?: R.drawable.logo,
+            model = message.userProfile ?: R.drawable.logo,
             contentDescription = "프로필 이미지",
             modifier = Modifier
                 .width(40.dp)
@@ -122,7 +124,7 @@ fun ChatMessage(message: ChatMessage) {
                 .padding(8.dp, 0.dp, 0.dp, 0.dp)
         ) {
             Text(
-                message.senderNickname,
+                message.userNickname,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
             )

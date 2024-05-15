@@ -20,8 +20,9 @@ data class ChatRoomResponse(
 )
 
 data class ChatMessage(
+    // @SerializedName("userId") val userId: Int,
     @SerializedName("createdAt") val createdAt: String,
-    @SerializedName("senderNickname") val senderNickname: String,
-    @SerializedName("senderProfile") val senderProfile: String?,
+    @SerializedName("userNickname") val userNickname: String,
+    @SerializedName("userProfile") var userProfile: String?,
     @SerializedName("content") val content: String
 )
