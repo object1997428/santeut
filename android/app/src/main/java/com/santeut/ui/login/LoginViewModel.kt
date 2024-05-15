@@ -8,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.wearable.Wearable
 import com.santeut.MainApplication
 import com.santeut.data.model.request.FCMTokenRequest
 import com.santeut.data.model.request.LoginRequest

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.santeut.data.model.response.CourseDetailRespnse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainResponse
@@ -29,6 +30,10 @@ class MountainViewModel @Inject constructor(
 
     private val _courseList = MutableLiveData<List<HikingCourseResponse>>()
     val courseList: LiveData<List<HikingCourseResponse>> = _courseList
+
+    private val _pathList = MutableLiveData<List<CourseDetailRespnse>>()
+    val pathList: LiveData<List<CourseDetailRespnse>> = _pathList
+
 
     fun popularMountain() {
         viewModelScope.launch {
@@ -71,6 +76,18 @@ class MountainViewModel @Inject constructor(
             try {
                 mountainUseCase.getHikingCourseList(mountainId).let {
                     _courseList.postValue(mountainUseCase.getHikingCourseList(mountainId))
+                }
+            } catch (e: Exception) {
+                _error.postValue("코스 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun setPathList(mountainId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                mountainUseCase.getAllCourses(mountainId).let {
+                    _pathList.postValue(mountainUseCase.getAllCourses(mountainId))
                 }
             } catch (e: Exception) {
                 _error.postValue("코스 목록 조회 실패: ${e.message}")

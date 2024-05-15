@@ -24,7 +24,9 @@ interface PartyApiService {
     @GET("/api/party/user")
     suspend fun getMyPartyList(
         @Query("date") date: String?,
-        @Query("includeEnd") includeEnd: Boolean
+        @Query("includeEnd") includeEnd: Boolean,
+        @Query("page") page: Int?,
+        @Query("size") size: Int?
     ): CustomResponse<MyPartyListResponse>
 
     @POST("/api/party/")

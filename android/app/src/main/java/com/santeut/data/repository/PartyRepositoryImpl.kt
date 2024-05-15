@@ -36,10 +36,12 @@ class PartyRepositoryImpl @Inject constructor(
 
     override suspend fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean
+        includeEnd: Boolean,
+        page: Int?,
+        size: Int?
     ): List<MyPartyResponse> {
         return try {
-            val response = partyApiService.getMyPartyList(date, includeEnd)
+            val response = partyApiService.getMyPartyList(date, includeEnd, page, size)
             if (response.status == "200") {
                 response.data.partyList ?: emptyList()
             } else {

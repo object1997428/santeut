@@ -1,15 +1,18 @@
+@file:OptIn(ExperimentalNaverMapApi::class)
+
 package com.santeut.ui.mountain
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,9 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,12 +34,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapProperties
+import com.naver.maps.map.compose.MapType
+import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.PathOverlay
+import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
+import com.santeut.data.model.response.CourseDetailRespnse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -53,10 +61,13 @@ fun MountainScreen(
 
     val mountain by mountainViewModel.mountain.observeAsState()
     val courseList by mountainViewModel.courseList.observeAsState(emptyList())
+    val pathData by mountainViewModel.pathList.observeAsState(listOf())
+
 
     LaunchedEffect(key1 = mountainId) {
         mountainViewModel.mountainDetail(mountainId)
         mountainViewModel.getHikingCourseList(mountainId)
+        mountainViewModel.setPathList(mountainId)
     }
 
     Scaffold {
@@ -91,7 +102,7 @@ fun MountainScreen(
             }
 
             when (selectedTab) {
-                0 -> item { HikingCourse(mountain?.courseCount ?: 0, courseList) }
+                0 -> item { HikingCourse(mountain?.courseCount ?: 0, courseList, pathData)  }
                 1 -> item { MountainWeather(mountain) }
             }
         }
@@ -128,9 +139,38 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
 }
 
 @Composable
-fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>) {
+fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>, pathData: List<CourseDetailRespnse>) {
 
-    /* 등산 코스 지도 자리 */
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 15.0)
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        NaverMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            properties = MapProperties(
+                locationTrackingMode = LocationTrackingMode.Follow,
+                mapType = MapType.Terrain,
+                isMountainLayerGroupEnabled = true
+            )
+        ) {
+            pathData.forEach { courseDetail ->
+                val path = courseDetail.locationDataList.map { LatLng(it.lat, it.lng) }
+                if (path.size >= 2) {
+                    PathOverlay(
+                        coords = path,
+                        width = 3.dp,
+                        color = Color.Green,
+                        outlineWidth = 1.dp,
+                        outlineColor = Color.Red,
+                        tag = courseDetail.courseId
+                    )
+                    Log.d("제발","${pathData}")
+                }
+            }
+        }
+    }
 
     Column {
         Row {
