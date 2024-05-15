@@ -29,17 +29,17 @@ class ChatRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun getChatMessageList(partyId: Int): List<ChatMessage> {
+    override suspend fun getChatMessageList(partyId: Int): MutableList<ChatMessage> {
         return try {
             val response = chatApiService.getChatMessageList(partyId)
             if(response.status=="200") {
-                response.data.chatMessageList ?: emptyList()
+                response.data.chatMessageList.toMutableList() ?: mutableListOf()
             } else {
                 Log.e(
                     "ChatRepository",
                     "채팅방 대화내용 조회 실패: ${response.status} - ${response.data}"
                 )
-                emptyList()
+                mutableListOf()
             }
         } catch (e: Exception) {
             Log.e("ChatRepository", "Network error while fetching get: ${e.message}", e)

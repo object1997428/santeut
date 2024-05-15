@@ -33,15 +33,8 @@ class ChatViewModel @Inject constructor (
     private val _chatrooms = MutableLiveData<List<ChatRoomInfo>>()
     val chatrooms: LiveData<List<ChatRoomInfo>> = _chatrooms
 
-//    private val _chatmessages = MutableLiveData<MutableList<ChatMessage>>()
-    private val _chatmessages = MutableLiveData<MutableList<ChatMessage>>()
+    private val _chatmessages = MutableLiveData<MutableList<ChatMessage>>(mutableListOf())
     val chatmessages: LiveData<MutableList<ChatMessage>> = _chatmessages
-//    val chatmessages = _chatmessages.value ?: mutableListOf()
-
-//    private val chatService = ChatService()
-////    val socketStatus = chatService.isConnected
-
-
 
     fun getChatRoomList() {
         viewModelScope.launch {
@@ -59,12 +52,25 @@ class ChatViewModel @Inject constructor (
         viewModelScope.launch {
             try {
                     chatUseCase.getChatMessageList(partyId).let {
-                    _chatmessages.postValue(chatUseCase.getChatMessageList(partyId).toMutableList())
+                        _chatmessages.postValue(it)
                 }
             } catch(e: Exception) {
                 _error.value = "Failed to load chat messages(party: ${partyId}): ${e.message}}"
             }
         }
+    }
+
+    private fun <E> MutableLiveData<MutableList<E>>.setList(element: E?) {
+        val tempList: MutableList<E> = mutableListOf()
+        this.value.let {
+            if(it != null) {
+                tempList.addAll(it)
+            }
+        }
+        if(element != null) {
+            tempList.add(element)
+        }
+        this.postValue(tempList)
     }
 
     // web socket
@@ -86,14 +92,14 @@ class ChatViewModel @Inject constructor (
             var json: JSONObject? = null
             json = JSONObject(text)
 
-            Log.d("SENDER: ", "${json.get("userId")}번 유저: ${json.get("userNickname").toString()}, ${json.get("userProfile").toString()}, ${json.get("content").toString()}")
+            Log.d("SENDER: ", "${json.get("userId")}번 유저: ${json.get("userNickname")}, ${json.get("userProfile")}, ${json.get("content")}")
             var msg = ChatMessage(
                 json.get("createdAt").toString(),
                 json.get("userNickname").toString(),
                 json.get("userProfile").toString(),
                 json.get("content").toString()
             )
-//            addChatMessage(msg) // 안됨
+            _chatmessages.setList(msg);
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -107,7 +113,7 @@ class ChatViewModel @Inject constructor (
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             Log.d("웹소켓 리스너", "onFailure")
-            Log.d("onFailure", "${webSocket.toString()}/ $t/ $response")
+            Log.d("onFailure", "${webSocket}/ $t/ $response")
         }
     }
 
@@ -115,10 +121,8 @@ class ChatViewModel @Inject constructor (
         val webSocketUrl =
             "wss://k10e201.p.ssafy.io/api/party/ws/chat/room/${partyId}"
 
-        val token = MainApplication.sharedPreferencesUtil.getAccessToken()
-
         val request:Request = Request.Builder()
-            .header("Authorization", "Bearer ${token}")
+            .header("Authorization", "Bearer ${MainApplication.sharedPreferencesUtil.getAccessToken()}")
             .url(webSocketUrl)
             .build()
         webSocket = okHttpClient.newWebSocket(request, webSocketListener)
@@ -143,22 +147,4 @@ class ChatViewModel @Inject constructor (
             }
         }
     }
-
-    fun addChatMessage(message: ChatMessage) {
-//        chatmessages.add(message)
-//        _chatmessages.value = chatmessages
-
-//        var tempList = _chatmessages.value
-//        Log.d("addChatMessage", tempList.toString())
-//        if (tempList != null) {
-//            Log.d("tempList","not null")
-//            chatmessages.value?.let { tempList.addAll(it) }
-//        }
-//        _chatmessages.value = tempList?: mutableListOf()
-
-        _chatmessages.value?.add(message)
-        _chatmessages.value = _chatmessages.value
-
-    }
-
 }

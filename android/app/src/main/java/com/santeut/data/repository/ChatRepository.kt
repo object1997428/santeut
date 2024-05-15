@@ -8,5 +8,5 @@ interface ChatRepository {
 
     suspend fun getChatList(): List<ChatRoomInfo>
 
-    suspend fun getChatMessageList(partyId: Int): List<ChatMessage>
+    suspend fun getChatMessageList(partyId: Int): MutableList<ChatMessage>
 }
