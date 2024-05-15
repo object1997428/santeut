@@ -55,12 +55,8 @@ public class ChatServiceImpl implements ChatService {
 
   @Override
   public void saveMessage(LocalDateTime time, int partyId, ChatMessageResponse message) {
-    chatMessageRepository.save(ChatMessage.builder()
-        .partyId(partyId)
-        .userId(message.getUserId())
-        .content(message.getContent())
-        .createdAt(time)
-        .build());
+    chatMessageRepository.save(
+        ChatMessage.of(time, partyId, message.getUserId(), message.getContent()));
   }
 
   @Override

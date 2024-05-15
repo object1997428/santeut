@@ -38,4 +38,14 @@ public class ChatMessage {
         .build();
   }
 
+  public static ChatMessage of(LocalDateTime time, int partyId, int userId, String content) {
+    return ChatMessage.builder()
+        .id(CollectionIdGenerator.generateId())
+        .partyId(partyId)
+        .userId(userId)
+        .content(content)
+        .createdAt(time)
+        .build();
+  }
+
 }

@@ -17,7 +17,7 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Long
 
   @Aggregation(pipeline = {
       "{'$match':  {'partyId': ?0}}",
-      "{'$sort':  {'createdAt': 1}}",
+      "{'$sort':  {'createdAt': -1}}",
   })
   List<ChatMessage> findAllBy(int partyId);
 
