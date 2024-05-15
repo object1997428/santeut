@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
@@ -48,7 +48,7 @@ import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun ChatScreen(
     partyId: Int,
@@ -56,10 +56,14 @@ fun ChatScreen(
 ) {
 
     val chatmessages by chatViewModel.chatmessages.observeAsState(emptyList())
+    val listState = rememberLazyListState()
 
-    LaunchedEffect(key1 = partyId) {
+    LaunchedEffect(key1 = partyId, key2 = chatmessages.size) {
         chatViewModel.getChatMessageList(partyId)
         chatViewModel.connect(partyId)
+        if(chatmessages.isNotEmpty()) {
+            listState.scrollToItem(chatmessages.size-1)
+        }
     }
 
     DisposableEffect(Unit) {
@@ -81,7 +85,7 @@ fun ChatScreen(
                         modifier = Modifier
                             .fillMaxWidth(),
                         reverseLayout = false,
-                        state = LazyListState(firstVisibleItemIndex = 0)
+                        state = listState
                     ) {
                         chatmessages.forEach {
                             item {
