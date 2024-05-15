@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ChatMessage {
 
   @Id
-  private Long id;
+  private String id;
   @Indexed
   private int partyId;    // 소모임 id
   private int userId;     // 전송자 유저 id
@@ -30,7 +30,6 @@ public class ChatMessage {
 
   public static ChatMessage from(ChatMessageDto chatMessageDto) {
     return ChatMessage.builder()
-        .id(CollectionIdGenerator.generateId())
         .partyId(chatMessageDto.getPartyId())
         .userId(chatMessageDto.getUserId())
         .content(chatMessageDto.getContent())
@@ -40,7 +39,6 @@ public class ChatMessage {
 
   public static ChatMessage of(LocalDateTime time, int partyId, int userId, String content) {
     return ChatMessage.builder()
-        .id(CollectionIdGenerator.generateId())
         .partyId(partyId)
         .userId(userId)
         .content(content)
