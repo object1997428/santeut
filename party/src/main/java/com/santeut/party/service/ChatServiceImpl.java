@@ -3,6 +3,7 @@ package com.santeut.party.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.party.dto.chatting.ChatMessage;
 import com.santeut.party.dto.chatting.ChatMessageDto;
+import com.santeut.party.dto.chatting.ChatMessageResponse;
 import com.santeut.party.dto.response.ChatMessageListResponse;
 import com.santeut.party.dto.response.ChatMessageListResponse.ChatMessageInfoDto;
 import com.santeut.party.dto.response.ChatRoomListResponse;
@@ -50,6 +51,16 @@ public class ChatServiceImpl implements ChatService {
   @Override
   public void saveMessage(ChatMessageDto messageDto) {
     chatMessageRepository.save(ChatMessage.from(messageDto));
+  }
+
+  @Override
+  public void saveMessage(LocalDateTime time, int partyId, ChatMessageResponse message) {
+    chatMessageRepository.save(ChatMessage.builder()
+        .partyId(partyId)
+        .userId(message.getUserId())
+        .content(message.getContent())
+        .createdAt(time)
+        .build());
   }
 
   @Override
