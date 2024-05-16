@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -83,4 +85,12 @@ dependencies {
     //rx
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    // 경로설정
+    implementation ("org.locationtech.jts:jts-core:1.18.2")
+
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 }

@@ -307,4 +307,5 @@
         <item>일본어(ja-JP)</item>
         <item>중국어(zh-CN)</item>
     </string-array>
+    <string name="msg_token_fmt">FCM Registration Token: %s</string>
 </resources>
