@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -102,7 +103,10 @@ fun ApplyRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
             AsyncImage(
                 model = apply.userProfile ?: R.drawable.logo,
                 contentDescription = "회원 프로필 사진",
@@ -111,9 +115,7 @@ fun ApplyRow(
                     .clip(CircleShape)
             )
             Spacer(Modifier.width(16.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth() // 공간을 적절히 분배하기 위해 추가
-            ) {
+            Column {
                 Text(
                     text = apply.userNickname,
                     style = MaterialTheme.typography.bodyLarge,
@@ -127,13 +129,22 @@ fun ApplyRow(
             }
         }
 
-        Row {
-            Button(onClick = { guildViewModel.denyMember(guild.guildId, apply.userId) }) {
-                Text(text = "거절하기")
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.padding(start = 8.dp)
+        ) {
+            Button(
+                onClick = { guildViewModel.denyMember(guild.guildId, apply.userId) },
+                colors = ButtonDefaults.buttonColors(Color.Red)
+            ) {
+                Text(text = "거절")
             }
             Spacer(Modifier.width(8.dp))
-            Button(onClick = { guildViewModel.approveMember(guild.guildId, apply.userId) }) {
-                Text(text = "승인하기")
+            Button(
+                onClick = { guildViewModel.approveMember(guild.guildId, apply.userId) },
+                colors = ButtonDefaults.buttonColors(Color(0xFF678C40))
+            ) {
+                Text(text = "승인")
             }
         }
     }
