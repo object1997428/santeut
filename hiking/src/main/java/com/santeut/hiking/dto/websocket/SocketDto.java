@@ -13,5 +13,6 @@ import org.springframework.web.socket.WebSocketSession;
 public class SocketDto {
     private int userId;
     private String userNickname;
+    private String userProfile;
     private WebSocketSession session;
 }

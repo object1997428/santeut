@@ -16,6 +16,7 @@ public class GetUserInfoResponse {
     private int userId;
     private String userLoginId;
     private String userNickname;
+    private String userProfile;
 
 }
 

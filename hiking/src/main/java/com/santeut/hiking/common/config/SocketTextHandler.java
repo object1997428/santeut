@@ -43,19 +43,21 @@ public class SocketTextHandler extends TextWebSocketHandler {
         log.info("roomId={}",roomId);
 
         //Auth서버한테 유저 정보 요청
-        String userNickname="";
+        String userNickname="",userProfile="";
         log.info("[Hiking Server][Auth request url: /api/auth/user/{userId}");
         Optional<FeignResponseDto<GetUserInfoResponse>> responseEntity = hikingAuthClient.userInfo(userId);
         log.info("[Hiking Server][Auth response ={}",responseEntity);
         if (responseEntity != null && responseEntity.get().getData() != null) {
             GetUserInfoResponse userInfo = om.convertValue(responseEntity.get().getData(), GetUserInfoResponse.class);
             userNickname = userInfo.getUserNickname();
+            userProfile=userInfo.getUserProfile();
             log.info("[Party Server] Auth 한테 유저 정보 응답 받음 userInfo={}", userInfo);
         }
 
         SocketDto socketDto = SocketDto.builder()
                 .userId(userId)
                 .userNickname(userNickname)
+                .userProfile(userProfile)
                 .session(session)
                 .build();
         //이미 userId가 존재하면 제거하고 새로 넣기
@@ -100,7 +102,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
         SocketDto fromDto = room.getSessionByUserId(Integer.parseInt(userId));
         log.info("partyId={}",room.getId());
         LocationRequestMessage locationDto = om.treeToValue(jsonNode, LocationRequestMessage.class);
-        LocationResponseMessage locationRspDto = LocationResponseMessage.fromRequestDto(locationDto,Integer.parseInt(userId),fromDto.getUserNickname());
+        LocationResponseMessage locationRspDto = LocationResponseMessage.fromRequestDto(locationDto,Integer.parseInt(userId),fromDto.getUserNickname(),fromDto.getUserProfile());
         locationSaveService.locationSave(locationRspDto,room.getId());
         String responsePayload = om.writeValueAsString(locationRspDto);
         TextMessage textMessage = new TextMessage(responsePayload);
