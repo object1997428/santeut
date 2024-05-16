@@ -62,17 +62,15 @@ import com.santeut.ui.guild.regionName
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun JoinGuildScreen(
-    navController: NavController,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = null) {
         guildViewModel.getGuilds()
     }
     Column {
         // 검색 필드
-
         var name by remember { mutableStateOf("") }
         Row(
             modifier = Modifier
@@ -190,8 +188,10 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 5.dp, top = 5.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 5.dp, top = 5.dp)
+                )
                 {
                     Icon(
                         imageVector = Icons.Filled.PersonOutline,
@@ -208,7 +208,10 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                 }
 //                --------------------------
 
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 10.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Filled.PinDrop,
                         contentDescription = "지역",

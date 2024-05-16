@@ -37,16 +37,21 @@ fun CommunityScreen(
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
-                backgroundColor =Color.White,
+                backgroundColor = Color.White,
                 divider = {},
                 indicator = { tabPositions ->
-                    Canvas(modifier = Modifier
-                        .pagerTabIndicatorOffset(pagerState, tabPositions)
-                        .fillMaxWidth()
-                        .height(2.dp)) {
+                    Canvas(
+                        modifier = Modifier
+                            .pagerTabIndicatorOffset(pagerState, tabPositions)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                    ) {
                         drawRoundRect(
                             color = Color(0xff678C40),
-                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx())
+                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(
+                                x = 10.dp.toPx(),
+                                y = 10.dp.toPx()
+                            )
                         )
                     }
                 }
@@ -54,8 +59,11 @@ fun CommunityScreen(
                 pages.forEachIndexed { index, title ->
                     Tab(
                         text = {
-                            Text(text = title,
-                                color = if (pagerState.currentPage == index)  Color(0xff678C40) else Color(0xff666E7A),
+                            Text(
+                                text = title,
+                                color = if (pagerState.currentPage == index) Color(0xff678C40) else Color(
+                                    0xff666E7A
+                                ),
                             )
                         },
                         selected = pagerState.currentPage == index,
@@ -74,7 +82,7 @@ fun CommunityScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> JoinGuildScreen(navController)
+                    0 -> JoinGuildScreen()
                     1 -> JoinPartyScreen(null)
                     2 -> PostTipsScreen(navController)
                     3 -> PostCourseScreen()
