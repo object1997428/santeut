@@ -46,7 +46,7 @@ fun TopBar(
     val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     when (currentTap) {
         "home" -> HomeTopBar(navController)
-        "community" -> DefaultTopBar(navController, "커뮤니티")
+        "community/{initialPage}", "community" -> DefaultTopBar(navController, "커뮤니티")
         "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
         "chatList" -> SimpleTopBar(navController, "채팅방")
