@@ -3,6 +3,7 @@ package com.santeut.ui.guild
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -244,14 +245,31 @@ fun CreateGuildScreen(
     }
 }
 
+private fun getFileNameWithExtension(context: Context, uri: Uri): String {
+    val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
+    val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: ""
+    val fileName = uri.lastPathSegment ?: "upload"
+    return if (extension.isNotEmpty()) {
+        "$fileName.$extension"
+    } else {
+        fileName
+    }
+}
+
 private fun createMultiPartBody(uri: Uri?, context: Context): MultipartBody.Part? {
     var guildProfile: MultipartBody.Part? = null
     if (uri != null) {
         try {
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val mimeType =
-                    context.contentResolver.getType(uri) ?: "application/octet-stream"
-                val fileName = uri.lastPathSegment ?: "upload.file"
+                val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
+                val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: ""
+                val fileName = uri.lastPathSegment?.let {
+                    if (extension.isNotEmpty()) {
+                        "$it.$extension"
+                    } else {
+                        it
+                    }
+                } ?: "upload.file"
                 val byteArray = inputStream.readBytes()
                 val requestBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull())
                 guildProfile =
