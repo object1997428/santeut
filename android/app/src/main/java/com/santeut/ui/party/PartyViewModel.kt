@@ -29,6 +29,9 @@ class PartyViewModel @Inject constructor(
     private val _partyList = MutableLiveData<List<PartyResponse>>()
     val partyList: LiveData<List<PartyResponse>> = _partyList
 
+    private val _party = MutableLiveData<PartyResponse>()
+    val party: LiveData<PartyResponse> = _party
+
     private val _myPartyList = MutableLiveData<List<MyPartyResponse>>()
     val myPartyList: LiveData<List<MyPartyResponse>> = _myPartyList
 
@@ -51,6 +54,16 @@ class PartyViewModel @Inject constructor(
                 Log.d("PartyViewModel", _partyList.value?.size.toString())
             } catch (e: Exception) {
                 _error.postValue("소모임 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getParty(partyId: Int){
+        viewModelScope.launch {
+            try {
+                _party.postValue(partyUseCase.getParty(partyId))
+            } catch (e: Exception) {
+                _error.postValue("소모임 조회 실패: ${e.message}")
             }
         }
     }

@@ -9,6 +9,7 @@ import com.santeut.data.model.response.MyPartyListResponse
 import com.santeut.data.model.response.MyRecordListResponse
 import com.santeut.data.model.response.MyScheduleList
 import com.santeut.data.model.response.PartyListResponse
+import com.santeut.data.model.response.PartyResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -25,6 +26,11 @@ interface PartyApiService {
         @Query("start") start: String?,
         @Query("end") end: String?
     ): CustomResponse<PartyListResponse>
+
+    @GET("/api/party/{partyId}")
+    suspend fun getParty(
+        @Path("partyId") partyId: Int
+    ): CustomResponse<PartyResponse>
 
     @GET("/api/party/user")
     suspend fun getMyPartyList(

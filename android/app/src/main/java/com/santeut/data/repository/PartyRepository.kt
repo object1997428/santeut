@@ -23,6 +23,10 @@ interface PartyRepository {
         end: String?
     ): List<PartyResponse>
 
+    suspend fun getParty(
+        partyId: Int
+    ): PartyResponse
+
     suspend fun getMyPartyList(
         date: String?,
         includeEnd: Boolean,
