@@ -1,6 +1,5 @@
 package com.santeut.ui.community.party
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,17 +20,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,11 +43,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.data.model.response.PartyResponse
+import com.santeut.designsystem.theme.DarkGreen
+import com.santeut.designsystem.theme.Green
 import com.santeut.ui.party.PartyViewModel
 
 @Composable
@@ -89,7 +92,7 @@ fun JoinPartyScreen(
                             .align(alignment = Alignment.CenterHorizontally)
                     ) {
                         items(partyList) { party ->
-                            PartyCard(party)
+                            PartyCard(party, partyViewModel)
                         }
                     }
                 }
@@ -97,60 +100,89 @@ fun JoinPartyScreen(
         })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel = hiltViewModel()) {
-    Card {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
+    Card (
+        modifier = Modifier
+            .clickable(onClick = { showBottomSheet = true })
+            .fillMaxWidth()
+            .height(160.dp)  // 카드 높이 조정
+            .padding(8.dp), // 카드 주변 여백
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+    ) {
+        Column (
+          modifier = Modifier
+              .padding(16.dp)
         ) {
-            Text(text = party.partyName, style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = party.partyName,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = DarkGreen
+            )
+            // 일정
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
-                    contentDescription = "일정"
+                    contentDescription = "일정",
+                    tint = Green,
+                    modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(text = party.schedule)
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // 모임장소
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "위치"
+                    contentDescription = "위치",
+                    tint = Green,
+                    modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Text(text = party.place)
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            // 산, 인원수
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(0.dp, 4.dp, 0.dp, 0.dp)
+                    .fillMaxWidth()
+            ) {
+                Row {
                     Icon(
                         imageVector = Icons.Outlined.KeyboardDoubleArrowUp,
-                        contentDescription = "산"
+                        contentDescription = "산",
+                        tint = Green,
+                        modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = party.mountainName)
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row {
                     Icon(
                         imageVector = Icons.Outlined.Person,
-                        contentDescription = "인원 수"
+                        contentDescription = "인원 수",
+                        tint = Green,
+                        modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "${party.curPeople} / ${party.maxPeople} 명")
                 }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            // isMember= true 면 버튼 색 변경
-            Button(
-                onClick = { partyViewModel.joinParty(party.partyId) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("참가하기")
             }
         }
     }
@@ -169,15 +201,13 @@ fun PartySearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-//            .height(80.dp)
-//            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(top = 25.dp, bottom = 25.dp),
+                .padding(top = 8.dp, bottom = 8.dp),
             textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
             value = name,
             onValueChange = { text ->
