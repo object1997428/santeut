@@ -14,6 +14,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService()  {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: ${remoteMessage.from}")
+        Log.d("FCM Response", "data: ${remoteMessage.data}")
 
         // 메시지 데이터가 있는 경우
         remoteMessage.data.isNotEmpty().let {
