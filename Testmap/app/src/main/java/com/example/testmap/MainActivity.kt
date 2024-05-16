@@ -1568,18 +1568,18 @@ fun MapScreen(
         Box(modifier = Modifier.weight(2f)) {
             InfoPanel(altitude.toInt(), stepCount, distanceMoved, elapsedTime)
         }
-        if (showAlert.value) {
-            AlertDialog(
-                onDismissRequest = { showAlert.value = false },
-                title = { Text(text = "경고") },
-                text = { Text(text = "경로를 이탈했습니다!") },
-                confirmButton = {
-                    Button(onClick = { showAlert.value = false }) {
-                        Text("확인")
-                    }
-                }
-            )
-        }
+//        if (showAlert.value) {
+//            AlertDialog(
+//                onDismissRequest = { showAlert.value = false },
+//                title = { Text(text = "경고") },
+//                text = { Text(text = "경로를 이탈했습니다!") },
+//                confirmButton = {
+//                    Button(onClick = { showAlert.value = false }) {
+//                        Text("확인")
+//                    }
+//                }
+//            )
+//        }
     }
 }
 
@@ -1596,6 +1596,10 @@ fun checkRouteDeviation(latitude: Double, longitude: Double, pathData: List<Cour
 
         val isDeviated = distanceInMeters > 20.0
         onDeviation(isDeviated)
+
+        if (!isDeviated) {
+            Log.d("RouteCheck", "User is on the predefined route")
+        }
     }
 }
 
@@ -1636,6 +1640,11 @@ fun getCircularBitmap(bitmap: Bitmap): Bitmap {
 }
 
 suspend fun getOverlayImageFromUrl(url: String, width: Int, height: Int): OverlayImage? {
+    if (url == null || url.isEmpty()) {
+        Log.e("ImageDownloadError", "Invalid URL: $url")
+        return null
+    }
+
     val bitmap = downloadImage(url)
     return bitmap?.let {
         val circularBitmap = getCircularBitmap(it)
