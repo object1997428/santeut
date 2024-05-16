@@ -46,17 +46,7 @@ data class MyPartyResponse(
 )
 
 data class MyRecordListResponse(
-    @SerializedName("content") val recordList: List<MyRecordResponse>,
-
-    @SerializedName("page") val page: Int,
-    @SerializedName("totalPage") val totalPage: Int,
-    @SerializedName("totalElements") val totalElements: Int,
-    @SerializedName("size") val size: Int,
-    @SerializedName("sorted") val sorted: Boolean,  // 오름차순으로 정렬
-    @SerializedName("asc") val asc: Boolean,
-    @SerializedName("filtered") val filtered: Boolean,
-    @SerializedName("first") val first: Boolean,    // 첫 번째 페이지면 true
-    @SerializedName("last") val last: Boolean  // 마지막 페이지면 true
+    @SerializedName("recordList") val recordList: List<MyRecordResponse>
 )
 
 data class MyRecordResponse(
