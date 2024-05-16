@@ -206,7 +206,10 @@ fun CreateGuildScreen(
                 value = guildMinAge,
                 onValueChange = { guildMinAge = it },
                 label = { Text("최소 연령") },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    autoCorrect = true
+                ),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -216,7 +219,10 @@ fun CreateGuildScreen(
                 value = guildMaxAge,
                 onValueChange = { guildMaxAge = it },
                 label = { Text("최대 연령") },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    autoCorrect = true
+                ),
                 modifier = Modifier.weight(1f)
             )
         }

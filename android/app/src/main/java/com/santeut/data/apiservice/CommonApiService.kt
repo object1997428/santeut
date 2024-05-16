@@ -2,6 +2,7 @@ package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateCommentRequest
+import com.santeut.data.model.response.NotificationListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
