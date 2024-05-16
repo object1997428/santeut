@@ -1,10 +1,18 @@
 package com.santeut.data.repository
 
+import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.request.PartyIdRequest
+import com.santeut.data.model.response.ChatMessage
+import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
 import kotlinx.coroutines.flow.Flow
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface PartyRepository {
 
@@ -24,7 +32,17 @@ interface PartyRepository {
 
     suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit>
 
+    suspend fun deleteParty(partyId: Int): Flow<Unit>
+
+    suspend fun joinParty(partyId: Int): Flow<Unit>
+
+    suspend fun quitParty(partyId: Int): Flow<Unit>
+
     suspend fun getMyRecordList(): List<MyRecordResponse>
 
     suspend fun getMyScheduleList(year: Int, month: Int): List<String>
+
+    suspend fun getChatList(): List<ChatRoomInfo>
+
+    suspend fun getChatMessageList(partyId: Int): MutableList<ChatMessage>
 }

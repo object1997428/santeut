@@ -1,6 +1,9 @@
 package com.santeut.data.repository
 
+import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -8,10 +11,16 @@ import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.RankingResponse
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.Path
 
 interface GuildRepository {
 
     suspend fun getGuilds(): List<GuildResponse>
+
+    suspend fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ): Flow<Unit>
 
     suspend fun myGuilds(): List<GuildResponse>
 
@@ -29,6 +38,12 @@ interface GuildRepository {
     suspend fun getGuildPost(guildPostId: Int): GuildPostDetailResponse
 
     suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse>
+
+    suspend fun getGuildApplyList(guildId: Int): List<GuildApplyResponse>
+
+    suspend fun approveMember(guildId: Int, userId: Int): Flow<Unit>
+
+    suspend fun denyMember(guildId: Int, userId: Int): Flow<Unit>
 
     suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit>
 

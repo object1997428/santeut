@@ -2,13 +2,18 @@ package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.request.PartyIdRequest
+import com.santeut.data.model.response.ChatResponse
+import com.santeut.data.model.response.ChatRoomResponse
 import com.santeut.data.model.response.MyPartyListResponse
 import com.santeut.data.model.response.MyRecordListResponse
 import com.santeut.data.model.response.MyScheduleList
 import com.santeut.data.model.response.PartyListResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PartyApiService {
@@ -34,6 +39,21 @@ interface PartyApiService {
         @Body createPartyRequest: CreatePartyRequest
     ): CustomResponse<Unit>
 
+    @DELETE("/api/party/{partyId}")
+    suspend fun deleteParty(
+        @Path("partyId") partyId: PartyIdRequest
+    ): CustomResponse<Unit>
+
+    @POST("/api/party/user/join")
+    suspend fun joinParty(
+        @Body partyId: PartyIdRequest
+    ): CustomResponse<Unit>
+
+    @DELETE("/api/party/user/withdraw")
+    suspend fun quitParty(
+        @Body partyId: Int
+    ): CustomResponse<Unit>
+
     @GET("/api/party/user/record")
     suspend fun getMyRecordList(): CustomResponse<MyRecordListResponse>
 
@@ -42,5 +62,13 @@ interface PartyApiService {
         @Query("year") year: Int,
         @Query("month") month: Int
     ): CustomResponse<MyScheduleList>
+
+    @GET("/api/party/chat")
+    suspend fun getMyChatList(): CustomResponse<ChatResponse>
+
+    @GET("/api/party/chat/{partyId}")
+    suspend fun getChatMessageList(
+        @Path("partyId") partyId: Int
+    ): CustomResponse<ChatRoomResponse>
 
 }

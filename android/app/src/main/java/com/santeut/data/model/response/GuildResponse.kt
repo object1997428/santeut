@@ -66,7 +66,20 @@ data class GuildMemberListResponse(
 data class GuildMemberResponse(
     @SerializedName("userId") val userId: Int,
     @SerializedName("userProfile") val userProfile: String,
-    @SerializedName("userNickname") val userNickname: String
+    @SerializedName("userNickname") val userNickname: String,
+    @SerializedName("joinDate") val joinDate: LocalDateTime
+)
+
+data class GuildApplyListResponse(
+    @SerializedName("applyGuildList") val guildApplyList: List<GuildApplyResponse>
+)
+
+data class GuildApplyResponse(
+    @SerializedName("guildRequestId") val guildRequestId: Int,
+    @SerializedName("createdAt") val createdAt: LocalDateTime,
+    @SerializedName("userId") val userId: Int,
+    @SerializedName("userNickname") val userNickname: String,
+    @SerializedName("userProfile") val userProfile: String
 )
 
 data class RankingListResponse(

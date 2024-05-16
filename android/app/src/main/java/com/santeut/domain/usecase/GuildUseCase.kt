@@ -1,6 +1,8 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -18,6 +20,10 @@ class GuildUseCase @Inject constructor(
     suspend fun getGuilds(): List<GuildResponse> =
         guildRepository.getGuilds()
 
+    suspend fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = guildRepository.createGuild(guildProfile, createGuildRequest)
 
     suspend fun myGuilds(): List<GuildResponse> =
         guildRepository.myGuilds()
@@ -46,6 +52,14 @@ class GuildUseCase @Inject constructor(
     suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse> =
         guildRepository.getGuildMemberList(guildId)
 
+    suspend fun getGuildApplyList(guildId: Int): List<GuildApplyResponse> =
+        guildRepository.getGuildApplyList(guildId)
+
+    suspend fun approveMember(guildId: Int, userId: Int): Flow<Unit> =
+        guildRepository.approveMember(guildId, userId)
+
+    suspend fun denyMember(guildId: Int, userId: Int): Flow<Unit> =
+        guildRepository.denyMember(guildId, userId)
 
     suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit> =
         guildRepository.exileMember(guildId, userId)
