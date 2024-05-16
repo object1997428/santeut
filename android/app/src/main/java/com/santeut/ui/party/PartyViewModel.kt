@@ -11,6 +11,7 @@ import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,6 +48,7 @@ class PartyViewModel @Inject constructor(
             try {
                 Log.d("PartyViewModel", _partyList.value?.size.toString())
                 _partyList.postValue(partyUseCase.getPartyList(guildId, name, start, end))
+                Log.d("PartyViewModel", _partyList.value?.size.toString())
             } catch (e: Exception) {
                 _error.postValue("소모임 목록 조회 실패: ${e.message}")
             }
@@ -70,28 +72,10 @@ class PartyViewModel @Inject constructor(
     }
 
     fun createParty(
-        schedule: String,
-        partyName: String,
-        mountainId: Int,
-        mountainName: String,
-        maxPeople: Int,
-        guildId: Int?,
-        place: String,
-        selectedCourse: List<Int>
+        createPartyRequest: CreatePartyRequest
     ) {
         viewModelScope.launch {
             try {
-                val createPartyRequest = CreatePartyRequest(
-                    schedule,
-                    partyName,
-                    mountainId,
-                    mountainName,
-                    maxPeople,
-                    guildId,
-                    place,
-                    selectedCourse
-                )
-
                 partyUseCase.createParty(createPartyRequest).collect {
                     _partyCreationSuccess.value = true
                 }
@@ -101,6 +85,43 @@ class PartyViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteParty(partyId: Int) {
+        viewModelScope.launch {
+            try {
+                partyUseCase.deleteParty(partyId).collect {
+                    Log.d("PartyViewModel", "소모임 삭제 성공")
+                }
+            } catch (e: Exception) {
+                _error.value = "소모임 삭제 실패: ${e.message}"
+            }
+        }
+    }
+
+    fun joinParty(partyId: Int) {
+        viewModelScope.launch {
+            try {
+                partyUseCase.joinParty(partyId).collect {
+                    Log.d("PartyViewModel", "소모임 가입 성공")
+                }
+            } catch (e: Exception) {
+                _error.value = "소모임 가입 실패: ${e.message}"
+            }
+        }
+    }
+
+    fun quitParty(partyId: Int) {
+        viewModelScope.launch {
+            try {
+                partyUseCase.quitParty(partyId).collect {
+                    Log.d("PartyViewModel", "소모임 탈퇴 성공")
+                }
+            } catch (e: Exception) {
+                _error.value = "소모임 탈퇴 실패: ${e.message}"
+            }
+        }
+    }
+
 
     fun getMyRecordList() {
         viewModelScope.launch {

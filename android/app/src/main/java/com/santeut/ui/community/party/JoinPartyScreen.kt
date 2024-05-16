@@ -20,8 +20,10 @@ import androidx.compose.material.icons.outlined.FilterAlt
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -45,13 +47,13 @@ import com.santeut.ui.party.PartyViewModel
 
 @Composable
 fun JoinPartyScreen(
-    guildId:Int?,
+    guildId: Int?,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
 
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
 
-    LaunchedEffect(key1 = guildId) {
+    LaunchedEffect(key1 = null) {
         partyViewModel.getPartyList(guildId = guildId, name = null, start = null, end = null)
     }
 
@@ -62,12 +64,12 @@ fun JoinPartyScreen(
             onClickSearch = {},
             onClickFilter = {}
         )
-        
-        if(partyList.isEmpty()){
+
+        if (partyList.isEmpty()) {
             Text(text = "소모임이 없습니다")
-        }else{
+        } else {
             LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
-                items(partyList){party ->
+                items(partyList) { party ->
                     PartyCard(party)
                 }
             }
@@ -77,43 +79,64 @@ fun JoinPartyScreen(
 }
 
 @Composable
-fun PartyCard(party: PartyResponse) {
+fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel = hiltViewModel()) {
     Card {
-        Column(Modifier.fillMaxWidth()) {
-            Text(text = party.partyName)
-            Row {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(text = party.partyName, style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
                     contentDescription = "일정"
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(text = party.schedule)
             }
-            Row {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Outlined.LocationOn,
                     contentDescription = "위치"
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(text = party.place)
             }
-            Row{
-                Row {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Outlined.KeyboardDoubleArrowUp,
                         contentDescription = "산"
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = party.mountainName)
                 }
-                Row {
+                Spacer(modifier = Modifier.width(16.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Outlined.Person,
                         contentDescription = "인원 수"
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "${party.curPeople} / ${party.maxPeople} 명")
                 }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            // isMember= true 면 버튼 색 변경
+            Button(
+                onClick = { partyViewModel.joinParty(party.partyId) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("참가하기")
             }
         }
     }
 }
+
 
 @Composable
 fun PartySearchBar(
