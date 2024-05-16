@@ -6,6 +6,7 @@ import com.santeut.data.model.request.CreateCommentRequest
 import com.santeut.data.model.response.NotificationResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.http.Path
 import javax.inject.Inject
 
 class CommonRepositoryImpl @Inject constructor(
@@ -35,6 +36,26 @@ class CommonRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("CommonRepository", "Network error: ${e.message}", e)
             emptyList()
+        }
+    }
+
+    override suspend fun hitLike(
+        @Path("postId") postId: Int,
+        @Path("postType") postType: Char
+    ): Flow<Unit> = flow {
+        val response = commonApiService.hitLike(postId, postType)
+        if (response.status == "200") {
+            emit(response.data)
+        }
+    }
+
+    override suspend fun cancelLike(
+        @Path("postId") postId: Int,
+        @Path("postType") postType: Char
+    ): Flow<Unit> = flow {
+        val response = commonApiService.cancelLike(postId, postType)
+        if (response.status == "200") {
+            emit(response.data)
         }
     }
 }

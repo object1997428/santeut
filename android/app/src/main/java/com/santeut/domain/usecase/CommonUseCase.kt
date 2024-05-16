@@ -4,6 +4,7 @@ import com.santeut.data.model.request.CreateCommentRequest
 import com.santeut.data.model.response.NotificationResponse
 import com.santeut.data.repository.CommonRepository
 import kotlinx.coroutines.flow.Flow
+import retrofit2.http.Path
 import javax.inject.Inject
 
 class CommonUseCase @Inject constructor(
@@ -19,4 +20,14 @@ class CommonUseCase @Inject constructor(
 
     suspend fun getNotificationList(): List<NotificationResponse> =
         commonRepository.getNotificationList()
+
+    suspend fun hitLike(
+        @Path("postId") postId: Int,
+        @Path("postType") postType: Char
+    ): Flow<Unit> = commonRepository.hitLike(postId, postType)
+
+    suspend fun cancelLike(
+        @Path("postId") postId: Int,
+        @Path("postType") postType: Char
+    ): Flow<Unit> = commonRepository.cancelLike(postId, postType)
 }

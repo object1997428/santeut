@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.Icon
@@ -96,12 +97,18 @@ fun GuildPostDetailScreen(
 }
 
 @Composable
-fun GuildPostTitle(post: GuildPostDetailResponse) {
+fun GuildPostTitle(
+    post: GuildPostDetailResponse,
+    commonViewModel: CommonViewModel = hiltViewModel()
+) {
     val category = when (post.categoryId) {
         0 -> "공지"
         1 -> "자유"
         else -> "기타"
     }
+
+    var isLiked by remember { mutableStateOf(post.like) }
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text(text = category, style = MaterialTheme.typography.bodyMedium)
         Row(
@@ -110,10 +117,22 @@ fun GuildPostTitle(post: GuildPostDetailResponse) {
         ) {
             Text(text = post.guildPostTitle, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.weight(1f))
+
+            fun handleLikeClick() {
+                if (isLiked) {
+                    commonViewModel.cancelLike(post.guildPostId, post.postType)
+                } else {
+                    commonViewModel.hitLike(post.guildPostId, post.postType)
+                }
+                isLiked = !isLiked // 상태 변경
+            }
+
             Icon(
-                imageVector = Icons.Outlined.FavoriteBorder,
-                contentDescription = "Like",
-                modifier = Modifier.size(24.dp)
+                imageVector = if (isLiked) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = if (isLiked) "Unlike" else "Like",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable(onClick = { handleLikeClick() })
             )
         }
         Text(text = post.userNickName ?: "", style = MaterialTheme.typography.bodyMedium)
@@ -124,9 +143,7 @@ fun GuildPostTitle(post: GuildPostDetailResponse) {
             Icon(
                 imageVector = Icons.Filled.Comment,
                 contentDescription = "Comment",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable(onClick = {/* 좋아요 누르는 로직 추가 */ })
+                modifier = Modifier.size(24.dp)
             )
             Spacer(Modifier.width(4.dp))
             Text(text = "${post.commentCnt ?: 0}", style = MaterialTheme.typography.bodyMedium)
@@ -135,6 +152,7 @@ fun GuildPostTitle(post: GuildPostDetailResponse) {
                 imageVector = Icons.Filled.Favorite,
                 contentDescription = "Favorite",
                 modifier = Modifier.size(24.dp)
+
             )
             Spacer(Modifier.width(4.dp))
             Text(text = "${post.likeCnt ?: 0}", style = MaterialTheme.typography.bodyMedium)
