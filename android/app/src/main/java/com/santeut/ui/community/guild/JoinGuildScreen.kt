@@ -277,7 +277,8 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .padding(16.dp, 0.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
