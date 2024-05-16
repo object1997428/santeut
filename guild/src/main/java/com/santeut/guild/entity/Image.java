@@ -28,7 +28,6 @@ public class Image {
 
     public String extractExtension(String originName) {
         int index = originName.lastIndexOf('.');
-
         return originName.substring(index, originName.length());
     }
 

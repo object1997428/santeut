@@ -148,7 +148,7 @@ public class GuildUserServiceImpl implements GuildUserService {
             if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
             responseList.add(response);
         }
-        return new GuildMemberListResponse(GuildMemberListResponse.memberList(responseList));
+        return new GuildMemberListResponse(GuildMemberListResponse.memberList(responseList, guildUserEntityList));
     }
 
     @Override

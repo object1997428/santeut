@@ -31,6 +31,7 @@ public class GuildEntity {
     @NotNull
     private boolean guildIsPrivate;
 
+    @Column(columnDefinition = "TEXT")
     private String guildProfile;
 
     @NotNull
