@@ -227,7 +227,7 @@ fun CameraUI() {
 
                             val authKey = "897064a0-60a9-45ac-a0b8-2bc9e8ec0837:fx"
                             val translator = Translator(authKey)
-                            val text = "Ficus microcarpa, also known as Chinese banyan, Malayan banyan, Indian laurel, curtain fig, or gajumaru (\\u30ac\\u30b8\\u30e5\\u30de\\u30eb), is a tree in the fig family Moraceae. It is native in a range from China through tropical Asia and the Caroline Islands to Australia. It is widely planted as a shade tree and frequently misidentified as F. retusa or as F. nitida (syn. F. benjamina)."
+                            val text = "Matricaria chamomilla (synonym: Matricaria recutita), commonly known as chamomile (also spelled camomile), German chamomile, Hungarian chamomile (kamilla), wild chamomile, blue chamomile, or scented mayweed, is an annual plant of the composite family Asteraceae. Commonly, the name M. recutita is applied to the most popular source of the herbal product chamomile, although other species are also used as chamomile. Chamomile is known mostly for its use against gastrointestinal problems; additionally, it can be used to treat irritation of the skin.";
                             val result = translator.translateText(text, null, "ko")
 
                             Log.d("Translate Result: ", result.text)
@@ -242,7 +242,9 @@ fun CameraUI() {
                 // Result는 사진이 성공적으로 저장되었는지 여부를 알려줌
                 Log.d("카메라", "버튼 클릭")
             }
-        }) {  Text("Take Picture") }
+        }) {  Text("Take Picture")
+        }
+
     }
     val capturedImageFile = imageFile.value
 
