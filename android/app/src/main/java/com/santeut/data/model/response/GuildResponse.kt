@@ -7,6 +7,10 @@ data class GuildListResponse(
     @SerializedName("guildList") val guildList: List<GuildResponse>
 )
 
+data class SearchGuildListResponse(
+    @SerializedName("searchList") val searchList: List<GuildResponse>
+)
+
 data class GuildResponse(
     @SerializedName("guildId") val guildId: Int,
     @SerializedName("guildName") val guildName: String,
