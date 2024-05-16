@@ -5,6 +5,8 @@ plugins {
 //    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -34,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -91,7 +93,12 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
+    // 권한 요청 관련
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 
     // compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
@@ -100,12 +107,30 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.6.6")
     implementation("androidx.compose.material:material:1.6.6")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
-    implementation ("com.google.accompanist:accompanist-pager:0.20.1")
-    implementation ("com.google.accompanist:accompanist-pager-indicators:0.20.1")
+    implementation("com.google.accompanist:accompanist-pager:0.20.1")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.20.1")
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
 
     // LiveData
-    implementation ("androidx.compose.runtime:runtime-livedata:1.2.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.2.0")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Accompanist Pager
+    implementation ("com.google.accompanist:accompanist-pager:<version>")
+
+    // Wear
+    implementation("com.google.android.gms:play-services-wearable:18.1.0")
+
+    // navermap
+    implementation ("io.github.fornewid:naver-map-compose:1.7.0")
+    implementation ("io.github.fornewid:naver-map-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
 }

@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.mypage.MyPageScreen
 
 
@@ -16,7 +15,7 @@ fun NavGraphBuilder.MyPageNavGraph(
         route = "mypage_graph"
     ) {
         composable("mypage") {
-            MyPageScreen()
+            MyPageScreen(navController)
         }
     }
 }

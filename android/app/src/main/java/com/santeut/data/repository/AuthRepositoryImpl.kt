@@ -2,13 +2,13 @@ package com.santeut.data.repository
 
 import android.util.Log
 import com.santeut.data.apiservice.AuthApiService
+import com.santeut.data.model.request.FCMTokenRequest
 import com.santeut.data.model.request.LoginRequest
 import com.santeut.data.model.request.SignUpRequest
 import com.santeut.data.model.response.LoginResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService
@@ -30,6 +30,13 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signup(signUpRequest: SignUpRequest): Flow<Unit>  = flow {
         val response = authApiService.signup(signUpRequest)
+        if(response.status == "200"){
+            emit(response.data)
+        }
+    }
+
+    override suspend fun sendFCMToken(fcmTokenRequest: FCMTokenRequest): Flow<Unit> = flow {
+        val response = authApiService.sendFCMToken(fcmTokenRequest)
         if(response.status == "200"){
             emit(response.data)
         }

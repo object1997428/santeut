@@ -9,6 +9,5 @@ interface PostRepository {
 
     suspend fun getPosts(postType: Char): List<PostResponse>
     suspend fun createPost(createPostRequest: CreatePostRequest): Flow<Unit>
-
     suspend fun readPost(postId: Int, postType: Char): PostResponse
 }

@@ -1,4 +1,4 @@
-package com.santeut.ui.community
+package com.santeut.ui.community.tips
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
+import com.santeut.ui.community.PostViewModel
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -122,7 +123,11 @@ fun TipDetail(post: PostResponse, navController: NavController) {
     }
 }
 
-fun formatTime(createdAt: LocalDateTime): String {
+fun formatTime(createdAt: LocalDateTime?): String {
+
+    if (createdAt == null) {
+        return "알 수 없음"
+    }
 
     // 현재 시각과의 차이
     val duration = Duration.between(createdAt, LocalDateTime.now()).abs()

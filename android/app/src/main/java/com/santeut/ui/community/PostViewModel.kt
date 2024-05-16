@@ -1,6 +1,7 @@
 package com.santeut.ui.community
 
 import android.adservices.adid.AdId
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -55,7 +56,9 @@ class PostViewModel @Inject constructor(
                     CreatePostRequest(postTitle, postContent, postType, userPartyId)
                 postUseCase.createPost(createPostRequest).collect {
                     _postCreationSuccess.value = true
+                    Log.d("PostViewModel", "Navigating to postTips Ready")
                 }
+
             } catch (e: Exception) {
                 _error.value = "Failed to load posts: ${e.message}"
                 _postCreationSuccess.value = false

@@ -4,26 +4,17 @@ import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.santeut.data.model.request.LoginRequest
 import com.santeut.data.model.request.SignUpRequest
 import com.santeut.domain.usecase.SignUpUseCase
-import com.santeut.ui.login.LoginEvent
-import com.santeut.ui.login.LoginViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -81,7 +72,7 @@ class SignUpViewModel @Inject constructor(
                             userPassword = _userPassword.value,
                             userNickname = _userNickName.value,
                             userBirth = _userBirth.value,
-                            userGender = _userGender.value
+                            userGender = if (_userGender.value) 'M' else 'F'
                         )
                     ).catch { e ->
                         Log.d("SignUp Error", "${e.message}")

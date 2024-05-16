@@ -15,23 +15,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,18 +48,31 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.santeut.designsystem.theme.SanteutTheme
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.santeut.R
+import com.santeut.data.model.response.GuildResponse
+import com.santeut.data.model.response.MountainResponse
+import com.santeut.data.model.response.MyPartyResponse
+import com.santeut.ui.guild.GuildViewModel
+import com.santeut.ui.mountain.MountainViewModel
+import com.santeut.ui.party.PartyViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
-
+    navController: NavController,
+    mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
     Log.d("Home Screen", "Loading")
-//    val viewModel = viewModel<HomeViewModel>()
+
+    LaunchedEffect(key1 = null) {
+        mountainViewModel.popularMountain()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -62,42 +80,33 @@ fun HomeScreen(
             .background(color = Color.White)
     ) {
         item {
-            HomeSearchBar(
-                onSearchTextChanged = {},
-                onClickSearch = {},
+            SearchMountainBar(
+                navController,
                 onClickMap = {}
             )
         }
         item {
-            PopMountainCard()
+            PopMountainCard(navController)
         }
         item {
-            MyGuildCard()
+            MyGuildCard(navController)
         }
         item {
-            WeeklyHikingCard()
+            TodayHikingCard()
         }
         item {
-            HomeCommunityCard()
+            HomeCommunityCard(navController)
         }
     }
 }
 
-@Preview
 @Composable
-fun HomeScreenPreview() {
-    SanteutTheme {
-        HomeScreen()
-    }
-}
-
-@Composable
-fun HomeSearchBar(
-    onSearchTextChanged: (String) -> Unit,
-    onClickSearch: () -> Unit,
+fun SearchMountainBar(
+    navController: NavController,
     onClickMap: () -> Unit
 ) {
-    val text = ""
+    var name by remember { mutableStateOf("") }
+    var region by remember { mutableStateOf("") }
 
     Row(
         modifier = Modifier
@@ -110,10 +119,8 @@ fun HomeSearchBar(
             modifier = Modifier
                 .fillMaxWidth(0.9f),
             textStyle = TextStyle(fontSize = 12.sp),
-            value = "",
-            onValueChange = { text ->
-                onSearchTextChanged(text)
-            },
+            value = name,
+            onValueChange = { name = it },
             placeholder = {
                 Text(
                     text = "어느 산을 찾으시나요?"
@@ -135,7 +142,11 @@ fun HomeSearchBar(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
                     tint = Color.Black,
-                    modifier = Modifier.clickable { onClickSearch() }
+                    modifier = Modifier.clickable {
+                        val path =
+                            if (region.isNullOrEmpty()) "mountainList/$name" else "mountainList/$name/$region"
+                        navController.navigate(path)
+                    }
                 )
             }
         )
@@ -151,8 +162,12 @@ fun HomeSearchBar(
 
 @Composable
 fun PopMountainCard(
-
+    navController: NavController,
+    mountainViewModel: MountainViewModel = hiltViewModel(),
 ) {
+
+    val mountains by mountainViewModel.mountains.observeAsState(emptyList())
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,7 +175,7 @@ fun PopMountainCard(
             .padding(12.dp, 12.dp, 12.dp, 0.dp),
     ) {
         Text(
-            text = "지금 인기있는 산?",
+            text = "산뜻에서 인기 있는 산",
             fontSize = 20.sp,
             fontWeight = FontWeight.ExtraBold,
             modifier = Modifier
@@ -171,21 +186,20 @@ fun PopMountainCard(
                 .fillMaxHeight()
                 .fillMaxWidth(),
         ) {
-            items(4) { index ->
-                MountainCard()
+            items(mountains) { mountain ->
+                MountainCard(mountain, navController)
             }
         }
     }
 }
 
 @Composable
-fun MountainCard(
-
-) {
+fun MountainCard(mountain: MountainResponse, navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
-            .width(160.dp),
+            .width(160.dp)
+            .clickable(onClick = { navController.navigate("mountain/${mountain.mountainId}") }),
     ) {
         Column(
             modifier = Modifier
@@ -195,13 +209,15 @@ fun MountainCard(
             Box(
                 modifier = Modifier
                     .height(100.dp)
-                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
                     .clip(shape = RoundedCornerShape(20.dp))
             ) {
-                Image(
-                    painter = painterResource(R.drawable.logo),
-                    contentDescription = "Logo",
-                    contentScale = ContentScale.Crop,
+                AsyncImage(
+                    model = mountain.image ?: R.drawable.logo,
+                    contentDescription = "산 이미지",
+                    modifier = Modifier
+                        .width(160.dp)
+                        .height(100.dp),
+                    contentScale = ContentScale.Crop
                 )
             }
             Row(
@@ -212,19 +228,19 @@ fun MountainCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "한라산",
+                    text = mountain.mountainName,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "1111m 제주",
+                    text = "${mountain.height}m ${mountain.regionName}",
                     fontSize = 12.sp,
                     color = Color.LightGray
                 )
             }
             Text(
-                text = "4개 코스",
+                text = "${mountain.courseCount}개 코스",
                 fontSize = 12.sp,
                 color = Color.LightGray,
                 modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
@@ -235,8 +251,16 @@ fun MountainCard(
 
 @Composable
 fun MyGuildCard(
-
+    navController: NavController,
+    guildViewModel: GuildViewModel = hiltViewModel()
 ) {
+
+    val guilds by guildViewModel.guilds.observeAsState(emptyList())
+
+    LaunchedEffect(key1 = null) {
+        guildViewModel.myGuilds()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -258,7 +282,8 @@ fun MyGuildCard(
                 text = "전체보기",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color.LightGray
+                color = Color.LightGray,
+                modifier = Modifier.clickable(onClick = { navController.navigate("guild") })
             )
         }
         LazyRow(
@@ -266,9 +291,9 @@ fun MyGuildCard(
                 .height(180.dp)
                 .fillMaxWidth()
         ) {
-            items(3) { index ->
-                HomeGuildItem(
-                    onClick = {}
+            items(guilds.take(3)) { guild ->
+                HomeGuildItem(guild,
+                    onClick = { navController.navigate("getGuild/${guild.guildId}") }
                 )
             }
         }
@@ -277,30 +302,33 @@ fun MyGuildCard(
 
 @Composable
 fun HomeGuildItem(
+    guild: GuildResponse,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp, 0.dp, 8.dp, 0.dp),
+            .padding(0.dp, 0.dp, 8.dp, 0.dp)
+            .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .height(140.dp)
-                .width(200.dp)
-                .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
                 .clip(shape = RoundedCornerShape(20.dp))
         ) {
-            Image(
-                painter = painterResource(R.drawable.logo),
-                contentDescription = "Logo",
-                contentScale = ContentScale.Crop,
+            AsyncImage(
+                model = guild.guildProfile ?: R.drawable.logo,
+                contentDescription = "동호회 사진",
+                modifier = Modifier
+                    .width(160.dp)
+                    .height(140.dp),
+                contentScale = ContentScale.Crop
             )
         }
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "싸피 산악회",
+            text = guild.guildName,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
@@ -308,9 +336,22 @@ fun HomeGuildItem(
 }
 
 @Composable
-fun WeeklyHikingCard(
-
+fun TodayHikingCard(
+    partyViewModel: PartyViewModel = hiltViewModel()
 ) {
+
+    val todayParty by partyViewModel.myPartyList.observeAsState(emptyList())
+
+    LaunchedEffect(key1 = null) {
+        val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        partyViewModel.getMyPartyList(
+            date = formattedDate,
+            includeEnd = false,
+            page = null,
+            size = null
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -323,61 +364,53 @@ fun WeeklyHikingCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "주간 등산 일정",
+                text = "오늘의 등산 일정",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
             )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "전체보기",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.LightGray
-            )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(24.dp))
-                .clip(shape = RoundedCornerShape(24.dp))
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xFFe5dd90))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(20.dp)
-                ) {
-                    Row {
-                        Image(
-                            imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = "달력"
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(
-                            text = "2024년 5월 5일",
-                            fontSize = 14.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "한라산 싸피 산악회",
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(24.dp, 0.dp, 0.dp, 0.dp)
-                    )
-                }
+
+        LazyRow {
+            items(todayParty) { party ->
+                PartyCard(party)
             }
         }
     }
 }
 
 @Composable
-fun HomeCommunityCard(
+fun PartyCard(party: MyPartyResponse) {
+    Card {
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+        ) {
+            Row {
+                // 일정 추가
+                Image(
+                    imageVector = Icons.Default.CalendarMonth,
+                    contentDescription = "달력"
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = party.schedule,
+                    fontSize = 14.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${party.partyName} ${party.guildName}",
+                fontSize = 14.sp,
+                modifier = Modifier.padding(24.dp, 0.dp, 0.dp, 0.dp)
+            )
+        }
+    }
+}
 
+@Composable
+fun HomeCommunityCard(
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
@@ -407,8 +440,29 @@ fun HomeCommunityCard(
                     .height(160.dp)
                     .fillMaxWidth()
             ) {
-                items(4) { index ->
-                    CommunityItem()
+                item {
+                    CommunityItem(
+                        "산악회 회원 모집",
+                        "다른 사람들과 함께 산행을 즐겨보세요!"
+                    ) { navController.navigate("community/0") }
+                }
+                item {
+                    CommunityItem(
+                        "등산 소모임 모집",
+                        "친구들과 산행을 즐기는 거 어때요?"
+                    ) { navController.navigate("community/1") }
+                }
+                item {
+                    CommunityItem(
+                        "등산 팁 공유",
+                        "등산 팁이 있으신가요?"
+                    ) { navController.navigate("community/2") }
+                }
+                item {
+                    CommunityItem(
+                        "코스 공유",
+                        "나만의 등산 코스를 자랑해볼까요?"
+                    ) { navController.navigate("community/3") }
                 }
             }
         }
@@ -417,7 +471,7 @@ fun HomeCommunityCard(
 
 @Composable
 fun CommunityItem(
-
+    title: String, content: String, onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -426,6 +480,7 @@ fun CommunityItem(
             .padding(0.dp, 0.dp, 8.dp, 0.dp)
             .background(color = Color.White)
             .border(width = 1.dp, color = Color.Black, shape = RectangleShape)
+            .clickable(onClick = { onClick() })
     ) {
         Column(
             modifier = Modifier
@@ -433,7 +488,7 @@ fun CommunityItem(
                 .height(160.dp)
         ) {
             Text(
-                text = "산악회 회원 모집",
+                text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -441,7 +496,7 @@ fun CommunityItem(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "다른 사람들과 함께 산행을 즐겨보세요, 다른 사람들과 함께 산행을 즐겨보세요, 다른 사람들과 함께 산행을 즐겨보세요, 다른 사람들과 함께 산행을 즐겨보세요",
+                text = content,
                 fontSize = 14.sp,
                 overflow = TextOverflow.Ellipsis
             )
