@@ -79,15 +79,12 @@ fun JoinGuildScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-//                .height(80.dp),
-//                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
-//                    .padding(start = 25.dp, top = 25.dp, bottom = 25.dp),
                     .padding(top = 8.dp, bottom = 8.dp),
                 textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
                 value = name,
@@ -307,7 +304,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
                 .fillMaxWidth()
                 .padding(0.dp, 16.dp, 0.dp, 0.dp),
             onClick = {
-                if (!isRequested) {
+                if (guild.joinStatus=='N') {
                     guildViewModel.applyGuild(guild.guildId)
                     isRequested = true
                 }
