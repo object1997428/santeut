@@ -86,8 +86,8 @@ fun JoinGuildScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
 //                    .padding(start = 25.dp, top = 25.dp, bottom = 25.dp),
-                    .padding(top = 25.dp, bottom = 25.dp),
-                textStyle = TextStyle(fontSize = 20.sp, color = Color(0xff666E7A)),
+                    .padding(top = 8.dp, bottom = 8.dp),
+                textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
                 value = name,
                 onValueChange = { name = it },
                 placeholder = {
