@@ -49,5 +49,4 @@ class CommonViewModel @Inject constructor(
             }
         }
     }
-
 }

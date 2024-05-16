@@ -12,5 +12,4 @@ interface CommonRepository {
     ): Flow<Unit>
 
     suspend fun getNotificationList(): List<NotificationResponse>
-
 }

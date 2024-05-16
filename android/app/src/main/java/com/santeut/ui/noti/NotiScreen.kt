@@ -22,6 +22,7 @@ import com.santeut.ui.community.CommonViewModel
 fun NotiScreen(commonViewModel: CommonViewModel = hiltViewModel()) {
 
     val notiList by commonViewModel.notiList.observeAsState(emptyList())
+    // 알림 추가 후 확인
 
     LaunchedEffect(key1 = null) {
         commonViewModel.getNotificationList()

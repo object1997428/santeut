@@ -16,7 +16,6 @@ class CommonUseCase @Inject constructor(
     ): Flow<Unit> =
         commonRepository.createComment(postId, postType, createCommentRequest)
 
-
     suspend fun getNotificationList(): List<NotificationResponse> =
         commonRepository.getNotificationList()
 }
