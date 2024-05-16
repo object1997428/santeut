@@ -2,6 +2,7 @@ package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
 import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyListResponse
 import com.santeut.data.model.response.GuildListResponse
 import com.santeut.data.model.response.GuildMemberListResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
@@ -64,6 +65,23 @@ interface GuildApiService {
     suspend fun getGuildMemberList(
         @Path("guildId") guildId: Int
     ): CustomResponse<GuildMemberListResponse>
+
+    @GET("/api/guild/user/apply-list/{guildId}")
+    suspend fun getGuildApplyList(
+        @Path("guildId") guildId: Int,
+    ): CustomResponse<GuildApplyListResponse>
+
+    @PATCH("/api/guild/user/{guildId}/{userId}/approve")
+    suspend fun approveMember(
+        @Path("guildId") guildId: Int,
+        @Path("userId") userId: Int
+    ): CustomResponse<Unit>
+
+    @PATCH("/api/guild/user/{guildId}/{userId}/deny")
+    suspend fun denyMember(
+        @Path("guildId") guildId: Int,
+        @Path("userId") userId: Int
+    ): CustomResponse<Unit>
 
     @DELETE("/api/guild/user/{guildId}/member-list/{userId}")
     suspend fun exileMember(

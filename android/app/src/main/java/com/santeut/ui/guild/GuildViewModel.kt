@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -15,7 +16,6 @@ import com.santeut.data.model.response.RankingResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -42,6 +42,9 @@ class GuildViewModel @Inject constructor(
 
     private val _memberList = MutableLiveData<List<GuildMemberResponse>>(emptyList())
     val memberList: LiveData<List<GuildMemberResponse>> = _memberList
+
+    private val _applyList = MutableLiveData<List<GuildApplyResponse>>(emptyList())
+    val applyList: LiveData<List<GuildApplyResponse>> = _applyList
 
     private val _rankingList = MutableLiveData<List<RankingResponse>>(emptyList())
     val rankingList: LiveData<List<RankingResponse>> = _rankingList
@@ -145,6 +148,16 @@ class GuildViewModel @Inject constructor(
                 _memberList.postValue(guildUseCase.getGuildMemberList(guildId))
             } catch (e: Exception) {
                 _error.postValue("동호회 회원 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getGuildApplyList(guildId: Int) {
+        viewModelScope.launch {
+            try {
+                _applyList.postValue(guildUseCase.getGuildApplyList(guildId))
+            } catch (e: Exception) {
+                _error.postValue("동호회 가입 신청 목록 조회 실패: ${e.message}")
             }
         }
     }

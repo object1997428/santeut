@@ -2,6 +2,7 @@ package com.santeut.data.repository
 
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -35,6 +36,8 @@ interface GuildRepository {
     suspend fun getGuildPost(guildPostId: Int): GuildPostDetailResponse
 
     suspend fun getGuildMemberList(guildId: Int): List<GuildMemberResponse>
+
+    suspend fun getGuildApplyList(guildId: Int): List<GuildApplyResponse>
 
     suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit>
 

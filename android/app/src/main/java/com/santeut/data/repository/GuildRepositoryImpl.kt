@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -152,6 +153,21 @@ class GuildRepositoryImpl @Inject constructor(
                 response.data.memberList ?: emptyList()
             } else {
                 throw Exception("동호회 회원 목록 조회 실패: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun getGuildApplyList(guildId: Int): List<GuildApplyResponse> {
+        return try {
+            val response = guildApiService.getGuildApplyList(guildId)
+            if (response.status == "200") {
+                Log.d("GuildRepository", "동호회 가입 신청 목록 조회 성공")
+                response.data.guildApplyList ?: emptyList()
+            } else {
+                throw Exception("동호회 가입 신청 목록 조회 실패: ${response.status} ${response.data}")
             }
         } catch (e: Exception) {
             Log.e("GuildRepository", "Network error: ${e.message}", e)

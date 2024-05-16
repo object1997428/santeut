@@ -302,7 +302,9 @@ fun GuildTopBar(
                 DropdownMenuItem(text = { Text(text = "소모임 만들기") }, onClick = { /*TODO*/ })
 
                 if (guild.isPresident) {
-                    DropdownMenuItem(text = { Text(text = "가입 요청 보기") }, onClick = { /*TODO*/ })
+                    DropdownMenuItem(
+                        text = { Text(text = "가입 요청 보기") },
+                        onClick = { navController.navigate("guildApplyList/${guild.guildId}") })
                     DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
                 }
 
