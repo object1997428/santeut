@@ -2,18 +2,21 @@ package com.santeut.ui.community.party
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FilterAlt
@@ -54,7 +57,7 @@ fun JoinPartyScreen(
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
 
     LaunchedEffect(key1 = null) {
-        partyViewModel.getPartyList(guildId = guildId, name = null, start = null, end = null)
+        partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
     }
 
     Column {
@@ -149,22 +152,25 @@ fun PartySearchBar(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .fillMaxWidth(),
+//            .height(80.dp)
+//            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .fillMaxWidth(0.9f),
-            textStyle = TextStyle(fontSize = 12.sp),
+                .fillMaxWidth(0.8f)
+                .padding(top=25.dp, bottom = 25.dp),
+            textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
             value = name,
             onValueChange = { text ->
                 onSearchTextChanged(text)
             },
             placeholder = {
                 androidx.compose.material.Text(
-                    text = "어느 소모임을 찾으시나요?"
+                    text = "어느 소모임을 찾으시나요?",
+                    color = Color(0xff666E7A)
                 )
             },
             singleLine = true,
@@ -172,29 +178,30 @@ fun PartySearchBar(
                 imeAction = ImeAction.Done // 완료 액션 지정
             ),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color(0xFF678C40),
-                unfocusedContainerColor = Color(0xFFFBF9ED),
-                focusedBorderColor = Color(0xFF678C40),
-                focusedContainerColor = Color(0xFFFBF9ED),
+                unfocusedBorderColor = Color(0xFFD6D8DB),
+                unfocusedContainerColor = Color(0xFFEFEFF0),
+                focusedBorderColor = Color(0xFFD6D8DB),
+                focusedContainerColor = Color(0xFFEFEFF0),
             ),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
             trailingIcon = {
-                Icon(
+                androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
-                    tint = Color.Black,
-                    modifier = Modifier.clickable {
+                    tint = Color(0xff33363F),
+                    modifier = Modifier.size(30.dp)
+                            .clickable {
                         partyViewModel.getPartyList(null, name, null, null)
                     }
                 )
             }
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.Outlined.FilterAlt,
+        Spacer(modifier = Modifier.width(15.dp))
+        androidx.compose.material3.Icon(
+            imageVector = Icons.Default.FilterList,
             contentDescription = "필터",
-            modifier = Modifier.clickable { onClickFilter() }
+            tint = Color(0xff335C49),
+            modifier = Modifier.size(30.dp)
         )
-        Spacer(modifier = Modifier.width(6.dp))
     }
 }

@@ -125,7 +125,7 @@ fun JoinGuildScreen(
             Spacer(modifier = Modifier.width(15.dp))
             androidx.compose.material3.Icon(
                 imageVector = Icons.Default.FilterList,
-                contentDescription = "검색",
+                contentDescription = "필터",
                 tint = Color(0xff335C49),
                 modifier = Modifier.size(30.dp)
 //                modifier = Modifier.clickable {
