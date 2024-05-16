@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
@@ -60,25 +62,39 @@ fun JoinPartyScreen(
         partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
     }
 
-    Column {
-        PartySearchBar(
-            partyViewModel,
-            onSearchTextChanged = {},
-            onClickSearch = {},
-            onClickFilter = {}
-        )
+    Scaffold(
+        topBar = {
+            PartySearchBar(
+                partyViewModel,
+                onSearchTextChanged = {},
+                onClickSearch = {},
+                onClickFilter = {}
+            )
+        }, content = { paddingValues ->
 
-        if (partyList.isEmpty()) {
-            Text(text = "소모임이 없습니다")
-        } else {
-            LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
-                items(partyList) { party ->
-                    PartyCard(party)
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                if (partyList.isEmpty()) {
+                    Text(
+                        text = "소모임이 없습니다",
+                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(alignment = Alignment.CenterHorizontally)
+                    ) {
+                        items(partyList) { party ->
+                            PartyCard(party)
+                        }
+                    }
                 }
             }
-        }
-
-    }
+        })
 }
 
 @Composable
@@ -161,7 +177,7 @@ fun PartySearchBar(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(top=25.dp, bottom = 25.dp),
+                .padding(top = 25.dp, bottom = 25.dp),
             textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
             value = name,
             onValueChange = { text ->
@@ -189,10 +205,11 @@ fun PartySearchBar(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
                     tint = Color(0xff33363F),
-                    modifier = Modifier.size(30.dp)
-                            .clickable {
-                        partyViewModel.getPartyList(null, name, null, null)
-                    }
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            partyViewModel.getPartyList(null, name, null, null)
+                        }
                 )
             }
         )
