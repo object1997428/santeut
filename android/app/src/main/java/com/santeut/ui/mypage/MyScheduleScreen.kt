@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -34,6 +35,13 @@ import java.time.YearMonth
 fun MyScheduleScreen(partyViewModel: PartyViewModel = hiltViewModel()) {
     val myScheduleList by partyViewModel.myScheduleList.observeAsState(emptyList())
     val activeDates = myScheduleList.map { LocalDate.parse(it) }
+
+    val year = 2024
+    val month = 5
+
+    LaunchedEffect (key1 = year, key2 = month){
+        partyViewModel.getMyScheduleList(year, month)
+    }
 
     val pagerState = rememberPagerState()
 
@@ -82,7 +90,9 @@ fun DateCell(date: LocalDate, hasEvent: Boolean) {
                 imageVector = Icons.Filled.Circle,
                 contentDescription = "Event marker",
                 tint = Color.Green,
-                modifier = Modifier.size(16.dp).align(Alignment.BottomEnd)
+                modifier = Modifier
+                    .size(16.dp)
+                    .align(Alignment.BottomEnd)
             )
         }
     }

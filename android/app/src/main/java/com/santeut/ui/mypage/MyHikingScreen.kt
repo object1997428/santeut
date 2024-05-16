@@ -121,18 +121,33 @@ fun MyRecord(record: MyRecordResponse) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "이동거리 ${record.distance}km",
+                    text = "이동거리 ${record.distance ?: 0}km",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "이동시간 ${record.duration}", // 이동 시간을 보여줍니다.
+                    text = "이동시간 ${minuteToHour(record.duration ?: 0)}", // 이동 시간을 보여줍니다.
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
             Text(
-                text = "최고 고도 ${record.height}m", // 최고 고도를 보여줍니다.
+                text = "최고 고도 ${record.height ?: 0}m", // 최고 고도를 보여줍니다.
                 style = MaterialTheme.typography.bodyMedium
             )
         }
     }
+}
+
+fun minuteToHour(duration: Int): String {
+    val hour = duration / 60
+    val minute = duration % 60
+
+    if (hour == 0) {
+        return "${minute}분"
+    }
+
+    if (minute == 0) {
+        return "${hour}시간"
+    }
+
+    return "${hour}시간 ${minute}분"
 }
