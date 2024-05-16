@@ -5,10 +5,12 @@ package com.santeut.ui.mountain
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,13 +34,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -83,7 +89,11 @@ fun MountainScreen(
     Scaffold {
 
         // 전체 스크롤 또는 정보는 고정하고 TabRow Content만 스크롤
-        LazyColumn(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
             item {
                 AsyncImage(
                     model = mountain?.image ?: R.drawable.logo,
@@ -112,7 +122,7 @@ fun MountainScreen(
             }
 
             when (selectedTab) {
-                0 -> item { HikingCourse(mountain?.courseCount ?: 0, courseList, pathData)  }
+                0 -> item { HikingCourse(mountain?.courseCount ?: 0, courseList, pathData) }
                 1 -> item { MountainWeather(mountain) }
             }
         }
@@ -149,51 +159,60 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
 }
 
 @Composable
-fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>, pathData: List<CourseDetailRespnse>) {
+fun HikingCourse(
+    courseCount: Int,
+    courseList: List<HikingCourseResponse>,
+    pathData: List<CourseDetailRespnse>
+) {
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 15.0)
     }
+    Column(
+        modifier = Modifier.padding(20.dp) // 전체 Column에 패딩 적용
+    ) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        NaverMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(
-                locationTrackingMode = LocationTrackingMode.Follow,
-                mapType = MapType.Terrain,
-                isMountainLayerGroupEnabled = true
-            )
+        Box(
+            modifier = Modifier
+                .height(232.dp)
+                .fillMaxWidth()
+                .background(Color(0xFFD9D9D9))
+                .shadow(4.dp, RoundedCornerShape(4.dp)),
         ) {
-            pathData.forEach { courseDetail ->
-                val path = courseDetail.locationDataList.map { LatLng(it.lat, it.lng) }
-                if (path.size >= 2) {
-                    PathOverlay(
-                        coords = path,
-                        width = 3.dp,
-                        color = Color.Green,
-                        outlineWidth = 1.dp,
-                        outlineColor = Color.Red,
-                        tag = courseDetail.courseId
-                    )
-                    Log.d("제발","${pathData}")
+            NaverMap(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp),
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(
+                    locationTrackingMode = LocationTrackingMode.Follow,
+                    mapType = MapType.Terrain,
+                    isMountainLayerGroupEnabled = true
+                )
+            ) {
+                pathData.forEach { courseDetail ->
+                    val path = courseDetail.locationDataList.map { LatLng(it.lat, it.lng) }
+                    if (path.size >= 2) {
+                        PathOverlay(
+                            coords = path,
+                            width = 3.dp,
+                            color = Color.Green,
+                            outlineWidth = 1.dp,
+                            outlineColor = Color.Red,
+                            tag = courseDetail.courseId
+                        )
+                        Log.d("제발", "${pathData}")
+                    }
                 }
             }
         }
-    }
 
-    Column {
-        Box(
-            modifier = Modifier
-                .padding(10.dp) // Padding around the Box
-        ) {
+        Column {
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        horizontal = 10.dp,
-                        vertical = 8.dp
-                    ) // Padding as per your last message
+                    .padding(top = 20.dp)
             ) {
                 Text(
                     text = "등산로",
@@ -203,35 +222,35 @@ fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>, pathD
                     lineHeight = 24.sp,
                     fontFamily = FontFamily.SansSerif
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "${courseCount}개",
                     color = Color.Black,
                     fontSize = 14.sp,
                     lineHeight = 16.sp,
                     textAlign = TextAlign.Right,
-                    modifier = Modifier.fillMaxWidth()
                 )
             }
-        }
 
-            Column {
-                courseList.forEach { course ->
-                    CourseItem(course)
-                }
+            courseList.forEach { course ->
+                CourseItem(
+                    course = course,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
             }
 
-
+        }
     }
 }
 
 @Composable
-fun CourseItem(course: HikingCourseResponse) {
+fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-//            .absoluteOffset(x = 29.dp, y = 976.dp) // Setting absolute position
-//            .width(333.dp)
-//            .height(87.dp)
-            .background(color = Color(0xFFE5DD90), shape = RoundedCornerShape(10.dp)) // Background color and border radius
+        modifier = modifier
+            .background(
+                color = Color(0xFFE5DD90),
+                shape = RoundedCornerShape(10.dp)
+            )
             .padding(8.dp) // Internal padding
     ) {
         Card(
@@ -239,22 +258,96 @@ fun CourseItem(course: HikingCourseResponse) {
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "${course.courseName ?: ""} 코스")
-                Text(text = "난이도 ${course.level ?: "알 수 없음"}")
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "거리 ${course.distance ?: "?"}km")
-                Text(text = "등산 시간 ${course.upTime ?: "?"}분")
-                Text(text = "하산 시간 ${course.downTime ?: "?"}분")
+            Column {
+                Row(
+                    modifier = Modifier
+                        .background(color = Color(0xFFE5DD90))
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${course.courseName ?: ""} 코스",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                                append("난이도 ")
+                            }
+                            // "Level" value in a different color, if present
+                            withStyle(style = SpanStyle(color = getColorForLevel(course.level))) {
+                                append(course.level ?: "알 수 없음")
+                            }
+                        }
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .background(color = Color(0xFFE5DD90))
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                                append("거리 ")
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Black,
+                                )
+                            ) {
+                                append("${course.distance ?: "?"}km")
+                            }
+                        }
+                    )
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                                append("등산 시간 ")
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Black,
+                                )
+                            ) {
+                                append("${course.upTime ?: "?"}분")
+                            }
+                        }
+                    )
+                    Text(
+                        buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = Color.Gray)) {
+                                append("하산 시간 ")
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Black,
+                                )
+                            ) {
+                                append("${course.downTime ?: "?"}분")
+                            }
+                        }
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+fun getColorForLevel(level: String?): Color {
+    return when (level) {
+        "쉬움" -> Color(0xFF335C49)  // Dark green
+        "보통" -> Color.Black
+        "어려움" -> Color.Red
+        else -> Color.Gray
     }
 }
 
