@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -13,6 +15,7 @@ import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.RankingResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -41,6 +44,9 @@ class GuildViewModel @Inject constructor(
     private val _memberList = MutableLiveData<List<GuildMemberResponse>>(emptyList())
     val memberList: LiveData<List<GuildMemberResponse>> = _memberList
 
+    private val _applyList = MutableLiveData<List<GuildApplyResponse>>(emptyList())
+    val applyList: LiveData<List<GuildApplyResponse>> = _applyList
+
     private val _rankingList = MutableLiveData<List<RankingResponse>>(emptyList())
     val rankingList: LiveData<List<RankingResponse>> = _rankingList
 
@@ -50,6 +56,21 @@ class GuildViewModel @Inject constructor(
                 _guilds.postValue(guildUseCase.getGuilds())
             } catch (e: Exception) {
                 _error.postValue("동호회 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                guildUseCase.createGuild(guildProfile, createGuildRequest).collect {
+                    Log.d("GuildViewModel", "동호회 생성 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("동호회 생성 실패: ${e.message}")
             }
         }
     }
@@ -128,6 +149,40 @@ class GuildViewModel @Inject constructor(
                 _memberList.postValue(guildUseCase.getGuildMemberList(guildId))
             } catch (e: Exception) {
                 _error.postValue("동호회 회원 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getGuildApplyList(guildId: Int) {
+        viewModelScope.launch {
+            try {
+                _applyList.postValue(guildUseCase.getGuildApplyList(guildId))
+            } catch (e: Exception) {
+                _error.postValue("동호회 가입 신청 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun approveMember(guildId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                guildUseCase.approveMember(guildId, userId).collect {
+                    Log.d("GuildViewModel", "가입 승인 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("가입 승인 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun denyMember(guildId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                guildUseCase.denyMember(guildId, userId).collect {
+                    Log.d("GuildViewModel", "가입 거절 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("가입 거절 실패: ${e.message}")
             }
         }
     }

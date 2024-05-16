@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.gson.Gson
 import com.santeut.data.apiservice.GuildApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
+import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -32,6 +34,29 @@ class GuildRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = flow {
+        Log.d("", "레포짇토리 ")
+        val response =
+            guildApiService.createGuild(guildProfile, createGuildPart(createGuildRequest))
+        Log.d("response status", response?.status ?: "Response is null")
+        if (response.status == "200") {
+            Log.d("Guild Repository", "동호회 생성 성공")
+            emit(response.data)
+        } else {
+            throw Exception("동호회 생성 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    private fun createGuildPart(createGuildPostPart: CreateGuildRequest): MultipartBody.Part {
+        val json = Gson().toJson(createGuildPostPart)
+        val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("request", null, requestBody)
+    }
+
 
     override suspend fun myGuilds(): List<GuildResponse> {
         return try {
@@ -90,7 +115,6 @@ class GuildRepositoryImpl @Inject constructor(
         images: List<MultipartBody.Part>?,
         createGuildPostRequest: CreateGuildPostRequest
     ): Flow<Unit> = flow {
-        Log.d("Repository", "접근 성공")
         val response =
             guildApiService.createGuildPost(images, createGuildPostPart(createGuildPostRequest))
         if (response.status == "200") {
@@ -136,6 +160,41 @@ class GuildRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getGuildApplyList(guildId: Int): List<GuildApplyResponse> {
+        return try {
+            val response = guildApiService.getGuildApplyList(guildId)
+            if (response.status == "200") {
+                Log.d("GuildRepository", "동호회 가입 신청 목록 조회 성공")
+                response.data.guildApplyList ?: emptyList()
+            } else {
+                throw Exception("동호회 가입 신청 목록 조회 실패: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun approveMember(guildId: Int, userId: Int): Flow<Unit> = flow {
+        val response = guildApiService.approveMember(guildId, userId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "가입 승인 성공")
+            emit(response.data)
+        } else {
+            throw Exception("가입 승인 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun denyMember(guildId: Int, userId: Int): Flow<Unit> = flow {
+        val response = guildApiService.denyMember(guildId, userId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "가입 거절 성공")
+            emit(response.data)
+        } else {
+            throw Exception("가입 거절 실패: ${response.status} ${response.data}")
+        }
+    }
+
     override suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit> = flow {
         val response = guildApiService.exileMember(guildId, userId)
         if (response.status == "200") {
@@ -171,7 +230,7 @@ class GuildRepositoryImpl @Inject constructor(
             val response = guildApiService.getRanking(type)
             if (response.status == "200") {
                 Log.d("GuildRepository", "랭킹 조회 성공")
-                response.data.partyMembers?: emptyList()
+                response.data.partyMembers ?: emptyList()
             } else {
                 throw Exception("랭킹 조회 실패: ${response.status} ${response.data}")
             }

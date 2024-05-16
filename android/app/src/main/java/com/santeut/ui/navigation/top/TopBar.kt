@@ -1,5 +1,6 @@
 package com.santeut.ui.navigation.top
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -31,15 +32,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.GuildViewModel
+import com.santeut.ui.party.PartyViewModel
 
 @Composable
 fun TopBar(
     navController: NavController,
     currentTap: String?
 ) {
+    val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     when (currentTap) {
         "home" -> HomeTopBar(navController)
         "community/{initialPage}", "community" -> DefaultTopBar(navController, "커뮤니티")
@@ -48,8 +52,14 @@ fun TopBar(
         "chatList" -> SimpleTopBar(navController, "채팅방")
         "noti" -> SimpleTopBar(navController, "알림")
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
+        "createGuild"-> SimpleTopBar(navController, "동호회 만들기")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
-        "chatRoom/{partyId}" -> MenuTopBar(navController, "소모임 제목")
+        "chatRoom/{partyId}/{partyName}" -> {
+            MenuTopBar(
+                navController,
+                currentBackStackEntry?.arguments?.getString("partyName") ?: "소모임 제목"
+            )
+        }
     }
 }
 
@@ -142,7 +152,14 @@ fun SimpleTopBar(navController: NavController, pageName: String) {
 }
 
 @Composable
-fun MenuTopBar(navController: NavController, pageName: String) {
+fun MenuTopBar(
+    navController: NavController,
+    pageName: String,
+    partyViewModel: PartyViewModel = hiltViewModel()
+) {
+
+    var showMenu by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = { Text(pageName) },
         contentColor = Color.Black,
@@ -158,10 +175,51 @@ fun MenuTopBar(navController: NavController, pageName: String) {
             }
         },
         actions = {
-            IconButton(onClick = { /* 클릭 시 메뉴 열림 */ }) {
+
+            var showDialog by remember { mutableStateOf(false) }
+
+            IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "추가 메뉴"
+                )
+            }
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text(text = "소모임 정보") },
+                    // TODO: 소모임 상세 조회
+                    onClick = { Log.d("소모임 정보", "클릭") }
+                    // onClick = { navController.navigate("guildMemberList/${guild.guildId}") }
+                )
+
+                DropdownMenuItem(
+                    text = { Text(text = "소모임 나가기", color = Color.Red) },
+                    onClick = { showDialog = true })
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    text = { Text(text = "${pageName}에서 나가시겠습니까?") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+//                                partyViewModel.// TODO: 소모임 나가기
+                                Log.d("소모임", "나감")
+                                showDialog = false
+                            }
+                        ) {
+                            Text("나가기")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { showDialog = false }) {
+                            Text("취소")
+                        }
+                    }
                 )
             }
         }
@@ -245,7 +303,9 @@ fun GuildTopBar(
                 DropdownMenuItem(text = { Text(text = "소모임 만들기") }, onClick = { /*TODO*/ })
 
                 if (guild.isPresident) {
-                    DropdownMenuItem(text = { Text(text = "가입 요청 보기") }, onClick = { /*TODO*/ })
+                    DropdownMenuItem(
+                        text = { Text(text = "가입 요청 보기") },
+                        onClick = { navController.navigate("guildApplyList/${guild.guildId}") })
                     DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
                 }
 

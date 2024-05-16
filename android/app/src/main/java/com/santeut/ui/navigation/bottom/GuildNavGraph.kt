@@ -8,6 +8,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.CreateGuildPostScreen
+import com.santeut.ui.guild.CreateGuildScreen
+import com.santeut.ui.guild.GuildApplyListScreen
 import com.santeut.ui.guild.GuildCommunityScreen
 import com.santeut.ui.guild.GuildMemberListScreen
 import com.santeut.ui.guild.GuildPostDetailScreen
@@ -28,6 +30,10 @@ fun NavGraphBuilder.GuildNavGraph(
         // 나의 모임 페이지
         composable("guild") {
             MyGuildScreen(navController)
+        }
+
+        composable("createGuild") {
+            CreateGuildScreen()
         }
 
         // 동호회 상세 페이지
@@ -83,6 +89,18 @@ fun NavGraphBuilder.GuildNavGraph(
             GuildMemberListScreen(guildId, navController)
         }
 
+        // 동호회 가입 신청 목록 조회
+        composable(
+            route = "guildApplyList/{guildId}",
+            arguments = listOf(
+                navArgument("guildId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            GuildApplyListScreen(guildId, navController)
+        }
+
+        // 동호회 전용 소모임 생성
         composable("createParty") {
             CreatePartyScreen(navController)
         }
