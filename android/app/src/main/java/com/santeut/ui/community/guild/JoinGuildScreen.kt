@@ -183,7 +183,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                     .weight(1f),  // 남은 공간 모두 사용
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                androidx.compose.material3.Text(
+                Text(
                     text = guild.guildName,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
