@@ -7,11 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateCommentRequest
 import com.santeut.data.model.response.CommentResponse
+import com.santeut.data.model.response.NotificationResponse
 import com.santeut.domain.usecase.CommonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import retrofit2.http.Path
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,11 +24,14 @@ class CommonViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    private val _notiList = MutableLiveData<List<NotificationResponse>>()
+    val notiList: LiveData<List<NotificationResponse>> = _notiList
+
     fun createComment(postId: Int, postType: Char, commentContent: String) {
         viewModelScope.launch {
             try {
                 val createCommentRequest = CreateCommentRequest(commentContent)
-                commonUseCase.createComment(postId, postType, createCommentRequest).collect {
+                commonUseCase.createComment(postId, postType, createCommentRequest).let {
                     Log.d("CommonViewModel", "Create Comment")
                 }
             } catch (e: Exception) {

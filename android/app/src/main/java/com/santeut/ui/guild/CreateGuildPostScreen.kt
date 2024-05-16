@@ -50,6 +50,7 @@ import com.santeut.ui.navigation.top.CreateTopBar
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.InputStream
 
 @Composable
 fun CreateGuildPostScreen(
