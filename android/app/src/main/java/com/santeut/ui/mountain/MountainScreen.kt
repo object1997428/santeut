@@ -4,15 +4,19 @@ package com.santeut.ui.mountain
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,7 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -73,7 +83,7 @@ fun MountainScreen(
     Scaffold {
 
         // 전체 스크롤 또는 정보는 고정하고 TabRow Content만 스크롤
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
             item {
                 AsyncImage(
                     model = mountain?.image ?: R.drawable.logo,
@@ -173,35 +183,77 @@ fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>, pathD
     }
 
     Column {
-        Row {
-            Text(text = "등산로")
-            Text(text = "${courseCount}개")
-        }
-
-        Column {
-            courseList.forEach { course ->
-                CourseItem(course)
+        Box(
+            modifier = Modifier
+                .padding(10.dp) // Padding around the Box
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 10.dp,
+                        vertical = 8.dp
+                    ) // Padding as per your last message
+            ) {
+                Text(
+                    text = "등산로",
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp,
+                    fontFamily = FontFamily.SansSerif
+                )
+                Text(
+                    text = "${courseCount}개",
+                    color = Color.Black,
+                    fontSize = 14.sp,
+                    lineHeight = 16.sp,
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
+
+            Column {
+                courseList.forEach { course ->
+                    CourseItem(course)
+                }
+            }
+
 
     }
 }
 
 @Composable
 fun CourseItem(course: HikingCourseResponse) {
-    Card(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
+//            .absoluteOffset(x = 29.dp, y = 976.dp) // Setting absolute position
+//            .width(333.dp)
+//            .height(87.dp)
+            .background(color = Color(0xFFE5DD90), shape = RoundedCornerShape(10.dp)) // Background color and border radius
+            .padding(8.dp) // Internal padding
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "${course.courseName?:""} 코스")
-            Text(text = "난이도 ${course.level?:"알 수 없음"}")
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(text = "거리 ${course.distance?:"?"}km")
-            Text(text = "등산 시간 ${course.upTime?:"?"}분")
-            Text(text = "하산 시간 ${course.downTime?:"?"}분")
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "${course.courseName ?: ""} 코스")
+                Text(text = "난이도 ${course.level ?: "알 수 없음"}")
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "거리 ${course.distance ?: "?"}km")
+                Text(text = "등산 시간 ${course.upTime ?: "?"}분")
+                Text(text = "하산 시간 ${course.downTime ?: "?"}분")
+            }
         }
     }
 }
