@@ -31,7 +31,7 @@ class CommonViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val createCommentRequest = CreateCommentRequest(commentContent)
-                commonUseCase.createComment(postId, postType, createCommentRequest).collect {
+                commonUseCase.createComment(postId, postType, createCommentRequest).let {
                     Log.d("CommonViewModel", "Create Comment")
                 }
             } catch (e: Exception) {
@@ -40,12 +40,36 @@ class CommonViewModel @Inject constructor(
         }
     }
 
-    fun getNotificationList(){
+    fun getNotificationList() {
         viewModelScope.launch {
-            try{
+            try {
                 _notiList.postValue(commonUseCase.getNotificationList())
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 _error.postValue("알림 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun hitLike(postId: Int, postType: Char) {
+        viewModelScope.launch {
+            try {
+                commonUseCase.hitLike(postId, postType).collect {
+                    Log.d("CommonViewModel", "Hit Like")
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to hit Like: ${e.message}"
+            }
+        }
+    }
+
+    fun cancelLike(postId: Int, postType: Char) {
+        viewModelScope.launch {
+            try {
+                commonUseCase.cancelLike(postId, postType).collect {
+                    Log.d("CommonViewModel", "Cancel Like")
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to cancel Like: ${e.message}"
             }
         }
     }

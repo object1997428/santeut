@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.request.CreateGuildPostRequest
+import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostResponse
@@ -13,6 +14,7 @@ import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.RankingResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
@@ -50,6 +52,21 @@ class GuildViewModel @Inject constructor(
                 _guilds.postValue(guildUseCase.getGuilds())
             } catch (e: Exception) {
                 _error.postValue("동호회 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun createGuild(
+        guildProfile: MultipartBody.Part?,
+        createGuildRequest: CreateGuildRequest
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                guildUseCase.createGuild(guildProfile, createGuildRequest).collect {
+                    Log.d("GuildViewModel", "동호회 생성 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("동호회 생성 실패: ${e.message}")
             }
         }
     }
