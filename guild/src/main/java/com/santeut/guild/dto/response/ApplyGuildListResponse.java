@@ -40,7 +40,7 @@ public class ApplyGuildListResponse {
     @AllArgsConstructor
     public static class ApplyGuildListInfo{
         int guildRequestId;
-        LocalDateTime createdAt;
+        LocalDateTime JoinDate;
         int userId;
         String userNickname;
         String userProfile;
