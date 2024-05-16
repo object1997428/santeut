@@ -38,6 +38,7 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildApplyResponse
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildResponse
+import com.santeut.ui.community.tips.formatTime
 import com.santeut.ui.navigation.top.GuildTopBar
 
 @Composable
@@ -71,11 +72,11 @@ fun GuildApplyListScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "동호회 회원",
+                        text = "가입 요청",
                         style = MaterialTheme.typography.headlineSmall
                     )
                     Text(
-                        text = "${applyList.size}명",
+                        text = "${applyList.size}건",
                         style = MaterialTheme.typography.headlineSmall
                     )
                 }
@@ -107,40 +108,38 @@ fun ApplyRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = apply.userProfile ?: R.drawable.logo,
-                    contentDescription = "회원 프로필 사진",
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(
+                model = apply.userProfile ?: R.drawable.logo,
+                contentDescription = "회원 프로필 사진",
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(Modifier.width(16.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth() // 공간을 적절히 분배하기 위해 추가
+            ) {
+                Text(
+                    text = apply.userNickname,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black
                 )
-                Spacer(Modifier.width(16.dp))
-                Column {
-                    Text(
-                        text = apply.userNickname,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Black,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = apply.createdAt,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                Text(
+                    text = formatTime(apply.createdAt),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
             }
+        }
 
-            Row {
-                Button(onClick = { guildViewModel.denyMember(guild.guildId, apply.userId) }) {
-                    Text(text = "거절하기")
-                }
-                Button(onClick = { guildViewModel.approveMember(guild.guildId, apply.userId) }) {
-                    Text(text = "승인하기")
-                }
+        Row {
+            Button(onClick = { guildViewModel.denyMember(guild.guildId, apply.userId) }) {
+                Text(text = "거절하기")
+            }
+            Spacer(Modifier.width(8.dp))
+            Button(onClick = { guildViewModel.approveMember(guild.guildId, apply.userId) }) {
+                Text(text = "승인하기")
             }
         }
     }
