@@ -33,6 +33,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import com.santeut.R
@@ -46,15 +47,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
+import com.santeut.ui.mypage.UserViewModel
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
 @Composable
 fun ChatScreen(
     partyId: Int,
-    chatViewModel: ChatViewModel = hiltViewModel()
+    chatViewModel: ChatViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
 
+    val myProfile by userViewModel.myProfile.observeAsState()
     val chatmessages by chatViewModel.chatmessages.observeAsState(emptyList())
     val listState = rememberLazyListState()
 
@@ -64,6 +68,7 @@ fun ChatScreen(
         if(chatmessages.isNotEmpty()) {
             listState.scrollToItem(chatmessages.size-1)
         }
+        userViewModel.getMyProfile()
     }
 
     DisposableEffect(Unit) {
@@ -89,7 +94,11 @@ fun ChatScreen(
                     ) {
                         chatmessages.forEach {
                             item {
-                                ChatMessage(message = it)
+                                if (it.userNickname == (myProfile?.userNickname ?: "")) {
+                                    MyChatMessage(message = it)
+                                } else {
+                                    OthersChatMessage(message = it)
+                                }
                             }
                         }
                     }
@@ -101,11 +110,58 @@ fun ChatScreen(
 }
 
 @Composable
-fun ChatMessage(message: ChatMessage) {
+fun MyChatMessage(message: ChatMessage) {
     Row(
-        modifier = Modifier.padding(16.dp, 8.dp)
+        modifier = Modifier
+            .padding(16.dp, 8.dp)
+            .fillMaxWidth()
     ) {
-        if(message.userProfile != null &&message.userProfile.equals("null")) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp, 0.dp, 0.dp, 0.dp)
+                .fillMaxWidth()
+        ) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 48f,
+                                topEnd = 48f,
+                                bottomStart = 48f,
+                                bottomEnd = 0f
+                            )
+                        )
+                        .background(DarkGreen)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = message.content,
+                        color = Color.White,
+                        softWrap = true
+                    )
+                }
+
+            Text(
+                message.createdAt,
+                color = Color.LightGray,
+                modifier = Modifier
+                    .padding(4.dp, 4.dp, 0.dp, 0.dp)
+                    .align(Alignment.End)
+            )
+        }
+
+    }
+}
+
+@Composable
+fun OthersChatMessage(message: ChatMessage) {
+    Row(
+        modifier = Modifier
+            .padding(16.dp, 8.dp)
+            .fillMaxWidth()
+    ) {
+        if(message.userProfile != null && message.userProfile.equals("null")) {
             message.userProfile.let { message.userProfile = null}
         }
         AsyncImage(
@@ -132,28 +188,26 @@ fun ChatMessage(message: ChatMessage) {
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
             )
-            Box(
-                modifier = Modifier
-//            .align(if (message.isFromMe) Alignment.End else Alignment.Start)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 48f,
-                            topEnd = 48f,
-                            bottomStart = 48f,
-                            bottomEnd = 48f
-//                    bottomStart = if (message.isFromMe) 48f else 0f,
-//                    bottomEnd = if (message.isFromMe) 0f else 48f
+                Box(
+                    modifier = Modifier
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 48f,
+                                topEnd = 48f,
+                                bottomStart = 0f,
+                                bottomEnd = 48f
+                            )
                         )
+                        .background(Color.LightGray)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = message.content,
+                        color = Color.Black,
+                        softWrap = true
                     )
-                    .background(DarkGreen)
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = message.content,
-                    color = Color.White,
-                    softWrap = true
-                )
-            }
+                }
+
             Text(
                 message.createdAt,
                 color = Color.LightGray,
@@ -162,7 +216,6 @@ fun ChatMessage(message: ChatMessage) {
         }
 
     }
-
 }
 
 @Composable
