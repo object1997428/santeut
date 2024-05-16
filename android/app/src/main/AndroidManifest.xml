@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permission -->
-<<<<<<< HEAD
 <!--    <uses-feature android:name="android.hardware.camera" android:required="true"/>-->
     <uses-feature android:name="android.hardware.camera.any"/>
-=======
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
->>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />

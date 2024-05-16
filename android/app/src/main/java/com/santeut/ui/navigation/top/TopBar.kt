@@ -10,16 +10,13 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-<<<<<<< HEAD
 import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-=======
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Message
->>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
@@ -87,47 +84,44 @@ fun HomeTopBar(
                     .clickable(onClick = { navController.navigate("home") })
             )
         },
-        actions = {
-            IconButton(onClick = { navController.navigate("chatList") }) {
-                Icon(
-                    imageVector = Icons.Outlined.Message,
-                    contentDescription = "Message"
-                )
-            }
-            IconButton(onClick = { navController.navigate("noti") }) {
-                Icon(
-                    imageVector = Icons.Outlined.Notifications,
-                    contentDescription = "Notifications"
-                )
-            }
-        }
-<<<<<<< HEAD
-        Spacer(modifier = Modifier.width(2.dp))
-        Text(
-            text = "산뜻",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.AutoMirrored.Outlined.Message,
-            contentDescription = "채팅",
-            modifier = Modifier
-                .padding(10.dp)
-                .clickable { onClickChatting() }
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Image(
-            imageVector = Icons.Outlined.Notifications,
-            contentDescription = "알림",
-            modifier = Modifier
-                .clickable { onClickAlert() }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-    }
-=======
+//        actions = {
+//            IconButton(onClick = { navController.navigate("chatList") }) {
+//                Icon(
+//                    imageVector = Icons.Outlined.Message,
+//                    contentDescription = "Message"
+//                )
+//            }
+//            IconButton(onClick = { navController.navigate("noti") }) {
+//                Icon(
+//                    imageVector = Icons.Outlined.Notifications,
+//                    contentDescription = "Notifications"
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.width(2.dp))
+//        Text(
+//            text = "산뜻",
+//            fontSize = 24.sp,
+//            fontWeight = FontWeight.ExtraBold
+//        )
+//        Spacer(modifier = Modifier.weight(1f))
+//        Image(
+//            imageVector = Icons.AutoMirrored.Outlined.Message,
+//            contentDescription = "채팅",
+//            modifier = Modifier
+//                .padding(10.dp)
+//                .clickable { onClickChatting() }
+//        )
+//        Spacer(modifier = Modifier.width(4.dp))
+//        Image(
+//            imageVector = Icons.Outlined.Notifications,
+//            contentDescription = "알림",
+//            modifier = Modifier
+//                .clickable { onClickAlert() }
+//        )
+//        Spacer(modifier = Modifier.width(8.dp))
+//    }
     )
->>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
 }
 
 @Composable

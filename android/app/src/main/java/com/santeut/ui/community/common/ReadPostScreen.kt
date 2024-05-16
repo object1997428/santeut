@@ -116,7 +116,6 @@ fun ContentSection(post: PostResponse?) {
     }
 }
 
-<<<<<<< HEAD
 @Composable
 fun CommentSection(
     postId: Int,
@@ -128,7 +127,7 @@ fun CommentSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        CommentScreen(postId, postType, commonViewModel)
+//        CommentScreen(postId, postType, commonViewModel)
     }
 
     Row(
@@ -148,7 +147,7 @@ fun CommentSection(
             modifier = Modifier
                 .weight(1f)
                 .background(Color.Transparent),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { onSend() })
         )
         IconButton(onClick = { onSend() }) {
@@ -159,5 +158,3 @@ fun CommentSection(
         }
     }
 }
-=======
->>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e

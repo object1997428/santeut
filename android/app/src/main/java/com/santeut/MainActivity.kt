@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
     private var isCameraPermissionGranted = false
     private var isForegroundServiceGranted = false
     private var isPostNotificationsPermissionGranted = false
-<<<<<<< HEAD
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ){
@@ -43,7 +42,6 @@ class MainActivity : ComponentActivity() {
             Log.i("kilo", "Permission denied")
         }
     }
-=======
 
     private val dataClient by lazy { Wearable.getDataClient(this) }
     private val messageClient by lazy { Wearable.getMessageClient(this) }
@@ -57,7 +55,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
->>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

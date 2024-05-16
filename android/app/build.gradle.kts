@@ -119,7 +119,6 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-<<<<<<< HEAD
     // Camera
     implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
     implementation("androidx.camera:camera-lifecycle:1.4.0-alpha02")
@@ -129,7 +128,7 @@ dependencies {
 
     // Translate
     implementation("com.deepl.api:deepl-java:1.5.0")
-=======
+
     // Accompanist Pager
     implementation ("com.google.accompanist:accompanist-pager:<version>")
 
@@ -144,5 +143,4 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
->>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
 }

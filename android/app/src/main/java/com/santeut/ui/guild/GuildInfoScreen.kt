@@ -168,9 +168,7 @@ fun CameraUI() {
 
     Log.d("진입", "확인")
     CameraPreview(
-//        modifier = modifier,
         cameraState = cameraState,
-//        camSelector = camSelector
     ){
         Button(onClick = {
             val file = File(directory, fileName)
@@ -236,8 +234,6 @@ fun CameraUI() {
                         }
                     }
 
-
-
                 }
                 else {
                     Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
@@ -246,10 +242,6 @@ fun CameraUI() {
                 Log.d("카메라", "버튼 클릭")
             }
         }) {  Text("Take Picture") }
-//        Button(onClick = {
-//            camSelector = camSelector.inverse
-//        }) { Text("Switch camera") }
-
     }
     val capturedImageFile = imageFile.value
 
@@ -262,156 +254,6 @@ fun encodeFileToBase64Binary(filePath: String): String {
     val bytes = fileInputStreamReader.readBytes()
     fileInputStreamReader.close()
     return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.DEFAULT)
-}
-fun convertImageFileToBase64(imageFile: File) : String{
-    val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-    val outputStream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-    val byteArray = outputStream.toByteArray()
-    return Base64.encodeToString(byteArray, Base64.DEFAULT)
-}
-
-@Composable
-fun CameraUI2(modifier: Modifier = Modifier, onPictureTaken: (String) -> Unit) {
-    val cameraState = rememberCameraState()
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-
-//    val imageFile = remember { mutableStateOf<File?>(null) }
-//    val fileName = "image_${System.currentTimeMillis()}.jpg"
-//    val directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-//    var camSelector by remember {
-//        mutableStateOf(CamSelector.Back)
-//    }
-    val imageCapture = ImageCapture.Builder().build()
-    Log.d("진입", "확인")
-    CameraPreview(
-        modifier = modifier,
-        cameraState = cameraState,
-//        camSelector = camSelector
-    ){
-        Button(onClick = {
-
-            val executor = ContextCompat.getMainExecutor(context)
-            cameraProviderFuture.get().unbindAll()
-
-            imageCapture.takePicture(
-                ContextCompat.getMainExecutor(context),
-                object : ImageCapture.OnImageCapturedCallback() {
-                    override fun onCaptureSuccess(image: ImageProxy) {
-                        val buffer = image.planes.first().buffer
-                        val bytes = ByteArray(buffer.remaining())
-                        buffer.get(bytes)
-                        image.close()
-
-                        val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
-                        onPictureTaken(base64String)
-                        Toast.makeText(context, "Image captured!", Toast.LENGTH_SHORT).show()
-                    }
-
-                    override fun onError(exception: ImageCaptureException) {
-                        Log.d("Capture failed : ${exception.message}", "Test")
-                        System.out.println(exception.message)
-                        Toast.makeText(context, "Capture failed: ${exception.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            )
-        }) {
-            Text("Take Picture")
-        }
-//        Button(onClick = {
-//            val file = File(directory, fileName)
-//            cameraState.takePicture(file) { result ->
-//                if (result is ImageCaptureResult.Success){
-//                    imageFile.value = file
-//                    onPictureTaken(file)
-//                    System.out.println(imageFile.value)
-//                    Log.d("imageFile Value", "File path: ${imageFile.value}")
-//                    Log.d("imageFile Name", "File name: ${imageFile.value?.name}")
-//                    Toast.makeText(context, "Success!", Toast.LENGTH_LONG).show()
-////                    encodeFileToBase64Binary(imageFile.value.absolutePath)
-//                }
-//                else {
-//                    Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
-//                }
-//                // Result는 사진이 성공적으로 저장되었는지 여부를 알려줌
-//                Log.d("카메라", "버튼 클릭")
-//            }
-//        }) {  Text("Take Picture") }
-
-    }
-//    val capturedImageFile = imageFile.value
-//
-//    Log.d("찍은 사진", capturedImageFile.toString())
-}
-//fun createImageFile(context: Context): File {
-//    return File(directory, fileName)
-//}
-
-//@Composable
-//fun CaptureImage() {
-//    var imageFile by remember { mutableStateOf<File?>(null) }
-//    var base64Image by remember { mutableStateOf<String?>(null) }
-//
-//    CameraUI { file ->
-//        imageFile = file
-//        file?.let{
-//            base64Image = convertImageFileToBase64(it)
-//            Log.d("Base64 Image", base64Image ?: "Conversion failed")
-//        }
-//    }
-//
-//    imageFile?.let { file ->
-//        // 이미지 파일이 존재할 때 UI에 보여주는 부분
-//        Box(
-//            modifier = Modifier.fillMaxSize(),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Image(
-//                painter = rememberAsyncImagePainter(file.toUri()),
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .size(300.dp)
-//                    .clip(shape = RoundedCornerShape(10.dp))
-//                    .border(1.dp, Color.Black, shape = RoundedCornerShape(10.dp))
-//            )
-//        }
-//    }
-//}
-
-@Composable
- fun CameraScreen(showSnackBar: (String) -> Unit) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val cameraX = remember { CameraXFactory.create() }
-    val previewView = remember { mutableStateOf<PreviewView?>(null) }
-    val facing = cameraX.getFacingState().collectAsState()
-
-    LaunchedEffect(Unit) {
-        cameraX.initialize(context = context)
-        previewView.value = cameraX.getPreviewView()
-        cameraScope.launch(Dispatchers.Main) {
-            cameraX.startCamera(lifecycleOwner = lifecycleOwner)
-        }
-    }
-    DisposableEffect(facing.value) {
-
-        onDispose {
-            cameraX.unBindCamera()
-        }
-    }
-    Button(
-        modifier = Modifier
-            .padding(10.dp),
-        onClick = {
-            Log.d("Camera Button", "Click Click")
-            cameraX.takePicture(showSnackBar)
-        }
-    ) {
-        Text("takePicture")
-    }
 }
 
 fun genderToString(guild: GuildResponse?):String {
