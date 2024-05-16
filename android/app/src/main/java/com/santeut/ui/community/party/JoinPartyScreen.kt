@@ -1,5 +1,6 @@
 package com.santeut.ui.community.party
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,13 +24,17 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -51,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
+import com.santeut.ui.community.guild.GuildDetail
 import com.santeut.ui.party.PartyViewModel
 
 @Composable
@@ -113,7 +119,7 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
             .fillMaxWidth()
             .height(160.dp)  // 카드 높이 조정
             .padding(8.dp), // 카드 주변 여백
-        colors = CardDefaults.cardColors(
+            colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
         shape = RoundedCornerShape(8.dp),
@@ -182,6 +188,42 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                         modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
                     )
                     Text(text = "${party.curPeople} / ${party.maxPeople} 명")
+                }
+            }
+        }
+    }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+            Surface(modifier = Modifier.padding(16.dp)) {
+                Column {
+                    // 동호회 상세 정보
+                    Button(
+                        onClick = { partyViewModel.joinParty(party.partyId) },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !(party.isMember),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Green,
+                            contentColor = Color.White,
+                            disabledContainerColor = Color.LightGray,
+                            disabledContentColor = Color.Black,
+                        )
+                    ) {
+                        if(party.isMember) {
+                            Text(
+                                "이미 가입한 소모임입니다",
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        } else {
+                            Text(
+                                text = "참가하기",
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
                 }
             }
         }
