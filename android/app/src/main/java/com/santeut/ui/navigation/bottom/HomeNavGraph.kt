@@ -1,5 +1,6 @@
 package com.santeut.ui.navigation.bottom
 
+import CommunityScreen
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -20,6 +21,11 @@ fun NavGraphBuilder.HomeNavGraph(
         composable("home") {
             HomeScreen(navController)
         }
-
+        composable("community/{initialPage}",
+            arguments = listOf(navArgument("initialPage") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val initialPage = backStackEntry.arguments?.getInt("initialPage") ?: 0
+            CommunityScreen(navController, initialPage)
+        }
     }
 }

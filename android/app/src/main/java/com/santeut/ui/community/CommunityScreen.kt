@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
@@ -21,11 +22,16 @@ import com.santeut.ui.community.tips.PostTipsScreen
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun CommunityScreen(
-    navController: NavController
+    navController: NavController,
+    initialPage: Int = 0
 ) {
     val pages = listOf("동호회", "소모임", "등산Tip", "코스공유")
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = initialPage) {
+        pagerState.scrollToPage(initialPage)
+    }
 
     Scaffold() {
         Column(modifier = Modifier.fillMaxWidth()) {
