@@ -79,9 +79,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Box(
-
-            ) {
+            Box {
                 Image(
                     painter = painterResource(R.drawable.logo),
                     contentDescription = "Logo",

@@ -76,13 +76,13 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
             Row {
 
                 AsyncImage(
-                    model = guild.guildProfile ?: R.drawable.logo,
+                    model = guild.guildProfile,
                     contentDescription = "동호회 사진"
                 )
 
                 Column {
                     androidx.compose.material.Text(text = guild.guildName)
-                    androidx.compose.material.Text(text = "${guild.guildMember ?: 0}명")
+                    androidx.compose.material.Text(text = "${guild.guildMember}명")
                     androidx.compose.material.Text(text = regionName(guild.regionId))
                 }
             }

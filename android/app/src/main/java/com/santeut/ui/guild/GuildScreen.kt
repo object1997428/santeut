@@ -1,6 +1,10 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Tab
@@ -21,6 +25,8 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.santeut.ui.party.PartyListScreen
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -39,7 +45,7 @@ fun GuildScreen(
         guildViewModel.getGuild(guildId)
     }
 
-    Scaffold() {
+    Scaffold {
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
@@ -68,6 +74,7 @@ fun GuildScreen(
             ) { page ->
                 when (page) {
                     0 -> GuildInfoScreen(guild)
+//                    0 -> CameraUI ()
                     1 -> GuildCommunityScreen()
                     2 -> PartyListScreen()
                     3 -> GuildRankingScreen()
@@ -76,4 +83,6 @@ fun GuildScreen(
             }
         }
     }
+
 }
+

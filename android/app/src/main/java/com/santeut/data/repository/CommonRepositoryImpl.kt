@@ -29,7 +29,7 @@ class CommonRepositoryImpl @Inject constructor(
         return try{
             val response = commonApiService.getComments(postId, postType.toString())
             if(response.status=="200"){
-                response.data.commentList?: emptyList()
+                response.data.commentList
             } else{
                 Log.e(
                     "CommonRepository",

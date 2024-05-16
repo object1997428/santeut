@@ -60,7 +60,7 @@ class LoginViewModel @Inject constructor(
                         )
                     ).catch { e ->
                         Log.d("Login Error", "${e.message}")
-                        _uiEvent.value = LoginUiEvent.Login(false);
+                        _uiEvent.value = LoginUiEvent.Login(false)
 
                         _userLoginId.value = ""
                         _userPassword.value = ""
@@ -83,7 +83,7 @@ class LoginViewModel @Inject constructor(
                         }
 
                         _userState.value.copy(token = data.accessToken, isLoggedIn = true)
-                        _uiEvent.value = LoginUiEvent.Login(true);
+                        _uiEvent.value = LoginUiEvent.Login(true)
                     }
                 }
             }

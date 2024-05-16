@@ -29,7 +29,7 @@ class GuildRepositoryImpl @Inject constructor(
         return try {
             val response = guildApiService.myGuilds()
             if (response.status == "200") {
-                response.data.guildList ?: emptyList()
+                response.data.guildList
             } else {
                 throw Exception("Failed to load post: ${response.status} ${response.data}")
             }

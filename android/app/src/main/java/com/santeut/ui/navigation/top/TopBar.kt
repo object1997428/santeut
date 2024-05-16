@@ -17,10 +17,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Comment
-import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -81,7 +80,7 @@ fun HomeTopBar(
         )
         Spacer(modifier = Modifier.weight(1f))
         Image(
-            imageVector = Icons.Outlined.Message,
+            imageVector = Icons.AutoMirrored.Outlined.Message,
             contentDescription = "채팅",
             modifier = Modifier
                 .padding(10.dp)
@@ -117,7 +116,7 @@ fun DefaultTopBar(navController: NavController, pageName:String) {
         actions = {
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
-                    imageVector = Icons.Outlined.Message,
+                    imageVector = Icons.AutoMirrored.Outlined.Message,
                     contentDescription = "Message"
                 )
             }

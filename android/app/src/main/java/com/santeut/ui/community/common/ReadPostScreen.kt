@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -158,7 +158,7 @@ fun CommentSection(
         )
         IconButton(onClick = { onSend() }) {
             Icon(
-                imageVector = Icons.Outlined.Send,
+                imageVector = Icons.AutoMirrored.Outlined.Send,
                 contentDescription = "Send"
             )
         }

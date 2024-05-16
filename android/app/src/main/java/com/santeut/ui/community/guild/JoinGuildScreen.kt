@@ -88,13 +88,13 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
             Row {
 
                 AsyncImage(
-                    model = guild.guildProfile ?: R.drawable.logo,
+                    model = guild.guildProfile,
                     contentDescription = "동호회 사진"
                 )
 
                 Column {
                     Text(text = guild.guildName)
-                    Text(text = "${guild.guildMember ?: 0}명")
+                    Text(text = "${guild.guildMember}명")
                     Text(text = regionName(guild.regionId))
                 }
             }
@@ -132,7 +132,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
     ) {
 
         AsyncImage(
-            model = guild.guildProfile ?: R.drawable.logo,
+            model = guild.guildProfile,
             contentDescription = "동호회 사진",
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,7 +159,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "인원 ${guild.guildMember ?: 0}명",
+                text = "인원 ${guild.guildMember}명",
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyMedium
             )

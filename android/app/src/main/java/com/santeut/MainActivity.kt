@@ -28,7 +28,17 @@ class MainActivity : ComponentActivity() {
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private var isCameraPermissionGranted = false
     private var isPostNotificationsPermissionGranted = false
-
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){
+        isGranted ->
+        if (isGranted) {
+            Log.i("kilo", "Permission granted")
+        }
+        else {
+            Log.i("kilo", "Permission denied")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
