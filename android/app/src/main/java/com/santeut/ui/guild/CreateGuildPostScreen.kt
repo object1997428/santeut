@@ -20,15 +20,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Photo
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +50,6 @@ import com.santeut.ui.navigation.top.CreateTopBar
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.InputStream
 
 @Composable
 fun CreateGuildPostScreen(
@@ -129,7 +128,9 @@ fun CreateGuildPostScreen(
                     .fillMaxWidth()
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -142,7 +143,9 @@ fun CreateGuildPostScreen(
                     .height(250.dp)
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -185,13 +188,14 @@ fun ImagePreviewSection(images: List<Uri>) {
     }
 }
 
-fun createMultiPartBody(uriList: List<Uri>?, context: Context): List<MultipartBody.Part>? {
+private fun createMultiPartBody(uriList: List<Uri>?, context: Context): List<MultipartBody.Part>? {
     val multipartList = mutableListOf<MultipartBody.Part>()
     if (uriList != null) {
         for (uri in uriList) {
             try {
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
+                    val mimeType =
+                        context.contentResolver.getType(uri) ?: "application/octet-stream"
                     val fileName = uri.lastPathSegment ?: "upload.file"
                     val byteArray = inputStream.readBytes()
                     val requestBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull())

@@ -21,3 +21,4 @@ data class NotificationResponse(
     @SerializedName("referenceId") val referenceId: Int,
     @SerializedName("createdAt") val createdAt: LocalDateTime
 )
+

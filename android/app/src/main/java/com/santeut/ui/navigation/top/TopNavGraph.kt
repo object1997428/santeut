@@ -22,10 +22,14 @@ fun NavGraphBuilder.TopNavGraph(
         }
 
         composable(
-            route = "chatRoom/{partyId}",
-            arguments = listOf(navArgument("partyId") { type = NavType.IntType })
+            route = "chatRoom/{partyId}/{partyName}",
+            arguments = listOf(
+                navArgument("partyId") { type = NavType.IntType },
+                navArgument("partyName") { type = NavType.StringType }
+            )
         ) {backStackEntry->
             val partyId = backStackEntry.arguments?.getInt("partyId")?:0
+            val partyName = backStackEntry.arguments?.getString("partyName")?:"소모임"
             ChatScreen(partyId)
         }
         composable(

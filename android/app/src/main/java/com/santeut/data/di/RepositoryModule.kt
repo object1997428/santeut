@@ -42,4 +42,5 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindMountainRepository(impl: MountainRepositoryImpl): MountainRepository
+
 }
