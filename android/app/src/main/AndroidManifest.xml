@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permission -->
+<!--    <uses-feature android:name="android.hardware.camera" android:required="true"/>-->
+    <uses-feature android:name="android.hardware.camera.any"/>
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />

@@ -57,7 +57,6 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.genderToString
-import com.santeut.ui.guild.regionName
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -174,7 +173,18 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                 contentScale = ContentScale.Crop  // 이미지 채우기 방식
             )
 
-            Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
+            AsyncImage(
+                model = guild.guildProfile,
+                contentDescription = "동호회 사진"
+            )
+
+            Column {
+                Text(text = guild.guildName)
+                Text(text = "${guild.guildMember}명")
+                Text(text = regionName(guild.regionId))
+
+                Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
+
 
             // 텍스트 정보 부분
             Column(
@@ -183,7 +193,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                     .weight(1f),  // 남은 공간 모두 사용
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                androidx.compose.material3.Text(
+                Text(
                     text = guild.guildName,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
@@ -201,45 +211,63 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                     )
                     Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
                     androidx.compose.material3.Text(
-                        text = "${guild.guildMember ?: 0} 명",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xff76797D)
+                        text = guild.guildName,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
-                }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 5.dp, top = 5.dp)
+                    )
+                    {
+                        Icon(
+                            imageVector = Icons.Filled.PersonOutline,
+                            contentDescription = "회원수",
+                            modifier = Modifier.size(20.dp),
+                            tint = Color(0xff76797D),
+                        )
+                        Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                        androidx.compose.material3.Text(
+                            text = "${guild.guildMember ?: 0} 명",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xff76797D)
+                        )
+                    }
 //                --------------------------
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 10.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.PinDrop,
-                        contentDescription = "지역",
-                        modifier = Modifier.size(20.dp),
-                        tint = Color(0xff76797D)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
-                    androidx.compose.material3.Text(
-                        text = regionName(guild.regionId),
-                        color = Color(0xff76797D),
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PinDrop,
+                            contentDescription = "지역",
+                            modifier = Modifier.size(20.dp),
+                            tint = Color(0xff76797D)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                        androidx.compose.material3.Text(
+                            text = regionName(guild.regionId),
+                            color = Color(0xff76797D),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
                 }
-//                --------------------------
             }
         }
-    }
 
 
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
-        ) {
-            Surface(modifier = Modifier.padding(16.dp)) {
-                Column {
-                    // 동호회 상세 정보
-                    GuildDetail(guild, guildViewModel)
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = sheetState
+            ) {
+                Surface(modifier = Modifier.padding(16.dp)) {
+                    Column {
+                        // 동호회 상세 정보
+                        GuildDetail(guild, guildViewModel)
+                    }
                 }
             }
         }
@@ -262,7 +290,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
     ) {
 
         AsyncImage(
-            model = guild.guildProfile ?: R.drawable.logo,
+            model = guild.guildProfile,
             contentDescription = "동호회 사진",
             modifier = Modifier
                 .fillMaxWidth()
@@ -289,7 +317,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "인원 ${guild.guildMember ?: 0}명",
+                text = "인원 ${guild.guildMember}명",
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -317,4 +345,5 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
             Text(text = buttonText)
         }
     }
+}
 }

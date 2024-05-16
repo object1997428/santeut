@@ -31,6 +31,17 @@ class MainActivity : ComponentActivity() {
     private var isCameraPermissionGranted = false
     private var isForegroundServiceGranted = false
     private var isPostNotificationsPermissionGranted = false
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){
+        isGranted ->
+        if (isGranted) {
+            Log.i("kilo", "Permission granted")
+        }
+        else {
+            Log.i("kilo", "Permission denied")
+        }
+    }
 
     private val dataClient by lazy { Wearable.getDataClient(this) }
     private val messageClient by lazy { Wearable.getMessageClient(this) }

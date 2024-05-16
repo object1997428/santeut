@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.santeut"
-        minSdk = 30
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -118,6 +118,16 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Camera
+    implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
+    implementation("androidx.camera:camera-lifecycle:1.4.0-alpha02")
+    implementation("androidx.camera:camera-view:1.4.0-alpha02")
+    implementation("io.github.ujizin:camposer:0.4.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.3.1")
+
+    // Translate
+    implementation("com.deepl.api:deepl-java:1.5.0")
 
     // Accompanist Pager
     implementation ("com.google.accompanist:accompanist-pager:<version>")
