@@ -1,13 +1,9 @@
 package com.santeut.data.repository
 
-import android.util.Log
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.response.CommentListResponse
-import com.santeut.data.model.response.CommentResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.lang.Exception
 import javax.inject.Inject
 
 class CommonRepositoryImpl @Inject constructor(
@@ -25,6 +21,7 @@ class CommonRepositoryImpl @Inject constructor(
         }
     }
 
+<<<<<<< HEAD
     override suspend fun getComments(postId: Int, postType: Char): List<CommentResponse> {
         return try{
             val response = commonApiService.getComments(postId, postType.toString())
@@ -42,4 +39,6 @@ class CommonRepositoryImpl @Inject constructor(
             throw e
         }
     }
+=======
+>>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
 }

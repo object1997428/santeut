@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
+import com.santeut.data.apiservice.MountainApiService
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.apiservice.PostApiService
 import com.santeut.data.apiservice.UserApiService
@@ -20,6 +21,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -56,6 +58,11 @@ object RemoteModule {
     @Singleton
     fun providePartyApiService(@Named("retrofit") retrofit: Retrofit): PartyApiService =
         retrofit.create(PartyApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providerMountainApiService(@Named("retrofit") retrofit: Retrofit): MountainApiService =
+        retrofit.create(MountainApiService::class.java)
 
     @Provides
     @Singleton
@@ -97,4 +104,14 @@ object RemoteModule {
     fun provideInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     }
+
+    @Provides
+    @Singleton
+    @WebSocketClient
+    fun provideWebSocketClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .pingInterval(30, TimeUnit.SECONDS)
+            .build()
 }

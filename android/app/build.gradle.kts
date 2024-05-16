@@ -36,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -119,6 +119,7 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+<<<<<<< HEAD
     // Camera
     implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
     implementation("androidx.camera:camera-lifecycle:1.4.0-alpha02")
@@ -128,4 +129,20 @@ dependencies {
 
     // Translate
     implementation("com.deepl.api:deepl-java:1.5.0")
+=======
+    // Accompanist Pager
+    implementation ("com.google.accompanist:accompanist-pager:<version>")
+
+    // Wear
+    implementation("com.google.android.gms:play-services-wearable:18.1.0")
+
+    // navermap
+    implementation ("io.github.fornewid:naver-map-compose:1.7.0")
+    implementation ("io.github.fornewid:naver-map-location:21.0.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+>>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e
 }

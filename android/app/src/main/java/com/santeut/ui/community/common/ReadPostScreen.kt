@@ -22,6 +22,7 @@ import com.santeut.data.model.response.PostResponse
 import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.tips.formatTime
+import com.santeut.ui.navigation.top.DefaultTopBar
 import com.santeut.ui.navigation.top.TopBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,10 +45,10 @@ fun ReadPostScreen(
     Scaffold(
 
         topBar = {
-            TopBar(navController, "readPost")
+            DefaultTopBar(navController, "커뮤니티")
         },
 
-        content = {innerPadding->
+        content = { innerPadding ->
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
@@ -57,14 +58,7 @@ fun ReadPostScreen(
                 Column {
                     HeaderSection(post)
                     ContentSection(post)
-                    CommentSection(
-                        postId,
-                        postType,
-                        comment,
-                        onCommentChange = { comment = it },
-                        onSend = { focusManager.clearFocus() },
-                        commonViewModel
-                    )
+
                 }
             }
         }
@@ -122,6 +116,7 @@ fun ContentSection(post: PostResponse?) {
     }
 }
 
+<<<<<<< HEAD
 @Composable
 fun CommentSection(
     postId: Int,
@@ -164,3 +159,5 @@ fun CommentSection(
         }
     }
 }
+=======
+>>>>>>> d6cc9bbc9799cdc6845814115e0a49e707e6e65e

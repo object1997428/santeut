@@ -3,22 +3,37 @@ package com.santeut.ui.party
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.widget.DatePicker
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
 fun CreatePartyScreen(
@@ -32,6 +47,8 @@ fun CreatePartyScreen(
     var schedule by remember { mutableStateOf("") }
 
     val selectedCourse = listOf<Int>()
+
+    val partyCreationSuccess by partyViewModel.partyCreationSuccess.observeAsState()
 
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(
@@ -53,34 +70,56 @@ fun CreatePartyScreen(
     Column(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        Text(
+            text = "소모임 이름",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start
+        )
         TextField(
             value = partyName,
             onValueChange = { partyName = it },
-            label = { Text("소모임 이름") },
+            label = { },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "최대 인원",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start
+        )
         TextField(
             value = maxPeople,
             onValueChange = { maxPeople = it },
-            label = { Text("최대 인원") },
+            label = { },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "모임 장소",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start
+        )
         TextField(
             value = place,
             onValueChange = { place = it },
-            label = { Text("모임 장소") },
+            label = { },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "일정",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start
+        )
         TextField(
             value = schedule,
             onValueChange = {},
-            label = { Text("일정") },
+            label = { },
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { datePickerDialog.show() }) {
@@ -90,14 +129,31 @@ fun CreatePartyScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "산 선택하기",
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Start
+        )
+
+        SelectedMountainBar(navController)
+
         Button(onClick = {
             partyViewModel.createParty(
                 schedule, partyName, 1,
-                "승학산", maxPeople.toInt(), 1, place,
+                "승학산", maxPeople.toInt(), null, place,
                 selectedCourse
             )
+
+            if (partyCreationSuccess == true) {
+                // 로직 추가
+            }
         }) {
             Text("소모임 생성", fontSize = 18.sp)
         }
     }
+}
+
+@Composable
+fun SelectedMountainBar(navController: NavController) {
+Text(text = "산 선택하기")
 }
