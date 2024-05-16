@@ -55,6 +55,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
+import com.santeut.designsystem.theme.DarkGreen
+import com.santeut.designsystem.theme.Green
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.genderToString
 import com.santeut.ui.guild.regionName
@@ -233,7 +235,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
         ) {
-            Surface(modifier = Modifier.padding(16.dp)) {
+            Surface {
                 Column {
                     // 동호회 상세 정보
                     GuildDetail(guild, guildViewModel)
@@ -245,11 +247,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
 
 @Composable
 fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
-
-    var isRequested by remember { mutableStateOf(false) }
-    val buttonBackgroundColor =
-        if (isRequested) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primary
-    val buttonText = if (isRequested) "가입 요청 완료" else "가입 요청하기"
+    var isRequested by remember { mutableStateOf(guild.joinStatus != 'N') }
 
     Column(
         modifier = Modifier
@@ -270,13 +268,14 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
 
         Text(
             text = guild.guildName,
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
         Text(
             text = guild.guildInfo,
-            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -303,15 +302,31 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
         }
 
         Button(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 16.dp, 0.dp, 0.dp),
             onClick = {
                 if (!isRequested) {
                     guildViewModel.applyGuild(guild.guildId)
                     isRequested = true
                 }
             },
-            colors = ButtonDefaults.buttonColors(buttonBackgroundColor)
+            enabled = !isRequested,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Green,
+                contentColor = Color.White,
+                disabledContainerColor = Color.LightGray,
+                disabledContentColor = Color.Black,
+            )
         ) {
-            Text(text = buttonText)
+            if(guild.joinStatus==='N') {
+                Text(text = "가입 요청하기")
+            } else if(guild.joinStatus == 'R') {
+                Text(text = "가입 요청 완료")
+            } else {
+                Text(text =  "이미 가입한 동호회입니다")
+            }
         }
     }
 }
