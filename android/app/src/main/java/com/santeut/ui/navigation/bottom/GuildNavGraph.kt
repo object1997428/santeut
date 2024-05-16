@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.CreateGuildPostScreen
+import com.santeut.ui.guild.CreateGuildScreen
 import com.santeut.ui.guild.GuildCommunityScreen
 import com.santeut.ui.guild.GuildMemberListScreen
 import com.santeut.ui.guild.GuildPostDetailScreen
@@ -28,6 +29,10 @@ fun NavGraphBuilder.GuildNavGraph(
         // 나의 모임 페이지
         composable("guild") {
             MyGuildScreen(navController)
+        }
+
+        composable("createGuild"){
+            CreateGuildScreen()
         }
 
         // 동호회 상세 페이지
