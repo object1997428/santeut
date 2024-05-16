@@ -53,7 +53,7 @@ fun ChatRoom(chatRoomInfo: ChatRoomInfo, navController: NavController) {
             .padding(24.dp, 16.dp, 24.dp, 0.dp)
             .fillMaxWidth()
             .clickable(
-                onClick = { navController.navigate("chatRoom/${chatRoomInfo.partyId}") }
+                onClick = { navController.navigate("chatRoom/${chatRoomInfo.partyId}/${chatRoomInfo.partyName}") }
             )
     ) {
         Column() {

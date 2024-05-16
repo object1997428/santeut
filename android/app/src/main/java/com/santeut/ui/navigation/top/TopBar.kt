@@ -1,5 +1,6 @@
 package com.santeut.ui.navigation.top
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -31,15 +32,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.GuildViewModel
+import com.santeut.ui.party.PartyViewModel
 
 @Composable
 fun TopBar(
     navController: NavController,
     currentTap: String?
 ) {
+    val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     when (currentTap) {
         "home" -> HomeTopBar(navController)
         "community" -> DefaultTopBar(navController, "커뮤니티")
@@ -49,7 +53,12 @@ fun TopBar(
         "noti" -> SimpleTopBar(navController, "알림")
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
-        "chatRoom/{partyId}" -> MenuTopBar(navController, "소모임 제목")
+        "chatRoom/{partyId}/{partyName}" -> {
+            MenuTopBar(
+                navController,
+                currentBackStackEntry?.arguments?.getString("partyName") ?: "소모임 제목"
+            )
+        }
     }
 }
 
@@ -142,7 +151,14 @@ fun SimpleTopBar(navController: NavController, pageName: String) {
 }
 
 @Composable
-fun MenuTopBar(navController: NavController, pageName: String) {
+fun MenuTopBar(
+    navController: NavController,
+    pageName: String,
+    partyViewModel: PartyViewModel = hiltViewModel()
+) {
+
+    var showMenu by remember { mutableStateOf(false) }
+
     TopAppBar(
         title = { Text(pageName) },
         contentColor = Color.Black,
