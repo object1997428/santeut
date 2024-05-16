@@ -175,6 +175,26 @@ class GuildRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun approveMember(guildId: Int, userId: Int): Flow<Unit> = flow {
+        val response = guildApiService.approveMember(guildId, userId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "가입 승인 성공")
+            emit(response.data)
+        } else {
+            throw Exception("가입 승인 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun denyMember(guildId: Int, userId: Int): Flow<Unit> = flow {
+        val response = guildApiService.denyMember(guildId, userId)
+        if (response.status == "200") {
+            Log.d("Guild Repository", "가입 거절 성공")
+            emit(response.data)
+        } else {
+            throw Exception("가입 거절 실패: ${response.status} ${response.data}")
+        }
+    }
+
     override suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit> = flow {
         val response = guildApiService.exileMember(guildId, userId)
         if (response.status == "200") {

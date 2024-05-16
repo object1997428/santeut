@@ -16,6 +16,7 @@ import com.santeut.data.model.response.RankingResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -158,6 +159,30 @@ class GuildViewModel @Inject constructor(
                 _applyList.postValue(guildUseCase.getGuildApplyList(guildId))
             } catch (e: Exception) {
                 _error.postValue("동호회 가입 신청 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun approveMember(guildId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                guildUseCase.approveMember(guildId, userId).collect {
+                    Log.d("GuildViewModel", "가입 승인 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("가입 승인 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun denyMember(guildId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                guildUseCase.denyMember(guildId, userId).collect {
+                    Log.d("GuildViewModel", "가입 거절 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("가입 거절 실패: ${e.message}")
             }
         }
     }

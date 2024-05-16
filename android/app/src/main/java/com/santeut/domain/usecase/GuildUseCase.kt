@@ -55,6 +55,12 @@ class GuildUseCase @Inject constructor(
     suspend fun getGuildApplyList(guildId: Int): List<GuildApplyResponse> =
         guildRepository.getGuildApplyList(guildId)
 
+    suspend fun approveMember(guildId: Int, userId: Int): Flow<Unit> =
+        guildRepository.approveMember(guildId, userId)
+
+    suspend fun denyMember(guildId: Int, userId: Int): Flow<Unit> =
+        guildRepository.denyMember(guildId, userId)
+
     suspend fun exileMember(guildId: Int, userId: Int): Flow<Unit> =
         guildRepository.exileMember(guildId, userId)
 

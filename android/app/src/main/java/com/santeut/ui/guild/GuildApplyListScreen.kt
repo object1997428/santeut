@@ -97,8 +97,6 @@ fun ApplyRow(
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
 
-    var showDialog by remember { mutableStateOf(false) }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,12 +133,12 @@ fun ApplyRow(
                     )
                 }
             }
-            
+
             Row {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { guildViewModel.denyMember(guild.guildId, apply.userId) }) {
                     Text(text = "거절하기")
                 }
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { guildViewModel.approveMember(guild.guildId, apply.userId) }) {
                     Text(text = "승인하기")
                 }
             }
