@@ -1,9 +1,7 @@
 package com.santeut.data.repository
 
-import android.util.Log
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.response.NotificationResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.http.Path

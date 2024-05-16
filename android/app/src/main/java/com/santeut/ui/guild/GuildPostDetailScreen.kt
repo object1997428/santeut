@@ -217,7 +217,9 @@ fun CommentSection(
                 modifier = Modifier
                     .weight(1f)
                     .background(Color.Transparent),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(onDone = { onSend() })
             )
             IconButton(onClick = { onSend() }) {

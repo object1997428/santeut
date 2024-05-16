@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,10 +27,6 @@ fun GuildRankingScreen(
 ) {
     val rankingList by guildViewModel.rankingList.observeAsState()
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(key1 = null) {
-        guildViewModel.getRanking('H') // 최고고도
-    }
 
     Column(
         modifier = Modifier
@@ -82,7 +77,7 @@ fun RankingItem(rank: RankingResponse) {
             .fillMaxWidth()
             .padding(vertical = 4.dp)
     ) {
-        Text(text = "${rank.order}", modifier = Modifier.weight(1f))
+        Text(text = "${rank.order}.", modifier = Modifier.weight(1f))
         AsyncImage(model = rank.userProfile ?: R.drawable.logo, contentDescription = "프로필 사진")
         Text(text = rank.userNickname, modifier = Modifier.weight(3f))
         Text(text = rank.score, modifier = Modifier.weight(2f))

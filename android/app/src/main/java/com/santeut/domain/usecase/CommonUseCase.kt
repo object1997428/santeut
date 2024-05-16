@@ -1,7 +1,6 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreateCommentRequest
-import com.santeut.data.model.response.NotificationResponse
 import com.santeut.data.repository.CommonRepository
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Path
@@ -14,9 +13,9 @@ class CommonUseCase @Inject constructor(
         postId: Int,
         postType: Char,
         createCommentRequest: CreateCommentRequest
-    ): Flow<Unit> =
-        commonRepository.createComment(postId, postType, createCommentRequest)
-
+    ): Flow<Unit> {
+        return commonRepository.createComment(postId, postType, createCommentRequest)
+    }
 
     suspend fun getNotificationList(): List<NotificationResponse> =
         commonRepository.getNotificationList()

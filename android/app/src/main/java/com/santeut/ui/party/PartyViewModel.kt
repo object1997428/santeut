@@ -55,15 +55,16 @@ class PartyViewModel @Inject constructor(
 
     fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean
+        includeEnd: Boolean,
+        page: Int?,
+        size: Int?
     ) {
         viewModelScope.launch {
             try {
                 Log.d("PartyViewModel", _myPartyList.value?.size.toString())
-                _myPartyList.value = partyUseCase.getMyPartyList(date, includeEnd)
+                _myPartyList.postValue(partyUseCase.getMyPartyList(date, includeEnd, page, size))
             } catch (e: Exception) {
-                _error.value = "내 소모임 목록 조회 실패: ${e.message}"
-
+                _error.postValue("내 소모임 목록 조회 실패: ${e.message}")
             }
         }
     }

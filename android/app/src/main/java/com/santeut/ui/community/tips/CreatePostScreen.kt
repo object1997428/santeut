@@ -53,7 +53,9 @@ fun CreatePostScreen(
                     .fillMaxWidth()
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(androidx.compose.ui.focus.FocusDirection.Down) })
             )
             TextField(
@@ -65,7 +67,9 @@ fun CreatePostScreen(
                     .height(250.dp)
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
         }

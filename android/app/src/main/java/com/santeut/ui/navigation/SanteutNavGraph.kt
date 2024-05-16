@@ -1,8 +1,11 @@
+@file:OptIn(ExperimentalNaverMapApi::class)
+
 package com.santeut.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.santeut.ui.navigation.top.TopNavGraph
 import com.santeut.ui.navigation.bottom.CommunityNavGraph
 import com.santeut.ui.navigation.bottom.GuildNavGraph

@@ -1,6 +1,7 @@
 package com.santeut.domain.usecase
 
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
@@ -21,8 +22,10 @@ class PartyUseCase @Inject constructor(
 
     suspend fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean
-    ): List<MyPartyResponse> = partyRepository.getMyPartyList(date, includeEnd)
+        includeEnd: Boolean,
+        page: Int?,
+        size: Int?
+    ): List<MyPartyResponse> = partyRepository.getMyPartyList(date, includeEnd, page, size)
 
     suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit> =
         partyRepository.createParty(createPartyRequest)
@@ -31,4 +34,10 @@ class PartyUseCase @Inject constructor(
 
     suspend fun getMyScheduleList(year: Int, month: Int): List<String> =
         partyRepository.getMyScheduleList(year, month)
+
+    suspend fun getChatRoomList(): List<ChatRoomInfo> = partyRepository.getChatList()
+
+    suspend fun getChatMessageList(
+        partyId: Int
+    ) = partyRepository.getChatMessageList(partyId)
 }

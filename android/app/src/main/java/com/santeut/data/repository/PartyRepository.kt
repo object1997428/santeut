@@ -1,6 +1,8 @@
 package com.santeut.data.repository
 
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.ChatMessage
+import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyResponse
@@ -17,7 +19,9 @@ interface PartyRepository {
 
     suspend fun getMyPartyList(
         date: String?,
-        includeEnd: Boolean
+        includeEnd: Boolean,
+        page: Int?,
+        size: Int?
     ): List<MyPartyResponse>
 
     suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit>
@@ -25,4 +29,8 @@ interface PartyRepository {
     suspend fun getMyRecordList(): List<MyRecordResponse>
 
     suspend fun getMyScheduleList(year: Int, month: Int): List<String>
+
+    suspend fun getChatList(): List<ChatRoomInfo>
+
+    suspend fun getChatMessageList(partyId: Int): MutableList<ChatMessage>
 }

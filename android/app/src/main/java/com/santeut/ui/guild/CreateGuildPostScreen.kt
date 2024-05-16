@@ -128,7 +128,9 @@ fun CreateGuildPostScreen(
                     .fillMaxWidth()
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -141,7 +143,9 @@ fun CreateGuildPostScreen(
                     .height(250.dp)
                     .background(Color.White)
                     .border(1.dp, Color(0XFF678C40)),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
             Spacer(modifier = Modifier.height(16.dp))
