@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -55,8 +56,12 @@ import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.MountainResponse
+import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.mountain.MountainViewModel
+import com.santeut.ui.party.PartyViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
@@ -87,10 +92,10 @@ fun HomeScreen(
             MyGuildCard(navController)
         }
         item {
-            WeeklyHikingCard()
+            TodayHikingCard()
         }
         item {
-            HomeCommunityCard()
+            HomeCommunityCard(navController)
         }
     }
 }
@@ -303,7 +308,8 @@ fun HomeGuildItem(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp, 0.dp, 8.dp, 0.dp),
+            .padding(0.dp, 0.dp, 8.dp, 0.dp)
+            .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -330,9 +336,22 @@ fun HomeGuildItem(
 }
 
 @Composable
-fun WeeklyHikingCard(
-
+fun TodayHikingCard(
+    partyViewModel: PartyViewModel = hiltViewModel()
 ) {
+
+    val todayParty by partyViewModel.myPartyList.observeAsState(emptyList())
+
+    LaunchedEffect(key1 = null) {
+        val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        partyViewModel.getMyPartyList(
+            date = formattedDate,
+            includeEnd = false,
+            page = null,
+            size = null
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -345,61 +364,53 @@ fun WeeklyHikingCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "주간 등산 일정",
+                text = "오늘의 등산 일정",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
             )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "전체보기",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.LightGray
-            )
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(24.dp))
-                .clip(shape = RoundedCornerShape(24.dp))
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xFFe5dd90))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(20.dp)
-                ) {
-                    Row {
-                        Image(
-                            imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = "달력"
-                        )
-                        Spacer(modifier = Modifier.width(3.dp))
-                        Text(
-                            text = "2024년 5월 5일",
-                            fontSize = 14.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "한라산 싸피 산악회",
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(24.dp, 0.dp, 0.dp, 0.dp)
-                    )
-                }
+
+        LazyRow {
+            items(todayParty) { party ->
+                PartyCard(party)
             }
         }
     }
 }
 
 @Composable
-fun HomeCommunityCard(
+fun PartyCard(party: MyPartyResponse) {
+    Card {
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+        ) {
+            Row {
+                // 일정 추가
+                Image(
+                    imageVector = Icons.Default.CalendarMonth,
+                    contentDescription = "달력"
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = party.schedule,
+                    fontSize = 14.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "${party.partyName} ${party.guildName}",
+                fontSize = 14.sp,
+                modifier = Modifier.padding(24.dp, 0.dp, 0.dp, 0.dp)
+            )
+        }
+    }
+}
 
+@Composable
+fun HomeCommunityCard(
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
@@ -429,8 +440,29 @@ fun HomeCommunityCard(
                     .height(160.dp)
                     .fillMaxWidth()
             ) {
-                items(4) { index ->
-                    CommunityItem()
+                item {
+                    CommunityItem(
+                        "산악회 회원 모집",
+                        "다른 사람들과 함께 산행을 즐겨보세요!"
+                    ) { navController.navigate("community/0") }
+                }
+                item {
+                    CommunityItem(
+                        "등산 소모임 모집",
+                        "친구들과 산행을 즐기는 거 어때요?"
+                    ) { navController.navigate("community/1") }
+                }
+                item {
+                    CommunityItem(
+                        "등산 팁 공유",
+                        "등산 팁이 있으신가요?"
+                    ) { navController.navigate("community/2") }
+                }
+                item {
+                    CommunityItem(
+                        "코스 공유",
+                        "나만의 등산 코스를 자랑해볼까요?"
+                    ) { navController.navigate("community/3") }
                 }
             }
         }
@@ -439,7 +471,7 @@ fun HomeCommunityCard(
 
 @Composable
 fun CommunityItem(
-
+    title: String, content: String, onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -448,6 +480,7 @@ fun CommunityItem(
             .padding(0.dp, 0.dp, 8.dp, 0.dp)
             .background(color = Color.White)
             .border(width = 1.dp, color = Color.Black, shape = RectangleShape)
+            .clickable(onClick = { onClick() })
     ) {
         Column(
             modifier = Modifier
@@ -455,7 +488,7 @@ fun CommunityItem(
                 .height(160.dp)
         ) {
             Text(
-                text = "산악회 회원 모집",
+                text = title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -463,7 +496,7 @@ fun CommunityItem(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "다른 사람들과 함께 산행을 즐겨보세요, 다른 사람들과 함께 산행을 즐겨보세요, 다른 사람들과 함께 산행을 즐겨보세요, 다른 사람들과 함께 산행을 즐겨보세요",
+                text = content,
                 fontSize = 14.sp,
                 overflow = TextOverflow.Ellipsis
             )

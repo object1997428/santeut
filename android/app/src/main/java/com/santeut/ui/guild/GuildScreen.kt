@@ -77,10 +77,8 @@ fun GuildScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-//                    0 -> GuildInfoScreen(guild)
-                    0 -> CameraUI ()
-//                    1 -> GuildCommunityScreen()
-//                    2 -> PartyListScreen()
+                    0 -> GuildInfoScreen(guild)
+//                    0 -> CameraUI ()
                     1 -> GuildCommunityScreen(guildId, navController)
                     2 -> JoinPartyScreen(guildId)
                     3 -> GuildRankingScreen()

@@ -49,12 +49,13 @@ fun TopBar(
     val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     when (currentTap) {
         "home" -> HomeTopBar(navController)
-        "community" -> DefaultTopBar(navController, "커뮤니티")
+        "community/{initialPage}", "community" -> DefaultTopBar(navController, "커뮤니티")
         "guild" -> DefaultTopBar(navController, "나의 모임")
         "mypage" -> DefaultTopBar(navController, "마이페이지")
         "chatList" -> SimpleTopBar(navController, "채팅방")
         "noti" -> SimpleTopBar(navController, "알림")
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
+        "createGuild"-> SimpleTopBar(navController, "동호회 만들기")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
         "chatRoom/{partyId}/{partyName}" -> {
             MenuTopBar(
@@ -328,7 +329,9 @@ fun GuildTopBar(
                 DropdownMenuItem(text = { Text(text = "소모임 만들기") }, onClick = { /*TODO*/ })
 
                 if (guild.isPresident) {
-                    DropdownMenuItem(text = { Text(text = "가입 요청 보기") }, onClick = { /*TODO*/ })
+                    DropdownMenuItem(
+                        text = { Text(text = "가입 요청 보기") },
+                        onClick = { navController.navigate("guildApplyList/${guild.guildId}") })
                     DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
                 }
 

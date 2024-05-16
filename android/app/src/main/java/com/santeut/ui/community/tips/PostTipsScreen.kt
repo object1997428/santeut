@@ -123,7 +123,11 @@ fun TipDetail(post: PostResponse, navController: NavController) {
     }
 }
 
-fun formatTime(createdAt: LocalDateTime): String {
+fun formatTime(createdAt: LocalDateTime?): String {
+
+    if (createdAt == null) {
+        return "알 수 없음"
+    }
 
     // 현재 시각과의 차이
     val duration = Duration.between(createdAt, LocalDateTime.now()).abs()

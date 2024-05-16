@@ -57,22 +57,19 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.genderToString
-import com.santeut.ui.guild.regionName
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun JoinGuildScreen(
-    navController: NavController,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = null) {
         guildViewModel.getGuilds()
     }
     Column {
         // 검색 필드
-
         var name by remember { mutableStateOf("") }
         Row(
             modifier = Modifier
@@ -188,13 +185,31 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
 
                 Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
 
-                // 텍스트 정보 부분
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)  // 텍스트 내부 여백
-                        .weight(1f),  // 남은 공간 모두 사용
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
+
+            // 텍스트 정보 부분
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)  // 텍스트 내부 여백
+                    .weight(1f),  // 남은 공간 모두 사용
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = guild.guildName,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 5.dp, top = 5.dp)
+                )
+                {
+                    Icon(
+                        imageVector = Icons.Filled.PersonOutline,
+                        contentDescription = "회원수",
+                        modifier = Modifier.size(20.dp),
+                        tint = Color(0xff76797D),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
                     androidx.compose.material3.Text(
                         text = guild.guildName,
                         fontWeight = FontWeight.Bold,
@@ -237,7 +252,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
-//                --------------------------
+
                 }
             }
         }
@@ -330,4 +345,5 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
             Text(text = buttonText)
         }
     }
+}
 }
