@@ -176,6 +176,7 @@ fun CameraUI() {
                 if (result is ImageCaptureResult.Success){
                     imageFile.value = file
                     System.out.println(imageFile.value)
+
                     Log.d("imageFile Value", "File path: ${imageFile.value}")
                     Log.d("imageFile Name", "File name: ${imageFile.value?.name}")
                     Toast.makeText(context, "Success!", Toast.LENGTH_LONG).show()
@@ -190,7 +191,7 @@ fun CameraUI() {
                             // API
                             val request = PlantIdentificationRequest(images = base64File, similar_images = true)
                             val retrofit = Retrofit.Builder()
-                                .baseUrl("https://plant.id/api/") // BASE_URL은 서버의 기본 URL입니다.
+                                .baseUrl("https://plant.id/api/")
                                 .addConverterFactory(GsonConverterFactory.create())
                                 .build()
                             val plantIdApi = retrofit.create(PlantIdApi::class.java)
