@@ -174,10 +174,51 @@ fun MenuTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { /* 클릭 시 메뉴 열림 */ }) {
+
+            var showDialog by remember { mutableStateOf(false) }
+
+            IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "추가 메뉴"
+                )
+            }
+            DropdownMenu(
+                expanded = showMenu,
+                onDismissRequest = { showMenu = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text(text = "소모임 정보") },
+                    // TODO: 소모임 상세 조회
+                    onClick = { Log.d("소모임 정보", "클릭") }
+                    // onClick = { navController.navigate("guildMemberList/${guild.guildId}") }
+                )
+
+                DropdownMenuItem(
+                    text = { Text(text = "소모임 나가기", color = Color.Red) },
+                    onClick = { showDialog = true })
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    text = { Text(text = "${pageName}에서 나가시겠습니까?") },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+//                                partyViewModel.// TODO: 소모임 나가기
+                                Log.d("소모임", "나감")
+                                showDialog = false
+                            }
+                        ) {
+                            Text("나가기")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { showDialog = false }) {
+                            Text("취소")
+                        }
+                    }
                 )
             }
         }
