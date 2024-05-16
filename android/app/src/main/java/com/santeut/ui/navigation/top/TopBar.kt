@@ -52,6 +52,7 @@ fun TopBar(
         "chatList" -> SimpleTopBar(navController, "채팅방")
         "noti" -> SimpleTopBar(navController, "알림")
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
+        "createGuild"-> SimpleTopBar(navController, "동호회 만들기")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
         "chatRoom/{partyId}/{partyName}" -> {
             MenuTopBar(
