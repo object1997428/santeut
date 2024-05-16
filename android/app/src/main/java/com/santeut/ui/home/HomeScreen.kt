@@ -303,7 +303,8 @@ fun HomeGuildItem(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp, 0.dp, 8.dp, 0.dp),
+            .padding(0.dp, 0.dp, 8.dp, 0.dp)
+            .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
