@@ -29,7 +29,7 @@ public class GuildMemberListResponse {
 
           GuildMemberInfo guildMemberInfo = new GuildMemberInfo((Integer)data.get("userId"),
                   (String)data.get("userProfile"), (String)data.get("userNickname"),
-                 guildUserEntityList.get(i).getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) );
+                 guildUserEntityList.get(i).getCreatedAt());
           list.add(guildMemberInfo);
           }
           return list;
@@ -42,7 +42,7 @@ public class GuildMemberListResponse {
           int userId;
           String userProfile;
           String userNickname;
-          String joinDate;
+          LocalDateTime joinDate;
      }
 }
 

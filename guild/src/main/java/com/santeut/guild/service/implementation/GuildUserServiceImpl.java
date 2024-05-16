@@ -86,7 +86,7 @@ public class GuildUserServiceImpl implements GuildUserService {
         if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
             responseList.add(response);
         }
-        guildEntity.setGuildMember(guildEntity.getGuildMember()+1);
+
         guildRepository.save(guildEntity);
         return new ApplyGuildListResponse(ApplyGuildListResponse.applyGuildList(responseList, requestEntityList));
     }
@@ -110,6 +110,7 @@ public class GuildUserServiceImpl implements GuildUserService {
         guildRequestRepository.save(guildRequestEntity);
 
         GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(userId, guildId);
+        guildEntity.setGuildMember(guildEntity.getGuildMember()+1);
         guildUserRepository.save(guildUserEntity);
     }
 
