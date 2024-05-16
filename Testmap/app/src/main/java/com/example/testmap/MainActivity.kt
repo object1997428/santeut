@@ -3,8 +3,7 @@ package com.example.testmap
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.hardware.Sensor
@@ -107,7 +106,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MapScreen(
                         context = this@MainActivity,
-                        token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNSIsInVzZXJOaWNrbmFtZSI6IuyCvOyInOydtCIsImlhdCI6MTcxNTY2OTYxNCwiZXhwIjoxNzQ3MTk5NjE0fQ.M6OTeo4i3Hvw214Nsur6ATOfXU2EvNl8mZWkWjDvMI8",
+                        token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyIsInVzZXJOaWNrbmFtZSI6IlRlc3RTU0FGWTU1NSIsImlhdCI6MTcxNTY2OTM3NiwiZXhwIjoxNzQ3MTk5Mzc2fQ.-9kQCi15rJaeKlVtFk40cxwjKXCvqJdGvp1GCLJ5ny8",
                         ::startWebSocket,
                         ::stopWebSocket,
                     )
@@ -116,7 +115,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun startWebSocket(updateLocation: (String, Double, Double) -> Unit, context: Context, token: String) {
+    fun startWebSocket(updateLocation: (String, Double, Double, String?) -> Unit, context: Context, token: String) {
         val request = Request.Builder()
             .url(webSocketUrl)
             .addHeader("Authorization", "Bearer $token") // 헤더에 토큰 추가
@@ -129,7 +128,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("WebSocket", "Received message: $text")
                 try {
                     val message = Gson().fromJson(text, WebSocketMessage::class.java)
-                    updateLocation(message.userNickname, message.lat.toDouble(), message.lng.toDouble())
+                    updateLocation(message.userNickname, message.lat.toDouble(), message.lng.toDouble(), message.userProfile)
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
                 }
@@ -142,7 +141,7 @@ class MainActivity : ComponentActivity() {
 
                 locationSendingJob = CoroutineScope(Dispatchers.IO).launch {
                     while (isActive) {
-                        delay(5000)  // 5초마다 반복
+                        delay(2000)  // 2초마다 반복
                         val currentLocation = getCurrentLocation(context)
                         currentLocation?.let {
                             val locationJson = Gson().toJson(WebSocketSendMessage(
@@ -151,7 +150,6 @@ class MainActivity : ComponentActivity() {
                                 lng = it.longitude.toString()
                             ))
                             webSocket.send(locationJson)
-                            Log.d("WebSocket", "Location sent: $locationJson")
                         }
                     }
                 }
@@ -183,7 +181,7 @@ class MainActivity : ComponentActivity() {
 fun MapScreen(
     context: Context,
     token: String,
-    startWebSocket: (updateLocation: (String, Double, Double) -> Unit, Context, String) -> Unit,
+    startWebSocket: (updateLocation: (String, Double, Double, String?) -> Unit, Context, String) -> Unit,
     stopWebSocket: () -> Unit,
 ) {
     val mountainService = remember { createMountainService(token) }
@@ -198,6 +196,7 @@ fun MapScreen(
 
     // 사용자 위치 마커 상태를 관리하기 위해 MutableMap을 사용
     val userMarkerStates by remember { mutableStateOf<MutableMap<String, MarkerState>>(mutableMapOf()) }
+    val userIcons by remember { mutableStateOf<MutableMap<String, OverlayImage?>>(mutableMapOf()) }
 
     // userPositions가 변경될 때마다 마커 상태를 업데이트
     LaunchedEffect(userPositions) {
@@ -252,9 +251,17 @@ fun MapScreen(
 
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
-            startWebSocket({ nickname, lat, lng ->
+            startWebSocket({ nickname, lat, lng, imageUrl ->
                 userPositions = userPositions.toMutableMap().apply {
                     this[nickname] = LatLng(lat, lng)
+                }
+                if (imageUrl != null) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val icon = getOverlayImageFromUrl(imageUrl, 100, 100)
+                        withContext(Dispatchers.Main) {
+                            userIcons[nickname] = icon
+                        }
+                    }
                 }
             }, context, token) // 토큰 전달
             while (timerRunning) {
@@ -307,12 +314,13 @@ fun MapScreen(
                 }
                 // 사용자 마커 렌더링
                 userMarkerStates.forEach { (nickname, markerState) ->
+                    val icon = userIcons[nickname] ?: resizedIcon
                     Marker(
                         state = markerState,
                         captionText = nickname,
                         captionTextSize = 14.sp,
                         captionMinZoom = 12.0,
-                        icon = resizedIcon  // 마커 이미지 설정
+                        icon = icon  // 마커 이미지 설정
                     )
                 }
             }
@@ -331,9 +339,59 @@ fun MapScreen(
     }
 }
 
+suspend fun downloadImage(url: String): Bitmap? {
+    return try {
+        val result = withContext(Dispatchers.IO) {
+            val client = OkHttpClient()
+            val request = Request.Builder().url(url).build()
+            val response = client.newCall(request).execute()
+            response.body?.byteStream()?.use {
+                BitmapFactory.decodeStream(it)
+            }
+        }
+        result
+    } catch (e: Exception) {
+        Log.e("ImageDownloadError", "Error downloading image", e)
+        null
+    }
+}
+
+fun getCircularBitmap(bitmap: Bitmap): Bitmap {
+    val size = Math.min(bitmap.width, bitmap.height)
+    val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+
+    val canvas = Canvas(output)
+    val paint = Paint()
+    val rect = Rect(0, 0, size, size)
+    val rectF = RectF(rect)
+
+    paint.isAntiAlias = true
+    canvas.drawARGB(0, 0, 0, 0)
+    canvas.drawOval(rectF, paint)
+
+    paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+    canvas.drawBitmap(bitmap, rect, rect, paint)
+
+    return output
+}
+
+suspend fun getOverlayImageFromUrl(url: String, width: Int, height: Int): OverlayImage? {
+    val bitmap = downloadImage(url)
+    return bitmap?.let {
+        val circularBitmap = getCircularBitmap(it)
+        val resizedBitmap = Bitmap.createScaledBitmap(circularBitmap, width, height, false)
+        val stream = ByteArrayOutputStream()
+        resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val byteArray = stream.toByteArray()
+        val bitmapResized = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        OverlayImage.fromBitmap(bitmapResized)
+    }
+}
+
 fun resizeMarkerIcon(context: Context, drawableResId: Int, width: Int, height: Int): OverlayImage {
     val bitmap = BitmapFactory.decodeResource(context.resources, drawableResId)
-    val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false)
+    val circularBitmap = getCircularBitmap(bitmap)
+    val resizedBitmap = Bitmap.createScaledBitmap(circularBitmap, width, height, false)
 
     // Bitmap을 ByteArray로 변환하여 OverlayImage.fromBitmap()에 전달
     val stream = ByteArrayOutputStream()
@@ -384,8 +442,10 @@ data class WebSocketMessage(
     val partyId: Int,
     val userId: Int,
     val userNickname: String,
+    val userProfile: String?, // 이미지 URL 필드 추가
     val lat: String,
     val lng: String
+
 )
 
 data class WebSocketSendMessage(
