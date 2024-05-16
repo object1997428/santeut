@@ -53,7 +53,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.santeut.R
+import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.MountainResponse
+import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.mountain.MountainViewModel
 
 @Composable
@@ -79,10 +81,10 @@ fun HomeScreen(
             )
         }
         item {
-            PopMountainCard(mountainViewModel, navController)
+            PopMountainCard(navController)
         }
         item {
-            MyGuildCard()
+            MyGuildCard(navController)
         }
         item {
             WeeklyHikingCard()
@@ -155,8 +157,8 @@ fun SearchMountainBar(
 
 @Composable
 fun PopMountainCard(
-    mountainViewModel: MountainViewModel,
-    navController: NavController
+    navController: NavController,
+    mountainViewModel: MountainViewModel = hiltViewModel(),
 ) {
 
     val mountains by mountainViewModel.mountains.observeAsState(emptyList())
@@ -202,7 +204,6 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
             Box(
                 modifier = Modifier
                     .height(100.dp)
-//                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
                     .clip(shape = RoundedCornerShape(20.dp))
             ) {
                 AsyncImage(
@@ -245,8 +246,16 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
 
 @Composable
 fun MyGuildCard(
-
+    navController: NavController,
+    guildViewModel: GuildViewModel = hiltViewModel()
 ) {
+
+    val guilds by guildViewModel.guilds.observeAsState(emptyList())
+
+    LaunchedEffect(key1 = null) {
+        guildViewModel.myGuilds()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,7 +277,8 @@ fun MyGuildCard(
                 text = "전체보기",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color.LightGray
+                color = Color.LightGray,
+                modifier = Modifier.clickable(onClick = { navController.navigate("guild") })
             )
         }
         LazyRow(
@@ -276,9 +286,9 @@ fun MyGuildCard(
                 .height(180.dp)
                 .fillMaxWidth()
         ) {
-            items(3) { index ->
-                HomeGuildItem(
-                    onClick = {}
+            items(guilds.take(3)) { guild ->
+                HomeGuildItem(guild,
+                    onClick = { navController.navigate("getGuild/${guild.guildId}") }
                 )
             }
         }
@@ -287,6 +297,7 @@ fun MyGuildCard(
 
 @Composable
 fun HomeGuildItem(
+    guild: GuildResponse,
     onClick: () -> Unit
 ) {
     Column(
@@ -298,19 +309,20 @@ fun HomeGuildItem(
         Box(
             modifier = Modifier
                 .height(140.dp)
-                .width(200.dp)
-                .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(20.dp))
                 .clip(shape = RoundedCornerShape(20.dp))
         ) {
-            Image(
-                painter = painterResource(R.drawable.logo),
-                contentDescription = "Logo",
-                contentScale = ContentScale.Crop,
+            AsyncImage(
+                model = guild.guildProfile ?: R.drawable.logo,
+                contentDescription = "동호회 사진",
+                modifier = Modifier
+                    .width(160.dp)
+                    .height(140.dp),
+                contentScale = ContentScale.Crop
             )
         }
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "싸피 산악회",
+            text = guild.guildName,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
