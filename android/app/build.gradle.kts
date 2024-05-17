@@ -141,7 +141,10 @@ dependencies {
     implementation ("io.github.fornewid:naver-map-location:21.0.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    implementation ("org.locationtech.jts:jts-core:1.18.2")
+
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
 
 }

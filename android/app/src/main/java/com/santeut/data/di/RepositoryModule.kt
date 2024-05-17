@@ -6,6 +6,8 @@ import com.santeut.data.repository.CommonRepository
 import com.santeut.data.repository.CommonRepositoryImpl
 import com.santeut.data.repository.GuildRepository
 import com.santeut.data.repository.GuildRepositoryImpl
+import com.santeut.data.repository.HikingRepository
+import com.santeut.data.repository.HikingRepositoryImpl
 import com.santeut.data.repository.MountainRepository
 import com.santeut.data.repository.MountainRepositoryImpl
 import com.santeut.data.repository.PartyRepository
@@ -42,5 +44,8 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindMountainRepository(impl: MountainRepositoryImpl): MountainRepository
+
+    @Binds
+    abstract fun bindHikingRepository(impl: HikingRepositoryImpl): HikingRepository
 
 }

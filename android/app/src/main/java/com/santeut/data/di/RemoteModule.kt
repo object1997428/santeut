@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
+import com.santeut.data.apiservice.HikingApiService
 import com.santeut.data.apiservice.MountainApiService
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.apiservice.PostApiService
@@ -63,6 +64,11 @@ object RemoteModule {
     @Singleton
     fun providerMountainApiService(@Named("retrofit") retrofit: Retrofit): MountainApiService =
         retrofit.create(MountainApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providerHikingApiService(@Named("retrofit") retrofit: Retrofit): HikingApiService =
+        retrofit.create(HikingApiService::class.java)
 
     @Provides
     @Singleton
