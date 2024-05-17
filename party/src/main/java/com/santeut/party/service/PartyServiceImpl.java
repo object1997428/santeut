@@ -46,9 +46,13 @@ public class PartyServiceImpl implements PartyService {
   @Transactional
   public void createParty(int userId, CreatePartyRequestDto requestDto) {
     log.info("소모임 생성 정보: " + requestDto);
-    String selectedCourse = Arrays.stream(requestDto.getSelectedCourse())
-        .mapToObj(String::valueOf)
-        .collect(Collectors.joining("."));
+    String selectedCourse = null;
+    // 선택한 등산로가 없다면 null 저장
+    if(requestDto.selectedCourse.length > 0) {
+      selectedCourse = Arrays.stream(requestDto.getSelectedCourse())
+          .mapToObj(String::valueOf)
+          .collect(Collectors.joining("."));
+    }
 
     Party entity = partyRepository.save(Party.createEntity(userId, requestDto, selectedCourse));
     partyUserService.joinUserParty(userId, entity.getPartyId());
@@ -136,27 +140,33 @@ public class PartyServiceImpl implements PartyService {
   public SelectedCourseResponse findCourseByPartyId(int partyId) {
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
+    String selectedCourse = party.getSelectedCourse();
 
-    List<Integer> courseList=new ArrayList<>();
-    String[] split = party.getSelectedCourse().split("\\.");
-    for (String s : split) {
-      courseList.add(Integer.parseInt(s));
-    }
-    MountainCourseFeignRequest mounainDto= MountainCourseFeignRequest.builder()
-        .courseIdList(courseList)
-        .build();
-    log.info("[Party Server] Mountain 한테 등산로 좌표 조회 요청");
-    ResponseEntity<?> mountainResp = hikingMountainClient.getCourse(mounainDto);
-    if (mountainResp.getStatusCode().is2xxSuccessful()) {
-      BasicResponse basicResponse = om.convertValue(mountainResp.getBody(), BasicResponse.class);
-      if (basicResponse != null && basicResponse.getData() != null) {
-        PartyTrackDataFeginRequest feignResp = om.convertValue(basicResponse.getData(), PartyTrackDataFeginRequest.class);
-        List<LocationData> locationDataList = feignResp.getLocationDataList();
-        log.info("[Party Server] Mountain 한테 등산로 좌표 조회 응답 받음 locationDataList={}", locationDataList);
-        return new SelectedCourseResponse(feignResp.getDistance(),locationDataList);
+    if (selectedCourse != null) {
+      String[] split = party.getSelectedCourse().split("\\.");
+
+      List<Integer> courseList = new ArrayList<>();
+      for (String s : split) {
+        courseList.add(Integer.parseInt(s));
       }
-    } else {
-      log.error("[Party Server] Mountain 한테 등산로 좌표 조회 요청 실패 mountainResp={}",mountainResp);
+      MountainCourseFeignRequest mounainDto = MountainCourseFeignRequest.builder()
+          .courseIdList(courseList)
+          .build();
+      log.info("[Party Server] Mountain 한테 등산로 좌표 조회 요청");
+      ResponseEntity<?> mountainResp = hikingMountainClient.getCourse(mounainDto);
+      if (mountainResp.getStatusCode().is2xxSuccessful()) {
+        BasicResponse basicResponse = om.convertValue(mountainResp.getBody(), BasicResponse.class);
+        if (basicResponse != null && basicResponse.getData() != null) {
+          PartyTrackDataFeginRequest feignResp = om.convertValue(basicResponse.getData(),
+              PartyTrackDataFeginRequest.class);
+          List<LocationData> locationDataList = feignResp.getLocationDataList();
+          log.info("[Party Server] Mountain 한테 등산로 좌표 조회 응답 받음 locationDataList={}",
+              locationDataList);
+          return new SelectedCourseResponse(feignResp.getDistance(), locationDataList);
+        }
+      } else {
+        log.error("[Party Server] Mountain 한테 등산로 좌표 조회 요청 실패 mountainResp={}", mountainResp);
+      }
     }
     return new SelectedCourseResponse(0L, new ArrayList<>());
   }
