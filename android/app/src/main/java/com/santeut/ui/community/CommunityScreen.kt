@@ -30,7 +30,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommunityScreen(
     navController: NavController,
-    initialPage: Int = 0
+    initialPage: Int = 0,
+    guildId:Int,
+    onClearData:()->Unit
 ) {
     val pages = listOf("동호회", "소모임", "등산Tip", "코스공유")
     val pagerState = rememberPagerState()
@@ -89,7 +91,7 @@ fun CommunityScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> JoinGuildScreen()
+                    0 -> JoinGuildScreen(guildId=guildId, onClearData=onClearData)
                     1 -> JoinPartyScreen(null)
                     2 -> PostTipsScreen(navController)
                     3 -> PostCourseScreen()

@@ -19,7 +19,9 @@ import com.santeut.ui.wearable.WearableViewModel
 
 @Composable
 fun SanteutApp(
-    wearableViewModel: WearableViewModel
+    wearableViewModel: WearableViewModel,
+    guildId:Int,
+    onClearData:()->Unit
 ) {
     val navController = rememberNavController()
 
@@ -47,7 +49,9 @@ fun SanteutApp(
             ) {
                 SanteutNavGraph(
                     navController = navController,
-                    wearableViewModel = wearableViewModel
+                    wearableViewModel = wearableViewModel,
+                    guildId = guildId,
+                    onClearData = onClearData
                 )
             }
         }

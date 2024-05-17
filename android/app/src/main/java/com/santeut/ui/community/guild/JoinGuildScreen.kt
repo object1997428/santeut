@@ -72,9 +72,12 @@ import com.santeut.ui.guild.regionName
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun JoinGuildScreen(
-    guildViewModel: GuildViewModel = hiltViewModel()
+    guildViewModel: GuildViewModel = hiltViewModel(),
+    guildId:Int,
+    onClearData:()->Unit
 ) {
     val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
+
     // 필터 bottom sheet
     var showBottomFilterSheet by remember { mutableStateOf(false) }
     val filterSheetState = rememberModalBottomSheetState()
@@ -134,7 +137,7 @@ fun JoinGuildScreen(
         // 동호회 카드 필드
         LazyColumn {
             items(guilds) { guild ->
-                GuildCard(guild, guildViewModel)
+                GuildCard(guild, guildViewModel, guildId, onClearData)
             }
         }
     }
@@ -214,10 +217,14 @@ fun JoinGuildScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
+fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int, onClearData: ()->Unit) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+
+    LaunchedEffect(guildId) {
+        showBottomSheet = (guild.guildId == guildId)
+    }
     Card(
         modifier = Modifier
             .clickable(onClick = { showBottomSheet = true })
@@ -304,7 +311,11 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
 
             if (showBottomSheet) {
                 ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
+                    onDismissRequest = {
+                        showBottomSheet = false
+                        if(guildId != 0 && onClearData != {})
+                            onClearData()
+                    },
                     sheetState = sheetState
                 ) {
                     Surface {

@@ -19,14 +19,16 @@ import com.santeut.ui.navigation.top.TopBar
 import com.santeut.ui.party.PartyViewModel
 
 fun NavGraphBuilder.CommunityNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    guildId:Int,
+    onClearData:()->Unit
 ) {
     navigation(
         startDestination = "community",
         route = "community_graph"
     ) {
         composable("community") {
-            CommunityScreen(navController)
+            CommunityScreen(navController, guildId=guildId, onClearData=onClearData)
         }
         composable("postTips") {
             PostTipsScreen(navController)
