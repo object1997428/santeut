@@ -2,16 +2,26 @@ package com.santeut.ui.guild
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.PinDrop
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +29,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -63,28 +76,78 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .height(100.dp)  // 카드 높이 조정
+            .padding(8.dp)  // 카드 주변 여백
             .clickable {
                 navController.navigate("getGuild/${guild.guildId}")
             },
         shape = RoundedCornerShape(8.dp),
-        elevation = 5.dp,
+        elevation = 8.dp,
     ) {
-        Box(
-            modifier = Modifier.height(150.dp),
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row {
 
-                AsyncImage(
-                    model = guild.guildProfile ?: R.drawable.logo,
-                    contentDescription = "동호회 사진"
+            AsyncImage(
+                model = guild.guildProfile ?: R.drawable.logo,
+                contentDescription = "동호회 사진",
+                modifier = Modifier
+                    .size(100.dp),  // 이미지 크기 고정
+                contentScale = ContentScale.Crop  // 이미지 채우기 방식
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)  // 텍스트 내부 여백
+                    .weight(1f),  // 남은 공간 모두 사용
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                androidx.compose.material.Text(
+                    text = guild.guildName,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
-
-                Column {
-                    androidx.compose.material.Text(text = guild.guildName)
-                    androidx.compose.material.Text(text = "${guild.guildMember ?: 0}명")
-                    androidx.compose.material.Text(text = regionName(guild.regionId))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 5.dp, top = 5.dp)
+                )
+                {
+                    Icon(
+                        imageVector = Icons.Filled.PersonOutline,
+                        contentDescription = "회원수",
+                        modifier = Modifier.size(20.dp),
+                        tint = Color(0xff76797D),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                    androidx.compose.material3.Text(
+                        text = "${guild.guildMember ?: 0} 명",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xff76797D)
+                    )
                 }
+//                --------------------------
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PinDrop,
+                        contentDescription = "지역",
+                        modifier = Modifier.size(20.dp),
+                        tint = Color(0xff76797D)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                    Text(
+                        text = regionName(guild.regionId),
+                        color = Color(0xff76797D),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+//                --------------------------
             }
         }
     }

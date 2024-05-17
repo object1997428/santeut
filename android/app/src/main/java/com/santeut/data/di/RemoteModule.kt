@@ -3,9 +3,12 @@ package com.santeut.data.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
+import com.santeut.data.apiservice.HikingApiService
 import com.santeut.data.apiservice.MountainApiService
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.apiservice.PostApiService
@@ -66,6 +69,11 @@ object RemoteModule {
 
     @Provides
     @Singleton
+    fun providerHikingApiService(@Named("retrofit") retrofit: Retrofit): HikingApiService =
+        retrofit.create(HikingApiService::class.java)
+
+    @Provides
+    @Singleton
     @Named("retrofit")
     fun provideRetrofitInstance(gson: Gson, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
@@ -84,6 +92,11 @@ object RemoteModule {
                     DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 )
             })
+            .registerTypeAdapter(
+                LocalDateTime::class.java,
+                JsonSerializer<LocalDateTime> { src, _, _ ->
+                    JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                })
             .setLenient().create()
     }
 

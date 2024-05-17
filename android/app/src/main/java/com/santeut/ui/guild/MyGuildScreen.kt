@@ -1,13 +1,14 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,6 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -58,17 +61,29 @@ fun MyGuildScreen(
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
+                backgroundColor =Color.White,
+                divider = {},
                 indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        height = 3.dp,
-                        modifier = Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-                    )
+                    Canvas(modifier = Modifier
+                        .pagerTabIndicatorOffset(pagerState, tabPositions)
+                        .fillMaxWidth()
+                        .height(2.dp)) {
+                        drawRoundRect(
+                            color = Color(0xff678C40),
+                            cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx())
+                        )
+                    }
                 }
             ) {
                 pages.forEachIndexed { index, title ->
                     Tab(
-                        text = { Text(text = title) },
+                        text = {
+                            Text(text = title,
+                                color = if (pagerState.currentPage == index)  Color(0xff678C40) else Color(0xff666E7A),
+                            )
+                        },
                         selected = pagerState.currentPage == index,
+
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.scrollToPage(index)
@@ -84,7 +99,7 @@ fun MyGuildScreen(
             ) { page ->
                 when (page) {
                     0 -> MyGuildListScreen(navController)
-                    1 -> MyPartyListScreen()
+                    1 -> MyPartyListScreen(navController)
                     else -> Text("Unknown page")
                 }
             }

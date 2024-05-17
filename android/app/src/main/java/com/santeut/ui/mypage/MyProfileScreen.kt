@@ -12,7 +12,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.outlined.Healing
 import androidx.compose.material.icons.outlined.Timer
@@ -84,7 +84,7 @@ fun ProfileHeader(myProfile: MyProfileResponse?) {
 @Composable
 fun ProfileStats(myProfile: MyProfileResponse?) {
     StatCard(
-        icon = Icons.Filled.DirectionsWalk,
+        icon = Icons.AutoMirrored.Filled.DirectionsWalk,
         contentDescription = "걸음",
         statText = "총 ${myProfile?.userDistance ?: 0}m 걸었어요!"
     )
