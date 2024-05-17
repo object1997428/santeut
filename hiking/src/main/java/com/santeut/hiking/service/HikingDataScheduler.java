@@ -76,6 +76,22 @@ public class HikingDataScheduler {
             }
             log.info("[Scheduler]: 등록 해제! -- partyId={}, userId={}",partyId,userId);
         }
+
+        //트랙 redis에서 꺼내오기
+        List<TrackData> trackDataList=new ArrayList<>();
+        TrackData trackData = getTrackData(partyId, userId);
+        if(trackData==null) return;
+
+        //Party 서버한테 마지막으로 트랙 저장 요청
+        trackDataList.add(trackData);
+        HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto=HikingTrackSaveReignRequestDto.builder()
+                .partyId(Integer.parseInt(partyId))
+                .trackDataList(trackDataList)
+                .build();
+        
+        log.info("[Hiking Server][Party request url: /api/party/hiking/track");
+        ResponseEntity<?> responseEntity = hikingPartyClient.saveHikingTrack(hikingTrackSaveReignRequestDto);
+        log.info("[Hiking Server][Party response ={}",responseEntity);
     }
 
 
