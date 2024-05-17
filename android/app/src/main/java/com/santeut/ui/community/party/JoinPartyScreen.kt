@@ -242,10 +242,13 @@ fun JoinPartyScreen(
                                     Toast.makeText(context, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
                                     showBottomFilterSheet = false
+                                } else {
+                                    Log.d("소모임 목록 검색) 길드 아이디", "${guildId}")
+                                    Log.d("소모임 목록 검색) 소모임 이름", "${searchWord}")
+                                    Log.d("소모임 목록 검색) 시작날짜", searchFilterStartDate)
+                                    Log.d("소모임 목록 검색) 종료날짜", searchFilterEndDate)
+                                    partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
                                 }
-                                // TODO: 소모임 필터 검색
-                                Log.d("조회 시작", searchFilterStartDate)
-                                Log.d("조회 종료", searchFilterEndDate)
                             }
                         ) {
                             Text(
