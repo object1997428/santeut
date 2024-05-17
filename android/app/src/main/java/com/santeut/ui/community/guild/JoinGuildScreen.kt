@@ -249,9 +249,6 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int,
             )
 
             Column {
-                Text(text = guild.guildName)
-                Text(text = "${guild.guildMember}명")
-//                Text(text = regionName(guild.regionId))
 
                 Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
 
