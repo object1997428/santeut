@@ -72,7 +72,7 @@ public class PartyController {
   }
 
   @GetMapping("/{partyId}/userId")
-  ResponseEntity<?> getPartyUserId(@PathVariable("partyId") int partyId){
+  ResponseEntity<BasicResponse> getPartyUserId(@PathVariable("partyId") int partyId){
     return ResponseUtil.buildBasicResponse(HttpStatus.OK,
             partyService.findUserIdById(partyId));
   }
