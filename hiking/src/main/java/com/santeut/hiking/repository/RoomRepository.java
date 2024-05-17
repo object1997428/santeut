@@ -3,6 +3,7 @@ package com.santeut.hiking.repository;
 import com.santeut.hiking.vo.Room;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,17 +13,16 @@ public class RoomRepository {
     private final Map<Integer, Room> rooms;
 
     public RoomRepository() {
-        rooms = Stream.of(
-                Room.create(1),
-                Room.create(2),
-                Room.create(3)
-        ).collect(Collectors.toMap(
-                Room::getId,
-                room -> room
-        ));
+        rooms = new HashMap<>();
     }
 
     public Room room(int id) {
-        return rooms.computeIfAbsent(id, Room::create);
+        return rooms.get(id);
+    }
+
+    public Room createRoom(int partyId, int userId) {
+        Room room = Room.create(partyId, userId);
+        rooms.put(partyId, room);
+        return room;
     }
 }

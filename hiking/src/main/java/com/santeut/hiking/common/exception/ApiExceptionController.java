@@ -68,6 +68,13 @@ public class ApiExceptionController {
         return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleAccessDeniedException");
     }
 
+    // Fegin실패 요청
+    @ExceptionHandler(FeginFailerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleFeginFailerException(FeginFailerException e) {
+        return constructErrorResponse(e,HttpStatus.FORBIDDEN, "handleFeginFailerException");
+    }
+
 
     private ErrorResponse constructErrorResponse(Exception e, HttpStatus status, String errorType) {
         log.error("[exceptionHandle] ex={}", e.getMessage(), e);
