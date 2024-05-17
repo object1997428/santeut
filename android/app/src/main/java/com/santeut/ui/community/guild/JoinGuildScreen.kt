@@ -332,7 +332,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
     ) {
 
         AsyncImage(
-            model = guild.guildProfile,
+            model = guild.guildProfile?: R.drawable.logo,
             contentDescription = "동호회 사진",
             modifier = Modifier
                 .fillMaxWidth()
