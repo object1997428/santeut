@@ -8,9 +8,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.tubesock.WebSocketMessage
 import com.google.gson.Gson
+import com.santeut.MainApplication
 import com.santeut.data.model.request.EndHikingRequest
 import com.santeut.data.model.request.StartHikingRequest
+import com.santeut.data.model.response.CourseDetailResponse
 import com.santeut.data.model.response.LocationDataResponse
+import com.santeut.data.model.response.WebSocketMessageResponse
 import com.santeut.domain.usecase.HikingUseCase
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,12 +32,7 @@ class HikingViewModel @Inject constructor(
     private val hikingUseCase: HikingUseCase
 ) : ViewModel() {
 
-    // party ID 받아와서 url 에 추가해주기
-    val partyId = 1
-
-    // Web Socket
-    private val webSocketUrl = "wss://k10e201.p.ssafy.io/api/hiking/chat/rooms/${partyId}"
-    private var webSocket: WebSocket? = null
+    var webSocket: WebSocket? = null
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
@@ -70,21 +68,27 @@ class HikingViewModel @Inject constructor(
 
 
     fun startWebSocket(
+        partyId: Int,
         updateLocation: (String, Double, Double, String?) -> Unit,
-        token: String,
         showAlert: MutableState<Boolean>,
         alertMessage: MutableState<String>
     ) {
+        // Web Socket
+        val webSocketUrl = "wss://k10e201.p.ssafy.io/api/hiking/chat/rooms/${partyId}"
+
         val request = Request.Builder()
+            .header(
+                "Authorization",
+                "Bearer ${MainApplication.sharedPreferencesUtil.getAccessToken()}"
+            )
             .url(webSocketUrl)
-            .addHeader("Authorization", "Bearer $token")
             .build()
 
         val listener = object : WebSocketListener() {
             override fun onMessage(webSocket: WebSocket, text: String) {
                 Log.d("WebSocket", "Received message: $text")
                 try {
-                    val message = Gson().fromJson(text, WebSocketMessage::class.java)
+                    val message = Gson().fromJson(text, WebSocketMessageResponse::class.java)
                     updateLocation(
                         message.userNickname,
                         message.lat.toDouble(),

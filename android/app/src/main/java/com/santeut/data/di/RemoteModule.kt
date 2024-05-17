@@ -3,6 +3,8 @@ package com.santeut.data.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
@@ -90,6 +92,11 @@ object RemoteModule {
                     DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 )
             })
+            .registerTypeAdapter(
+                LocalDateTime::class.java,
+                JsonSerializer<LocalDateTime> { src, _, _ ->
+                    JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                })
             .setLenient().create()
     }
 

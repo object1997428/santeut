@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -100,7 +99,7 @@ fun MyGuildScreen(
             ) { page ->
                 when (page) {
                     0 -> MyGuildListScreen(navController)
-                    1 -> MyPartyListScreen()
+                    1 -> MyPartyListScreen(navController)
                     else -> Text("Unknown page")
                 }
             }

@@ -1,6 +1,7 @@
 package com.santeut.ui.map
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -32,8 +33,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,9 +65,12 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.naver.maps.map.compose.rememberMarkerState
 import com.naver.maps.map.overlay.OverlayImage
-import com.santeut.MainActivity
-import com.santeut.data.model.response.CourseDetailResponse
+import com.santeut.R
+import com.santeut.data.model.request.StartHikingRequest
+import com.santeut.data.model.request.WebSocketSendMessageRequest
+import com.santeut.data.model.response.LocationDataResponse
 import com.santeut.data.model.response.UserLocationDataResponse
+import com.santeut.ui.mountain.MountainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -79,21 +85,25 @@ import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.operation.distance.DistanceOp
 import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
 
+@SuppressLint("MutableCollectionMutableState")
 @ExperimentalNaverMapApi
 @Composable
 fun HikingScreen(
-    context: Context,
-    token: String,
-    hikingViewModel: HikingViewModel = hiltViewModel()
+    partyId: Int,
+    hikingViewModel: HikingViewModel = hiltViewModel(),
+    mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
-    val mountainService = remember { createMountainService(token) }
-    var mountainData by remember { mutableStateOf<MountainData?>(null) }
-    var pathData by remember { mutableStateOf<List<CourseDetailResponse>>(listOf()) }
+
+    val context = LocalContext.current
+
+    val mountain by mountainViewModel.mountain.observeAsState()
+    val courseList by hikingViewModel.courseList.observeAsState(emptyList())
     var userPositions by remember { mutableStateOf<Map<String, LatLng>>(mapOf()) }
 
     var stepCount by remember { mutableStateOf(0) }
-    var distanceMoved by remember { mutableStateOf(0f) }
+    val distanceMoved by remember { mutableStateOf(0f) }
     var timerRunning by remember { mutableStateOf(false) }
     var elapsedTime by remember { mutableStateOf(0) }
     var altitude by remember { mutableStateOf(0f) }
@@ -103,8 +113,6 @@ fun HikingScreen(
     val showAlert = remember { mutableStateOf(false) }
     val alertMessage = remember { mutableStateOf("") }
 
-    val mainActivity = LocalContext.current as MainActivity
-
     LaunchedEffect(userPositions) {
         userPositions.forEach { (nickname, position) ->
             userMarkerStates[nickname] = MarkerState(position = position)
@@ -112,16 +120,7 @@ fun HikingScreen(
     }
 
     LaunchedEffect(true) {
-        try {
-            val pathResponse = mountainService.getAllCourses()
-            if (pathResponse.status == 200 && pathResponse.data.course.isNotEmpty()) {
-                pathData = pathResponse.data.course
-            } else {
-                Log.d("MapScreen", "Failed to load courses or empty list: Status ${pathResponse.status}")
-            }
-        } catch (e: Exception) {
-            Log.e("MapScreen", "Error fetching data", e)
-        }
+        hikingViewModel.startHiking(StartHikingRequest(partyId, LocalDateTime.now()))
     }
 
     val sensorManager = ContextCompat.getSystemService(context, SensorManager::class.java)
@@ -134,11 +133,12 @@ fun HikingScreen(
                     stepCount += event.values[0].toInt()
                 }
             }
+
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
         stepDetectorSensor?.let {
-            sensorManager?.registerListener(sensorEventListener, it, SensorManager.SENSOR_DELAY_UI)
+            sensorManager.registerListener(sensorEventListener, it, SensorManager.SENSOR_DELAY_UI)
         }
 
         onDispose {
@@ -152,14 +152,18 @@ fun HikingScreen(
             override fun onSensorChanged(event: SensorEvent) {
                 if (event.sensor.type == Sensor.TYPE_PRESSURE) {
                     val pressure = event.values[0]
-                    altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure)
+                    altitude = SensorManager.getAltitude(
+                        SensorManager.PRESSURE_STANDARD_ATMOSPHERE,
+                        pressure
+                    )
                 }
             }
+
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
 
         pressureSensor?.let {
-            sensorManager?.registerListener(sensorEventListener, it, SensorManager.SENSOR_DELAY_UI)
+            sensorManager.registerListener(sensorEventListener, it, SensorManager.SENSOR_DELAY_UI)
         }
 
         onDispose {
@@ -169,7 +173,7 @@ fun HikingScreen(
 
     LaunchedEffect(timerRunning) {
         if (timerRunning) {
-            mainActivity.startWebSocket({ nickname, lat, lng, imageUrl ->
+            hikingViewModel.startWebSocket(partyId, { nickname, lat, lng, imageUrl ->
                 userPositions = userPositions.toMutableMap().apply {
                     this[nickname] = LatLng(lat, lng)
                 }
@@ -181,7 +185,7 @@ fun HikingScreen(
                         }
                     }
                 }
-            }, token, showAlert, alertMessage)
+            }, showAlert, alertMessage)
             launch {
                 while (timerRunning) {
                     delay(1000)
@@ -193,22 +197,24 @@ fun HikingScreen(
                     delay(2000)
                     val currentLocation = getCurrentLocation(context)
                     currentLocation?.let {
-                        checkRouteDeviation(it.latitude, it.longitude, pathData) { isDeviated ->
+                        checkRouteDeviation(it.latitude, it.longitude, courseList) { isDeviated ->
                             showAlert.value = isDeviated
                             if (isDeviated) {
-                                val locationJson = Gson().toJson(WebSocketSendMessage(
-                                    type = "offCourse",
-                                    lat = it.latitude.toString(),
-                                    lng = it.longitude.toString()
-                                ))
-                                mainActivity.webSocket?.send(locationJson)
+                                val locationJson = Gson().toJson(
+                                    WebSocketSendMessageRequest(
+                                        type = "offCourse",
+                                        lat = it.latitude.toString(),
+                                        lng = it.longitude.toString()
+                                    )
+                                )
+                                hikingViewModel.webSocket?.send(locationJson)
                             }
                         }
                     }
                 }
             }
         } else {
-            mainActivity.stopWebSocket()
+            hikingViewModel.stopWebSocket()
             elapsedTime = 0
             userMarkerStates.clear()
             userPositions = mapOf()
@@ -217,6 +223,18 @@ fun HikingScreen(
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(LatLng(35.8447943443487, 127.11199020254), 16.0)
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val location = getCurrentLocation(context)
+            location?.let {
+                cameraPositionState.position =
+                    CameraPosition(LatLng(it.latitude, it.longitude), 16.0)
+            }
+        }
     }
 
     val uiSettings = remember {
@@ -240,9 +258,9 @@ fun HikingScreen(
                 ),
                 uiSettings = uiSettings
             ) {
-                val context = LocalContext.current
-                val resizedIcon = remember { resizeMarkerIcon(context, R.drawable.custom_marker, 100, 100) }
-                mountainData?.let {
+                val resizedIcon =
+                    remember { resizeMarkerIcon(context, R.drawable.logo, 100, 100) }
+                mountain?.let {
                     Marker(
                         state = rememberMarkerState(position = LatLng(it.lat, it.lng)),
                         captionText = it.mountainName,
@@ -251,8 +269,9 @@ fun HikingScreen(
                         icon = resizedIcon
                     )
                 }
-                pathData.forEach { courseDetail ->
-                    val path = courseDetail.validLocationDataList.map { LatLng(it.lat, it.lng) }
+
+                if (courseList.isNotEmpty()) {
+                    val path = courseList.map { LatLng(it.lat, it.lng) }
                     if (path.size >= 2) {
                         PathOverlay(
                             coords = path,
@@ -260,10 +279,10 @@ fun HikingScreen(
                             color = Color.Green,
                             outlineWidth = 1.dp,
                             outlineColor = Color.Red,
-                            tag = courseDetail.courseId
                         )
                     }
                 }
+
                 userMarkerStates.forEach { (nickname, markerState) ->
                     val icon = userIcons[nickname] ?: resizedIcon
                     Marker(
@@ -327,7 +346,10 @@ fun InfoPanel(altitude: Int, steps: Int, distance: Float, timeInSeconds: Int) {
             InfoItem(title = "고도", value = "$altitude m")
             InfoItem(title = "걸음 수", value = "$steps 걸음")
             InfoItem(title = "움직인 거리", value = String.format("%.2f km", distance))
-            InfoItem(title = "경과 시간", value = String.format("%02d시 %02d분 %02d초", hours, minutes, seconds))
+            InfoItem(
+                title = "경과 시간",
+                value = String.format("%02d시 %02d분 %02d초", hours, minutes, seconds)
+            )
         }
     }
 }
@@ -343,12 +365,18 @@ fun InfoItem(title: String, value: String) {
     }
 }
 
-fun checkRouteDeviation(latitude: Double, longitude: Double, pathData: List<CourseDetailResponse>, onDeviation: (Boolean) -> Unit) {
+fun checkRouteDeviation(
+    latitude: Double,
+    longitude: Double,
+    courseList: List<LocationDataResponse>,
+    onDeviation: (Boolean) -> Unit
+) {
     val geometryFactory = GeometryFactory()
     val userLocation: Point = geometryFactory.createPoint(Coordinate(longitude, latitude))
 
-    pathData.firstOrNull()?.let { courseDetail ->
-        val coordinates = courseDetail.validLocationDataList.map { Coordinate(it.lng, it.lat) }.toTypedArray()
+    val validLocations = LocationDataResponse.getValidLocations(courseList)
+    if (validLocations.isNotEmpty()) {
+        val coordinates = validLocations.map { Coordinate(it.lng, it.lat) }.toTypedArray()
         val predefinedRoute: LineString = geometryFactory.createLineString(coordinates)
         val distanceOp = DistanceOp(predefinedRoute, userLocation)
         val minDistance = distanceOp.distance()
@@ -360,6 +388,9 @@ fun checkRouteDeviation(latitude: Double, longitude: Double, pathData: List<Cour
         if (!isDeviated) {
             Log.d("RouteCheck", "User is on the predefined route")
         }
+    } else {
+        onDeviation(true)
+        Log.d("RouteCheck", "No valid locations in course list")
     }
 }
 
@@ -400,7 +431,7 @@ fun getCircularBitmap(bitmap: Bitmap): Bitmap {
 }
 
 suspend fun getOverlayImageFromUrl(url: String, width: Int, height: Int): OverlayImage? {
-    if (url == null || url.isEmpty()) {
+    if (url.isEmpty()) {
         Log.e("ImageDownloadError", "Invalid URL: $url")
         return null
     }
@@ -433,10 +464,18 @@ fun resizeMarkerIcon(context: Context, drawableResId: Int, width: Int, height: I
 
 
 suspend fun getCurrentLocation(context: Context): UserLocationDataResponse? {
-    val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+    val fusedLocationProviderClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(context)
 
-    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-        ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED &&
+        ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
         return null
     }
 

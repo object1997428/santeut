@@ -12,6 +12,7 @@ import javax.inject.Inject
 class HikingRepositoryImpl @Inject constructor(
     private val hikingApiService: HikingApiService
 ) : HikingRepository {
+
     override suspend fun startHiking(startHikingRequest: StartHikingRequest): StartHikingResponse {
         return try {
             val response = hikingApiService.startHiking(startHikingRequest)
