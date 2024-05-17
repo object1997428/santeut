@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,6 +40,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +58,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -76,7 +80,7 @@ fun CreateGuildScreen(
 ) {
     var guildName by remember { mutableStateOf("") }
     var guildInfo by remember { mutableStateOf("") }
-    var guildIsPrivate by remember { mutableStateOf(true) }
+    var guildIsPrivate by remember { mutableStateOf(false) }
     var guildGender by remember { mutableStateOf('A') }
     var regionId by remember { mutableIntStateOf(0) }
     var selectedRegion by remember { mutableStateOf("전체") }
@@ -162,22 +166,42 @@ fun CreateGuildScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 동호회 공개 여부
-            Text(text ="공개여부",
+            Text(
+                text = "공개여부",
                 modifier = Modifier.align(Alignment.Start)
-                )
+            )
 //            Spacer(modifier = Modifier.height(4.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
 
-                Row (
+                Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    ){
-                    RadioButton(selected = guildIsPrivate, onClick = { guildIsPrivate = false })
+                ) {
+                    RadioButton(
+                        selected = guildIsPrivate == false,
+                        onClick = {
+                            guildIsPrivate = false
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Green,
+                            unselectedColor = Color.LightGray,
+                        ),
+                    )
                     Text("공개")
+
                     Spacer(modifier = Modifier.width(8.dp))
-                    RadioButton(selected = !guildIsPrivate, onClick = { guildIsPrivate = true })
+                    RadioButton(
+                        selected = guildIsPrivate == true,
+                        onClick = {
+                            guildIsPrivate = true
+                        },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Green,
+                            unselectedColor = Color.LightGray,
+                        ),
+                    )
                     Text("비공개")
                 }
             }
@@ -186,7 +210,8 @@ fun CreateGuildScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             // 성별
-            Text(text ="성별",
+            Text(
+                text = "성별",
                 modifier = Modifier.align(Alignment.Start)
             )
 //            Spacer(modifier = Modifier.height(4.dp))
@@ -194,16 +219,37 @@ fun CreateGuildScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row (
+                Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    RadioButton(selected = guildGender == 'A', onClick = { guildGender = 'A' })
+                    RadioButton(
+                        selected = guildGender == 'A',
+                        onClick = { guildGender = 'A' },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Green,
+                            unselectedColor = Color.LightGray,
+                        ),
+                    )
                     Text("성별무관")
                     Spacer(modifier = Modifier.width(8.dp))
-                    RadioButton(selected = guildGender == 'M', onClick = { guildGender = 'M' })
+                    RadioButton(
+                        selected = guildGender == 'M',
+                        onClick = { guildGender = 'M' },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Green,
+                            unselectedColor = Color.LightGray,
+                        ),
+                    )
                     Text("남자")
                     Spacer(modifier = Modifier.width(8.dp))
-                    RadioButton(selected = guildGender == 'F', onClick = { guildGender = 'F' })
+                    RadioButton(
+                        selected = guildGender == 'F',
+                        onClick = { guildGender = 'F' },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Green,
+                            unselectedColor = Color.LightGray,
+                        ),
+                    )
                     Text("여자")
                 }
             }
@@ -212,7 +258,8 @@ fun CreateGuildScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 지역
-            Text(text ="지역",
+            Text(
+                text = "지역",
                 modifier = Modifier.align(Alignment.Start)
             )
             Spacer(modifier = Modifier.height(4.dp))
