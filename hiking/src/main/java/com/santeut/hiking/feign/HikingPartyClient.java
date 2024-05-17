@@ -12,5 +12,5 @@ public interface HikingPartyClient {
     @PostMapping("/hiking/track")
     ResponseEntity<?> saveHikingTrack(@RequestBody HikingTrackSaveReignRequestDto hikingTrackSaveReignRequestDto);
     @GetMapping("/{partyId}/userId")
-    ResponseEntity<BasicResponse> getPartyUserId(@PathVariable("partyId") int partyId);
+    ResponseEntity<?> getPartyUserId(@PathVariable("partyId") int partyId);
 }

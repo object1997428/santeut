@@ -8,10 +8,7 @@ import com.santeut.hiking.common.response.BasicResponse;
 import com.santeut.hiking.dto.request.LocationData;
 import com.santeut.hiking.dto.response.GetPartyUserIdResponse;
 import com.santeut.hiking.dto.response.GetUserInfoResponse;
-import com.santeut.hiking.dto.websocket.EnterandQuitRequestMessage;
-import com.santeut.hiking.dto.websocket.ResponseMessage;
-import com.santeut.hiking.dto.websocket.RequestMessage;
-import com.santeut.hiking.dto.websocket.SocketDto;
+import com.santeut.hiking.dto.websocket.*;
 import com.santeut.hiking.feign.FeignResponseDto;
 import com.santeut.hiking.feign.HikingAuthClient;
 import com.santeut.hiking.feign.HikingPartyClient;
@@ -191,8 +188,29 @@ public class SocketTextHandler extends TextWebSocketHandler {
         hikingDataScheduler.stopTascking(roomId.toString(), Integer.toString(userId));
 
         //userId가 파티장이면
-
+        if (userId==roomService.getPartyUser(roomId)){
+            AlarmMessage alarmMessage= AlarmMessage.builder()
+                    .type("hikingEnd")
+                    .title("소모임 종료")
+                    .content("소모임이 종료되었습니다. 즐거운 등반되셨나요?")
+                    .build();
+            String responsePayload = om.writeValueAsString(alarmMessage);
+            TextMessage textMessage = new TextMessage(responsePayload);
+            Room room = roomService.getOrCreateRoom(roomId);
+            room.getSessions().forEach((integer, socketDto) -> {
+                WebSocketSession connectedSession=socketDto.getSession();
+                log.info("message={}",textMessage);
+                try {
+                    connectedSession.sendMessage(textMessage);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
+
+
+
 
     //세션 url에서 roomId가져옴
     private Integer getRoomId(WebSocketSession session) {

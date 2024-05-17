@@ -57,4 +57,8 @@ public class RoomService {
     public void removeSession(int roomId,int userId) {
         roomRepository.room(roomId).removeSessionByUserId(userId);
     }
+
+    public int getPartyUser(int roomId){
+        return roomRepository.room(roomId).getUserId();
+    }
 }
