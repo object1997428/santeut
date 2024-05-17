@@ -3,6 +3,10 @@ package com.santeut.hiking.common.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.santeut.hiking.common.exception.FeginFailerException;
+import com.santeut.hiking.common.response.BasicResponse;
+import com.santeut.hiking.dto.request.LocationData;
+import com.santeut.hiking.dto.response.GetPartyUserIdResponse;
 import com.santeut.hiking.dto.response.GetUserInfoResponse;
 import com.santeut.hiking.dto.websocket.EnterandQuitRequestMessage;
 import com.santeut.hiking.dto.websocket.ResponseMessage;
@@ -10,22 +14,26 @@ import com.santeut.hiking.dto.websocket.RequestMessage;
 import com.santeut.hiking.dto.websocket.SocketDto;
 import com.santeut.hiking.feign.FeignResponseDto;
 import com.santeut.hiking.feign.HikingAuthClient;
+import com.santeut.hiking.feign.HikingPartyClient;
 import com.santeut.hiking.repository.RoomRepository;
 import com.santeut.hiking.service.HikingDataScheduler;
 import com.santeut.hiking.service.LocationSaveService;
+import com.santeut.hiking.service.RoomService;
 import com.santeut.hiking.vo.Room;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 public class SocketTextHandler extends TextWebSocketHandler {
-    @Autowired
-    private RoomRepository roomRepository;
+
     @Autowired
     private HikingDataScheduler hikingDataScheduler;
     @Autowired
@@ -33,6 +41,12 @@ public class SocketTextHandler extends TextWebSocketHandler {
     private ObjectMapper om = new ObjectMapper();
     @Autowired
     private HikingAuthClient hikingAuthClient;
+
+    @Autowired
+    private RoomService roomService;
+//
+//    @Autowired
+//    private RoomRepository roomRepository;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -43,10 +57,10 @@ public class SocketTextHandler extends TextWebSocketHandler {
         //Auth서버한테 유저 정보 요청
         String userNickname="",userProfile="";
         log.info("[Hiking Server][Auth request url: /api/auth/user/{userId}");
-        Optional<FeignResponseDto<GetUserInfoResponse>> responseEntity = hikingAuthClient.userInfo(userId);
-        log.info("[Hiking Server][Auth response ={}",responseEntity);
-        if (responseEntity != null && responseEntity.get().getData() != null) {
-            GetUserInfoResponse userInfo = om.convertValue(responseEntity.get().getData(), GetUserInfoResponse.class);
+        Optional<FeignResponseDto<GetUserInfoResponse>> authRespEntity = hikingAuthClient.userInfo(userId);
+        log.info("[Hiking Server][Auth response ={}",authRespEntity);
+        if (authRespEntity != null && authRespEntity.get().getData() != null) {
+            GetUserInfoResponse userInfo = om.convertValue(authRespEntity.get().getData(), GetUserInfoResponse.class);
             userNickname = userInfo.getUserNickname();
             userProfile=userInfo.getUserProfile();
             log.info("[Party Server] Auth 한테 유저 정보 응답 받음 userInfo={}", userInfo);
@@ -58,18 +72,21 @@ public class SocketTextHandler extends TextWebSocketHandler {
                 .userProfile(userProfile)
                 .session(session)
                 .build();
+        //room이 비어있으면 생성
+        roomService.getOrCreateRoom(roomId);
         //이미 userId가 존재하면 제거하고 새로 넣기
-        roomRepository.room(roomId).addSession(socketDto);
+        roomService.addSession(roomId,socketDto);
         log.info("새 클라이언트와 연결되었습니다. partyId={}, socketDto={}",roomId,socketDto);
         hikingDataScheduler.startTracking(roomId.toString(), Integer.toString(userId));
     }
+
 
     @Override
     protected void handleTextMessage(WebSocketSession session,
                                      TextMessage message) throws IOException {
         String userId = session.getHandshakeHeaders().get("userId").get(0);
         Integer roomId = getRoomId(session);
-        Room room = roomRepository.room(roomId);
+        Room room = roomService.getOrCreateRoom(roomId);
         String payload = message.getPayload();
         log.info("Received message: {}", payload);
 
@@ -169,7 +186,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
         //웹소켓 퇴장 처리
         int userId = Integer.parseInt(session.getHandshakeHeaders().get("userId").get(0));
         Integer roomId = getRoomId(session);
-        roomRepository.room(roomId).removeSessionByUserId(userId);
+        roomService.removeSession(roomId,userId);
         log.info("특정 클라이언트와의 연결이 해제되었습니다. partyId={}, userId={}",roomId,userId);
         hikingDataScheduler.stopTascking(roomId.toString(), Integer.toString(userId));
 
