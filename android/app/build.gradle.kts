@@ -109,6 +109,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
     implementation("com.google.accompanist:accompanist-pager:0.20.1")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.20.1")
+    implementation("com.google.accompanist:accompanist-flowlayout:0.26.3-beta")
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
