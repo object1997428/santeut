@@ -117,11 +117,11 @@ fun RowScope.BottomBarItem(
                 )
                 Spacer(
                     modifier = Modifier
-                        .height(2.dp)
+                        .height(4.dp)
                 )
                 Text(
                     text = tab.title,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = if(selected) Color(0xff678C40) else Color(0xff76797D)
                 )
