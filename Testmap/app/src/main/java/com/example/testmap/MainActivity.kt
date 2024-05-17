@@ -1153,8 +1153,6 @@ import com.example.testmap.ui.theme.TestmapTheme
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
@@ -1263,27 +1261,26 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // FCM SDK (and your app) can post notifications.
+            // 앱이 알림을 게시할 수 있습니다.
         } else {
-            // TODO: Inform user that that your app will not show notifications.
+            // TODO: 사용자가 알림을 받을 수 없다는 것을 알립니다.
         }
     }
 
     // 알림 권한 요청 함수
     private fun askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
+        // API 레벨 33 (TIRAMISU) 이상에서만 필요합니다.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
             ) {
-                // FCM SDK (and your app) can post notifications.
+                // 앱이 알림을 게시할 수 있습니다.
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: display an educational UI explaining to the user the features that will be enabled
-                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
+                // TODO: 사용자에게 알림 권한을 부여할 때 사용할 수 있는 기능을 설명하는 UI를 표시합니다.
+                // 사용자가 "확인"을 선택하면 권한을 직접 요청합니다.
+                // 사용자가 "아니요"를 선택하면 알림 없이 계속할 수 있습니다.
             } else {
-                // Directly ask for the permission
+                // 직접 권한 요청
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
@@ -1292,27 +1289,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Firebase 초기화
-        FirebaseApp.initializeApp(this)
-
         // 알림 권한 요청
         askNotificationPermission()
-
-        // Firebase 초기화 및 FCM 토큰 가져오기
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            val msg = getString(R.string.msg_token_fmt, token)
-            Log.d(TAG, msg)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-        })
 
         setContent {
             TestmapTheme {

@@ -1,6 +1,6 @@
 package com.santeut.data.model.response
 
-data class WebSocketMessage(
+data class WebSocketMessageResponse(
     val type: String,
     val partyId: Int,
     val userId: Int,
