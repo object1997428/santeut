@@ -3,20 +3,16 @@
 package com.santeut.ui.mountain
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -39,9 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -60,7 +54,7 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
-import com.santeut.data.model.response.CourseDetailRespnse
+import com.santeut.data.model.response.CourseDetailResponse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 
@@ -158,11 +152,12 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
     }
 }
 
+@OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun HikingCourse(
     courseCount: Int,
     courseList: List<HikingCourseResponse>,
-    pathData: List<CourseDetailRespnse>
+    pathData: List<CourseDetailResponse>
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -201,7 +196,6 @@ fun HikingCourse(
                             outlineColor = Color.Red,
                             tag = courseDetail.courseId
                         )
-                        Log.d("제발", "${pathData}")
                     }
                 }
             }

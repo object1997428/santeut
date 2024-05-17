@@ -35,9 +35,11 @@ import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.ui.home.SearchMountainBar
+import com.santeut.ui.party.SelectedMountainCard
 
 @Composable
 fun MountainListScreen(
+    type: String?,
     name: String, region: String?,
     navController: NavController,
     mountainViewModel: MountainViewModel = hiltViewModel()
@@ -49,14 +51,29 @@ fun MountainListScreen(
     }
 
     Column {
-        SearchMountainBar(
-            navController,
-            onClickMap = {}
-        )
+        if (type != "create") {
+            SearchMountainBar(
+                null,
+                navController,
+                onClickMap = {}
+            )
 
-        LazyColumn {
-            items(mountains) { mountain ->
-                MountainCard(navController, mountain)
+            LazyColumn {
+                items(mountains) { mountain ->
+                    MountainCard(navController, mountain)
+                }
+            }
+        } else {
+            SearchMountainBar(
+                "create",
+                navController,
+                onClickMap = {}
+            )
+
+            LazyColumn {
+                items(mountains) { mountain ->
+                    SelectedMountainCard(navController, mountain)
+                }
             }
         }
     }

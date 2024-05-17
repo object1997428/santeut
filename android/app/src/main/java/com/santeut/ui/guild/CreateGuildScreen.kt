@@ -140,10 +140,10 @@ fun CreateGuildScreen(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("공개여부")
             Row {
-                RadioButton(selected = guildIsPrivate, onClick = { guildIsPrivate = true })
+                RadioButton(selected = guildIsPrivate, onClick = { guildIsPrivate = false })
                 Text("공개")
                 Spacer(modifier = Modifier.width(8.dp))
-                RadioButton(selected = !guildIsPrivate, onClick = { guildIsPrivate = false })
+                RadioButton(selected = !guildIsPrivate, onClick = { guildIsPrivate = true })
                 Text("비공개")
             }
         }

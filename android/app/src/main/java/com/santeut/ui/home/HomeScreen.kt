@@ -81,6 +81,7 @@ fun HomeScreen(
     ) {
         item {
             SearchMountainBar(
+                null,
                 navController,
                 onClickMap = {}
             )
@@ -102,6 +103,7 @@ fun HomeScreen(
 
 @Composable
 fun SearchMountainBar(
+    type: String?,
     navController: NavController,
     onClickMap: () -> Unit
 ) {
@@ -143,8 +145,11 @@ fun SearchMountainBar(
                     contentDescription = "검색",
                     tint = Color.Black,
                     modifier = Modifier.clickable {
-                        val path =
-                            if (region.isNullOrEmpty()) "mountainList/$name" else "mountainList/$name/$region"
+                        val path = if (type == "create") {
+                            "create/mountainList/$name"
+                        } else {
+                            if (region.isEmpty()) "mountainList/$name" else "mountainList/$name/$region"
+                        }
                         navController.navigate(path)
                     }
                 )
