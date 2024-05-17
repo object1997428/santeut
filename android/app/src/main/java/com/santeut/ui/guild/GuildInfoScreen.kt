@@ -266,3 +266,27 @@ fun genderToString(guild: GuildResponse?):String {
         else -> "성별 무관"
     }
 }
+
+fun regionName(regionId: Int?): String {
+    return when (regionId) {
+        0 -> "전체"
+        1 -> "서울"
+        2 -> "부산"
+        3 -> "대구"
+        4 -> "인천"
+        5 -> "광주"
+        6 -> "대전"
+        7 -> "울산"
+        8 -> "세종"
+        9 -> "경기"
+        10 -> "충북"
+        11 -> "충남"
+        12 -> "전북"
+        13 -> "전남"
+        14 -> "경북"
+        15 -> "경남"
+        16 -> "제주"
+        17 -> "강원"
+        else -> "지역 무관"
+    }
+}

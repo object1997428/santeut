@@ -89,17 +89,6 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-<<<<<<< HEAD
-                AsyncImage(
-                    model = guild.guildProfile,
-                    contentDescription = "동호회 사진"
-                )
-
-                Column {
-                    androidx.compose.material.Text(text = guild.guildName)
-                    androidx.compose.material.Text(text = "${guild.guildMember}명")
-                    androidx.compose.material.Text(text = regionName(guild.regionId))
-=======
             AsyncImage(
                 model = guild.guildProfile ?: R.drawable.logo,
                 contentDescription = "동호회 사진",
@@ -138,7 +127,6 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xff76797D)
                     )
->>>>>>> c9277283a811f1bb3cf4f6208d823a5c5eda9bd1
                 }
 //                --------------------------
 
