@@ -85,6 +85,43 @@ fun HomeTopBar(
                     .clickable(onClick = { navController.navigate("home") })
             )
         },
+//        actions = {
+//            IconButton(onClick = { navController.navigate("chatList") }) {
+//                Icon(
+//                    imageVector = Icons.Outlined.Message,
+//                    contentDescription = "Message"
+//                )
+//            }
+//            IconButton(onClick = { navController.navigate("noti") }) {
+//                Icon(
+//                    imageVector = Icons.Outlined.Notifications,
+//                    contentDescription = "Notifications"
+//                )
+//            }
+//        }
+//        Spacer(modifier = Modifier.width(2.dp))
+//        Text(
+//            text = "산뜻",
+//            fontSize = 24.sp,
+//            fontWeight = FontWeight.ExtraBold
+//        )
+//        Spacer(modifier = Modifier.weight(1f))
+//        Image(
+//            imageVector = Icons.AutoMirrored.Outlined.Message,
+//            contentDescription = "채팅",
+//            modifier = Modifier
+//                .padding(10.dp)
+//                .clickable { onClickChatting() }
+//        )
+//        Spacer(modifier = Modifier.width(4.dp))
+//        Image(
+//            imageVector = Icons.Outlined.Notifications,
+//            contentDescription = "알림",
+//            modifier = Modifier
+//                .clickable { onClickAlert() }
+//        )
+//        Spacer(modifier = Modifier.width(8.dp))
+//    }
     )
 }
 
