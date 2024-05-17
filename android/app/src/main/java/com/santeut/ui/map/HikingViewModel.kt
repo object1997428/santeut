@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.tubesock.WebSocketMessage
 import com.google.gson.Gson
 import com.santeut.MainApplication
 import com.santeut.data.model.request.EndHikingRequest
