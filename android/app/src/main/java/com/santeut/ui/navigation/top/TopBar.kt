@@ -1,10 +1,20 @@
 package com.santeut.ui.navigation.top
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -14,7 +24,9 @@ import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
@@ -24,15 +36,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -249,6 +267,8 @@ fun GuildTopBar(
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
 
+    val context = LocalContext.current
+    val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
@@ -268,8 +288,11 @@ fun GuildTopBar(
         actions = {
 
             var showDialog by remember { mutableStateOf(false) }
+            var showLinkModal by remember { mutableStateOf(false)}
 
-            IconButton(onClick = { /* 클릭 시 링크 공유 */ }) {
+            IconButton(onClick = {
+                showLinkModal = true
+            }) {
                 Icon(
                     imageVector = Icons.Outlined.Share,
                     contentDescription = "링크 공유"
@@ -279,8 +302,79 @@ fun GuildTopBar(
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "추가 메뉴"
+                ) }
+            if (showLinkModal) {
+                Dialog(
+                    onDismissRequest = { showLinkModal = false },
+//                    text = { Text(text = "${guild.guildName}의 공유 링크", fontWeight = FontWeight.Bold ) },
+
+                    content = {
+                        Column(
+                            Modifier.size(300.dp,120.dp)
+                                .background(Color.White, shape = RoundedCornerShape(20.dp))
+                                .padding(horizontal = 20.dp)
+                            ,
+                            verticalArrangement = Arrangement.Center, // 수직으로 중앙 정렬
+                            horizontalAlignment = Alignment.CenterHorizontally // 수평으로 중앙 정렬
+
+                        )
+                        {
+                            Text(text = "${guild.guildName}의 공유 링크", fontWeight = FontWeight.Bold, color = Color.Black,
+                                modifier = Modifier.padding(bottom = 10.dp)
+                                )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .background(Color(0xffEFEFF0), shape = RoundedCornerShape(8.dp))
+                                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        text = "https://k10e201.p.ssafy.io/hi.html?param="+guild.guildId,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterStart)
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Default.Link,
+                                    contentDescription = "복사",
+                                    modifier = Modifier.size(35.dp)
+                                        .padding(start = 8.dp)
+                                        .clickable {
+                                            val clip = ClipData.newPlainText("길드 공유링크 클립보드에 복사", "https://k10e201.p.ssafy.io/hi.html?param=" + guild.guildId)
+                                            clipboardManager.setPrimaryClip(clip)
+                                        }
+                                    ,  // 아이콘과 텍스트 사이에 간격 추가
+                                    tint = Color(0xff76797D)
+                                )
+                            }
+                        }
+                    },
+
+//                    confirmButton = {
+//                        Button(
+//                            onClick = {
+//                                guildViewModel.quitGuild(guild.guildId)
+//                                showDialog = false
+//                            }
+//                        ) {
+//                            Text("탈퇴")
+//                        }
+//                    },
+//                    dismissButton = {
+//                        Button(onClick = { showDialog = false }) {
+//                            Text("취소")
+//                        }
+//                    },
                 )
             }
+
 
             DropdownMenu(
                 expanded = showMenu,
@@ -326,4 +420,51 @@ fun GuildTopBar(
             }
         }
     )
+}
+
+
+@Composable
+fun CustomAlertDialog(
+    showDialog: MutableState<Boolean>,
+    guildName: String,
+    onConfirmAction: () -> Unit,
+    onDismissAction: () -> Unit
+) {
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = {
+                Text(
+                    text = "공유 링크",
+//                    style = MaterialTheme.typography.h6
+                )
+            },
+            text = {
+                Column {
+                    Text("공유하고 싶은 링크를 선택하세요.")
+                    // 여기에 추가적인 컴포넌트를 배치할 수 있습니다.
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onConfirmAction()
+                        showDialog.value = false
+                    }
+                ) {
+                    Text("확인")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        onDismissAction()
+                        showDialog.value = false
+                    }
+                ) {
+                    Text("취소")
+                }
+            }
+        )
+    }
 }
