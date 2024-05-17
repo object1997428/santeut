@@ -2,17 +2,20 @@ package com.santeut.data.model.response
 
 import com.google.gson.annotations.SerializedName
 
-data class AllcourseResponse (
-    @SerializedName("course") val course: List<CourseDetailRespnse>
+data class AllCourseResponse(
+    @SerializedName("course") val course: List<CourseDetailResponse>
 )
 
-data class CourseDetailRespnse(
-    @SerializedName("courseId") val courseId: Long,
+data class CourseDetailResponse(
+    @SerializedName("courseId") val courseId: Int,
     @SerializedName("distance") val distance: Double,
-    @SerializedName("locationDataList") val locationDataList: List<LocationDataRespnse>
-)
+    @SerializedName("locationDataList") val locationDataList: List<LocationDataResponse>
+) {
+    val validLocationDataList: List<LocationDataResponse>
+        get() = locationDataList.filter { !it.lat.isNaN() && !it.lng.isNaN() }
+}
 
-data class LocationDataRespnse(
+data class LocationDataResponse(
     @SerializedName("lat") val lat: Double,
     @SerializedName("lng") val lng: Double
 )
