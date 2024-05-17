@@ -5,6 +5,7 @@ import android.os.Environment
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.camera.core.AspectRatio
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -44,35 +45,46 @@ import java.io.FileInputStream
 fun GuildInfoScreen(guild: GuildResponse?) {
     Column(
         modifier = Modifier
-            .padding(16.dp)
+//            .padding(16.dp)
             .fillMaxWidth()
     ) {
 
         if (guild != null) {
+
             AsyncImage(
                 model = guild.guildProfile,
                 contentDescription = "동호회 사진",
                 modifier = Modifier
+//                    .align(Alignment.TopStart)
                     .fillMaxWidth()
-                    .height(200.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
+//                    .height(300.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
+                    .clip(RoundedCornerShape(8.dp))
             )
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.Start)
+//                            .background(Color(0xAA000000))  // 투명한 검정 배경
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = guild.guildName ?: "",
+                            style = MaterialTheme.typography.headlineMedium.copy(color = Color.White), // 크기와 스타일 조정
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = guild.guildName?:"",
-                style = MaterialTheme.typography.headlineMedium, // 크기와 스타일 조정
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-
-            Text(
                 text = guild.guildInfo?:"",
                 style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
-                modifier = Modifier.padding(bottom = 8.dp)
+//                modifier = Modifier.padding(bottom = 16.dp)
             )
 
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = "인원 ${guild.guildMember}명",
@@ -160,14 +172,11 @@ fun CameraUI() {
                             } catch (e: Exception) {
                                 Log.d("API Response", "Error: ${e.message}")
                             }
-
                             val authKey = "897064a0-60a9-45ac-a0b8-2bc9e8ec0837:fx"
                             val translator = Translator(authKey)
                             val text = "Matricaria chamomilla (synonym: Matricaria recutita), commonly known as chamomile (also spelled camomile), German chamomile, Hungarian chamomile (kamilla), wild chamomile, blue chamomile, or scented mayweed, is an annual plant of the composite family Asteraceae. Commonly, the name M. recutita is applied to the most popular source of the herbal product chamomile, although other species are also used as chamomile. Chamomile is known mostly for its use against gastrointestinal problems; additionally, it can be used to treat irritation of the skin.";
                             val result = translator.translateText(text, null, "ko")
-
                             Log.d("Translate Result: ", result.text)
-
                         }
                     }
                 }
