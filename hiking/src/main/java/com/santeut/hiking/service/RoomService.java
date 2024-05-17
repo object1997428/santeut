@@ -38,6 +38,7 @@ public class RoomService {
         if (partyResp.getStatusCode().is2xxSuccessful()) {
             BasicResponse basicResponse = om.convertValue(partyResp.getBody(), BasicResponse.class);
             if (basicResponse != null && basicResponse.getData() != null) {
+                log.info("basicResponse={}",basicResponse);
                 GetPartyUserIdResponse feignResp = om.convertValue(basicResponse.getData(), GetPartyUserIdResponse.class);
                 int partyUserId = feignResp.getUserId();
                 log.info("[Party Server] Party 한테 소모임장 userId 요청 받은 partyUserId={}", partyUserId);

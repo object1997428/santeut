@@ -34,6 +34,7 @@ public class Room {
     }
 
     public void removeSessionByUserId(int userId) {
+        if(sessions.get(userId)==null) return;
         SocketDto dto = sessions.remove(userId);
     }
 

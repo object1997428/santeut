@@ -8,5 +8,4 @@ import lombok.Data;
 public class BasicResponse {
     private final int status;
     private final Object data;
-
 }
