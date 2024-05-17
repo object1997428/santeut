@@ -105,10 +105,15 @@ fun JoinPartyScreen(
         context,
         { _: DatePicker, year: Int, month: Int, day: Int ->
             endCalendar.set(year, month, day)
-            val selectedDate =
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endCalendar.time)
-            endCalendar.set(year, month, day)
-            searchFilterEndDate = selectedDate
+
+            if (endCalendar.time.before(startCalendar.time)) {
+                Toast.makeText(context, "종료 날짜는 시작 날짜보다 이후여야 합니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                val selectedDate =
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endCalendar.time)
+                endCalendar.set(year, month, day)
+                searchFilterEndDate = selectedDate
+            }
         },
         endCalendar.get(Calendar.YEAR),
         endCalendar.get(Calendar.MONTH),
