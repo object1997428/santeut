@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalNaverMapApi::class)
+
 package com.santeut.ui.community.party
 
 import android.app.DatePickerDialog
@@ -60,6 +62,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapProperties
+import com.naver.maps.map.compose.MapType
+import com.naver.maps.map.compose.PathOverlay
+import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
@@ -178,7 +189,8 @@ fun JoinPartyScreen(
                             .fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(8.dp, 0.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -293,6 +305,13 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
+//    val partyList by partyViewModel.partyList.observeAsState(emptyList())
+//    val selectedPartyCourse by partyViewModel.selectedCourseOfParty.observeAsState()
+//    val distanceinKm by remember { mutable}
+    val coords by partyViewModel.selectedCourseOfParty.observeAsState(emptyList())
+    val distanceInKm by partyViewModel.distanceInKm.observeAsState(0.0)
+
+
     LaunchedEffect(showBottomSheet) {
         if (showBottomSheet) {
             partyViewModel.getSelectedCourseInfoOfParty(party.partyId)
@@ -379,14 +398,41 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
         }
     }
 
+
+
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
         ) {
+
             Surface(modifier = Modifier.padding(16.dp)) {
                 Column {
-                    // 동호회 상세 정보
+                    // 소모임 상세 정보
+                    NaverMap(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 8.dp),
+//                        cameraPositionState = cameraPositionState,
+                        properties = MapProperties(
+//                            locationTrackingMode = LocationTrackingMode.Follow,
+                            mapType = MapType.Terrain,
+                            isMountainLayerGroupEnabled = true
+                        )
+                    ) {
+                        if(coords.size >= 2) {
+                            PathOverlay(
+                                coords = coords,
+                                width = 3.dp,
+                                color = Color.Green,
+                                outlineWidth = 1.dp,
+                                outlineColor = Color.Red,
+                            )
+                        }
+                    }
+                    Text(text="총 ${distanceInKm}km")
+                    // 가입 버튼
                     Button(
                         onClick = {
                             showBottomSheet = false

@@ -1,11 +1,14 @@
 package com.santeut.ui.party
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naver.maps.geometry.LatLng
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.CoordResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
@@ -40,8 +43,11 @@ class PartyViewModel @Inject constructor(
     private val _myScheduleList = MutableLiveData<List<String>>()
     val myScheduleList: LiveData<List<String>> = _myScheduleList
 
-    private val _selectedCourseOfParty = MutableLiveData<PartyCourseResponse>()
-    val selectedCourseOfParty: LiveData<PartyCourseResponse> = _selectedCourseOfParty
+    private val _selectedCourseOfParty = MutableLiveData<List<LatLng>>()
+    val selectedCourseOfParty: LiveData<List<LatLng>> = _selectedCourseOfParty
+
+    private val _distanceInKm = MutableLiveData<Double>(0.0)
+    val distanceInKm: LiveData<Double> = _distanceInKm
 
     fun getPartyList(
         guildId: Int?,
@@ -150,12 +156,15 @@ class PartyViewModel @Inject constructor(
         }
     }
 
-    fun getSelectedCourseInfoOfParty(partyId:Int) {
+    fun getSelectedCourseInfoOfParty(partyId: Int) {
         viewModelScope.launch {
             try {
-                _selectedCourseOfParty.postValue(partyUseCase.getSelectedCourseOfParty(partyId))
+                val response = partyUseCase.getSelectedCourseOfParty(partyId)
+                _selectedCourseOfParty.postValue(response.courseList.map { LatLng(it.lat, it.lng) }
+                    .toMutableList())
+                _distanceInKm.postValue(response.distance)
                 Log.d("PartyViewModel", "소모임 선택 등산로 정보 조회 시도")
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 _error.postValue("소모임 선택 등산로 정보 조회 실패: ${e.message}")
             }
         }
