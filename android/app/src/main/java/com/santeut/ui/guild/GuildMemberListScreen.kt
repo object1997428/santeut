@@ -54,6 +54,7 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.designsystem.theme.Green
+import com.santeut.designsystem.theme.Red
 import com.santeut.ui.navigation.top.GuildTopBar
 import java.time.format.DateTimeFormatter
 
@@ -230,7 +231,7 @@ fun MemberRow(
                     FilledTonalButton(
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xffE92B2B)
+                            containerColor = Red
                         ),
                         shape = RoundedCornerShape(12.dp),
                         onClick = {
