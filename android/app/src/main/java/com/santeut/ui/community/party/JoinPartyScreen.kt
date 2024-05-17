@@ -26,6 +26,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FilterListOff
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
@@ -35,7 +36,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -57,7 +57,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -123,6 +122,8 @@ fun JoinPartyScreen(
 
     // 검색어
     var searchWord by remember {mutableStateOf("")}
+    // 필터 적용 되었는지?
+    var isFiltered by remember {mutableStateOf(false)}
 
     LaunchedEffect(key1 = null) {
         partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
@@ -136,7 +137,9 @@ fun JoinPartyScreen(
                 onSearchTextChanged = { searchWord = it },
                 onClickFilter = {
                     showBottomFilterSheet = true
-                }
+                },
+                isFiltered = isFiltered,
+                setIsFiltered = { newValue -> isFiltered = newValue }
             )
         }, content = { paddingValues ->
 
@@ -174,19 +177,35 @@ fun JoinPartyScreen(
                             .padding(16.dp)
                             .fillMaxWidth()
                     ) {
-                        Text(
-                            text = "기간 선택",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(
-                                0.dp, 8.dp
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(8.dp, 0.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "기간 선택",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(
+                                    0.dp, 8.dp
+                                )
                             )
-                        )
+                            Text(
+                                text = "초기화",
+                                color = Color.DarkGray,
+                                fontSize = 14.sp,
+                                modifier = Modifier.clickable {
+                                    searchFilterStartDate = ""
+                                    searchFilterEndDate = ""
+                                }
+                            )
+                        }
                         Text(
                             text = "조회 시작 날짜",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
-                            modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
                         )
                         TextField(
                             value = searchFilterStartDate,
@@ -204,7 +223,7 @@ fun JoinPartyScreen(
                             text = "조회 마지막 날짜",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
-                            modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
                         )
                         TextField(
                             value = searchFilterEndDate,
@@ -230,24 +249,27 @@ fun JoinPartyScreen(
                             ),
                             onClick = {
                                 if(searchFilterStartDate == "" && searchFilterEndDate == "") {
-                                    Toast.makeText(context, "기간을 선택해주세요", Toast.LENGTH_SHORT)
-                                        .show()
+                                    partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
+                                    showBottomFilterSheet = false
+                                    isFiltered = false
                                 }
                                 else if (searchFilterStartDate == "") {
                                     Toast.makeText(context, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
-                                    showBottomFilterSheet = false
+                                    isFiltered = false
                                 }
                                 else if (searchFilterEndDate == "") {
                                     Toast.makeText(context, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
-                                    showBottomFilterSheet = false
+                                    isFiltered = false
                                 } else {
                                     Log.d("소모임 목록 검색) 길드 아이디", "${guildId}")
                                     Log.d("소모임 목록 검색) 소모임 이름", "${searchWord}")
                                     Log.d("소모임 목록 검색) 시작날짜", searchFilterStartDate)
                                     Log.d("소모임 목록 검색) 종료날짜", searchFilterEndDate)
                                     partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
+                                    showBottomFilterSheet = false
+                                    isFiltered = true
                                 }
                             }
                         ) {
@@ -360,7 +382,10 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                 Column {
                     // 동호회 상세 정보
                     Button(
-                        onClick = { partyViewModel.joinParty(party.partyId) },
+                        onClick = {
+                            showBottomSheet = false
+                            partyViewModel.joinParty(party.partyId)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !(party.isMember),
                         colors = ButtonDefaults.buttonColors(
@@ -394,7 +419,9 @@ fun PartySearchBar(
     partyViewModel: PartyViewModel,
     enteredText: String,
     onSearchTextChanged: (String) -> Unit,
-    onClickFilter: () -> Unit
+    onClickFilter: () -> Unit,
+    isFiltered: Boolean,
+    setIsFiltered: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -448,12 +475,21 @@ fun PartySearchBar(
                 onClickFilter()
             }
         ) {
-            androidx.compose.material3.Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = "필터",
-                tint = Color(0xff335C49),
-                modifier = Modifier.size(30.dp),
-            )
+            if(!isFiltered) {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.FilterListOff,
+                    contentDescription = "필터",
+                    tint = Color.DarkGray,
+                    modifier = Modifier.size(30.dp),
+                )
+            } else {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "필터",
+                    tint = Green,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
         }
     }
 }
