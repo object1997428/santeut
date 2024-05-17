@@ -181,7 +181,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
             Column {
                 Text(text = guild.guildName)
                 Text(text = "${guild.guildMember}명")
-                Text(text = regionName(guild.regionId))
+//                Text(text = regionName(guild.regionId))
 
                 Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
 
@@ -266,7 +266,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel) {
                 Surface(modifier = Modifier.padding(16.dp)) {
                     Column {
                         // 동호회 상세 정보
-                        GuildDetail(guild, guildViewModel)
+//                        GuildDetail(guild, guildViewModel)
                     }
                 }
             }
