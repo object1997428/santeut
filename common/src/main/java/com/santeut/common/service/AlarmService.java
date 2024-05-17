@@ -47,6 +47,7 @@ public class AlarmService {
         alarmRepository.save(alarmEntity);
 
         //알람 보내기
+        log.debug("referenceId: "+ referenceId + " / referenceType: "+ referenceType+" / userId: "+ alarmRequestDto.getUserId());
         AlarmTokenEntity alarmToken = alarmTokenRepository.findById(alarmRequestDto.getUserId()).orElseThrow();
         log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]", alarmToken.getId());
         boolean a = fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of("PUSH", alarmRequestDto.getAlarmTitle(),
