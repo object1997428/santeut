@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.santeut.data.model.response.GuildResponse
 import com.santeut.ui.guild.CreateGuildPostScreen
 import com.santeut.ui.guild.CreateGuildScreen
 import com.santeut.ui.guild.GuildApplyListScreen
@@ -14,10 +13,9 @@ import com.santeut.ui.guild.GuildCommunityScreen
 import com.santeut.ui.guild.GuildMemberListScreen
 import com.santeut.ui.guild.GuildPostDetailScreen
 import com.santeut.ui.guild.GuildScreen
-import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.MyGuildScreen
-import com.santeut.ui.party.CreatePartyScreen
-import com.santeut.ui.party.InputPartyInfo
+import com.santeut.ui.party.InputPartyInfoScreen
+import com.santeut.ui.party.SelectedMountain
 
 
 fun NavGraphBuilder.GuildNavGraph(
@@ -103,19 +101,20 @@ fun NavGraphBuilder.GuildNavGraph(
 
         // 동호회 전용 소모임 생성
         composable("createParty") {
-            CreatePartyScreen(navController)
+            SelectedMountain(null, navController, onClickMap = { navController.navigate("") })
         }
 
         composable(
-            route = "createParty/{mountainId}/{courseId}",
+            route = "createParty/{mountainId}/{courseIds}",
             arguments = listOf(
                 navArgument("mountainId") { type = NavType.IntType },
-                navArgument("courseId") { type = NavType.IntType },
+                navArgument("courseIds") { type = NavType.StringType },
             )
         ) { backStackEntry ->
             val mountainId = backStackEntry.arguments?.getInt("mountainId") ?: 0
-            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
-            InputPartyInfo(mountainId, courseId)
+            val courseIdsString = backStackEntry.arguments?.getString("courseIds") ?: ""
+            val selectedCourseIds = courseIdsString.split(",").map { it.toIntOrNull() ?: 0 }
+            InputPartyInfoScreen(mountainId, selectedCourseIds, navController)
         }
 
     }
