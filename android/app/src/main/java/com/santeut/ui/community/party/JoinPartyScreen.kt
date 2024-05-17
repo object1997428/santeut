@@ -293,6 +293,12 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
+    LaunchedEffect(showBottomSheet) {
+        if (showBottomSheet) {
+            partyViewModel.getSelectedCourseInfoOfParty(party.partyId)
+        }
+    }
+
     Card (
         modifier = Modifier
             .clickable(onClick = { showBottomSheet = true })
