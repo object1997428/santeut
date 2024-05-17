@@ -45,6 +45,7 @@ import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
 import com.santeut.data.model.response.CourseDetailRespnse
+import com.santeut.data.model.response.CourseDetailResponse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 
@@ -139,7 +140,7 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
 }
 
 @Composable
-fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>, pathData: List<CourseDetailRespnse>) {
+fun HikingCourse(courseCount: Int, courseList: List<HikingCourseResponse>, pathData: List<CourseDetailResponse>) {
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 15.0)

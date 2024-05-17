@@ -1123,7 +1123,6 @@
 package com.example.testmap
 
 import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.*
@@ -1330,7 +1329,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun startWebSocket(updateLocation: (String, Double, Double, String?) -> Unit, token: String) {
+    fun startWebSocket(
+        updateLocation: (String, Double, Double, String?) -> Unit,
+        token: String,
+        showAlert: MutableState<Boolean>,
+        alertMessage: MutableState<String>
+    ) {
         val request = Request.Builder()
             .url(webSocketUrl)
             .addHeader("Authorization", "Bearer $token")
@@ -1342,6 +1346,11 @@ class MainActivity : ComponentActivity() {
                 try {
                     val message = Gson().fromJson(text, WebSocketMessage::class.java)
                     updateLocation(message.userNickname, message.lat.toDouble(), message.lng.toDouble(), message.userProfile)
+
+                    if (message.type == "offCourse") {
+                        showAlert.value = true
+                        alertMessage.value = "${message.userNickname}님이 경로를 이탈하셨습니다."
+                    }
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
                 }
@@ -1391,6 +1400,7 @@ fun MapScreen(
     val userMarkerStates by remember { mutableStateOf<MutableMap<String, MarkerState>>(mutableMapOf()) }
     val userIcons by remember { mutableStateOf<MutableMap<String, OverlayImage?>>(mutableMapOf()) }
     val showAlert = remember { mutableStateOf(false) }
+    val alertMessage = remember { mutableStateOf("") }
 
     val mainActivity = LocalContext.current as MainActivity
 
@@ -1470,22 +1480,30 @@ fun MapScreen(
                         }
                     }
                 }
-            }, token)
-            while (timerRunning) {
-                delay(2000)
-                elapsedTime += 2
-                val currentLocation = getCurrentLocation(context)
-                currentLocation?.let {
-                    checkRouteDeviation(it.latitude, it.longitude, pathData) { isDeviated ->
-                        showAlert.value = isDeviated
+            }, token, showAlert, alertMessage)
+            launch {
+                while (timerRunning) {
+                    delay(1000)
+                    elapsedTime += 1
+                }
+            }
+            launch {
+                while (timerRunning) {
+                    delay(2000)
+                    val currentLocation = getCurrentLocation(context)
+                    currentLocation?.let {
+                        checkRouteDeviation(it.latitude, it.longitude, pathData) { isDeviated ->
+                            showAlert.value = isDeviated
+                            if (isDeviated) {
+                                val locationJson = Gson().toJson(WebSocketSendMessage(
+                                    type = "offCourse",
+                                    lat = it.latitude.toString(),
+                                    lng = it.longitude.toString()
+                                ))
+                                mainActivity.webSocket?.send(locationJson)
+                            }
+                        }
                     }
-                    // Send location to WebSocket
-                    val locationJson = Gson().toJson(WebSocketSendMessage(
-                        type = "message",
-                        lat = it.latitude.toString(),
-                        lng = it.longitude.toString()
-                    ))
-                    mainActivity.webSocket?.send(locationJson)
                 }
             }
         } else {
@@ -1568,18 +1586,53 @@ fun MapScreen(
         Box(modifier = Modifier.weight(2f)) {
             InfoPanel(altitude.toInt(), stepCount, distanceMoved, elapsedTime)
         }
-//        if (showAlert.value) {
-//            AlertDialog(
-//                onDismissRequest = { showAlert.value = false },
-//                title = { Text(text = "경고") },
-//                text = { Text(text = "경로를 이탈했습니다!") },
-//                confirmButton = {
-//                    Button(onClick = { showAlert.value = false }) {
-//                        Text("확인")
-//                    }
-//                }
-//            )
-//        }
+        if (showAlert.value) {
+            AlertDialog(
+                onDismissRequest = { showAlert.value = false },
+                title = { Text(text = "경고") },
+                text = { Text(text = alertMessage.value) },
+                confirmButton = {
+                    Button(onClick = { showAlert.value = false }) {
+                        Text("확인")
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun InfoPanel(altitude: Int, steps: Int, distance: Float, timeInSeconds: Int) {
+    val hours = timeInSeconds / 3600
+    val minutes = (timeInSeconds % 3600) / 60
+    val seconds = timeInSeconds % 60
+
+    Surface(
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = MaterialTheme.shapes.medium,
+        shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            InfoItem(title = "고도", value = "$altitude m")
+            InfoItem(title = "걸음 수", value = "$steps 걸음")
+            InfoItem(title = "움직인 거리", value = String.format("%.2f km", distance))
+            InfoItem(title = "경과 시간", value = String.format("%02d시 %02d분 %02d초", hours, minutes, seconds))
+        }
+    }
+}
+
+@Composable
+fun InfoItem(title: String, value: String) {
+    Column(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = title, style = MaterialTheme.typography.titleMedium)
+        Text(text = value, style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -1668,41 +1721,6 @@ fun resizeMarkerIcon(context: Context, drawableResId: Int, width: Int, height: I
     val bitmapResized = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 
     return OverlayImage.fromBitmap(bitmapResized)
-}
-
-@Composable
-fun InfoPanel(altitude: Int, steps: Int, distance: Float, timeInSeconds: Int) {
-    val hours = timeInSeconds / 3600
-    val minutes = (timeInSeconds % 3600) / 60
-    val seconds = timeInSeconds % 60
-
-    Surface(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = MaterialTheme.shapes.medium,
-        shadowElevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            InfoItem(title = "고도", value = "$altitude m")
-            InfoItem(title = "걸음 수", value = "$steps 걸음")
-            InfoItem(title = "움직인 거리", value = String.format("%.2f km", distance))
-            InfoItem(title = "경과 시간", value = String.format("%02d시 %02d분 %02d초", hours, minutes, seconds))
-        }
-    }
-}
-
-@Composable
-fun InfoItem(title: String, value: String) {
-    Column(
-        modifier = Modifier.padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = title, style = MaterialTheme.typography.titleMedium)
-        Text(text = value, style = MaterialTheme.typography.bodyLarge)
-    }
 }
 
 data class WebSocketMessage(

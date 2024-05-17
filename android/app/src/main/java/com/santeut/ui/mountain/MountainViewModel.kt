@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.model.response.CourseDetailRespnse
+import com.santeut.data.model.response.CourseDetailResponse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainResponse
@@ -31,8 +32,8 @@ class MountainViewModel @Inject constructor(
     private val _courseList = MutableLiveData<List<HikingCourseResponse>>()
     val courseList: LiveData<List<HikingCourseResponse>> = _courseList
 
-    private val _pathList = MutableLiveData<List<CourseDetailRespnse>>()
-    val pathList: LiveData<List<CourseDetailRespnse>> = _pathList
+    private val _pathList = MutableLiveData<List<CourseDetailResponse>>()
+    val pathList: LiveData<List<CourseDetailResponse>> = _pathList
 
 
     fun popularMountain() {

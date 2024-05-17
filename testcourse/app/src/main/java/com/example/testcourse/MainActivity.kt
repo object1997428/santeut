@@ -241,7 +241,7 @@ fun MapScreen(context: Context, locationSource: FusedLocationSource) {
                 locationTrackingMode = LocationTrackingMode.Follow,
                 mapType = MapType.Terrain,
                 isMountainLayerGroupEnabled = true
-            )
+            ),
         ) {
             pathData.value.forEach { courseDetail -> // 모든 경로를 순회하며 그리기
                 val path = courseDetail.validLocationDataList.map { LatLng(it.lat, it.lng) }
@@ -252,7 +252,7 @@ fun MapScreen(context: Context, locationSource: FusedLocationSource) {
                         color = Color.Green,
                         outlineWidth = 1.dp,
                         outlineColor = Color.Red,
-                        tag = courseDetail.courseId
+                        tag = courseDetail.courseId,
                     )
                     Log.d("경로", "${path}")
                 }

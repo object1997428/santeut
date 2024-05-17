@@ -4,6 +4,7 @@ import android.util.Log
 import com.santeut.data.apiservice.MountainApiService
 import com.santeut.data.model.response.AllcourseResponse
 import com.santeut.data.model.response.CourseDetailRespnse
+import com.santeut.data.model.response.CourseDetailResponse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainResponse
@@ -14,7 +15,7 @@ class MountainRepositoryImpl @Inject constructor(
     private val mountainApiService: MountainApiService
 ) : MountainRepository {
 
-    override suspend fun getAllCourses(mountainId: Int): List<CourseDetailRespnse> {
+    override suspend fun getAllCourses(mountainId: Int): List<CourseDetailResponse> {
         return try {
             val response = mountainApiService.getAllCourses(mountainId)
             if (response.status == "200") {
