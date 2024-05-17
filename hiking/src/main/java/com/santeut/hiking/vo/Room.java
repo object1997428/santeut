@@ -15,11 +15,12 @@ import java.util.Set;
 @AllArgsConstructor
 public class Room {
     private int id; //partyId
+//    private int userId; //파티장 userId
 
     private Map<Integer, SocketDto> sessions;  // Key: userId
 
     @Builder
-    public static Room create(int partyId) {
+    public static Room create(int partyId/*,int userId*/) {
         Room room = new Room();
         room.id =partyId;
         room.sessions = new HashMap<>();

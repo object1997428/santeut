@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.hiking.dto.response.GetUserInfoResponse;
-import com.santeut.hiking.dto.websocket.LocationResponseMessage;
-import com.santeut.hiking.dto.websocket.LocationRequestMessage;
 import com.santeut.hiking.dto.websocket.EnterandQuitRequestMessage;
+import com.santeut.hiking.dto.websocket.ResponseMessage;
+import com.santeut.hiking.dto.websocket.RequestMessage;
 import com.santeut.hiking.dto.websocket.SocketDto;
 import com.santeut.hiking.feign.FeignResponseDto;
 import com.santeut.hiking.feign.HikingAuthClient;
@@ -14,14 +14,12 @@ import com.santeut.hiking.repository.RoomRepository;
 import com.santeut.hiking.service.HikingDataScheduler;
 import com.santeut.hiking.service.LocationSaveService;
 import com.santeut.hiking.vo.Room;
-import jakarta.ws.rs.HEAD;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -79,16 +77,14 @@ public class SocketTextHandler extends TextWebSocketHandler {
             JsonNode jsonNode = om.readTree(payload);
             String messageType = jsonNode.get("type").asText();
             switch (messageType) {
-//                case "enter":
-//                    EnterandQuitRequestMessage enterDto = om.treeToValue(jsonNode, EnterandQuitRequestMessage.class);
-//                    hikingDataScheduler.startTracking(roomId.toString(), userId);
-//                    break;
-//                case "quit":
-//                    EnterandQuitRequestMessage quitDto = om.treeToValue(jsonNode, EnterandQuitRequestMessage.class);
-//                    hikingDataScheduler.stopTascking(roomId.toString(), userId);
-//                    break;
-                case "message":
-                    sendMessage(jsonNode, userId, room);
+                case "healthLisk":
+                    sendHealthLiskMessage(jsonNode,userId,room);
+                    break;
+                case "offCourse":
+                    sendOffCourseMessage(jsonNode,userId,room);
+                    break;
+                case "locationShare":
+                    sendLocationShareMessage(jsonNode, userId, room);
                     break;
                 default:
                     log.warn("Unknown message type received: {}", messageType);
@@ -98,12 +94,58 @@ public class SocketTextHandler extends TextWebSocketHandler {
         }
     }
 
-    private void sendMessage(JsonNode jsonNode, String userId, Room room) throws IOException {
+    private void sendHealthLiskMessage(JsonNode jsonNode, String userId, Room room) throws IOException {
         SocketDto fromDto = room.getSessionByUserId(Integer.parseInt(userId));
         log.info("partyId={}",room.getId());
-        LocationRequestMessage locationDto = om.treeToValue(jsonNode, LocationRequestMessage.class);
-        LocationResponseMessage locationRspDto = LocationResponseMessage.fromRequestDto(locationDto,Integer.parseInt(userId),fromDto.getUserNickname(),fromDto.getUserProfile());
-        locationSaveService.locationSave(locationRspDto,room.getId());
+
+        RequestMessage messageDto = om.treeToValue(jsonNode, RequestMessage.class);
+        ResponseMessage messageRespDto = ResponseMessage.fromRequestDto(messageDto,Integer.parseInt(userId), fromDto.getUserNickname(), fromDto.getUserProfile());
+        //redis에 위치 저장
+        locationSaveService.locationSave(messageRespDto, room.getId());
+        String responsePayload = om.writeValueAsString(messageRespDto);
+        TextMessage textMessage = new TextMessage(responsePayload);
+
+        room.getSessions().forEach((integer, socketDto) -> {
+            WebSocketSession connectedSession=socketDto.getSession();
+            log.info("message={}",textMessage);
+            try {
+                connectedSession.sendMessage(textMessage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void sendOffCourseMessage(JsonNode jsonNode, String userId, Room room) throws IOException {
+        SocketDto fromDto = room.getSessionByUserId(Integer.parseInt(userId));
+        log.info("partyId={}",room.getId());
+
+        RequestMessage messageDto = om.treeToValue(jsonNode, RequestMessage.class);
+        ResponseMessage messageRespDto = ResponseMessage.fromRequestDto(messageDto,Integer.parseInt(userId), fromDto.getUserNickname(), fromDto.getUserProfile());
+        //redis에 위치 저장
+        locationSaveService.locationSave(messageRespDto, room.getId());
+        String responsePayload = om.writeValueAsString(messageRespDto);
+        TextMessage textMessage = new TextMessage(responsePayload);
+
+        room.getSessions().forEach((integer, socketDto) -> {
+            WebSocketSession connectedSession=socketDto.getSession();
+            log.info("message={}",textMessage);
+            try {
+                connectedSession.sendMessage(textMessage);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void sendLocationShareMessage(JsonNode jsonNode, String userId, Room room) throws IOException {
+        SocketDto fromDto = room.getSessionByUserId(Integer.parseInt(userId));
+        log.info("partyId={}",room.getId());
+
+        RequestMessage locationDto = om.treeToValue(jsonNode, RequestMessage.class);
+        ResponseMessage locationRspDto = ResponseMessage.fromRequestDto(locationDto,Integer.parseInt(userId), fromDto.getUserNickname(), fromDto.getUserProfile());
+        //redis에 위치 저장
+        locationSaveService.locationSave(locationRspDto, room.getId());
         String responsePayload = om.writeValueAsString(locationRspDto);
         TextMessage textMessage = new TextMessage(responsePayload);
 
@@ -118,16 +160,21 @@ public class SocketTextHandler extends TextWebSocketHandler {
         });
     }
 
+
+
+
     @Override
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus status) throws JsonProcessingException {
+        //웹소켓 퇴장 처리
         int userId = Integer.parseInt(session.getHandshakeHeaders().get("userId").get(0));
         Integer roomId = getRoomId(session);
-
         roomRepository.room(roomId).removeSessionByUserId(userId);
         log.info("특정 클라이언트와의 연결이 해제되었습니다. partyId={}, userId={}",roomId,userId);
-
         hikingDataScheduler.stopTascking(roomId.toString(), Integer.toString(userId));
+
+        //userId가 파티장이면
+
     }
 
     //세션 url에서 roomId가져옴

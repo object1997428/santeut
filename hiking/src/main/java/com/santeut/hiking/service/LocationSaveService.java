@@ -3,7 +3,7 @@ package com.santeut.hiking.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.hiking.dto.request.LocationData;
-import com.santeut.hiking.dto.websocket.LocationResponseMessage;
+import com.santeut.hiking.dto.websocket.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ListOperations;
@@ -19,7 +19,7 @@ public class LocationSaveService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
-    public void locationSave(LocationResponseMessage locationDto, Integer partyId
+    public void locationSave(ResponseMessage locationDto, Integer partyId
                              ) throws JsonProcessingException {
         LocationData locationData = LocationData.builder()
                 .lat(locationDto.getLat())

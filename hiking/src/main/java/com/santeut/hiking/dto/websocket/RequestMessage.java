@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LocationRequestMessage {
-    private String type;
+public class RequestMessage {
+    private String type; //locationShare, healthLisk, offCourse
     private Double lat;
     private Double lng;
 

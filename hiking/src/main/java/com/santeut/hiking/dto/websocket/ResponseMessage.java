@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LocationResponseMessage {
-    private String type;
+public class ResponseMessage {
+    private String type; //locationShare, healthLisk, offCourse
     private Integer userId;
     private String userNickname;
     private String userProfile;
     private Double lat;
     private Double lng;
 
-    public static LocationResponseMessage fromRequestDto(LocationRequestMessage requestDto, Integer userId, String userNickname,String userProfile) {
-        return LocationResponseMessage.builder()
+    public static ResponseMessage fromRequestDto(RequestMessage requestDto, Integer userId, String userNickname, String userProfile) {
+        return ResponseMessage.builder()
                 .type(requestDto.getType())
                 .userId(userId)
                 .userNickname(userNickname)
