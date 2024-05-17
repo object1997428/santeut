@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,8 @@ public class PartyUserServiceImpl implements PartyUserService {
                 (p.getParty().getGuildId() == null) ? ""
           : guildAccessUtil.getGuildInfo(p.getParty().getGuildId(), userId).getGuildName()
             )
-        ).toList()
+        ).sorted(Comparator.comparing(PartyInfo::getStatus).reversed())
+            .toList()
     );
   }
 
