@@ -50,7 +50,7 @@ fun BottomNavBarPreview(
     SanteutTheme {
         BottomNavBar(
             currentTap = "Home",
-            onTabClick = {}
+            onTabClick = {},
         )
     }
 }
@@ -65,7 +65,7 @@ fun BottomNavBar(
 
     AnimatedVisibility(
         modifier = Modifier
-            .background(color = Color.White)
+            .background(color = Color(0xffFEFEFE))
             .padding(8.dp),
         visible = currentTap != null && !NoBottomScreen.contains(currentTap),
         enter = fadeIn() + slideIn { IntOffset(it.width, 0) },
