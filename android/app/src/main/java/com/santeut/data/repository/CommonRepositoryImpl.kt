@@ -24,6 +24,23 @@ class CommonRepositoryImpl @Inject constructor(
         }
     }
 
+//    override suspend fun getComments(postId: Int, postType: Char): List<CommentResponse> {
+//        return try{
+//            val response = commonApiService.getComments(postId, postType.toString())
+//            if(response.status=="200"){
+//                response.data.commentList
+//            } else{
+//                Log.e(
+//                    "CommonRepository",
+//                    "Error fetching posts: ${response.status} - ${response.data}"
+//                )
+//                emptyList()
+//            }
+//        } catch (e:Exception){
+//            Log.e("CommonRepository", "Network error while fetching post: ${e.message}", e)
+//            throw e
+//        }
+//    }
     override suspend fun getNotificationList(): List<NotificationResponse> {
         return try {
             val response = commonApiService.getNotificationList()

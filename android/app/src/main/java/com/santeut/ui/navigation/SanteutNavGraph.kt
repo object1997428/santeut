@@ -18,17 +18,19 @@ import com.santeut.ui.wearable.WearableViewModel
 @Composable
 fun SanteutNavGraph(
     navController: NavHostController,
-    wearableViewModel: WearableViewModel
+    wearableViewModel: WearableViewModel,
+    guildId:Int,
+    onClearData:()->Unit
 ) {
     NavHost(
         navController = navController,
-        startDestination = "auth_graph"
+        startDestination = if(guildId == 0)"auth_graph" else "community_graph"
     ) {
         UnAuthNavGraph(
             navController = navController
         )
         HomeNavGraph(navController)
-        CommunityNavGraph(navController)
+        CommunityNavGraph(navController, guildId = guildId, onClearData = onClearData )
         MapNavGraph(navController)
         GuildNavGraph(navController)
         MyPageNavGraph(navController)
