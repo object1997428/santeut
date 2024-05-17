@@ -9,8 +9,6 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -38,15 +36,11 @@ fun CommunityScreen(
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
-<<<<<<< HEAD
-    Scaffold {
-=======
     LaunchedEffect(key1 = initialPage) {
         pagerState.scrollToPage(initialPage)
     }
 
     Scaffold() {
->>>>>>> c9277283a811f1bb3cf4f6208d823a5c5eda9bd1
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
