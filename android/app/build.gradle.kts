@@ -64,7 +64,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.database.ktx)
+
 //    implementation(libs.androidx.material3.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -142,7 +145,10 @@ dependencies {
     implementation ("io.github.fornewid:naver-map-location:21.0.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    implementation ("org.locationtech.jts:jts-core:1.18.2")
+
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
 
 }

@@ -26,11 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.ui.community.party.PartySearchBar
 
 @Composable
 fun MyPartyListScreen(
+    navController: NavController,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
     val myPartyList by partyViewModel.myPartyList.observeAsState(emptyList())
@@ -62,7 +64,7 @@ fun MyPartyListScreen(
         } else {
             LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
                 items(myPartyList) { party ->
-                    MyPartyCard(party)
+                    MyPartyCard(party, navController)
                 }
             }
         }
@@ -71,7 +73,7 @@ fun MyPartyListScreen(
 }
 
 @Composable
-fun MyPartyCard(party: MyPartyResponse) {
+fun MyPartyCard(party: MyPartyResponse, navController: NavController) {
     Card {
         Column(Modifier.fillMaxWidth()) {
             Row {
@@ -113,7 +115,7 @@ fun MyPartyCard(party: MyPartyResponse) {
                     )
                     Text(text = "${party.curPeople} / ${party.maxPeople} 명")
                 }
-                Button(onClick = {/* 소모임 시작 버튼 로직 추가 */ }) {
+                Button(onClick = { navController.navigate("hiking/${party.partyId}") }) {
                     Icon(
                         imageVector = Icons.Outlined.NotStarted,
                         contentDescription = "시작 버튼"

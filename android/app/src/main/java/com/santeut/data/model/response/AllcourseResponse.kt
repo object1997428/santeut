@@ -10,12 +10,15 @@ data class CourseDetailResponse(
     @SerializedName("courseId") val courseId: Int,
     @SerializedName("distance") val distance: Double,
     @SerializedName("locationDataList") val locationDataList: List<LocationDataResponse>
-) {
-    val validLocationDataList: List<LocationDataResponse>
-        get() = locationDataList.filter { !it.lat.isNaN() && !it.lng.isNaN() }
-}
+)
 
 data class LocationDataResponse(
     @SerializedName("lat") val lat: Double,
     @SerializedName("lng") val lng: Double
-)
+) {
+    companion object {
+        fun getValidLocations(locations: List<LocationDataResponse>): List<LocationDataResponse> {
+            return locations.filter { !it.lat.isNaN() && !it.lng.isNaN() }
+        }
+    }
+}
