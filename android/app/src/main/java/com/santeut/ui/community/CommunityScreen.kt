@@ -9,8 +9,6 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import com.google.accompanist.pager.*
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -32,21 +30,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun CommunityScreen(
     navController: NavController,
-    initialPage: Int = 0
+    initialPage: Int = 0,
+    guildId:Int,
+    onClearData:()->Unit
 ) {
     val pages = listOf("동호회", "소모임", "등산Tip", "코스공유")
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
-<<<<<<< HEAD
-    Scaffold {
-=======
     LaunchedEffect(key1 = initialPage) {
         pagerState.scrollToPage(initialPage)
     }
 
     Scaffold() {
->>>>>>> c9277283a811f1bb3cf4f6208d823a5c5eda9bd1
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
@@ -95,7 +91,7 @@ fun CommunityScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> JoinGuildScreen()
+                    0 -> JoinGuildScreen(guildId=guildId, onClearData=onClearData)
                     1 -> JoinPartyScreen(null)
                     2 -> PostTipsScreen(navController)
                     3 -> PostCourseScreen()

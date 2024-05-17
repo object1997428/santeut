@@ -1,6 +1,7 @@
 package com.santeut.ui.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,10 +26,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -81,6 +82,7 @@ fun HomeScreen(
     ) {
         item {
             SearchMountainBar(
+                null,
                 navController,
                 onClickMap = {}
             )
@@ -102,11 +104,15 @@ fun HomeScreen(
 
 @Composable
 fun SearchMountainBar(
+    type: String?,
     navController: NavController,
     onClickMap: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var region by remember { mutableStateOf("") }
+
+    var showToastMessage by remember { mutableStateOf(false) }
+    var toastMessageText by remember { mutableStateOf<String?>(null) }
 
     Row(
         modifier = Modifier
@@ -117,13 +123,14 @@ fun SearchMountainBar(
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .fillMaxWidth(0.9f),
+                .fillMaxWidth(),
             textStyle = TextStyle(fontSize = 12.sp),
             value = name,
             onValueChange = { name = it },
             placeholder = {
                 Text(
-                    text = "어느 산을 찾으시나요?"
+                    text = "어느 산을 찾으시나요?",
+                    color = Color(0xff666E7A)
                 )
             },
             singleLine = true,
@@ -131,32 +138,39 @@ fun SearchMountainBar(
                 imeAction = ImeAction.Done // 완료 액션 지정
             ),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color(0xFF678C40),
-                unfocusedContainerColor = Color(0xFFFBF9ED),
-                focusedBorderColor = Color(0xFF678C40),
-                focusedContainerColor = Color(0xFFFBF9ED),
+                unfocusedBorderColor = Color(0xFFD6D8DB),
+                unfocusedContainerColor = Color(0xFFEFEFF0),
+                focusedBorderColor = Color(0xFFD6D8DB),
+                focusedContainerColor = Color(0xFFEFEFF0),
             ),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
             trailingIcon = {
-                Icon(
+                androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
-                    tint = Color.Black,
-                    modifier = Modifier.clickable {
-                        val path =
-                            if (region.isNullOrEmpty()) "mountainList/$name" else "mountainList/$name/$region"
-                        navController.navigate(path)
-                    }
+                    tint = Color(0xff33363F),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            if(name == null || name == "") {
+                                showToastMessage = true
+                                toastMessageText = "검색어를 입력하세요"
+                            } else {
+                                val path = if (type == "create") {
+                                    "create/mountainList/$name"
+                                } else {
+                                    if (region.isEmpty()) "mountainList/$name" else "mountainList/$name/$region"
+                                }
+                                navController.navigate(path)
+                            }
+                        }
                 )
             }
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.Default.Map,
-            contentDescription = "지도",
-            modifier = Modifier.clickable { onClickMap() }
-        )
-        Spacer(modifier = Modifier.width(6.dp))
+    }
+
+    if(showToastMessage) {
+        showToast(toastMessageText!!)
     }
 }
 
@@ -502,4 +516,11 @@ fun CommunityItem(
             )
         }
     }
+}
+
+@Composable
+fun showToast(message: String) {
+    val ctx = LocalContext.current
+
+    Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
 }
