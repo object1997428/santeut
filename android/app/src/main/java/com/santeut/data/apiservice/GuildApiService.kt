@@ -9,6 +9,7 @@ import com.santeut.data.model.response.GuildPostDetailResponse
 import com.santeut.data.model.response.GuildPostListResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.RankingListResponse
+import com.santeut.data.model.response.SearchGuildListResponse
 import okhttp3.MultipartBody
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -17,11 +18,18 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface GuildApiService {
 
     @GET("/api/guild/list")
     suspend fun getGuilds(): CustomResponse<GuildListResponse>
+
+    @GET("/api/guild/search")
+    suspend fun searchGuilds(
+        @Query("regionName") regionName: String,
+        @Query("gender") gender: String
+    ): CustomResponse<SearchGuildListResponse>
 
     @POST("/api/guild/create")
     @Multipart
