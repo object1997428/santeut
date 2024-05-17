@@ -332,6 +332,10 @@ fun CreateGuildScreen(
 
         }
 
+        // 완료 버튼
+        val isInputValid = guildName.isNotEmpty() &&
+                guildInfo.isNotEmpty()
+
         Button(
             onClick = {
                 // Toast.makeText(context, "동호회를 생성했습니다!", Toast.LENGTH_SHORT).show()
@@ -350,12 +354,21 @@ fun CreateGuildScreen(
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Green,
-                contentColor = Color.White,
                 disabledContainerColor = Color.LightGray,
-                disabledContentColor = Color.Black,
             ),
+            enabled = isInputValid,
         ) {
-            Text("완료")
+            if(isInputValid) {
+                Text(
+                    text = "완료",
+                    color = Color.White
+                )
+            } else {
+                Text(
+                    text = "완료",
+                    color = Color.Black
+                )
+            }
         }
     }
 
