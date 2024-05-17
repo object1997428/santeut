@@ -35,6 +35,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -89,7 +90,7 @@ fun HomeTopBar(
     navController: NavController
 ) {
     TopAppBar(
-        title = { Text(text = "산뜻") },
+        title = { Text(text = "산뜻", style = MaterialTheme.typography.titleLarge) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -146,7 +147,7 @@ fun HomeTopBar(
 @Composable
 fun DefaultTopBar(navController: NavController, pageName: String) {
     TopAppBar(
-        title = { Text(pageName) },
+        title = { Text(pageName, style = MaterialTheme.typography.titleLarge) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -179,7 +180,7 @@ fun DefaultTopBar(navController: NavController, pageName: String) {
 @Composable
 fun SimpleTopBar(navController: NavController, pageName: String) {
     TopAppBar(
-        title = { Text(pageName) },
+        title = { Text(pageName, style = MaterialTheme.typography.titleLarge) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -205,7 +206,7 @@ fun MenuTopBar(
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
-        title = { Text(pageName) },
+        title = { Text(pageName, style = MaterialTheme.typography.titleLarge) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -233,21 +234,21 @@ fun MenuTopBar(
                 onDismissRequest = { showMenu = false }
             ) {
                 DropdownMenuItem(
-                    text = { Text(text = "소모임 정보") },
+                    text = { Text(text = "소모임 정보", style = MaterialTheme.typography.titleMedium) },
                     // TODO: 소모임 상세 조회
                     onClick = { Log.d("소모임 정보", "클릭") }
                     // onClick = { navController.navigate("guildMemberList/${guild.guildId}") }
                 )
 
                 DropdownMenuItem(
-                    text = { Text(text = "소모임 나가기", color = Color.Red) },
+                    text = { Text(text = "소모임 나가기", color = Color.Red, style = MaterialTheme.typography.titleMedium) },
                     onClick = { showDialog = true })
             }
 
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    text = { Text(text = "${pageName}에서 나가시겠습니까?") },
+                    text = { Text(text = "${pageName}에서 나가시겠습니까?", style = MaterialTheme.typography.titleMedium) },
                     confirmButton = {
                         Button(
                             onClick = {
@@ -256,12 +257,12 @@ fun MenuTopBar(
                                 showDialog = false
                             }
                         ) {
-                            Text("나가기")
+                            Text("나가기", style = MaterialTheme.typography.titleMedium)
                         }
                     },
                     dismissButton = {
                         Button(onClick = { showDialog = false }) {
-                            Text("취소")
+                            Text("취소", style = MaterialTheme.typography.titleMedium)
                         }
                     }
                 )
@@ -273,7 +274,7 @@ fun MenuTopBar(
 @Composable
 fun CreateTopBar(navController: NavController, pageName: String, onWriteClick: () -> Unit) {
     TopAppBar(
-        title = { Text(pageName) },
+        title = { Text(pageName, style = MaterialTheme.typography.titleLarge) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -309,7 +310,7 @@ fun GuildTopBar(
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
-        title = { Text(guild.guildName) },
+        title = { Text(guild.guildName, style = MaterialTheme.typography.titleLarge) },
         contentColor = Color.Black,
         backgroundColor = Color.White,
         navigationIcon = {
@@ -357,7 +358,7 @@ fun GuildTopBar(
                         )
                         {
                             Text(text = "${guild.guildName}의 공유 링크", fontWeight = FontWeight.Bold, color = Color.Black,
-                                modifier = Modifier.padding(bottom = 10.dp)
+                                modifier = Modifier.padding(bottom = 10.dp), style = MaterialTheme.typography.titleMedium
                                 )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -375,7 +376,8 @@ fun GuildTopBar(
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier
-                                            .align(Alignment.CenterStart)
+                                            .align(Alignment.CenterStart),
+                                        style = MaterialTheme.typography.titleMedium
                                     )
                                 }
                                 Icon(
@@ -418,26 +420,26 @@ fun GuildTopBar(
                 onDismissRequest = { showMenu = false }
             ) {
                 DropdownMenuItem(
-                    text = { Text(text = "회원 목록 보기") },
+                    text = { Text(text = "회원 목록 보기", style = MaterialTheme.typography.titleMedium) },
                     onClick = { navController.navigate("guildMemberList/${guild.guildId}") })
-                DropdownMenuItem(text = { Text(text = "소모임 만들기") }, onClick = { /*TODO*/ })
+                DropdownMenuItem(text = { Text(text = "소모임 만들기", style = MaterialTheme.typography.titleMedium) }, onClick = { /*TODO*/ })
 
                 if (guild.isPresident) {
                     DropdownMenuItem(
-                        text = { Text(text = "가입 요청 보기") },
+                        text = { Text(text = "가입 요청 보기", style = MaterialTheme.typography.titleMedium) },
                         onClick = { navController.navigate("guildApplyList/${guild.guildId}") })
                     DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
                 }
 
                 DropdownMenuItem(
-                    text = { Text(text = "동호회 탈퇴하기", color = Color.Red) },
+                    text = { Text(text = "동호회 탈퇴하기", color = Color.Red, style = MaterialTheme.typography.titleMedium) },
                     onClick = { showDialog = true })
             }
 
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    text = { Text(text = "${guild.guildName}을 탈퇴할까요?") },
+                    text = { Text(text = "${guild.guildName}을 탈퇴할까요?", style = MaterialTheme.typography.titleMedium) },
                     confirmButton = {
                         Button(
                             onClick = {
@@ -445,12 +447,12 @@ fun GuildTopBar(
                                 showDialog = false
                             }
                         ) {
-                            Text("탈퇴")
+                            Text("탈퇴", style = MaterialTheme.typography.titleMedium)
                         }
                     },
                     dismissButton = {
                         Button(onClick = { showDialog = false }) {
-                            Text("취소")
+                            Text("취소", style = MaterialTheme.typography.titleMedium)
                         }
                     }
                 )
@@ -472,13 +474,13 @@ fun CustomAlertDialog(
             onDismissRequest = { showDialog.value = false },
             title = {
                 Text(
-                    text = "공유 링크",
+                    text = "공유 링크", style = MaterialTheme.typography.titleMedium
 //                    style = MaterialTheme.typography.h6
                 )
             },
             text = {
                 Column {
-                    Text("공유하고 싶은 링크를 선택하세요.")
+                    Text("공유하고 싶은 링크를 선택하세요.", style = MaterialTheme.typography.titleMedium)
                     // 여기에 추가적인 컴포넌트를 배치할 수 있습니다.
                 }
             },
@@ -489,7 +491,7 @@ fun CustomAlertDialog(
                         showDialog.value = false
                     }
                 ) {
-                    Text("확인")
+                    Text("확인", style = MaterialTheme.typography.titleMedium)
                 }
             },
             dismissButton = {
@@ -499,7 +501,7 @@ fun CustomAlertDialog(
                         showDialog.value = false
                     }
                 ) {
-                    Text("취소")
+                    Text("취소", style = MaterialTheme.typography.titleMedium)
                 }
             }
         )
