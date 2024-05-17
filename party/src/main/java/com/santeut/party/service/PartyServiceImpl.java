@@ -1,23 +1,33 @@
 package com.santeut.party.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.santeut.party.common.exception.AccessDeniedException;
 import com.santeut.party.common.exception.DataNotFoundException;
+import com.santeut.party.common.response.BasicResponse;
 import com.santeut.party.dto.request.CreatePartyRequestDto;
+import com.santeut.party.dto.request.LocationData;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
 import com.santeut.party.dto.response.GetPartyUserIdResponse;
+import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
+import com.santeut.party.dto.response.SelectedCourseResponse;
 import com.santeut.party.entity.Party;
 import com.santeut.party.feign.GuildAccessUtil;
+import com.santeut.party.feign.HikingMountainClient;
+import com.santeut.party.feign.dto.request.MountainCourseFeignRequest;
+import com.santeut.party.feign.dto.request.PartyTrackDataFeginRequest;
 import com.santeut.party.repository.PartyRepository;
 import com.santeut.party.repository.PartyUserRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +39,8 @@ public class PartyServiceImpl implements PartyService {
   private final PartyUserRepository partyUserRepository;
   private final PartyUserService partyUserService;
   private final GuildAccessUtil guildAccessUtil;
+  private final HikingMountainClient hikingMountainClient;
+  private final ObjectMapper om;
 
   @Override
   @Transactional
@@ -117,5 +129,35 @@ public class PartyServiceImpl implements PartyService {
             .userId(party.getUserId())
             .build();
     return partyUserInfo;
+  }
+
+  // 소모임 생성 시 선택한 등산로들의 좌표모음 조회
+  @Override
+  public SelectedCourseResponse findCourseByPartyId(int partyId) {
+    Party party = partyRepository.findById(partyId)
+        .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
+
+    List<Integer> courseList=new ArrayList<>();
+    String[] split = party.getSelectedCourse().split("\\.");
+    for (String s : split) {
+      courseList.add(Integer.parseInt(s));
+    }
+    MountainCourseFeignRequest mounainDto= MountainCourseFeignRequest.builder()
+        .courseIdList(courseList)
+        .build();
+    log.info("[Party Server] Mountain 한테 등산로 좌표 조회 요청");
+    ResponseEntity<?> mountainResp = hikingMountainClient.getCourse(mounainDto);
+    if (mountainResp.getStatusCode().is2xxSuccessful()) {
+      BasicResponse basicResponse = om.convertValue(mountainResp.getBody(), BasicResponse.class);
+      if (basicResponse != null && basicResponse.getData() != null) {
+        PartyTrackDataFeginRequest feignResp = om.convertValue(basicResponse.getData(), PartyTrackDataFeginRequest.class);
+        List<LocationData> locationDataList = feignResp.getLocationDataList();
+        log.info("[Party Server] Mountain 한테 등산로 좌표 조회 응답 받음 locationDataList={}", locationDataList);
+        return new SelectedCourseResponse(feignResp.getDistance(),locationDataList);
+      }
+    } else {
+      log.error("[Party Server] Mountain 한테 등산로 좌표 조회 요청 실패 mountainResp={}",mountainResp);
+    }
+    return new SelectedCourseResponse(0L, new ArrayList<>());
   }
 }

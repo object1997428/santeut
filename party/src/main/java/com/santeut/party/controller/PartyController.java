@@ -77,5 +77,11 @@ public class PartyController {
             partyService.findUserIdById(partyId));
   }
 
+  @GetMapping("/{partyId}/course")
+  ResponseEntity<BasicResponse> getPartyCourse(@PathVariable("partyId") int partyId){
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+        partyService.findCourseByPartyId(partyId));
+  }
+
 
 }

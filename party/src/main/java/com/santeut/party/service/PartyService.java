@@ -5,6 +5,7 @@ import com.santeut.party.dto.request.ModifyPartyRequestDto;
 import com.santeut.party.dto.response.GetPartyUserIdResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
+import com.santeut.party.dto.response.SelectedCourseResponse;
 import java.time.LocalDate;
 
 public interface PartyService {
@@ -21,4 +22,6 @@ public interface PartyService {
   PartyInfo findPartyById(int userId, int partyId);
 
   GetPartyUserIdResponse findUserIdById(int partyId);
+
+  SelectedCourseResponse findCourseByPartyId(int partyId);
 }
