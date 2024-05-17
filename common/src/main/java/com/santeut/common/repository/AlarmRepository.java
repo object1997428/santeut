@@ -15,7 +15,8 @@ public interface AlarmRepository extends JpaRepository<AlarmEntity, Integer> {
     // 삭제 된거 제외한 알람 리스트 받아오기
     @Modifying
     @Transactional
-    @Query("SELECT a FROM AlarmEntity  a WHERE a.id=:id and a.isDeleted!=false ORDER BY a.createdAt DESC")
+    @Query("SELECT a FROM AlarmEntity  a WHERE a.userId=:id and a.isDeleted=FALSE ORDER BY a.createdAt DESC")
+//    @Query("SELECT a FROM AlarmEntity  a WHERE a.id=:id  ORDER BY a.createdAt DESC")
     Optional<List<AlarmEntity>>findAlarmDirectly(int id);
 
     @Modifying
