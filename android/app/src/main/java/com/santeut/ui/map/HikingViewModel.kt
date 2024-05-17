@@ -8,11 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.tubesock.WebSocketMessage
 import com.google.gson.Gson
+import com.santeut.data.model.request.EndHikingRequest
 import com.santeut.data.model.request.StartHikingRequest
 import com.santeut.data.model.response.LocationDataResponse
 import com.santeut.domain.usecase.HikingUseCase
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -50,6 +52,18 @@ class HikingViewModel @Inject constructor(
                 _courseList.postValue(hikingUseCase.startHiking(startHikingRequest).courseList)
             } catch (e: Exception) {
                 _error.postValue("소모임 시작 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun endHiking(endHikingRequest: EndHikingRequest) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                hikingUseCase.endHiking(endHikingRequest).collect {
+                    Log.d("HikingViewModel", "소모임 종료 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("소모임 종료 실패: ${e.message}")
             }
         }
     }

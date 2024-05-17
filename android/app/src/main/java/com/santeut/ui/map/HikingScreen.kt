@@ -83,7 +83,7 @@ import java.io.ByteArrayOutputStream
 @ExperimentalNaverMapApi
 @Composable
 fun HikingScreen(
-//    context: Context,
+    context: Context,
     token: String,
     hikingViewModel: HikingViewModel = hiltViewModel()
 ) {
