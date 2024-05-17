@@ -183,7 +183,7 @@ fun TipDetail(post: PostResponse, navController: NavController) {
                 )
                 Spacer(Modifier.width(2.dp))
                 Text(
-                    text = "${post.likeCnt}",
+                    text = "${post.hitCnt}",
                     style = MaterialTheme.typography.body2,
                     color = Color(0xff76797D)
                 )
