@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public interface UserFeign {
 
     @GetMapping(path = "auth/user/login/info")
-    public ResponseEntity<?> userLoginInfo();
+    ResponseEntity<?> userLoginInfo();
 
     @GetMapping(path = "auth/user/{userId}")
-    public BasicResponse userInfo(@PathVariable int userId);
+    BasicResponse userInfo(@PathVariable int userId);
 
     @PostMapping("auth/user/party/profile")
     ResponseEntity<FeignResponseDto<PartyMemberInfoResponse>> getPartyMemberInfo(

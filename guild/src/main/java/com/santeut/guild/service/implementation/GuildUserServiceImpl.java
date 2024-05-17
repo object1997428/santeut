@@ -9,7 +9,9 @@ import com.santeut.guild.dto.response.UserInfoResponse;
 import com.santeut.guild.entity.GuildEntity;
 import com.santeut.guild.entity.GuildRequestEntity;
 import com.santeut.guild.entity.GuildUserEntity;
+import com.santeut.guild.feign.CommonClient;
 import com.santeut.guild.feign.UserFeign;
+import com.santeut.guild.feign.dto.AlarmRequestDto;
 import com.santeut.guild.repository.GuildRepository;
 import com.santeut.guild.repository.GuildRequestRepository;
 import com.santeut.guild.repository.GuildUserRepository;
@@ -31,6 +33,7 @@ public class GuildUserServiceImpl implements GuildUserService {
     private final GuildUserRepository guildUserRepository;
     private final GuildRequestRepository guildRequestRepository;
     private final UserFeign userFeign;
+    private final CommonClient commonClient;
     @Override
     public void applyGuild(int guildId, String userId) {
 
@@ -107,10 +110,24 @@ public class GuildUserServiceImpl implements GuildUserService {
 
         guildRequestEntity.setModifiedAt(LocalDateTime.now());
         guildRequestEntity.setStatus('A');
-        guildRequestRepository.save(guildRequestEntity);
 
         GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(userId, guildId);
         guildEntity.setGuildMember(guildEntity.getGuildMember()+1);
+
+        String referenceType = "GR";
+
+        AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
+                .userId(userId)
+                .referenceType(referenceType)
+                .referenceId(guildId)
+                .alarmTitle("동호회 가입 승인 알림")
+                .alarmContent("동호회 가입 신청이 승인되었습니다.")
+                .build();
+
+        log.debug("alarmRequestDto: {} ", alarmRequestDto.getUserId());
+
+        commonClient.createAlarm(guildId, referenceType, alarmRequestDto);
+        guildRequestRepository.save(guildRequestEntity);
         guildUserRepository.save(guildUserEntity);
     }
 

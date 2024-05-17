@@ -38,21 +38,12 @@ public class GuildServiceImpl implements GuildService {
     @Override
     public void createGuild(CreateGuildRequest request, String userId, MultipartFile multipartFile) {
 
-//        boolean existedGuild = guildRepository.existsByGuildName(request.getGuildName());
-//        if (existedGuild) throw new DataNotFoundException(ResponseCode.EXISTS_GUILD_NAME);
-
         GuildEntity guildEntity = GuildEntity.createGuild(request, Integer.parseInt(userId));
         if (multipartFile != null){
             String imageUrl = imageUtil.saveImage(multipartFile);
             guildEntity.setGuildProfile(imageUrl);
         }
         guildEntity = guildRepository.save(guildEntity);
-
-//        guildEntity = guildRepository.findByGuildName(request.getGuildName())
-//                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
-
-//        guildEntity = guildRepository.findLastRecord()
-//                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
 
         String regionName = regionUtil.getRegionName(request.getRegionId());
         RegionEntity regionEntity = new RegionEntity(request.getRegionId(), regionName);
@@ -95,9 +86,6 @@ public class GuildServiceImpl implements GuildService {
 
         if (Integer.parseInt(userId) != guildEntity.getUserId()) throw new DataNotFoundException(ResponseCode.NOT_MATCH_GUILD_LEADER);
 
-//        boolean existedGuildName = guildRepository.existsByGuildName(request.getGuildName());
-//        if (existedGuildName) throw new DataNotFoundException(ResponseCode.EXISTS_GUILD_NAME);
-
         if (request != null) {
             guildEntity = GuildEntity.patchGuild(request, guildEntity);
             guildRepository.save(guildEntity);
@@ -108,18 +96,6 @@ public class GuildServiceImpl implements GuildService {
             guildEntity.setGuildProfile(imageUrl);
             guildRepository.save(guildEntity);
         }
-
-//        if (request != null && request.getRegionId() != null){
-//        String regionName = regionUtil.getRegionName(request.getRegionId());
-//        RegionEntity regionEntity = new RegionEntity(request.getRegionId(), regionName);
-//        regionRepository.save(regionEntity);
-//        }
-
-//        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildId(guildId)
-//                        .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
-//
-//        guildUserEntity.setModifiedAt(LocalDateTime.now());
-//        guildUserRepository.save(guildUserEntity);
     }
 
     @Override

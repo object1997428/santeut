@@ -1,8 +1,10 @@
 package com.santeut.guild.feign;
 
+import com.santeut.guild.feign.dto.AlarmRequestDto;
 import com.santeut.guild.feign.dto.CommentListFeignDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,13 +12,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FeignClient(name = "commonClient", url="${common-service.url}")
+@FeignClient(name = "commonClient", url="http://k10e201.p.ssafy.io:52717/api/common")
 public interface CommonClient {
 
     // 좋아요 수 가져오기
     @GetMapping("/like/cnt/{postId}/{postType}")
 //    Optional<ApiResponse<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
     Optional<FeignResponseDto<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
+
+    // 가입 요청 승인 알람
+    @PostMapping("/alarm/{referenceId}/{referenceType}")
+    ResponseEntity<?> createAlarm(@PathVariable Integer referenceId,
+                                  @PathVariable String referenceType,
+                                  @RequestBody AlarmRequestDto requestDto);
+
     // 댓글 개수 가져오기
     @GetMapping("/comment/cnt/{postId}/{postType}")
     Optional<FeignResponseDto<Map<String,Integer>>> getCommentCnt(@PathVariable  Integer postId, @PathVariable Character postType);
