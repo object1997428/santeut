@@ -30,12 +30,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.deepl.api.Translator
+import com.santeut.R
 import com.santeut.data.apiservice.PlantIdApi
 import com.santeut.data.model.request.PlantIdentificationRequest
 import com.santeut.data.model.response.GuildResponse
+import com.santeut.designsystem.theme.DarkGreen
 import com.ujizin.camposer.CameraPreview
 import com.ujizin.camposer.state.ImageCaptureResult
 import com.ujizin.camposer.state.rememberCameraState
@@ -52,51 +56,101 @@ import java.io.FileInputStream
 fun GuildInfoScreen(guild: GuildResponse?) {
     Column(
         modifier = Modifier
-            .padding(16.dp)
             .fillMaxWidth()
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.Top
     ) {
 
         if (guild != null) {
             AsyncImage(
-                model = guild.guildProfile,
+                model = guild.guildProfile ?: R.drawable.logo,
                 contentDescription = "동호회 사진",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
+                    .fillMaxHeight(.3f)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = guild.guildName?:"",
-                style = MaterialTheme.typography.headlineMedium, // 크기와 스타일 조정
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-
-            Text(
-                text = guild.guildInfo?:"",
-                style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Column(modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
             ) {
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 동호회 이름
                 Text(
-                    text = "인원 ${guild.guildMember}명",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = guild.guildName ?: "",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 동호회 설명
                 Text(
-                    text = "성별 ${genderToString(guild)}",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = guild.guildInfo ?: "",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Text(
-                    text = "연령 ${guild.guildMinAge}세 ~ ${guild.guildMaxAge}세",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 동호회 인원, 성별, 연령
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "인원 ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "${guild.guildMember}명",
+                            color = DarkGreen,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "성별 ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "${genderToString(guild)}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "연령 ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "${guild.guildMinAge}세 ~ ${guild.guildMaxAge}세",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
         }
     }
