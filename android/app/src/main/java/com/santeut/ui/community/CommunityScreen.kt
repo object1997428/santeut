@@ -9,7 +9,6 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,8 +30,8 @@ import kotlinx.coroutines.launch
 fun CommunityScreen(
     navController: NavController,
     initialPage: Int = 0,
-    guildId:Int,
-    onClearData:()->Unit
+    guildId: Int,
+    onClearData: () -> Unit
 ) {
     val pages = listOf("동호회", "소모임", "등산Tip", "코스공유")
     val pagerState = rememberPagerState()
@@ -91,7 +90,7 @@ fun CommunityScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> JoinGuildScreen(guildId=guildId, onClearData=onClearData)
+                    0 -> JoinGuildScreen(guildId = guildId, onClearData = onClearData)
                     1 -> JoinPartyScreen(null)
                     2 -> PostTipsScreen(navController)
                     3 -> PostCourseScreen()
