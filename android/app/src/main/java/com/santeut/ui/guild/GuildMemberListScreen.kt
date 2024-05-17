@@ -1,6 +1,7 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,15 +19,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,6 +55,7 @@ import com.santeut.data.model.response.GuildMemberResponse
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.designsystem.theme.Green
 import com.santeut.ui.navigation.top.GuildTopBar
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -114,6 +121,7 @@ fun GuildMemberListScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MemberRow(
     guild: GuildResponse,
@@ -121,7 +129,13 @@ fun MemberRow(
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
 
-    var showDialog by remember { mutableStateOf(false) }
+    // bottom sheet
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val BottomSheetState = rememberModalBottomSheetState()
+
+    // alert dialog
+    var showExileDialog = remember { mutableStateOf(false) }
+    var showChangeDialog = remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -129,7 +143,7 @@ fun MemberRow(
             .clip(RoundedCornerShape(4.dp))
             .background(Color.White)
             .padding(horizontal = 24.dp, vertical = 8.dp)
-            .clickable { showDialog = true },
+            .clickable { showBottomSheet = true },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -153,26 +167,144 @@ fun MemberRow(
             )
         }
 
-        if (guild.isPresident && showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                text = { Text(text = "${member.userNickname}님을 추방할까요?") },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            guildViewModel.exileMember(guild.guildId, member.userId)
-                            showDialog = false
-                        }
-                    ) {
-                        Text("추방")
-                    }
+        if (guild.isPresident && showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showBottomSheet = false
                 },
-                dismissButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("취소")
+                sheetState = BottomSheetState,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // 사진
+                    AsyncImage(
+                        model = member.userProfile ?: R.drawable.logo,
+                        contentDescription = "회원 프로필 사진",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(96.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, Green, CircleShape)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    // 닉네임
+                    Text(
+                        text = member.userNickname,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    // 가입일
+                    Text(
+                        text = "가입일 ${member.joinDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}",
+                        fontSize = 14.sp,
+                        color = Color.DarkGray
+                    )
+
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                ) {
+                    // 위임 버튼
+                    FilledTonalButton(
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Green
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        onClick = {
+                            showChangeDialog.value = true
+                    }) {
+                        Text(text = "위임하기",
+                            color = Color.White)
+
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    // 추방 버튼
+                    FilledTonalButton(
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xffE92B2B)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        onClick = {
+                            showExileDialog.value = true
+                        }) {
+                        Text(text = "추방하기",
+                            color = Color.White
+                        )
                     }
                 }
-            )
+
+            }
+
+            if (showChangeDialog.value) {
+                showAlertDialog(
+                    showDialog = showChangeDialog,
+                    type = AlertType.CHANGE,
+                    text = "${member.userNickname}님에게 ${guild.guildName} 회장을 위임하시겠습니까?",
+                    member = member,
+                    guild = guild,
+                    guildViewModel = guildViewModel
+                )
+            } else if(showExileDialog.value) {
+                showAlertDialog(
+                    showDialog = showExileDialog,
+                    type = AlertType.EXILE,
+                    text = "${member.userNickname}님을 추방하시겠습니까?",
+                    member = member,
+                    guild = guild,
+                    guildViewModel = guildViewModel
+                )
+            }
         }
     }
+}
+
+@Composable
+fun showAlertDialog(
+    showDialog: MutableState<Boolean>,//Boolean,
+    type: AlertType,
+    text:String,
+    member: GuildMemberResponse,
+    guild: GuildResponse,
+    guildViewModel: GuildViewModel
+) {
+    if(showDialog.value == true) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            text = { Text(text = text) }, // "${member.userNickname}님을 추방할까요?"
+            confirmButton = {
+                Button(
+                    onClick = {
+                        when (type) {
+                            AlertType.EXILE -> guildViewModel.exileMember(guild.guildId, member.userId)
+                            AlertType.CHANGE -> guildViewModel.changeLeader(guild.guildId, member.userId)
+                        }
+                        showDialog.value = false
+                    }
+                ) {
+                    Text("네")
+                }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    showDialog.value = false
+                }) {
+                    Text("아니요")
+                }
+            }
+        )
+    }
+}
+
+enum class AlertType {
+    EXILE, // 추방
+    CHANGE // 위임
 }
