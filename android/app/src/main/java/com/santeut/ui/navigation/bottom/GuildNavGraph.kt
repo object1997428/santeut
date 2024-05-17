@@ -17,6 +17,7 @@ import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.MyGuildScreen
 import com.santeut.ui.party.CreatePartyScreen
+import com.santeut.ui.party.InputPartyInfo
 
 
 fun NavGraphBuilder.GuildNavGraph(
@@ -104,5 +105,18 @@ fun NavGraphBuilder.GuildNavGraph(
         composable("createParty") {
             CreatePartyScreen(navController)
         }
+
+        composable(
+            route = "createParty/{mountainId}/{courseId}",
+            arguments = listOf(
+                navArgument("mountainId") { type = NavType.IntType },
+                navArgument("courseId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val mountainId = backStackEntry.arguments?.getInt("mountainId") ?: 0
+            val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+            InputPartyInfo(mountainId, courseId)
+        }
+
     }
 }

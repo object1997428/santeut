@@ -1,4 +1,4 @@
-package com.santeut.ui.mountain
+package com.santeut.ui.party
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,58 +32,39 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapProperties
+import com.naver.maps.map.compose.MapType
+import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.PathOverlay
+import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.ui.home.SearchMountainBar
-import com.santeut.ui.party.SelectedMountainCard
+import com.santeut.ui.mountain.MountainViewModel
+import com.santeut.ui.navigation.top.SimpleTopBar
 
 @Composable
-fun MountainListScreen(
-    type: String?,
-    name: String, region: String?,
+fun CreateParty(
+    guildId: Int?,
     navController: NavController,
+    onClickMap: () -> Unit,
     mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
-    val mountains by mountainViewModel.mountains.observeAsState(emptyList())
-
-    LaunchedEffect(key1 = name) {
-        mountainViewModel.searchMountain(name, region)
-    }
-
-    Column {
-        if (type != "create") {
-            SearchMountainBar(
-                null,
-                navController,
-                onClickMap = {}
-            )
-
-            LazyColumn {
-                items(mountains) { mountain ->
-                    MountainCard(navController, mountain)
-                }
-            }
-        } else {
-            SearchMountainBar(
-                "create",
-                navController,
-                onClickMap = {}
-            )
-
-            LazyColumn {
-                items(mountains) { mountain ->
-                    SelectedMountainCard(navController, mountain)
-                }
-            }
-        }
-    }
+    SearchMountainBar(type = "create", navController, onClickMap)
 }
 
 @Composable
-fun MountainCard(navController: NavController, mountain: MountainResponse) {
+fun SelectedMountainCard(
+    navController: NavController, mountain: MountainResponse
+) {
     Card(
         modifier = Modifier
-            .clickable(onClick = { navController.navigate("mountain/${mountain.mountainId}") })
+            .clickable(onClick = { navController.navigate("create/courseList/${mountain.mountainId}/${mountain.mountainName}") })
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
             .padding(8.dp),  // 카드 주변 여백
@@ -148,4 +129,78 @@ fun MountainCard(navController: NavController, mountain: MountainResponse) {
             }
         }
     }
+}
+
+@OptIn(ExperimentalNaverMapApi::class)
+@Composable
+fun SelectedCourse(
+    mountainId: Int,
+    mountainName: String,
+    navController: NavController,
+    mountainViewModel: MountainViewModel = hiltViewModel()
+) {
+
+    val courseList by mountainViewModel.courseList.observeAsState(emptyList())
+    val pathData by mountainViewModel.pathList.observeAsState(emptyList())
+    val courseId = 1    // 선택한 코스로 입력
+
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 15.0)
+    }
+
+    Scaffold(
+        topBar = { SimpleTopBar(navController, mountainName) },
+        content = { paddingValues ->
+            // 해당 코스 선택 시 색상 변경
+            NaverMap(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues) // 패딩 값을 여기서 전달
+                    .padding(vertical = 8.dp),
+                cameraPositionState = cameraPositionState,
+                properties = MapProperties(
+                    locationTrackingMode = LocationTrackingMode.Follow,
+                    mapType = MapType.Terrain,
+                    isMountainLayerGroupEnabled = true
+                )
+            ) {
+                pathData.forEach { courseDetail ->
+                    val path = courseDetail.locationDataList.map { LatLng(it.lat, it.lng) }
+                    if (path.size >= 2) {
+                        PathOverlay(
+                            coords = path,
+                            width = 3.dp,
+                            color = Color.Green,
+                            outlineWidth = 1.dp,
+                            outlineColor = Color.Red,
+                            tag = courseDetail.courseId
+                        )
+                    }
+                }
+            }
+        },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(onClick = {
+                    // 버튼 클릭 시 소모임 만들기 페이지 이동
+                    // 이동 시, 산 아이디, 코스 아이디 넘겨주기
+                    navController.navigate("createParty/${mountainId}/${courseId}")
+                }) {
+                    Text(text = "Button")
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun InputPartyInfo(mountainId: Int, courseId: Int) {
+    // CreatePartyScreen 값 가져올 것
+
 }
