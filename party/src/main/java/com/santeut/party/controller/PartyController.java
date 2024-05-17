@@ -71,5 +71,11 @@ public class PartyController {
         partyService.findPartyById(Integer.parseInt(request.getHeader("userId")), partyId));
   }
 
+  @GetMapping("/{partyId}/userId")
+  ResponseEntity<?> getPartyUserId(@PathVariable("partyId") int partyId){
+    return ResponseUtil.buildBasicResponse(HttpStatus.OK,
+            partyService.findUserIdById(partyId));
+  }
+
 
 }

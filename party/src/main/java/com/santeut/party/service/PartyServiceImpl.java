@@ -4,6 +4,7 @@ import com.santeut.party.common.exception.AccessDeniedException;
 import com.santeut.party.common.exception.DataNotFoundException;
 import com.santeut.party.dto.request.CreatePartyRequestDto;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
+import com.santeut.party.dto.response.GetPartyUserIdResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
 import com.santeut.party.entity.Party;
@@ -105,5 +106,16 @@ public class PartyServiceImpl implements PartyService {
         : guildAccessUtil.getGuildInfo(party.getGuildId(), userId).getGuildName();
     boolean isMember = partyUserRepository.existsByUserIdAndPartyId(userId, partyId);
     return PartyInfo.of(userId == party.getUserId(), null, party, isMember, guildName);
+  }
+
+  @Override
+  public GetPartyUserIdResponse findUserIdById(int partyId) {
+    Party party = partyRepository.findById(partyId)
+            .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
+    GetPartyUserIdResponse partyUserInfo=GetPartyUserIdResponse.builder()
+            .partyId(partyId)
+            .userId(party.getUserId())
+            .build();
+    return partyUserInfo;
   }
 }
