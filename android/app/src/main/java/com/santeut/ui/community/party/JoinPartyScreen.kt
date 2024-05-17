@@ -35,6 +35,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -173,7 +174,20 @@ fun JoinPartyScreen(
                             .padding(16.dp)
                             .fillMaxWidth()
                     ) {
-                        Text("조회 시작 날짜")
+                        Text(
+                            text = "기간 선택",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(
+                                0.dp, 8.dp
+                            )
+                        )
+                        Text(
+                            text = "조회 시작 날짜",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                        )
                         TextField(
                             value = searchFilterStartDate,
                             onValueChange = {},
@@ -186,11 +200,11 @@ fun JoinPartyScreen(
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Text("조회 마지막 날짜")
                         Text(
                             text = "조회 마지막 날짜",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Start
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
                         )
                         TextField(
                             value = searchFilterEndDate,
@@ -215,13 +229,19 @@ fun JoinPartyScreen(
                                 contentColor = Color.White
                             ),
                             onClick = {
-                                if (searchFilterStartDate == "") {
-                                    Toast.makeText(context, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT)
+                                if(searchFilterStartDate == "" && searchFilterEndDate == "") {
+                                    Toast.makeText(context, "기간을 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
                                 }
-                                if (searchFilterEndDate == "") {
+                                else if (searchFilterStartDate == "") {
+                                    Toast.makeText(context, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT)
+                                        .show()
+                                    showBottomFilterSheet = false
+                                }
+                                else if (searchFilterEndDate == "") {
                                     Toast.makeText(context, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
+                                    showBottomFilterSheet = false
                                 }
                                 // TODO: 소모임 필터 검색
                                 Log.d("조회 시작", searchFilterStartDate)
