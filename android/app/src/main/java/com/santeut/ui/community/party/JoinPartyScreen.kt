@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
@@ -30,12 +32,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,16 +56,30 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
-import com.santeut.ui.community.guild.GuildDetail
+import com.santeut.ui.party.DatePickerViewModel
 import com.santeut.ui.party.PartyViewModel
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinPartyScreen(
     guildId: Int?,
-    partyViewModel: PartyViewModel = hiltViewModel()
+    partyViewModel: PartyViewModel = hiltViewModel(),
+    datePickerViewModel: DatePickerViewModel = hiltViewModel()
 ) {
 
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
+
+
+    var showBottomFilterSheet by remember { mutableStateOf(false) }
+    val filterSheetState = rememberModalBottomSheetState()
+
+    var searchFilterStartDate by remember { mutableStateOf("") }
+    var searchFilterEndDate by remember { mutableStateOf("") }
+    val customDatePickerDialogState = datePickerViewModel.customDatePickerDialogState.value
+
+    // 검색어
+    var searchWord by remember {mutableStateOf("")}
 
     LaunchedEffect(key1 = null) {
         partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
@@ -75,9 +89,14 @@ fun JoinPartyScreen(
         topBar = {
             PartySearchBar(
                 partyViewModel,
-                onSearchTextChanged = {},
-                onClickSearch = {},
-                onClickFilter = {}
+                searchWord,
+                onSearchTextChanged = { searchWord = it },
+                //onSelectionChange = { searchFilterGender = it })
+//                onClickSearch = { partyViewModel.getPartyList(guildId, searchWord, null, null)
+//                },
+                onClickFilter = {
+                    showBottomFilterSheet = true
+                }
             )
         }, content = { paddingValues ->
 
@@ -103,7 +122,41 @@ fun JoinPartyScreen(
                     }
                 }
             }
-        })
+
+            if(showBottomFilterSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = {
+                            showBottomFilterSheet = false
+                        },
+                        sheetState = filterSheetState
+                    ) {
+                        Text("조회 시작 날짜")
+                        Button(
+                            onClick = {
+                                datePickerViewModel.showDatePickerDialog()
+                            }
+                        ){
+                            Text("조회 시작 날짜 선택")
+                        }
+                        Text("조회 마지막 날짜")
+                        Button(
+                            onClick = {
+                                datePickerViewModel.showDatePickerDialog()
+                            }
+                        ){
+                            Text("조회 마지막 날짜 선택")
+                        }
+                        if (customDatePickerDialogState?.isShowDialog == true) {
+                            CustomDatePickerDialog(
+                                selectedDate = customDatePickerDialogState.selectedDate,
+                                onClickCancel = customDatePickerDialogState.onClickCancel,
+                                onClickConfirm = customDatePickerDialogState.onClickConfirm
+                            )
+                        }
+                    }
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -234,12 +287,10 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
 @Composable
 fun PartySearchBar(
     partyViewModel: PartyViewModel,
+    enteredText: String,
     onSearchTextChanged: (String) -> Unit,
-    onClickSearch: () -> Unit,
     onClickFilter: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -251,7 +302,7 @@ fun PartySearchBar(
                 .fillMaxWidth(0.8f)
                 .padding(top = 8.dp, bottom = 8.dp),
             textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
-            value = name,
+            value = enteredText,
             onValueChange = { text ->
                 onSearchTextChanged(text)
             },
@@ -280,17 +331,25 @@ fun PartySearchBar(
                     modifier = Modifier
                         .size(30.dp)
                         .clickable {
-                            partyViewModel.getPartyList(null, name, null, null)
+                            Log.d("소모임 검색 버튼 클릭", enteredText)
+                            partyViewModel.getPartyList(null, enteredText, null, null)
                         }
                 )
             }
         )
         Spacer(modifier = Modifier.width(15.dp))
-        androidx.compose.material3.Icon(
-            imageVector = Icons.Default.FilterList,
-            contentDescription = "필터",
-            tint = Color(0xff335C49),
-            modifier = Modifier.size(30.dp)
-        )
+        IconButton(
+            onClick = {
+                onClickFilter()
+            }
+        ) {
+            androidx.compose.material3.Icon(
+                imageVector = Icons.Default.FilterList,
+                contentDescription = "필터",
+                tint = Color(0xff335C49),
+                modifier = Modifier.size(30.dp),
+            )
+        }
     }
 }
+
