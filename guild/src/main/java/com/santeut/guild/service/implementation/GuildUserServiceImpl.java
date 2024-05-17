@@ -19,9 +19,11 @@ import com.santeut.guild.service.GuildUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
@@ -34,6 +36,8 @@ public class GuildUserServiceImpl implements GuildUserService {
     private final GuildRequestRepository guildRequestRepository;
     private final UserFeign userFeign;
     private final CommonClient commonClient;
+
+    @Transactional
     @Override
     public void applyGuild(int guildId, String userId) {
 
@@ -48,12 +52,8 @@ public class GuildUserServiceImpl implements GuildUserService {
         if (guildRequestEntity != null){
             if(guildRequestEntity.getStatus() == 'R') throw new DataNotFoundException(ResponseCode.ALREADY_REQUEST);
             else if(guildRequestEntity.getStatus() == 'A') throw new DataNotFoundException(ResponseCode.ALREADY_APPROVE);
-            else if(guildRequestEntity.getStatus() == 'D'){
-                guildRequestEntity.setStatus('R');
-            }
-            else if(guildRequestEntity.getStatus() == 'C'){
-                guildRequestEntity.setStatus('R');
-            }
+            else if(guildRequestEntity.getStatus() == 'D') guildRequestEntity.setStatus('R');
+            else if(guildRequestEntity.getStatus() == 'C') guildRequestEntity.setStatus('R');
             guildRequestRepository.save(guildRequestEntity);
         }
         else {
@@ -62,9 +62,25 @@ public class GuildUserServiceImpl implements GuildUserService {
         guildRequestRepository.save(guildRequestEntity);
         }
 
-        // 동호회장을 위임하고 가입 요청을 보내는 경우 방지
-//        GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, Integer.parseInt(userId))
-//                .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
+        String referenceType = "GR";
+
+        BasicResponse response = userFeign.userInfo(Integer.parseInt(userId));
+        log.debug("Response: "+ response);
+        if (response.getStatus() != 200) throw new DataNotFoundException(ResponseCode.FEIGN_ERROR);
+
+        LinkedHashMap<String, Object> data = (LinkedHashMap<String, Object>) response.getData();
+
+        AlarmRequestDto alarmRequestDto = AlarmRequestDto.builder()
+                .userId(guildEntity.getUserId())
+                .referenceType(referenceType)
+                .referenceId(guildId)
+                .alarmTitle("동호회 가입 신청 알림")
+                .alarmContent(data.get("userNickname")+ "님으로 부터 "+ guildEntity.getGuildName()+" 동호회 가입 신청이 왔습니다.")
+                .build();
+
+        log.debug("alarmRequestDto: {} ", alarmRequestDto.getUserId());
+
+        commonClient.createAlarm(guildId, referenceType, alarmRequestDto);
 
     }
 
@@ -94,6 +110,7 @@ public class GuildUserServiceImpl implements GuildUserService {
         return new ApplyGuildListResponse(ApplyGuildListResponse.applyGuildList(responseList, requestEntityList));
     }
 
+    @Transactional
     @Override
     public void approveApply(int guildId, int userId, String leaderUserId) {
 
@@ -110,9 +127,11 @@ public class GuildUserServiceImpl implements GuildUserService {
 
         guildRequestEntity.setModifiedAt(LocalDateTime.now());
         guildRequestEntity.setStatus('A');
+        guildRequestRepository.save(guildRequestEntity);
 
         GuildUserEntity guildUserEntity = GuildUserEntity.createGuildUser(userId, guildId);
         guildEntity.setGuildMember(guildEntity.getGuildMember()+1);
+        guildUserRepository.save(guildUserEntity);
 
         String referenceType = "GR";
 
@@ -121,14 +140,12 @@ public class GuildUserServiceImpl implements GuildUserService {
                 .referenceType(referenceType)
                 .referenceId(guildId)
                 .alarmTitle("동호회 가입 승인 알림")
-                .alarmContent("동호회 가입 신청이 승인되었습니다.")
+                .alarmContent(guildEntity.getGuildName()+" 동호회 가입 신청이 승인되었습니다.")
                 .build();
 
         log.debug("alarmRequestDto: {} ", alarmRequestDto.getUserId());
 
         commonClient.createAlarm(guildId, referenceType, alarmRequestDto);
-        guildRequestRepository.save(guildRequestEntity);
-        guildUserRepository.save(guildUserEntity);
     }
 
     @Override

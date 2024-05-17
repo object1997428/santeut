@@ -20,7 +20,7 @@ public interface CommonClient {
 //    Optional<ApiResponse<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
     Optional<FeignResponseDto<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
 
-    // 가입 요청 승인 알람
+    // 알람 생성
     @PostMapping("/alarm/{referenceId}/{referenceType}")
     ResponseEntity<?> createAlarm(@PathVariable Integer referenceId,
                                   @PathVariable String referenceType,
