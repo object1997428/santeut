@@ -507,7 +507,7 @@ fun CustomRadioGroup(
 }
 
 val gender = listOf(
-    "전체",
+    "성별무관",
     "남성",
     "여성"
 )
