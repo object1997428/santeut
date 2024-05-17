@@ -149,7 +149,8 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                         Text(
                             text = "${guild.guildMinAge}세 ~ ${guild.guildMaxAge}세",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = DarkGreen,
                         )
                     }
                 }
