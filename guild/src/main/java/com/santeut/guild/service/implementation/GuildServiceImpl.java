@@ -186,6 +186,25 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
+    public SearchGuildNameListResponse searchGuildName(String guildName, int userId) {
+
+        List<GuildEntity> searchGuildList = guildRepository.searchGuildName(guildName);
+        if (searchGuildList == null) throw new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD);
+
+        List<GuildRequestEntity> guildRequestList = new ArrayList<>();
+        for (GuildEntity guildEntity : searchGuildList){
+
+            GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
+                    .orElse(null);
+            if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
+            else guildRequestList.add(null);
+
+        }
+
+        return new SearchGuildNameListResponse(GetDetailGuildResponse.guildList(searchGuildList, guildRequestList, userId));
+    }
+
+    @Override
     public ShareLinkResponse shareLink(int guildId) {
 
         String url = "https://www.google.com/search?q=%EA%B3%A0%EC%96%91%EC%9D%B4&oq=%EA%B3%A0%EC%96%91%EC%9D%B4&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTM5MzFqMGoxNagCALACAA&sourceid=chrome&ie=UTF-8";

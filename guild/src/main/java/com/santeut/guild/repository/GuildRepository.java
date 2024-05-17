@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface GuildRepository extends JpaRepository<GuildEntity, Integer> {
 
-    boolean existsByGuildName(String guildName);
     Optional<GuildEntity> findByGuildName(String guildName);
     Optional<GuildEntity> findByGuildId(int guildId);
     @Query("SELECT g FROM GuildEntity g WHERE g.guildIsPrivate = false AND g.isDeleted = false ORDER BY g.createdAt DESC")
@@ -27,5 +26,8 @@ public interface GuildRepository extends JpaRepository<GuildEntity, Integer> {
     "(:guildGender = 'A' OR g.guildGender = :guildGender) AND "+
     "g.isDeleted = false AND g.guildIsPrivate = false ORDER BY g.createdAt DESC")
     List<GuildEntity> searchGuild(@Param("regionId") Integer regionId, @Param("guildGender") String guildGender);
+
+    @Query("SELECT g FROM GuildEntity g WHERE g.guildName LIKE %:guildName% AND g.isDeleted = false AND g.guildIsPrivate = false ORDER BY g.createdAt DESC")
+    List<GuildEntity> searchGuildName(@Param("guildName") String guildName);
 
 }

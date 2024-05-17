@@ -1,6 +1,7 @@
 package com.santeut.guild.controller;
 
 import com.santeut.guild.common.response.BasicResponse;
+import com.santeut.guild.common.util.ResponseUtil;
 import com.santeut.guild.dto.request.CreateGuildRequest;
 import com.santeut.guild.dto.request.PatchGuildInfoRequest;
 import com.santeut.guild.dto.response.GetGuildListResponse;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,6 +87,16 @@ public class GuildController {
         log.debug("동호회 필터링 검색");
         int userId = Integer.parseInt(httpServletRequest.getHeader("userId"));
         return new BasicResponse(HttpStatus.OK.value(), guildService.searchGuildList(regionName, gender, userId));
+    }
+
+    @GetMapping("/search/guild")
+    public ResponseEntity<BasicResponse> searchGuildName(
+            @RequestParam(name = "name") String guildName,
+            HttpServletRequest httpServletRequest){
+        
+        log.debug("동호회명 검색");
+        int userId = Integer.parseInt(httpServletRequest.getHeader("userId"));
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK, guildService.searchGuildName(guildName, userId));
     }
 
     @GetMapping("/{guildId}/link")
