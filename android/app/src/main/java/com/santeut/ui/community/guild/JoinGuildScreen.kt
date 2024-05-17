@@ -194,12 +194,14 @@ fun JoinGuildScreen(
                             if (searchFilterRegion == "") {
                                 Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT).show()
                             }
-                            if (searchFilterGender == "") {
+                            else if (searchFilterGender == "") {
                                 Toast.makeText(context, "성별을 선택해주세요", Toast.LENGTH_SHORT).show()
+                            } else {
+                                guildViewModel.searchGuilds(searchFilterRegion, searchFilterGender)
+                                showBottomFilterSheet = false
+                                Log.d("동호회 검색) 지역", searchFilterRegion)
+                                Log.d("동호회 검색) 성별", searchFilterGender)
                             }
-                            // TODO: 동호회 필터 검색
-                            Log.d("지역", searchFilterRegion)
-                            Log.d("성별", searchFilterGender)
                         }
                     ) {
                         Text(
