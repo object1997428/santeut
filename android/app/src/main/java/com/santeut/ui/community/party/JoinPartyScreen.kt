@@ -1,6 +1,9 @@
 package com.santeut.ui.community.party
 
+import android.app.DatePickerDialog
 import android.util.Log
+import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +22,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.CalendarMonth
@@ -47,17 +52,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
-import com.santeut.ui.party.DatePickerViewModel
 import com.santeut.ui.party.PartyViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,18 +74,46 @@ import com.santeut.ui.party.PartyViewModel
 fun JoinPartyScreen(
     guildId: Int?,
     partyViewModel: PartyViewModel = hiltViewModel(),
-    datePickerViewModel: DatePickerViewModel = hiltViewModel()
 ) {
 
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
 
+    var searchFilterStartDate by remember { mutableStateOf("") }
+    var searchFilterEndDate by remember { mutableStateOf("") }
 
     var showBottomFilterSheet by remember { mutableStateOf(false) }
     val filterSheetState = rememberModalBottomSheetState()
+    val context = LocalContext.current
 
-    var searchFilterStartDate by remember { mutableStateOf("") }
-    var searchFilterEndDate by remember { mutableStateOf("") }
-    val customDatePickerDialogState = datePickerViewModel.customDatePickerDialogState.value
+    // 달력
+    val startCalendar = Calendar.getInstance()
+    val startDatePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year: Int, month: Int, day: Int ->
+            startCalendar.set(year, month, day)
+            val selectedDate =
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(startCalendar.time)
+            startCalendar.set(year, month, day)
+            searchFilterStartDate = selectedDate
+        },
+        startCalendar.get(Calendar.YEAR),
+        startCalendar.get(Calendar.MONTH),
+        startCalendar.get(Calendar.DAY_OF_MONTH)
+    )
+    val endCalendar = Calendar.getInstance()
+    val endDatePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year: Int, month: Int, day: Int ->
+            endCalendar.set(year, month, day)
+            val selectedDate =
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endCalendar.time)
+            endCalendar.set(year, month, day)
+            searchFilterEndDate = selectedDate
+        },
+        endCalendar.get(Calendar.YEAR),
+        endCalendar.get(Calendar.MONTH),
+        endCalendar.get(Calendar.DAY_OF_MONTH)
+    )
 
     // 검색어
     var searchWord by remember {mutableStateOf("")}
@@ -91,9 +128,6 @@ fun JoinPartyScreen(
                 partyViewModel,
                 searchWord,
                 onSearchTextChanged = { searchWord = it },
-                //onSelectionChange = { searchFilterGender = it })
-//                onClickSearch = { partyViewModel.getPartyList(guildId, searchWord, null, null)
-//                },
                 onClickFilter = {
                     showBottomFilterSheet = true
                 }
@@ -123,37 +157,80 @@ fun JoinPartyScreen(
                 }
             }
 
-            if(showBottomFilterSheet) {
-                    ModalBottomSheet(
-                        onDismissRequest = {
-                            showBottomFilterSheet = false
-                        },
-                        sheetState = filterSheetState
+            val context = LocalContext.current
+            if (showBottomFilterSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomFilterSheet = false },
+                    sheetState = filterSheetState
+                ) {
+                    Column (
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
                     ) {
                         Text("조회 시작 날짜")
-                        Button(
-                            onClick = {
-                                datePickerViewModel.showDatePickerDialog()
-                            }
-                        ){
-                            Text("조회 시작 날짜 선택")
-                        }
+                        TextField(
+                            value = searchFilterStartDate,
+                            onValueChange = {},
+                            label = { },
+                            readOnly = true,
+                            trailingIcon = {
+                                IconButton(onClick = { startDatePickerDialog.show() }) {
+                                    androidx.compose.material.Icon(Icons.Filled.DateRange, contentDescription = "조회 시작 날짜")
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         Text("조회 마지막 날짜")
+                        Text(
+                            text = "조회 마지막 날짜",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start
+                        )
+                        TextField(
+                            value = searchFilterEndDate,
+                            onValueChange = {},
+                            label = { },
+                            readOnly = true,
+                            trailingIcon = {
+                                IconButton(onClick = { endDatePickerDialog.show() }) {
+                                    androidx.compose.material.Icon(Icons.Filled.DateRange, contentDescription = "조회 마지막 날짜")
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // 적용 버튼
                         Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Green,
+                                contentColor = Color.White
+                            ),
                             onClick = {
-                                datePickerViewModel.showDatePickerDialog()
+                                if (searchFilterStartDate == "") {
+                                    Toast.makeText(context, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                if (searchFilterEndDate == "") {
+                                    Toast.makeText(context, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                // TODO: 소모임 필터 검색
+                                Log.d("조회 시작", searchFilterStartDate)
+                                Log.d("조회 종료", searchFilterEndDate)
                             }
-                        ){
-                            Text("조회 마지막 날짜 선택")
-                        }
-                        if (customDatePickerDialogState?.isShowDialog == true) {
-                            CustomDatePickerDialog(
-                                selectedDate = customDatePickerDialogState.selectedDate,
-                                onClickCancel = customDatePickerDialogState.onClickCancel,
-                                onClickConfirm = customDatePickerDialogState.onClickConfirm
+                        ) {
+                            Text(
+                                text = "적용하기",
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
                             )
                         }
                     }
+                }
             }
         }
     )
