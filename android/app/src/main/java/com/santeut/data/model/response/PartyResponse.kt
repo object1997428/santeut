@@ -41,7 +41,7 @@ data class MyPartyResponse(
     @SerializedName("place") val place: String,
     @SerializedName("maxPeople") val maxPeople: Int,
     @SerializedName("curPeople") val curPeople: Int,
-    @SerializedName("owner") val owner: String,
+    @SerializedName("isOwner") val isOwner: Boolean,
     @SerializedName("status") val status: String,
 )
 

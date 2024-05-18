@@ -1,11 +1,18 @@
+@file:OptIn(ExperimentalNaverMapApi::class)
+
 package com.santeut.ui.community.party
 
+import android.app.DatePickerDialog
 import android.util.Log
+import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,9 +23,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FilterListOff
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
@@ -30,12 +42,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,25 +57,87 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapProperties
+import com.naver.maps.map.compose.MapType
+import com.naver.maps.map.compose.PathOverlay
+import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
-import com.santeut.ui.community.guild.GuildDetail
 import com.santeut.ui.party.PartyViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JoinPartyScreen(
     guildId: Int?,
-    partyViewModel: PartyViewModel = hiltViewModel()
+    partyViewModel: PartyViewModel = hiltViewModel(),
 ) {
 
     val partyList by partyViewModel.partyList.observeAsState(emptyList())
+
+    var searchFilterStartDate by remember { mutableStateOf("") }
+    var searchFilterEndDate by remember { mutableStateOf("") }
+
+    var showBottomFilterSheet by remember { mutableStateOf(false) }
+    val filterSheetState = rememberModalBottomSheetState()
+    val context = LocalContext.current
+
+    // 달력
+    val startCalendar = Calendar.getInstance()
+    val startDatePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year: Int, month: Int, day: Int ->
+            startCalendar.set(year, month, day)
+            val selectedDate =
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(startCalendar.time)
+            startCalendar.set(year, month, day)
+            searchFilterStartDate = selectedDate
+        },
+        startCalendar.get(Calendar.YEAR),
+        startCalendar.get(Calendar.MONTH),
+        startCalendar.get(Calendar.DAY_OF_MONTH)
+    )
+    val endCalendar = Calendar.getInstance()
+    val endDatePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, year: Int, month: Int, day: Int ->
+            endCalendar.set(year, month, day)
+
+            if (endCalendar.time.before(startCalendar.time)) {
+                Toast.makeText(context, "종료 날짜는 시작 날짜보다 이후여야 합니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                val selectedDate =
+                    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(endCalendar.time)
+                endCalendar.set(year, month, day)
+                searchFilterEndDate = selectedDate
+            }
+        },
+        endCalendar.get(Calendar.YEAR),
+        endCalendar.get(Calendar.MONTH),
+        endCalendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    // 검색어
+    var searchWord by remember {mutableStateOf("")}
+    // 필터 적용 되었는지?
+    var isFiltered by remember {mutableStateOf(false)}
 
     LaunchedEffect(key1 = null) {
         partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
@@ -75,9 +147,13 @@ fun JoinPartyScreen(
         topBar = {
             PartySearchBar(
                 partyViewModel,
-                onSearchTextChanged = {},
-                onClickSearch = {},
-                onClickFilter = {}
+                searchWord,
+                onSearchTextChanged = { searchWord = it },
+                onClickFilter = {
+                    showBottomFilterSheet = true
+                },
+                isFiltered = isFiltered,
+                setIsFiltered = { newValue -> isFiltered = newValue }
             )
         }, content = { paddingValues ->
 
@@ -103,7 +179,126 @@ fun JoinPartyScreen(
                     }
                 }
             }
-        })
+
+            val context = LocalContext.current
+            if (showBottomFilterSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomFilterSheet = false },
+                    sheetState = filterSheetState
+                ) {
+                    Column (
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp, 0.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "기간 선택",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(
+                                    0.dp, 8.dp
+                                )
+                            )
+                            Text(
+                                text = "초기화",
+                                color = Color.DarkGray,
+                                fontSize = 14.sp,
+                                modifier = Modifier.clickable {
+                                    searchFilterStartDate = ""
+                                    searchFilterEndDate = ""
+                                }
+                            )
+                        }
+                        Text(
+                            text = "조회 시작 날짜",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
+                        )
+                        TextField(
+                            value = searchFilterStartDate,
+                            onValueChange = {},
+                            label = { },
+                            readOnly = true,
+                            trailingIcon = {
+                                IconButton(onClick = { startDatePickerDialog.show() }) {
+                                    androidx.compose.material.Icon(Icons.Filled.DateRange, contentDescription = "조회 시작 날짜")
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = "조회 마지막 날짜",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
+                        )
+                        TextField(
+                            value = searchFilterEndDate,
+                            onValueChange = {},
+                            label = { },
+                            readOnly = true,
+                            trailingIcon = {
+                                IconButton(onClick = { endDatePickerDialog.show() }) {
+                                    androidx.compose.material.Icon(Icons.Filled.DateRange, contentDescription = "조회 마지막 날짜")
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // 적용 버튼
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Green,
+                                contentColor = Color.White
+                            ),
+                            onClick = {
+                                if(searchFilterStartDate == "" && searchFilterEndDate == "") {
+                                    partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
+                                    showBottomFilterSheet = false
+                                    isFiltered = false
+                                }
+                                else if (searchFilterStartDate == "") {
+                                    Toast.makeText(context, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT)
+                                        .show()
+                                    isFiltered = false
+                                }
+                                else if (searchFilterEndDate == "") {
+                                    Toast.makeText(context, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT)
+                                        .show()
+                                    isFiltered = false
+                                } else {
+                                    Log.d("소모임 목록 검색) 길드 아이디", "${guildId}")
+                                    Log.d("소모임 목록 검색) 소모임 이름", "${searchWord}")
+                                    Log.d("소모임 목록 검색) 시작날짜", searchFilterStartDate)
+                                    Log.d("소모임 목록 검색) 종료날짜", searchFilterEndDate)
+                                    partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
+                                    showBottomFilterSheet = false
+                                    isFiltered = true
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = "적용하기",
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,6 +307,26 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+
+    val coords by partyViewModel.selectedCourseOfParty.observeAsState(emptyList())
+    val distanceInKm by partyViewModel.distanceInKm.observeAsState(0.0)
+    val initialPosition = if (coords.isNotEmpty()) coords[0] else LatLng(35.116824651798, 128.99110450587247)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition(initialPosition, 15.0)
+    }
+
+
+    LaunchedEffect(showBottomSheet) {
+        if (showBottomSheet) {
+            partyViewModel.getSelectedCourseInfoOfParty(party.partyId)
+        }
+    }
+
+    LaunchedEffect(coords) {
+        if (coords.isNotEmpty()) {
+            cameraPositionState.position = CameraPosition(coords[0], 15.0)
+        }
+    }
 
     Card (
         modifier = Modifier
@@ -193,16 +408,63 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
         }
     }
 
+
+
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
         ) {
-            Surface(modifier = Modifier.padding(16.dp)) {
-                Column {
-                    // 동호회 상세 정보
+
+            Box(modifier = Modifier
+                .padding(16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // 소모임 상세 정보
+                    if(coords.size==0) {
+                        Text(text = "선택한 등산로가 없습니다",
+                            modifier = Modifier
+                                .fillMaxWidth(),
+//                                .fillMaxHeight(.3f),
+                            textAlign = TextAlign.Center)
+                        Spacer(Modifier.height(16.dp))
+                    } else {
+                        NaverMap(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(.3f)
+                                .padding(vertical = 8.dp),
+                            cameraPositionState = cameraPositionState,
+                            properties = MapProperties(
+//                            locationTrackingMode = LocationTrackingMode.Follow,
+                                mapType = MapType.Terrain,
+                                isMountainLayerGroupEnabled = true
+                            )
+                        ) {
+                            if(coords.size >= 2) {
+                                PathOverlay(
+                                    coords = coords,
+                                    width = 3.dp,
+                                    color = Color.Green,
+                                    outlineWidth = 1.dp,
+                                    outlineColor = Color.Red,
+                                )
+                            }
+                        }
+                        Text(text="총 ${distanceInKm}km")
+
+                    }
+                    Spacer(Modifier.height(4.dp))
+
+                    // 가입 버튼
                     Button(
-                        onClick = { partyViewModel.joinParty(party.partyId) },
+                        onClick = {
+                            showBottomSheet = false
+                            partyViewModel.joinParty(party.partyId)
+                        },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !(party.isMember),
                         colors = ButtonDefaults.buttonColors(
@@ -234,12 +496,12 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
 @Composable
 fun PartySearchBar(
     partyViewModel: PartyViewModel,
+    enteredText: String,
     onSearchTextChanged: (String) -> Unit,
-    onClickSearch: () -> Unit,
-    onClickFilter: () -> Unit
+    onClickFilter: () -> Unit,
+    isFiltered: Boolean,
+    setIsFiltered: (Boolean) -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -251,7 +513,7 @@ fun PartySearchBar(
                 .fillMaxWidth(0.8f)
                 .padding(top = 8.dp, bottom = 8.dp),
             textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
-            value = name,
+            value = enteredText,
             onValueChange = { text ->
                 onSearchTextChanged(text)
             },
@@ -280,17 +542,34 @@ fun PartySearchBar(
                     modifier = Modifier
                         .size(30.dp)
                         .clickable {
-                            partyViewModel.getPartyList(null, name, null, null)
+                            Log.d("소모임 검색 버튼 클릭", enteredText)
+                            partyViewModel.getPartyList(null, enteredText, null, null)
                         }
                 )
             }
         )
         Spacer(modifier = Modifier.width(15.dp))
-        androidx.compose.material3.Icon(
-            imageVector = Icons.Default.FilterList,
-            contentDescription = "필터",
-            tint = Color(0xff335C49),
-            modifier = Modifier.size(30.dp)
-        )
+        IconButton(
+            onClick = {
+                onClickFilter()
+            }
+        ) {
+            if(!isFiltered) {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.FilterListOff,
+                    contentDescription = "필터",
+                    tint = Color.DarkGray,
+                    modifier = Modifier.size(30.dp),
+                )
+            } else {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "필터",
+                    tint = Green,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
+        }
     }
 }
+

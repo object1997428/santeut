@@ -8,6 +8,7 @@ import com.santeut.data.model.response.ChatRoomResponse
 import com.santeut.data.model.response.MyPartyListResponse
 import com.santeut.data.model.response.MyRecordListResponse
 import com.santeut.data.model.response.MyScheduleList
+import com.santeut.data.model.response.PartyCourseResponse
 import com.santeut.data.model.response.PartyListResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -70,5 +71,10 @@ interface PartyApiService {
     suspend fun getChatMessageList(
         @Path("partyId") partyId: Int
     ): CustomResponse<ChatRoomResponse>
+
+    @GET("/api/party/{partyId}/course")
+    suspend fun getSelectedCourseOfParty(
+        @Path("partyId") partyId: Int
+    ): CustomResponse<PartyCourseResponse>
 
 }

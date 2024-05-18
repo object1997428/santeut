@@ -1,3 +1,5 @@
+package com.santeut.ui.community.tips
+
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background

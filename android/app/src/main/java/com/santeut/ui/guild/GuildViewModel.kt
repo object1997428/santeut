@@ -60,6 +60,16 @@ class GuildViewModel @Inject constructor(
         }
     }
 
+    fun searchGuilds(regionName: String, gender: String) {
+        viewModelScope.launch {
+            try {
+                _guilds.postValue(guildUseCase.searchGuilds(regionName, gender))
+            } catch (e: Exception) {
+                _error.postValue("검색 동호회 목록 조회 실패: ${e.message}")
+            }
+        }
+    }
+
     fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
