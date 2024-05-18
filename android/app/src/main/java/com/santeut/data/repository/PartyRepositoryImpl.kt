@@ -38,6 +38,21 @@ class PartyRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getParty(partyId: Int): PartyResponse {
+        return try {
+            val response = partyApiService.getParty(partyId)
+            if (response.status == "200") {
+                response.data
+            } else {
+                throw Exception("소모임 조회 실패: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("PartyRepository", "소모임 조회 실패: ${e.message}")
+            throw e
+        }
+    }
+
+
     override suspend fun getMyPartyList(
         date: String?,
         includeEnd: Boolean,
@@ -49,7 +64,10 @@ class PartyRepositoryImpl @Inject constructor(
             if (response.status == "200") {
                 response.data.partyList ?: emptyList()
             } else {
-                Log.e("PartyRepository", "내 소모임 목록 조회 실패: ${response.status} - ${response.data}")
+                Log.e(
+                    "PartyRepository",
+                    "내 소모임 목록 조회 실패: ${response.status} - ${response.data}"
+                )
                 emptyList()
             }
         } catch (e: Exception) {
@@ -64,6 +82,7 @@ class PartyRepositoryImpl @Inject constructor(
             emit(Unit)
         }
     }
+
 
     override suspend fun deleteParty(partyId: Int): Flow<Unit> = flow {
         val response = partyApiService.deleteParty(PartyIdRequest(partyId))

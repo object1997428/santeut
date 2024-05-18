@@ -46,6 +46,33 @@ fun NavGraphBuilder.MountainNavGraph(navController: NavController) {
             MountainScreen(mountainId)
         }
 
+
+        // 산 선택하기
+        composable(
+            route = "create/mountainList/{name}/{guildId}",
+            arguments = listOf(
+                navArgument("name") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+
+            MountainListScreen(null, "create", name, null, navController)
+        }
+
+        // 코스 선택하기
+        composable(
+            route = "create/courseList/{mountainId}/{mountainName}/{guildId}",
+            arguments = listOf(
+                navArgument("mountainId") { type = NavType.IntType },
+                navArgument("mountainName") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val mountainId = backStackEntry.arguments?.getInt("mountainId") ?: 0
+            val mountainName = backStackEntry.arguments?.getString("mountainName") ?: ""
+            SelectedCourse(null, mountainId, mountainName, navController)
+        }
+
+
         // 산 선택하기
         composable(
             route = "create/mountainList/{name}/{guildId}",

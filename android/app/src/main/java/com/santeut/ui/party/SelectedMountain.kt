@@ -70,7 +70,17 @@ fun SelectedMountainCard(
 ) {
     Card(
         modifier = Modifier
-            .clickable(onClick = { navController.navigate("create/courseList/${mountain.mountainId}/${mountain.mountainName}/${guildId}") })
+            .clickable(onClick = {
+                if(guildId==null){
+                    navController.navigate(
+                        "create/courseList/${mountain.mountainId}/${mountain.mountainName}"
+                    )
+                }else {
+                    navController.navigate(
+                        "create/courseList/${mountain.mountainId}/${mountain.mountainName}/${guildId}"
+                    )
+                }
+            })
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
             .padding(8.dp),  // 카드 주변 여백

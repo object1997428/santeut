@@ -95,7 +95,6 @@ fun HikingScreen(
     hikingViewModel: HikingViewModel = hiltViewModel(),
     mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
 
     val mountain by mountainViewModel.mountain.observeAsState()
@@ -382,7 +381,7 @@ fun checkRouteDeviation(
         val minDistance = distanceOp.distance()
         val distanceInMeters = minDistance * 111319.9
 
-        val isDeviated = distanceInMeters > 20.0
+        val isDeviated = distanceInMeters > 10.0
         onDeviation(isDeviated)
 
         if (!isDeviated) {
