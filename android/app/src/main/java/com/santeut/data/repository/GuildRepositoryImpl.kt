@@ -55,12 +55,28 @@ class GuildRepositoryImpl @Inject constructor(
     ): Flow<Unit> = flow {
         val response =
             guildApiService.createGuild(guildProfile, createGuildPart(createGuildRequest))
-        Log.d("response status", response?.status ?: "Response is null")
+        Log.d("response status", response.status ?: "Response is null")
         if (response.status == "200") {
             Log.d("Guild Repository", "동호회 생성 성공")
             emit(response.data)
         } else {
             throw Exception("동호회 생성 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun updateguild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = flow {
+        val response =
+            guildApiService.updateGuild(guildId, guildProfile, createGuildPart(updateGuildRequest))
+        Log.d("response status", response.status ?: "Response is null")
+        if (response.status == "200") {
+            Log.d("Guild Repository", "동호회 정보 수정 성공")
+            emit(response.data)
+        } else {
+            throw Exception("동호회 정보 수정 실패: ${response.status} ${response.data}")
         }
     }
 

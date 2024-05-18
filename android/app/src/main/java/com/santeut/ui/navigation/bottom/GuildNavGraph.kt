@@ -14,6 +14,7 @@ import com.santeut.ui.guild.GuildMemberListScreen
 import com.santeut.ui.guild.GuildPostDetailScreen
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.MyGuildScreen
+import com.santeut.ui.guild.UpdateGuildScreen
 import com.santeut.ui.party.InputPartyInfoScreen
 import com.santeut.ui.party.SelectedMountain
 
@@ -31,8 +32,20 @@ fun NavGraphBuilder.GuildNavGraph(
             MyGuildScreen(navController)
         }
 
+        // 동호회 만들기
         composable("createGuild") {
             CreateGuildScreen(navController)
+        }
+
+        // 동호회 수정하기 (동호회 관리)
+        composable(
+            route = "updateGuild/{guildId}",
+            arguments = listOf(
+                navArgument("guildId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            UpdateGuildScreen(navController, guildId)
         }
 
         // 동호회 상세 페이지

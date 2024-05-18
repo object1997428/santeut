@@ -85,6 +85,22 @@ class GuildViewModel @Inject constructor(
         }
     }
 
+    fun updateGuild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                guildUseCase.updateGuild(guildId, guildProfile, updateGuildRequest).collect {
+                    Log.d("GuildViewModel", "동호회 정보 수정 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("동호회 정보 수정 실패: ${e.message}")
+            }
+        }
+    }
+
 
     fun myGuilds() {
         viewModelScope.launch {

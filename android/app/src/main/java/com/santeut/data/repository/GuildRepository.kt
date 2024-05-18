@@ -24,6 +24,12 @@ interface GuildRepository {
         createGuildRequest: CreateGuildRequest
     ): Flow<Unit>
 
+    suspend fun updateguild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ): Flow<Unit>
+
     suspend fun myGuilds(): List<GuildResponse>
 
     suspend fun getGuild(guildId: Int): GuildResponse
