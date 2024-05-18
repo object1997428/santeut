@@ -1,8 +1,6 @@
 package com.santeut.ui.map
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -12,39 +10,35 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.overlay.OverlayImage
 import com.santeut.MainApplication
-import com.santeut.R
 import com.santeut.data.model.request.EndHikingRequest
 import com.santeut.data.model.response.LocationDataResponse
-import com.santeut.data.model.response.UserLocationDataResponse
 import com.santeut.data.model.response.WebSocketMessageResponse
 import com.santeut.domain.usecase.HikingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.LineString
+import org.locationtech.jts.geom.Point
+import org.locationtech.jts.operation.distance.DistanceOp
 import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -145,6 +139,9 @@ class MapViewModel @Inject constructor(
                         Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
                     } else if (message.type == "healthLisk") {
                         Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
+                    } else if(message.type == "hikingEnd"){
+                        Log.d("소모임 종료", "방장이 종료헀어용")
+                        endedHiking()
                     }
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
@@ -233,11 +230,12 @@ class MapViewModel @Inject constructor(
                 result ?: return
                 result.locations.lastOrNull()?.let {
                     val newLocation = LatLng(it.latitude, it.longitude)
-                    Log.d("위치 업데이트", "${it.latitude} / ${it.longitude} / ${it.altitude}")
 //                    if (_myLocation.value == null || (_myLocation.value != newLocation && it.accuracy < 30)) {
-                    _myLocation.value = newLocation
-                    _altitude.value = it.altitude.toInt()
-                    sendLocationUpdate(newLocation)
+                        Log.d("위치 변경됨", "${it.latitude} / ${it.longitude} / ${it.altitude}")
+                        _myLocation.value = newLocation
+                        _altitude.value = it.altitude.toInt()
+                        sendLocationUpdate(newLocation)
+                        checkRouteDeviation(newLocation)
 //                    }
                 }
             }
@@ -342,5 +340,38 @@ class MapViewModel @Inject constructor(
 
         return output
     }
+
+    fun checkRouteDeviation(
+        latLng: LatLng
+    ) {
+        val geometryFactory = GeometryFactory()
+        val userLocation: Point = geometryFactory.createPoint(Coordinate(latLng.latitude, latLng.longitude))
+
+        if (_courseList.value.isNotEmpty()) {
+            val coordinates = _courseList.value.map { Coordinate(it.latitude, it.longitude) }.toTypedArray()
+            val predefinedRoute: LineString = geometryFactory.createLineString(coordinates)
+            val distanceOp = DistanceOp(predefinedRoute, userLocation)
+            val minDistance = distanceOp.distance()
+            val distanceInMeters = minDistance * 111319.9
+
+            val isDeviated = distanceInMeters > 20.0
+            Log.d("경로 계산", "경로와 떨어진 거리 : $distanceInMeters")
+
+            if (isDeviated) {
+                Log.d("경로 이탈", "경로 이탈했어용")
+            }
+        } else {
+            Log.d("경로 이탈", "경로가 존재하지 않음.")
+        }
+    }
+
+
+
+
+
+
+
+
+
 }
 

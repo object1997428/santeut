@@ -268,7 +268,6 @@ fun HikingScreen(
                         icon = resizedIcon
                     )
                 }
-
                 if (courseList.isNotEmpty()) {
                     val path = courseList.map { LatLng(it.lat, it.lng) }
                     if (path.size >= 2) {
