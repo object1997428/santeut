@@ -2,7 +2,9 @@ package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -61,13 +63,15 @@ fun MyGuildScreen(
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
-                backgroundColor =Color.White,
+                backgroundColor = Color.White,
                 divider = {},
                 indicator = { tabPositions ->
-                    Canvas(modifier = Modifier
-                        .pagerTabIndicatorOffset(pagerState, tabPositions)
-                        .fillMaxWidth()
-                        .height(2.dp)) {
+                    Canvas(
+                        modifier = Modifier
+                            .pagerTabIndicatorOffset(pagerState, tabPositions)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                    ) {
                         drawRoundRect(
                             color = Color(0xff678C40),
                             cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx())
@@ -78,8 +82,11 @@ fun MyGuildScreen(
                 pages.forEachIndexed { index, title ->
                     Tab(
                         text = {
-                            Text(text = title,
-                                color = if (pagerState.currentPage == index)  Color(0xff678C40) else Color(0xff666E7A),
+                            Text(
+                                text = title,
+                                color = if (pagerState.currentPage == index) Color(0xff678C40) else Color(
+                                    0xff666E7A
+                                ),
                             )
                         },
                         selected = pagerState.currentPage == index,

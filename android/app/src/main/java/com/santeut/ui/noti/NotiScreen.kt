@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import androidx.navigation.NavController
 import com.santeut.data.model.response.NotificationResponse
 import com.santeut.ui.community.CommonViewModel
 import java.time.LocalDateTime
+
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -72,7 +74,11 @@ fun NotiScreen(
             }
 //            Spacer(modifier = Modifier.height(10.dp))
             if (notiList.isNotEmpty()) {
-                LazyColumn {
+                LazyColumn (
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.Start
+                ){
                     items(notiList) { noti ->
                         NotiMessage(noti, navController)
                     }
@@ -80,9 +86,9 @@ fun NotiScreen(
             }else {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .fillMaxHeight()
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     androidx.compose.material3.Text(
                         text = "알람이 없습니다.",

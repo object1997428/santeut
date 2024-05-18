@@ -31,6 +31,12 @@ class GuildUseCase @Inject constructor(
         createGuildRequest: CreateGuildRequest
     ): Flow<Unit> = guildRepository.createGuild(guildProfile, createGuildRequest)
 
+    suspend fun updateGuild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = guildRepository.updateguild(guildId, guildProfile, updateGuildRequest)
+
     suspend fun myGuilds(): List<GuildResponse> =
         guildRepository.myGuilds()
 

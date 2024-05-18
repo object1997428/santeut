@@ -127,8 +127,9 @@ fun JoinGuildScreen(
                 } else {
                     LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .align(alignment = Alignment.CenterHorizontally)
+                            .fillMaxSize()
+                            .align(alignment = Alignment.CenterHorizontally),
+                        horizontalAlignment = Alignment.Start
                     ) {
                         items(guildList) { guild ->
                             GuildCard(guild, guildViewModel, guildId, onClearData)
@@ -250,11 +251,88 @@ fun JoinGuildScreen(
             }
         }
     )
+    // 검색 필터
+    val context = LocalContext.current
+    if (showBottomFilterSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomFilterSheet = false
+                searchFilterGender = ""
+                searchFilterRegion = ""
+            },
+            sheetState = filterSheetState,
+        ) {
+            Surface(modifier = Modifier.padding(16.dp)) {
+                Column {
+                    // 지역 필터
+                    Text(
+                        text = "지역",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                    )
+                    CustomRadioGroup(
+                        6,
+                        3,
+                        region,
+                        selectedOption = searchFilterRegion,
+                        onSelectionChange = { searchFilterRegion = it })
+                    // 성별 필터
+                    Text(
+                        text = "성별",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                    )
+                    CustomRadioGroup(
+                        1,
+                        3,
+                        gender,
+                        selectedOption = searchFilterGender,
+                        onSelectionChange = { searchFilterGender = it })
+                    // 적용 버튼
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Green,
+                            contentColor = Color.White
+                        ),
+                        onClick = {
+                            if (searchFilterRegion == "") {
+                                Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT).show()
+                            } else if (searchFilterGender == "") {
+                                Toast.makeText(context, "성별을 선택해주세요", Toast.LENGTH_SHORT).show()
+                            } else {
+                                guildViewModel.searchGuilds(searchFilterRegion, searchFilterGender)
+                                showBottomFilterSheet = false
+                                Log.d("동호회 검색) 지역", searchFilterRegion)
+                                Log.d("동호회 검색) 성별", searchFilterGender)
+                            }
+                        }
+                    ) {
+                        Text(
+                            text = "적용하기",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int, onClearData: ()->Unit) {
+fun GuildCard(
+    guild: GuildResponse,
+    guildViewModel: GuildViewModel,
+    guildId: Int,
+    onClearData: () -> Unit
+) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -351,7 +429,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int,
                 ModalBottomSheet(
                     onDismissRequest = {
                         showBottomSheet = false
-                        if(guildId != 0 && onClearData != {})
+                        if (guildId != 0 && onClearData != {})
                             onClearData()
                     },
                     sheetState = sheetState
@@ -381,7 +459,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
     ) {
 
         AsyncImage(
-            model = guild.guildProfile?: R.drawable.logo,
+            model = guild.guildProfile ?: R.drawable.logo,
             contentDescription = "동호회 사진",
             modifier = Modifier
                 .fillMaxWidth()
@@ -448,18 +526,18 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
         ) {
             if (guild.joinStatus === 'N') {
                 Text(
-                    text = "가입 요청하기",
+                    text = "가입 신청 하기",
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
             } else if (guild.joinStatus == 'R') {
                 Text(
-                    text = "가입 요청 완료",
+                    text = "가입 신청 완료",
                     fontWeight = FontWeight.SemiBold
                 )
             } else {
                 Text(
-                    text = "이미 가입한 동호회입니다",
+                    text = "이미 가입한 동호회",
                     fontWeight = FontWeight.SemiBold
                 )
             }
