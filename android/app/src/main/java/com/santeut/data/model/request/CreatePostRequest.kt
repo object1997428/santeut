@@ -1,5 +1,4 @@
 package com.santeut.data.model.request
-
 data class CreatePostRequest(
     val postTitle: String,
     val postContent: String,
