@@ -2,6 +2,7 @@ package com.santeut.ui.party
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -163,7 +164,7 @@ fun SelectedCourse(
 
     val pathList by mountainViewModel.pathList.observeAsState(emptyList())
 
-    val selectedCourseIds = remember { mutableStateListOf<Int>() }
+    val selectedCourseIds = remember { mutableStateListOf<Int?>() }
 
     val cameraPositionState = rememberCameraPositionState()
 
@@ -232,6 +233,7 @@ fun SelectedCourse(
                     Text(text = "등산로를 선택해주세요")
                     Button(onClick = {
                         val selectedCourses = selectedCourseIds.joinToString(",")
+                        Log.d("등산로", selectedCourses)
                         navController.navigate("createParty/${mountainId}/${selectedCourses}")
                     }) {
                         Text(text = "선택완료")

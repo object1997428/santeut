@@ -35,7 +35,7 @@ fun NavGraphBuilder.TopNavGraph(
         composable(
             route="noti"
         ){
-            NotiScreen()
+            NotiScreen(navController)
         }
     }
 }
