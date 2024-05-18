@@ -233,9 +233,9 @@ fun ChatBox(
         onValueChange = { chatBoxValue = it },
         shape = CircleShape,
         trailingIcon = {
-            if(chatBoxValueHasValue) {
-                IconButton (
-                    onClick = {
+            IconButton (
+                onClick = {
+                    if(chatBoxValueHasValue){
                         // send
                         Log.d("SEND", chatBoxValue.text)
                         chatViewModel.sendMessage(
@@ -247,12 +247,12 @@ fun ChatBox(
                         // 채팅창 내용 초기화
                         chatBoxValue = TextFieldValue("")
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = null
-                    )
                 }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = null
+                )
             }
         }
     )
