@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -140,6 +141,8 @@ fun JoinGuildScreen(
             val context = LocalContext.current
             if (showBottomFilterSheet) {
                 ModalBottomSheet(
+                    modifier = Modifier
+                        .fillMaxHeight(.8f),
                     onDismissRequest = {
                         showBottomFilterSheet = false
                         searchFilterGender = ""
@@ -149,12 +152,37 @@ fun JoinGuildScreen(
                 ) {
                     Surface(modifier = Modifier.padding(16.dp)) {
                         Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp, 0.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "필터 검색",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.padding(
+                                        0.dp, 8.dp
+                                    )
+                                )
+                                Text(
+                                    text = "초기화",
+                                    color = Color.DarkGray,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.clickable {
+                                        searchFilterRegion = ""
+                                        searchFilterGender = ""
+                                    }
+                                )
+                            }
                             // 지역 필터
                             Text(
                                 text = "지역",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
-                                modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                                modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
                             )
                             CustomRadioGroup(
                                 6,
@@ -167,7 +195,7 @@ fun JoinGuildScreen(
                                 text = "성별",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
-                                modifier = Modifier.padding(4.dp, 0.dp, 0.dp, 0.dp)
+                                modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
                             )
                             CustomRadioGroup(
                                 1,
@@ -185,7 +213,12 @@ fun JoinGuildScreen(
                                     contentColor = Color.White
                                 ),
                                 onClick = {
-                                    if (searchFilterRegion == "") {
+                                    if (searchFilterRegion =="" && searchFilterGender==""){
+                                        guildViewModel.getGuilds()
+                                        showBottomFilterSheet = false
+                                        isFiltered = false
+                                    }
+                                    else if (searchFilterRegion == "") {
                                         Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT)
                                             .show()
                                         isFiltered = false
