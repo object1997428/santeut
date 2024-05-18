@@ -17,6 +17,7 @@ import com.santeut.data.model.response.PartyResponse
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +29,7 @@ class PartyViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    private val _partyCreationSuccess = MutableLiveData<Boolean>()
+    private val _partyCreationSuccess = MutableLiveData<Boolean>(false)
     val partyCreationSuccess: LiveData<Boolean> = _partyCreationSuccess
 
     private val _partyList = MutableLiveData<List<PartyResponse>>()

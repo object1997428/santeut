@@ -417,7 +417,10 @@ fun TodayHikingCard(
 
 @Composable
 fun PartyCard(party: MyPartyResponse) {
-    Card {
+    Card (
+        modifier = Modifier
+            .padding(0.dp, 0.dp, 8.dp, 0.dp)
+    ){
         Column(
             modifier = Modifier
                 .padding(20.dp)
