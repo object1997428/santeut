@@ -3,6 +3,14 @@ package com.santeut.ui.map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
+import android.graphics.RectF
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -17,22 +25,27 @@ import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.compose.MarkerState
+import com.naver.maps.map.overlay.OverlayImage
 import com.santeut.MainApplication
+import com.santeut.R
 import com.santeut.data.model.request.EndHikingRequest
 import com.santeut.data.model.response.LocationDataResponse
 import com.santeut.data.model.response.UserLocationDataResponse
 import com.santeut.data.model.response.WebSocketMessageResponse
 import com.santeut.domain.usecase.HikingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -42,6 +55,7 @@ class MapViewModel @Inject constructor(
     private val fusedLocationProviderClient: FusedLocationProviderClient
 ) : ViewModel() {
     private val _partyId = mutableStateOf(0)
+    val partyId = _partyId
 
     // 웹 소켓
     var webSocket: WebSocket? = null
@@ -64,11 +78,11 @@ class MapViewModel @Inject constructor(
 
     // 이동 거리
     private val _movedDistance = mutableStateOf(0.0)
-    val movedDistance = _stepCount
+    val movedDistance = _movedDistance
 
     // 위치
     private val _myLocation = mutableStateOf<LatLng?>(null)
-    val myLocation = _stepCount
+    val myLocation = _myLocation
 
     // 고도
     private val _altitude = mutableStateOf(0)
@@ -82,7 +96,7 @@ class MapViewModel @Inject constructor(
     val userPositions = _userPositions
 
     // 유저들 아이콘
-    private val _userIcons = mutableStateOf<MutableMap<String, MarkerState>>(mutableMapOf())
+    private val _userIcons = mutableStateOf<MutableMap<String, OverlayImage?>>(mutableMapOf())
     val userIcons = _userIcons
 
     // 경로 이탈 계산
@@ -116,20 +130,20 @@ class MapViewModel @Inject constructor(
             override fun onMessage(webSocket: WebSocket, text: String) {
                 try {
                     val message = Gson().fromJson(text, WebSocketMessageResponse::class.java)
-//                    updateLocation(
-//                        message.userNickname,
-//                        message.lat.toDouble(),
-//                        message.lng.toDouble(),
-//                        message.userProfile
-//                    )
-                    if (message.type == "locationShare"){
-                        Log.d("위치 바등ㅁ", message.userNickname + " / " + message.lat
-                        + " / " + message.lng)
-                    }
-                    else if (message.type == "offCourse") {
+                    if (message.type == "locationShare") {
+                        updateUserState(
+                            message.userNickname,
+                            message.lat.toDouble(),
+                            message.lng.toDouble(),
+                            message.userProfile
+                        )
+                        Log.d(
+                            "위치 바듬", message.userNickname + " / " + message.lat
+                                    + " / " + message.lng
+                        )
+                    } else if (message.type == "offCourse") {
                         Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
-                    }
-                    else if(message.type == "healthLisk"){
+                    } else if (message.type == "healthLisk") {
                         Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
                     }
                 } catch (e: Exception) {
@@ -166,15 +180,29 @@ class MapViewModel @Inject constructor(
                     )
                 ).collect {
                     Log.d("MapViewModel", "소모임 종료 성공")
-                    _partyId.value = 0
+                    initData()
                 }
             } catch (e: Exception) {
                 e.message?.let { Log.e("MapViewModel", "소모임 종료 실패 e: $it") }
-                _partyId.value = 0
+                initData()
             }
         }
 
         stopWebSocket()
+    }
+
+    fun initData(){
+        _partyId.value = 0
+        _distance.value = 0.0
+        _courseList.value = emptyList()
+        _startTime.value = null
+        _stepCount.value = 0
+        _movedDistance.value = 0.0
+        _altitude.value = 0
+        _bestHeight.value = 0
+        _userPositions.value = mapOf()
+        _userIcons.value = mutableMapOf()
+        _deviation.value = 0
     }
 
     fun stopWebSocket() {
@@ -205,10 +233,11 @@ class MapViewModel @Inject constructor(
                 result ?: return
                 result.locations.lastOrNull()?.let {
                     val newLocation = LatLng(it.latitude, it.longitude)
-                    Log.d("위치 업데이트", "${it.latitude} / ${it.longitude}")
+                    Log.d("위치 업데이트", "${it.latitude} / ${it.longitude} / ${it.altitude}")
 //                    if (_myLocation.value == null || (_myLocation.value != newLocation && it.accuracy < 30)) {
-                        _myLocation.value = newLocation
-                        sendLocationUpdate(newLocation)
+                    _myLocation.value = newLocation
+                    _altitude.value = it.altitude.toInt()
+                    sendLocationUpdate(newLocation)
 //                    }
                 }
             }
@@ -229,14 +258,89 @@ class MapViewModel @Inject constructor(
 
     private fun sendLocationUpdate(location: LatLng) {
         webSocket?.let { socket ->
-            Log.d("sendLocationUpdate", "위치 업데이트 전송")
-            val message = Gson().toJson(mapOf(
-                "type" to "locationShare",
-                "lat" to location.latitude,
-                "lng" to location.longitude
-            ))
+//            Log.d("sendLocationUpdate", "위치 업데이트 전송")
+            val message = Gson().toJson(
+                mapOf(
+                    "type" to "locationShare",
+                    "lat" to location.latitude,
+                    "lng" to location.longitude
+                )
+            )
             socket.send(message)
         }
+    }
+
+    private fun updateUserState(
+        userNickname: String,
+        lat: Double,
+        lng: Double,
+        userProfile: String?
+    ) {
+        val newLatLng = LatLng(lat, lng)
+        _userPositions.value = _userPositions.value.toMutableMap().apply {
+            this[userNickname] = newLatLng
+        }
+
+        viewModelScope.launch {
+            val newIcon = userProfile?.let { getUserIcon(it) }
+            _userIcons.value = _userIcons.value.toMutableMap().apply {
+                this[userNickname] = newIcon
+            }
+        }
+    }
+
+    private suspend fun getUserIcon(url: String): OverlayImage? {
+        if (url.isEmpty()) {
+            Log.e("ImageDownloadError", "Invalid URL: $url")
+            return null
+        }
+
+        val bitmap = downloadImage(url)
+        return bitmap?.let {
+            val circularBitmap = getCircularBitmap(it)
+            val resizedBitmap = Bitmap.createScaledBitmap(circularBitmap, 100, 100, false)
+            val stream = ByteArrayOutputStream()
+            resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            val byteArray = stream.toByteArray()
+            val bitmapResized = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            OverlayImage.fromBitmap(bitmapResized)
+        }
+    }
+
+    private suspend fun downloadImage(url: String): Bitmap? {
+        return try {
+            val result = withContext(Dispatchers.IO) {
+                val client = OkHttpClient()
+                val request = Request.Builder().url(url).build()
+                val response = client.newCall(request).execute()
+                response.body?.byteStream()?.use {
+                    BitmapFactory.decodeStream(it)
+                }
+            }
+            result
+        } catch (e: Exception) {
+            Log.e("ImageDownloadError", "Error downloading image", e)
+            null
+        }
+    }
+
+    private fun getCircularBitmap(bitmap: Bitmap): Bitmap {
+        val size = Math.min(bitmap.width, bitmap.height)
+        val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(output)
+        val paint = Paint()
+        val rect = Rect(0, 0, size, size)
+        val rectF = RectF(rect)
+
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        canvas.drawOval(rectF, paint)
+
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+
+        return output
     }
 }
 
