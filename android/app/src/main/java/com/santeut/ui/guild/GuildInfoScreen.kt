@@ -60,25 +60,22 @@ fun GuildInfoScreen(guild: GuildResponse?) {
 //                    .height(300.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
                     .clip(RoundedCornerShape(8.dp))
             )
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.Start)
-//                            .background(Color(0xAA000000))  // 투명한 검정 배경
-                            .padding(8.dp)
-                    ) {
                         Text(
                             text = guild.guildName ?: "",
-                            style = MaterialTheme.typography.headlineMedium.copy(color = Color.White), // 크기와 스타일 조정
+                            style = MaterialTheme.typography.headlineMedium.copy(color = Color.Black), // 크기와 스타일 조정
                             modifier = Modifier.padding(16.dp)
                         )
-                    }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
+//                val guildInfo = guild.guildInfo ?: ""
+//                val lineChangeGuildInfo = guildInfo.replace(".")
             Text(
-                text = guild.guildInfo?:"",
+
+                text = guild.guildInfo ?: "",
                 style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
-//                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             )
 
             Row(
