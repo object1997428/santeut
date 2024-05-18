@@ -2,11 +2,20 @@ package com.santeut.ui.map
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
@@ -19,7 +28,7 @@ import kotlinx.coroutines.launch
 
 @ExperimentalNaverMapApi
 @Composable
-fun MapScreen() {
+fun MapScreen(navController: NavController) {
 
     val context = LocalContext.current
 
@@ -49,5 +58,20 @@ fun MapScreen() {
                 isMountainLayerGroupEnabled = true
             )
         )
+
+        Button(
+            onClick = {
+                navController.navigate("searchPlant")
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Camera,
+                contentDescription = "Camera",
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     }
 }

@@ -9,6 +9,7 @@ import androidx.navigation.navigation
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.santeut.ui.map.HikingScreen
 import com.santeut.ui.map.MapScreen
+import com.santeut.ui.map.SearchPlant
 
 
 @ExperimentalNaverMapApi
@@ -21,7 +22,7 @@ fun NavGraphBuilder.MapNavGraph(
     ) {
 
         composable(route = "map") {
-            MapScreen()
+            MapScreen(navController)
         }
         composable(
             route = "hiking/{partyId}",
@@ -29,6 +30,10 @@ fun NavGraphBuilder.MapNavGraph(
         ) { backStackEntry ->
             val partyId = backStackEntry.arguments?.getInt("partyId") ?: 0
             HikingScreen(partyId)
+        }
+
+        composable("searchPlant") {
+            SearchPlant()
         }
     }
 }
