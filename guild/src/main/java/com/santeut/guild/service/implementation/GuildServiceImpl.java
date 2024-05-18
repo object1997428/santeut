@@ -73,10 +73,11 @@ public class GuildServiceImpl implements GuildService {
             else if(guildRequestEntity.getStatus() == 'A') status = 'A';
         }
 
+        boolean isPrivate = guildEntity.getGuildIsPrivate();
         boolean isPresident = false;
         if (guildEntity.getUserId() == userId) isPresident = true;
 
-        return new GetDetailGuildResponse(guildEntity, status, isPresident);
+        return new GetDetailGuildResponse(guildEntity, status, isPresident, isPrivate);
     }
 
     @Override

@@ -28,8 +28,9 @@ public class GetDetailGuildResponse {
     LocalDateTime createdAt;
     char joinStatus;
     Boolean isPresident;
+    Boolean isPrivate;
 
-    public GetDetailGuildResponse(GuildEntity guildEntity, char joinStatus, Boolean isPresident){
+    public GetDetailGuildResponse(GuildEntity guildEntity, char joinStatus, Boolean isPresident, Boolean isPrivate){
         this.guildId = guildEntity.getGuildId();
         this.guildName = guildEntity.getGuildName();
         this.guildProfile = guildEntity.getGuildProfile();
@@ -42,6 +43,7 @@ public class GetDetailGuildResponse {
         this.createdAt = guildEntity.getCreatedAt();
         this.joinStatus = joinStatus;
         this.isPresident = isPresident;
+        this.isPrivate = isPrivate;
     }
 
     public static List<GetDetailGuildResponse> guildList(List<GuildEntity> guildEntityList,
