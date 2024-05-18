@@ -9,19 +9,23 @@ import androidx.navigation.navigation
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.santeut.ui.map.HikingScreen
 import com.santeut.ui.map.MapScreen
-
+import com.santeut.ui.map.MapViewModel
 
 @ExperimentalNaverMapApi
 fun NavGraphBuilder.MapNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    mapViewModel: MapViewModel
 ) {
     navigation(
         startDestination = "map",
         route = "map_graph"
     ) {
-
-        composable(route = "map") {
-            MapScreen()
+        composable(
+            route = "map"
+        ) {
+            MapScreen(
+                mapViewModel = mapViewModel
+            )
         }
         composable(
             route = "hiking/{partyId}",

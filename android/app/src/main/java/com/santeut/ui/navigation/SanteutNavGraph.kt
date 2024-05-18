@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.santeut.ui.map.MapViewModel
 import com.santeut.ui.navigation.top.TopNavGraph
 import com.santeut.ui.navigation.bottom.CommunityNavGraph
 import com.santeut.ui.navigation.bottom.GuildNavGraph
@@ -19,6 +20,7 @@ import com.santeut.ui.wearable.WearableViewModel
 fun SanteutNavGraph(
     navController: NavHostController,
     wearableViewModel: WearableViewModel,
+    mapViewModel: MapViewModel,
     guildId:Int,
     onClearData:()->Unit
 ) {
@@ -31,8 +33,8 @@ fun SanteutNavGraph(
         )
         HomeNavGraph(navController)
         CommunityNavGraph(navController, guildId = guildId, onClearData = onClearData )
-        MapNavGraph(navController)
-        GuildNavGraph(navController)
+        MapNavGraph(navController = navController, mapViewModel = mapViewModel)
+        GuildNavGraph(navController = navController, mapViewModel = mapViewModel)
         MyPageNavGraph(navController)
         TopNavGraph(navController)
         MountainNavGraph(navController)

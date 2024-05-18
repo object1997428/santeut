@@ -31,7 +31,6 @@ class HikingViewModel @Inject constructor(
     private val partyUseCase: PartyUseCase,
     private val hikingUseCase: HikingUseCase
 ) : ViewModel() {
-
     var webSocket: WebSocket? = null
 
     private val _error = MutableLiveData<String>()
@@ -49,7 +48,7 @@ class HikingViewModel @Inject constructor(
                 _distance.postValue(hikingUseCase.startHiking(startHikingRequest).distance)
                 _courseList.postValue(hikingUseCase.startHiking(startHikingRequest).courseList)
             } catch (e: Exception) {
-                _error.postValue("소모임 시작 실패: ${e.message}")
+                _error.postValue("소임 시작 실패: ${e.message}")
             }
         }
     }
@@ -65,7 +64,6 @@ class HikingViewModel @Inject constructor(
             }
         }
     }
-
 
     fun startWebSocket(
         partyId: Int,

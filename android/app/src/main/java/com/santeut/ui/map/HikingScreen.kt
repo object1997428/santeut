@@ -461,7 +461,6 @@ fun resizeMarkerIcon(context: Context, drawableResId: Int, width: Int, height: I
     return OverlayImage.fromBitmap(bitmapResized)
 }
 
-
 suspend fun getCurrentLocation(context: Context): UserLocationDataResponse? {
     val fusedLocationProviderClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)

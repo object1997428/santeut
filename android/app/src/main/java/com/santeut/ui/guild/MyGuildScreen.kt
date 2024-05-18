@@ -37,6 +37,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
+import com.santeut.ui.map.MapViewModel
 import com.santeut.ui.party.MyPartyListScreen
 import kotlinx.coroutines.launch
 
@@ -44,7 +45,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MyGuildScreen(
-    navController: NavController
+    navController: NavController,
+    mapViewModel: MapViewModel
 ) {
     val pages = listOf("동호회", "소모임")
     val pagerState = rememberPagerState()
@@ -106,7 +108,7 @@ fun MyGuildScreen(
             ) { page ->
                 when (page) {
                     0 -> MyGuildListScreen(navController)
-                    1 -> MyPartyListScreen(navController)
+                    1 -> MyPartyListScreen(navController = navController, mapViewModel = mapViewModel)
                     else -> Text("Unknown page")
                 }
             }
