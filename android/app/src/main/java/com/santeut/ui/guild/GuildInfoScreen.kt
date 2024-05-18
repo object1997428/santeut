@@ -1,51 +1,47 @@
 package com.santeut.ui.guild
 
-import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Environment
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraX
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.PhotoAlbum
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.deepl.api.Translator
+import com.santeut.R
 import com.santeut.data.apiservice.PlantIdApi
 import com.santeut.data.model.request.PlantIdentificationRequest
 import com.santeut.data.model.response.GuildResponse
-import com.santeut.data.util.CameraXFactory
-import com.santeut.data.util.CameraXImpl
-import com.santeut.data.util.RecordingInfo
+import com.santeut.designsystem.theme.DarkGreen
 import com.ujizin.camposer.CameraPreview
 import com.ujizin.camposer.state.ImageCaptureResult
 import com.ujizin.camposer.state.rememberCameraState
@@ -55,107 +51,112 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
-import retrofit2.http.POST
-import retrofit2.Response
 
 @Composable
 fun GuildInfoScreen(guild: GuildResponse?) {
     Column(
         modifier = Modifier
-            .padding(16.dp)
             .fillMaxWidth()
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.Top
     ) {
 
         if (guild != null) {
             AsyncImage(
-                model = guild.guildProfile,
+                model = guild.guildProfile ?: R.drawable.logo,
                 contentDescription = "동호회 사진",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
+                    .fillMaxHeight(.3f)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = guild.guildName?:"",
-                style = MaterialTheme.typography.headlineMedium, // 크기와 스타일 조정
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-
-            Text(
-                text = guild.guildInfo?:"",
-                style = MaterialTheme.typography.bodyLarge, // 일관된 텍스트 스타일
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Column(modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
             ) {
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 동호회 이름
                 Text(
-                    text = "인원 ${guild.guildMember}명",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = guild.guildName ?: "",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 동호회 설명
                 Text(
-                    text = "성별 ${genderToString(guild)}",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = guild.guildInfo ?: "",
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-                Text(
-                    text = "연령 ${guild.guildMinAge}세 ~ ${guild.guildMaxAge}세",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // 동호회 인원, 성별, 연령
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "인원 ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "${guild.guildMember}명",
+                            color = DarkGreen,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "성별 ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "${genderToString(guild)}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = "연령 ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "${guild.guildMinAge}세 ~ ${guild.guildMaxAge}세",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = DarkGreen,
+                        )
+                    }
+                }
             }
         }
     }
-}
-
-@Composable
-fun TakeCamera(modifier: Modifier = Modifier, onPictureTaken: (File) -> Unit) {
-    val cameraState = rememberCameraState()
-    val context = LocalContext.current
-    val imageFile = remember { mutableStateOf<File?>(null) }
-    val fileName = "image_${System.currentTimeMillis()}.jpg"
-    val directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-//    var camSelector by remember {
-//        mutableStateOf(CamSelector.Back)
-//    }
-    Log.d("진입", "확인")
-    CameraPreview(
-//        modifier = modifier,
-        cameraState = cameraState,
-//        camSelector = camSelector
-    ){
-        Button(onClick = {
-            val file = File(directory, fileName)
-            cameraState.takePicture(file) { result ->
-                if (result is ImageCaptureResult.Success){
-                    imageFile.value = file
-                    onPictureTaken(file)
-                    Log.d("imageFile Value", "File path: ${imageFile.value?.absolutePath}")
-                    Toast.makeText(context, "Success!", Toast.LENGTH_LONG).show()
-                }
-                else {
-                    Toast.makeText(context, "Falied", Toast.LENGTH_SHORT).show()
-                }
-                // Result는 사진이 성공적으로 저장되었는지 여부를 알려줌
-                Log.d("카메라", "버튼 클릭")
-            }
-        }) {  Text("Take Picture") }
-//        Button(onClick = {
-//            camSelector = camSelector.inverse
-//        }) { Text("Switch camera") }
-
-    }
-    val capturedImageFile = imageFile.value
-
-    Log.d("찍은 사진", capturedImageFile.toString())
-
 }
 
 @Composable
@@ -234,7 +235,6 @@ fun CameraUI() {
 
                         }
                     }
-
                 }
                 else {
                     Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show()
@@ -242,14 +242,41 @@ fun CameraUI() {
                 // Result는 사진이 성공적으로 저장되었는지 여부를 알려줌
                 Log.d("카메라", "버튼 클릭")
             }
-        }) {  Text("Take Picture")
         }
-
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Take Picture")
+        }
     }
-    val capturedImageFile = imageFile.value
 
-    Log.d("찍은 사진", capturedImageFile.toString())
+    imageFile.value?.let { file ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White.copy(alpha = 0.7f))
+                .padding(16.dp)
+        ) {
+            Image(
+                bitmap = BitmapFactory.decodeFile(file.absolutePath).asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "독우산광대버섯",
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = "독우산광대버섯은 맹독성 독버섯의 일종으로 전체가 흰색을 띠고 있다. 생김새가 양송이버섯과 흰우산버섯, 흰주름버섯과 비슷하게 생겼다. 일단 이 버섯을 한 조각이라도 먹게 되면 몸속의 여러 부위의 세포와 내부 장기가 파괴되어 심한 복통, 구토, 설사 등의 콜레라 증상을 보이다가 며칠 만에 사망할 수 있다.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
 }
+
 
 fun encodeFileToBase64Binary(filePath: String): String {
     val file = File(filePath)

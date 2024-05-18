@@ -213,16 +213,11 @@ fun MyScheduleScreen(
 //                        horizontalArrangement = Arrangement.Center,
                         maxItemsInEachRow = 7,
                     ) {
-                        var startOfMonth = 0
                         var select by remember { mutableStateOf("") }
+                        for (i in 1..dayOfWeek) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                         dates.forEach { date ->
-                            if (dayOfWeek > startOfMonth) {
-                                for (i in 1..dayOfWeek) {
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    startOfMonth++
-                                }
-                            }
-
                             Column(
                                 modifier = Modifier
                                     .padding(top = 10.dp)
@@ -232,7 +227,6 @@ fun MyScheduleScreen(
                                     },
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                startOfMonth++
                                 val dateLocal = LocalDate.of(date.year, date.month, date.day)
 
                                 Box(
@@ -286,10 +280,8 @@ fun MyScheduleScreen(
                                     Spacer(Modifier.size(20.dp)) // 아이콘이 없을 경우 같은 크기의 공간을 확보합니다.
                                 }
                             }
-                            if (startOfMonth == daysInCurrentMonth + dayOfWeek) {
-                                for (i in 1..7) Spacer(modifier = Modifier.weight(1f))
-                            }
                         }
+                        for (i in 1..7) Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }

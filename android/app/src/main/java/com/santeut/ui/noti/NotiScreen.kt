@@ -51,11 +51,11 @@ fun NotiMessage(noti: NotificationResponse) {
         // 4. 소모임장이 등산 시작을 누름(P)
         // 5. 등산(H)
         val emoji = when (noti.referenceType) {
-            'C' -> "💬"
-            'L' -> "💗"
-            'G' -> "✔"
-            'P' -> "⛰"
-            'H' -> "⛰"
+            "TC", "GC", "CC" -> "💬"
+            "TL", "GL", "CL" -> "💗"
+            "GR" -> "✔"
+            "P" -> "⛰"
+            "HS" -> "⛰"
             else -> "▪"
         }
 

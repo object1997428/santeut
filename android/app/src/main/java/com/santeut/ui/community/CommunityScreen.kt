@@ -7,6 +7,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.launch
@@ -73,6 +74,7 @@ fun CommunityScreen(
                                 color = if (pagerState.currentPage == index) Color(0xff678C40) else Color(
                                     0xff666E7A
                                 ),
+                                style = MaterialTheme.typography.titleMedium
                             )
                         },
                         selected = pagerState.currentPage == index,

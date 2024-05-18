@@ -194,12 +194,14 @@ fun JoinGuildScreen(
                             if (searchFilterRegion == "") {
                                 Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT).show()
                             }
-                            if (searchFilterGender == "") {
+                            else if (searchFilterGender == "") {
                                 Toast.makeText(context, "성별을 선택해주세요", Toast.LENGTH_SHORT).show()
+                            } else {
+                                guildViewModel.searchGuilds(searchFilterRegion, searchFilterGender)
+                                showBottomFilterSheet = false
+                                Log.d("동호회 검색) 지역", searchFilterRegion)
+                                Log.d("동호회 검색) 성별", searchFilterGender)
                             }
-                            // TODO: 동호회 필터 검색
-                            Log.d("지역", searchFilterRegion)
-                            Log.d("성별", searchFilterGender)
                         }
                     ) {
                         Text(
@@ -249,9 +251,6 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int,
             )
 
             Column {
-                Text(text = guild.guildName)
-                Text(text = "${guild.guildMember}명")
-//                Text(text = regionName(guild.regionId))
 
                 Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
 
@@ -508,7 +507,7 @@ fun CustomRadioGroup(
 }
 
 val gender = listOf(
-    "전체",
+    "성별무관",
     "남성",
     "여성"
 )

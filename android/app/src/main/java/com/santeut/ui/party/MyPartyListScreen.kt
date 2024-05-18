@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
@@ -17,7 +18,6 @@ import androidx.compose.material.icons.outlined.Sensors
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,11 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.ui.community.party.PartySearchBar
 
 @Composable
 fun MyPartyListScreen(
+    navController: NavController,
     partyViewModel: PartyViewModel = hiltViewModel()
 ) {
     val myPartyList by partyViewModel.myPartyList.observeAsState(emptyList())
@@ -40,12 +42,13 @@ fun MyPartyListScreen(
     }
 
     Column {
-        PartySearchBar(
-            partyViewModel,
-            onSearchTextChanged = {},
-            onClickSearch = {},
-            onClickFilter = {}
-        )
+//        PartySearchBar(
+//            partyViewModel,
+//            enteredText = "",
+//            onSearchTextChanged = {},
+////            onClickSearch = {},
+//            onClickFilter = {}
+//        )
 
         if (myPartyList.isEmpty()) {
             Box(
@@ -61,7 +64,7 @@ fun MyPartyListScreen(
         } else {
             LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
                 items(myPartyList) { party ->
-                    MyPartyCard(party)
+                    MyPartyCard(party, navController)
                 }
             }
         }
@@ -70,7 +73,7 @@ fun MyPartyListScreen(
 }
 
 @Composable
-fun MyPartyCard(party: MyPartyResponse) {
+fun MyPartyCard(party: MyPartyResponse, navController: NavController) {
     Card {
         Column(Modifier.fillMaxWidth()) {
             Row {
@@ -112,7 +115,7 @@ fun MyPartyCard(party: MyPartyResponse) {
                     )
                     Text(text = "${party.curPeople} / ${party.maxPeople} 명")
                 }
-                Button(onClick = {/* 소모임 시작 버튼 로직 추가 */ }) {
+                Button(onClick = { navController.navigate("hiking/${party.partyId}") }) {
                     Icon(
                         imageVector = Icons.Outlined.NotStarted,
                         contentDescription = "시작 버튼"
