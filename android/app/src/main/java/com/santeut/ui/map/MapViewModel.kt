@@ -268,6 +268,19 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    private fun sendMessage(type: String){
+        webSocket?.let { socket ->
+            val message = Gson().toJson(
+                mapOf(
+                    "type" to type,
+                    "lat" to _myLocation.value?.latitude,
+                    "lng" to _myLocation.value?.longitude
+                )
+            )
+            socket.send(message)
+        }
+    }
+
     private fun updateUserState(
         userNickname: String,
         lat: Double,
@@ -359,6 +372,7 @@ class MapViewModel @Inject constructor(
 
             if (isDeviated) {
                 Log.d("경로 이탈", "경로 이탈했어용")
+                sendMessage("offCourse")
             }
         } else {
             Log.d("경로 이탈", "경로가 존재하지 않음.")
