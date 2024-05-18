@@ -229,12 +229,31 @@ public class GuildUserServiceImpl implements GuildUserService {
     }
 
     @Override
+    @Transactional
     public void quitGuild(int guildId, int userId) {
 
         GuildEntity guildEntity = guildRepository.findByGuildId(guildId)
                 .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD));
 
-        if (guildEntity.getUserId() == userId) throw new DataNotFoundException(ResponseCode.MUST_NOT_QUIT_GUILD_LEADER);
+        // 동호회장 일 땐
+        if (guildEntity.getUserId() == userId) {
+            // 여러 명이면 탈퇴 X
+            if(guildEntity.getGuildMember() >= 1) throw new DataNotFoundException(ResponseCode.MUST_NOT_QUIT_GUILD_LEADER);
+            // 혼자라면
+            else {
+
+                GuildUserEntity guildUserEntity = guildUserRepository.findByGuildIdAndUserId(guildId, userId)
+                        .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
+                guildUserEntity.setDeleted(true);
+                guildUserEntity.setModifiedAt(LocalDateTime.now());
+                guildUserEntity.setDeletedAt(LocalDateTime.now());
+                guildUserRepository.save(guildUserEntity);
+
+                guildEntity.setGuildIsPrivate(true);
+                guildEntity.setGuildMember(guildEntity.getGuildMember()-1);
+                guildRepository.save(guildEntity);
+            }
+        }
 
         GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildId, userId)
                 .orElse(null);

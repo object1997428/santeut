@@ -16,6 +16,7 @@ import com.santeut.guild.util.RegionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -99,6 +100,7 @@ public class GuildServiceImpl implements GuildService {
     }
 
     @Override
+    @Transactional
     public void deleteGuild(int guildId, String userId) {
 
         GuildEntity guildEntity = guildRepository.findByGuildId(guildId)
@@ -108,14 +110,13 @@ public class GuildServiceImpl implements GuildService {
 
         guildEntity.setDeleted(true);
         guildEntity.setDeletedAt(LocalDateTime.now());
+        guildRepository.save(guildEntity);
 
         GuildUserEntity guildUserEntity = guildUserRepository.findByGuildId(guildId)
                         .orElseThrow(() -> new DataNotFoundException(ResponseCode.NOT_EXISTS_GUILD_USER));
 
         guildUserEntity.setDeleted(true);
         guildUserEntity.setDeletedAt(LocalDateTime.now());
-
-        guildRepository.save(guildEntity);
         guildUserRepository.save(guildUserEntity);
     }
 
