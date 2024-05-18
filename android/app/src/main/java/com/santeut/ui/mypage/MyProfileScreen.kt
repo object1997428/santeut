@@ -1,16 +1,11 @@
 package com.santeut.ui.mypage
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -27,9 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -58,52 +51,35 @@ fun MyProfileScreen(userViewModel: UserViewModel = hiltViewModel()) {
 
 @Composable
 fun ProfileHeader(myProfile: MyProfileResponse?) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        // 첫번째 Column: 원형 프로필 사진
-        Box(
+        AsyncImage(
+            model = myProfile?.userProfile ?: R.drawable.logo,
+            contentDescription = "프로필 사진",
             modifier = Modifier
                 .size(100.dp)
-                .clip(CircleShape)
-        ) {
-            AsyncImage(
-                model = myProfile?.userProfile ?: R.drawable.logo,
-                contentDescription = "프로필 사진",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // 두번째 Column: 닉네임
-        Text(
-            text = "${myProfile?.userNickname}",
-            style = MaterialTheme.typography.h6,
-            textAlign = TextAlign.Center
+                .padding(end = 16.dp)
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // 세번째 Column: 레벨과 포인트
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column {
+            Text(
+                text = "${myProfile?.userNickname}",
+                style = MaterialTheme.typography.h6
+            )
             Text(
                 text = "Lv. ${myProfile?.userTierName}",
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.body1
             )
             Text(
                 text = "포인트 ${myProfile?.userTierPoint}P",
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.body1
             )
         }
     }
 }
-
 
 @Composable
 fun ProfileStats(myProfile: MyProfileResponse?) {
