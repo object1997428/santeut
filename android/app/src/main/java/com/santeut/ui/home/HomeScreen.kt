@@ -161,7 +161,10 @@ fun SearchMountainBar(
                                 toastMessageText = "검색어를 입력하세요"
                             } else {
                                 val path = if (type == "create") {
-                                    "create/mountainList/$name/$guildId"
+                                    if (guildId == null)
+                                        "create/mountainList/$name"
+                                    else
+                                        "create/mountainList/$name/$guildId"
                                 } else {
                                     if (region.isEmpty()) "mountainList/$name" else "mountainList/$name/$region"
                                 }
@@ -260,7 +263,7 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top=0.dp, start = 6.dp, end =6.dp, bottom = 0.dp),
+                    .padding(top = 0.dp, start = 6.dp, end = 6.dp, bottom = 0.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -444,7 +447,7 @@ fun PartyCard(party: MyPartyResponse) {
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(20.dp)

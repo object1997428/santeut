@@ -21,6 +21,10 @@ class PartyUseCase @Inject constructor(
         end: String?
     ): List<PartyResponse> = partyRepository.getPartyList(guildId, name, start, end)
 
+    suspend fun getParty(
+        partyId: Int
+    ): PartyResponse = partyRepository.getParty(partyId)
+
     suspend fun getMyPartyList(
         date: String?,
         includeEnd: Boolean,

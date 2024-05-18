@@ -95,7 +95,6 @@ fun HikingScreen(
     hikingViewModel: HikingViewModel = hiltViewModel(),
     mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
 
     val mountain by mountainViewModel.mountain.observeAsState()

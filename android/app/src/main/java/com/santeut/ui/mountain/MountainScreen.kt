@@ -81,7 +81,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -271,15 +270,13 @@ fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
                 color = Color(0xFFE5DD90),
                 shape = RoundedCornerShape(10.dp)
             )
-            .padding(8.dp) // Internal padding
+            .padding(8.dp)
     ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .background(
-                    color = Color(0xFFE5DD90)
-                )
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp), // Card 모양을 Box와 동일하게 설정
+            backgroundColor = Color.Transparent, // Card의 배경색을 투명하게 설정
+            elevation = 0.dp // 필요시 elevation 제거
         ) {
             Column {
                 Row(
@@ -356,7 +353,8 @@ fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
                             ) {
                                 append("${course.downTime ?: "?"}분")
                             }
-                        }
+                        },
+                        modifier = Modifier.padding(end = 20.dp),
                     )
                 }
             }
@@ -674,6 +672,7 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                                             .background(
                                                 color = Color(0xFFE5DD90),
                                             ),
+                                        elevation = 0.dp,
                                     ) {
                                         Box(
                                             modifier = Modifier
@@ -682,7 +681,9 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                                             contentAlignment = Alignment.Center
                                         ) {
                                             val iconName = hourlyWeather?.get(index)?.iconUrl
-                                            Column {
+                                            Column (
+                                                modifier = Modifier.background(color = Color.Transparent)
+                                            ){
                                                 Text(
                                                     text = "${hourlyWeather?.get(index)?.time}시",
                                                     color = Color(0xFF335C49),

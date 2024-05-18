@@ -105,7 +105,7 @@ fun CreateTipPostScreen(
                     postViewModel.createPost(
                         multipartImages,
                         CreatePostRequest(
-                            title, content, postType
+                            title, content, postType, 0
                         )
                     )
                     navController.navigate("postTips")
