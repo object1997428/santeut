@@ -1,7 +1,9 @@
 package com.santeut.ui.noti
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
@@ -10,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.EmojiSupportMatch
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -30,10 +34,22 @@ fun NotiScreen(commonViewModel: CommonViewModel = hiltViewModel()) {
 
     Scaffold {
         if (notiList.isNotEmpty()) {
-            LazyColumn {
+            LazyColumn (
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.Start
+            ){
                 items(notiList) { noti ->
                     NotiMessage(noti)
                 }
+            }
+        }else{
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "알림이 없습니다.")
             }
         }
     }
