@@ -9,7 +9,6 @@ public class PatchGuildInfoRequest {
     String guildName;
     String guildInfo;
     boolean guildIsPrivate;
-    Integer guildMember;
     Integer regionId;
     Character guildGender;
     Integer guildMinAge;

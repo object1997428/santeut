@@ -90,7 +90,6 @@ public class GuildEntity {
         guildEntity.guildName = request.getGuildName();
         guildEntity.guildInfo = request.getGuildInfo();
         guildEntity.guildIsPrivate = request.isGuildIsPrivate();
-        guildEntity.guildMember = request.getGuildMember();
         guildEntity.regionId = request.getRegionId();
         guildEntity.guildGender = request.getGuildGender();
         guildEntity.guildMinAge = request.getGuildMinAge();
