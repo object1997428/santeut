@@ -186,7 +186,7 @@ fun HikingCourse(
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 15.0)
+        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 12.0)
     }
     Column(
         modifier = Modifier.padding(20.dp) // 전체 Column에 패딩 적용

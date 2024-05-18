@@ -381,7 +381,7 @@ fun checkRouteDeviation(
         val minDistance = distanceOp.distance()
         val distanceInMeters = minDistance * 111319.9
 
-        val isDeviated = distanceInMeters > 20.0
+        val isDeviated = distanceInMeters > 10.0
         onDeviation(isDeviated)
 
         if (!isDeviated) {
