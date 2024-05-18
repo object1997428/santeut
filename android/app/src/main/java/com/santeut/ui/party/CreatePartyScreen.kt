@@ -140,7 +140,6 @@ fun CreatePartyScreen(
 
         Button(onClick = {
             partyViewModel.createParty(
-
                 CreatePartyRequest(
                     schedule,
                     partyName,

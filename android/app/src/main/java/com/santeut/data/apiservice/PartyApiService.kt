@@ -38,7 +38,7 @@ interface PartyApiService {
     @POST("/api/party/")
     suspend fun createParty(
         @Body createPartyRequest: CreatePartyRequest
-    ): CustomResponse<Unit>
+    ): CustomResponse<String>
 
     @DELETE("/api/party/{partyId}")
     suspend fun deleteParty(

@@ -58,11 +58,10 @@ class PartyRepositoryImpl @Inject constructor(
         }
     }
 
-
     override suspend fun createParty(createPartyRequest: CreatePartyRequest): Flow<Unit> = flow {
         val response = partyApiService.createParty(createPartyRequest)
         if (response.status == "201") {
-            emit(response.data)
+            emit(Unit)
         }
     }
 

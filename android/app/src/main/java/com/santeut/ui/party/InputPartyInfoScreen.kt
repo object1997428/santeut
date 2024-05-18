@@ -62,6 +62,12 @@ fun InputPartyInfoScreen(
         mountainViewModel.mountainDetail(mountainId)
     }
 
+    LaunchedEffect(partyCreationSuccess) {
+        if (partyCreationSuccess == true) {
+            navController.navigate("guild")
+        }
+    }
+
     val calendar = Calendar.getInstance()
     val datePickerDialog = DatePickerDialog(
         context,
@@ -163,9 +169,6 @@ fun InputPartyInfoScreen(
                     selectedCourseIds
                 )
             )
-            if (partyCreationSuccess == true) {
-                navController.navigate("guild")
-            }
         }) {
             Text("완료", fontSize = 18.sp)
         }
