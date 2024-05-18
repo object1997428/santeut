@@ -156,22 +156,21 @@ fun JoinPartyScreen(
                 setIsFiltered = { newValue -> isFiltered = newValue }
             )
         }, content = { paddingValues ->
-
             Column(
                 modifier = Modifier
-                    .padding(paddingValues)
                     .fillMaxSize()
+                    .padding(paddingValues)
             ) {
                 if (partyList.isEmpty()) {
                     Text(
-                        text = "소모임이 없습니다",
+                        text = "검색결과가 없습니다.",
                         modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
                     )
                 } else {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(alignment = Alignment.CenterHorizontally)
+                            .align(alignment = Alignment.CenterHorizontally),
                     ) {
                         items(partyList) { party ->
                             PartyCard(party, partyViewModel)

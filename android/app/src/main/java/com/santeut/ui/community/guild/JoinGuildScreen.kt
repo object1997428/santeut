@@ -127,8 +127,9 @@ fun JoinGuildScreen(
                 } else {
                     LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .align(alignment = Alignment.CenterHorizontally)
+                            .fillMaxSize()
+                            .align(alignment = Alignment.CenterHorizontally),
+                        horizontalAlignment = Alignment.Start
                     ) {
                         items(guildList) { guild ->
                             GuildCard(guild, guildViewModel, guildId, onClearData)
@@ -646,3 +647,4 @@ val region = listOf(
     "제주",
     "강원"
 )
+
