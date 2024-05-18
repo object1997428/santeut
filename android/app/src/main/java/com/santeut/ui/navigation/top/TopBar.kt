@@ -74,7 +74,7 @@ fun TopBar(
         "chatList" -> SimpleTopBar(navController, "채팅방")
         "noti" -> SimpleTopBar(navController, "알림")
         "mountain/{mountainId}" -> SimpleTopBar(navController, "산 정보")
-        "createGuild"-> SimpleTopBar(navController, "동호회 만들기")
+        "createGuild" -> SimpleTopBar(navController, "동호회 만들기")
         "createParty" -> SimpleTopBar(navController, "소모임 만들기")
         "chatRoom/{partyId}/{partyName}" -> {
             MenuTopBar(
@@ -241,14 +241,25 @@ fun MenuTopBar(
                 )
 
                 DropdownMenuItem(
-                    text = { Text(text = "소모임 나가기", color = Color.Red, style = MaterialTheme.typography.titleMedium) },
+                    text = {
+                        Text(
+                            text = "소모임 나가기",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                     onClick = { showDialog = true })
             }
 
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    text = { Text(text = "${pageName}에서 나가시겠습니까?", style = MaterialTheme.typography.titleMedium) },
+                    text = {
+                        Text(
+                            text = "${pageName}에서 나가시겠습니까?",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                     confirmButton = {
                         Button(
                             onClick = {
@@ -326,7 +337,7 @@ fun GuildTopBar(
         actions = {
 
             var showDialog by remember { mutableStateOf(false) }
-            var showLinkModal by remember { mutableStateOf(false)}
+            var showLinkModal by remember { mutableStateOf(false) }
 
             IconButton(onClick = {
                 showLinkModal = true
@@ -340,7 +351,8 @@ fun GuildTopBar(
                 Icon(
                     imageVector = Icons.Filled.MoreVert,
                     contentDescription = "추가 메뉴"
-                ) }
+                )
+            }
             if (showLinkModal) {
                 Dialog(
                     onDismissRequest = { showLinkModal = false },
@@ -348,18 +360,22 @@ fun GuildTopBar(
 
                     content = {
                         Column(
-                            Modifier.size(300.dp,120.dp)
+                            Modifier
+                                .size(300.dp, 120.dp)
                                 .background(Color.White, shape = RoundedCornerShape(20.dp))
-                                .padding(horizontal = 20.dp)
-                            ,
+                                .padding(horizontal = 20.dp),
                             verticalArrangement = Arrangement.Center, // 수직으로 중앙 정렬
                             horizontalAlignment = Alignment.CenterHorizontally // 수평으로 중앙 정렬
 
                         )
                         {
-                            Text(text = "${guild.guildName}의 공유 링크", fontWeight = FontWeight.Bold, color = Color.Black,
-                                modifier = Modifier.padding(bottom = 10.dp), style = MaterialTheme.typography.titleMedium
-                                )
+                            Text(
+                                text = "${guild.guildName}의 공유 링크",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                modifier = Modifier.padding(bottom = 10.dp),
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -368,11 +384,14 @@ fun GuildTopBar(
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .background(Color(0xffEFEFF0), shape = RoundedCornerShape(8.dp))
+                                        .background(
+                                            Color(0xffEFEFF0),
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
                                         .padding(horizontal = 8.dp, vertical = 8.dp)
                                 ) {
                                     Text(
-                                        text = "https://k10e201.p.ssafy.io/hi.html?param="+guild.guildId,
+                                        text = "https://k10e201.p.ssafy.io/hi.html?param=" + guild.guildId,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier
@@ -383,34 +402,21 @@ fun GuildTopBar(
                                 Icon(
                                     imageVector = Icons.Default.Link,
                                     contentDescription = "복사",
-                                    modifier = Modifier.size(35.dp)
+                                    modifier = Modifier
+                                        .size(35.dp)
                                         .padding(start = 8.dp)
                                         .clickable {
-                                            val clip = ClipData.newPlainText("길드 공유링크 클립보드에 복사", "https://k10e201.p.ssafy.io/hi.html?param=" + guild.guildId)
+                                            val clip = ClipData.newPlainText(
+                                                "길드 공유링크 클립보드에 복사",
+                                                "https://k10e201.p.ssafy.io/hi.html?param=" + guild.guildId
+                                            )
                                             clipboardManager.setPrimaryClip(clip)
-                                        }
-                                    ,  // 아이콘과 텍스트 사이에 간격 추가
+                                        },  // 아이콘과 텍스트 사이에 간격 추가
                                     tint = Color(0xff76797D)
                                 )
                             }
                         }
                     },
-
-//                    confirmButton = {
-//                        Button(
-//                            onClick = {
-//                                guildViewModel.quitGuild(guild.guildId)
-//                                showDialog = false
-//                            }
-//                        ) {
-//                            Text("탈퇴")
-//                        }
-//                    },
-//                    dismissButton = {
-//                        Button(onClick = { showDialog = false }) {
-//                            Text("취소")
-//                        }
-//                    },
                 )
             }
 
@@ -420,26 +426,56 @@ fun GuildTopBar(
                 onDismissRequest = { showMenu = false }
             ) {
                 DropdownMenuItem(
-                    text = { Text(text = "회원 목록 보기", style = MaterialTheme.typography.titleMedium) },
+                    text = {
+                        Text(
+                            text = "회원 목록 보기",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                     onClick = { navController.navigate("guildMemberList/${guild.guildId}") })
-                DropdownMenuItem(text = { Text(text = "소모임 만들기", style = MaterialTheme.typography.titleMedium) }, onClick = { /*TODO*/ })
+                DropdownMenuItem(text = {
+                    Text(
+                        text = "소모임 만들기",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }, onClick = {
+                    navController.navigate("createParty/${guild.guildId}")
+                })
 
                 if (guild.isPresident) {
                     DropdownMenuItem(
-                        text = { Text(text = "가입 요청 보기", style = MaterialTheme.typography.titleMedium) },
+                        text = {
+                            Text(
+                                text = "가입 요청 보기",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        },
                         onClick = { navController.navigate("guildApplyList/${guild.guildId}") })
-                    DropdownMenuItem(text = { Text(text = "동호회 정보 수정") }, onClick = { /*TODO*/ })
+                    DropdownMenuItem(text = { Text(text = "동호회 관리") }, onClick = {
+                        navController.navigate("updateGuild/${guild.guildId}")
+                    })
                 }
 
                 DropdownMenuItem(
-                    text = { Text(text = "동호회 탈퇴하기", color = Color.Red, style = MaterialTheme.typography.titleMedium) },
+                    text = {
+                        Text(
+                            text = "동호회 탈퇴하기",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                     onClick = { showDialog = true })
             }
 
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    text = { Text(text = "${guild.guildName}을 탈퇴할까요?", style = MaterialTheme.typography.titleMedium) },
+                    text = {
+                        Text(
+                            text = "${guild.guildName}을 탈퇴할까요?",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                     confirmButton = {
                         Button(
                             onClick = {

@@ -1,13 +1,9 @@
 package com.santeut.ui.guild
 
-import android.content.Context
 import android.net.Uri
-import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,12 +24,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -44,40 +40,47 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.designsystem.theme.Green
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
-
 
 @Composable
-fun CreateGuildScreen(
+fun UpdateGuildScreen(
     navController: NavController,
+    guildId: Int,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
+    val guild by guildViewModel.guild.observeAsState()
+
+    LaunchedEffect(key1 = guildId) {
+        guildViewModel.getGuild(guildId)
+    }
+
+    val regions = listOf(
+        "전체", "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기",
+        "충북", "충남", "전북", "전남", "경북", "경남", "제주", "강원", "기타"
+    )
+
+    var isDataLoaded by remember { mutableStateOf(false) }
     var guildName by remember { mutableStateOf("") }
     var guildInfo by remember { mutableStateOf("") }
     var guildIsPrivate by remember { mutableStateOf(false) }
     var guildGender by remember { mutableStateOf('A') }
     var regionId by remember { mutableIntStateOf(0) }
-    var selectedRegion by remember { mutableStateOf("전체") }
+    var selectedRegion by remember { mutableStateOf("") }
     var guildMinAge by remember { mutableStateOf("") }
     var guildMaxAge by remember { mutableStateOf("") }
     var isDropdownExpanded by remember { mutableStateOf(false) }
-
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri: Uri? ->
@@ -87,12 +90,22 @@ fun CreateGuildScreen(
         }
     )
 
-    val regions = listOf(
-        "전체", "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종", "경기",
-        "충북", "충남", "전북", "전남", "경북", "경남", "제주", "강원", "기타"
-    )
     val context = LocalContext.current
     val multipartImage = createMultiPartBody(imageUri, context)
+
+    LaunchedEffect(key1 = guild) {
+        if (guild != null && !isDataLoaded) {
+            guildName = guild!!.guildName
+            guildInfo = guild!!.guildInfo
+            guildIsPrivate = guild!!.guildIsPrivate
+            guildGender = guild!!.guildGender
+            regionId = guild!!.regionId
+            selectedRegion = regions[guild!!.regionId]
+            guildMinAge = guild!!.guildMinAge.toString()
+            guildMaxAge = guild!!.guildMaxAge.toString()
+            isDataLoaded = true
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -105,11 +118,11 @@ fun CreateGuildScreen(
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // 사진 선택
             if (imageUri != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = imageUri),
+                AsyncImage(
+                    model = imageUri,
                     contentDescription = "동호회 사진",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -121,9 +134,8 @@ fun CreateGuildScreen(
                         }
                 )
             } else {
-                val image: Painter = painterResource(id = R.drawable.logo)
-                Image(
-                    painter = image,
+                AsyncImage(
+                    model = guild?.guildProfile ?: R.drawable.logo,
                     contentDescription = "동호회 사진",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -141,11 +153,10 @@ fun CreateGuildScreen(
                 text = "이미지 삭제",
                 fontSize = 12.sp,
                 color = Color.Gray
+                // onclick 추가
             )
-            // 사진 선택 끝
-
-            // 동호회 이름, 설명 입력
             Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = guildName,
                 onValueChange = { guildName = it },
@@ -163,29 +174,24 @@ fun CreateGuildScreen(
                 placeholder = { Text("설명을 입력해주세요") },
                 modifier = Modifier.fillMaxWidth()
             )
-            // 동호회 이름, 설명 입력 끝
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 동호회 공개 여부
             Text(
                 text = "공개여부",
                 modifier = Modifier.align(Alignment.Start)
             )
-//            Spacer(modifier = Modifier.height(4.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     RadioButton(
                         selected = guildIsPrivate == false,
-                        onClick = {
-                            guildIsPrivate = false
-                        },
+                        onClick = { guildIsPrivate = false },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = Green,
                             unselectedColor = Color.LightGray,
@@ -196,9 +202,7 @@ fun CreateGuildScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     RadioButton(
                         selected = guildIsPrivate == true,
-                        onClick = {
-                            guildIsPrivate = true
-                        },
+                        onClick = { guildIsPrivate = true },
                         colors = RadioButtonDefaults.colors(
                             selectedColor = Green,
                             unselectedColor = Color.LightGray,
@@ -207,16 +211,14 @@ fun CreateGuildScreen(
                     Text("비공개")
                 }
             }
-            // 공개여부 끝
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 성별
             Text(
                 text = "성별",
                 modifier = Modifier.align(Alignment.Start)
             )
-//            Spacer(modifier = Modifier.height(4.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -255,11 +257,9 @@ fun CreateGuildScreen(
                     Text("여자")
                 }
             }
-            // 성별 끝
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 지역
             Text(
                 text = "지역",
                 modifier = Modifier.align(Alignment.Start)
@@ -299,11 +299,9 @@ fun CreateGuildScreen(
                     }
                 }
             }
-            // 지역 끝
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 연령
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -335,23 +333,20 @@ fun CreateGuildScreen(
                     modifier = Modifier.weight(1f)
                 )
             }
-            // 연령 끝
-
         }
 
-        // 완료 버튼
         val isInputValid = guildName.isNotEmpty() &&
                 guildInfo.isNotEmpty()
 
         Button(
             onClick = {
-                guildViewModel.createGuild(
-                    multipartImage, CreateGuildRequest(
+                guildViewModel.updateGuild(
+                    guildId, multipartImage, CreateGuildRequest(
                         guildName,
                         guildInfo,
                         guildIsPrivate,
                         regionId,
-                        guildGender,
+                        guildGender,  // 성별 정보가 올바르게 전달되는지 확인
                         guildMinAge.toIntOrNull() ?: 0,
                         guildMaxAge.toIntOrNull() ?: 100
                     )
@@ -376,33 +371,6 @@ fun CreateGuildScreen(
                     color = Color.Black
                 )
             }
-
         }
     }
-}
-
-fun createMultiPartBody(uri: Uri?, context: Context): MultipartBody.Part? {
-    var guildProfile: MultipartBody.Part? = null
-    if (uri != null) {
-        try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
-                val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: ""
-                val fileName = uri.lastPathSegment?.let {
-                    if (extension.isNotEmpty()) {
-                        "$it.$extension"
-                    } else {
-                        it
-                    }
-                } ?: "upload.file"
-                val byteArray = inputStream.readBytes()
-                val requestBody = byteArray.toRequestBody(mimeType.toMediaTypeOrNull())
-                guildProfile =
-                    MultipartBody.Part.createFormData("guildProfile", fileName, requestBody)
-            }
-        } catch (e: Exception) {
-            Log.e("MultiPart", "Error processing file Uri: $uri", e)
-        }
-    }
-    return guildProfile
 }
