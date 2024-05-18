@@ -4,13 +4,10 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
-import android.widget.Space
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,32 +15,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,29 +42,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.naver.maps.map.compose.Align
 import com.santeut.R
 import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.designsystem.theme.Green
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun CreateGuildScreen(
     guildViewModel: GuildViewModel = hiltViewModel()
@@ -85,8 +69,8 @@ fun CreateGuildScreen(
     var guildGender by remember { mutableStateOf('A') }
     var regionId by remember { mutableIntStateOf(0) }
     var selectedRegion by remember { mutableStateOf("전체") }
-    var guildMinAge by remember { mutableStateOf("0") }
-    var guildMaxAge by remember { mutableStateOf("100") }
+    var guildMinAge by remember { mutableStateOf("") }
+    var guildMaxAge by remember { mutableStateOf("") }
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
 
@@ -312,6 +296,7 @@ fun CreateGuildScreen(
                     value = guildMinAge,
                     onValueChange = { guildMinAge = it },
                     label = { Text("최소 연령") },
+                    placeholder = { Text(text = "10") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                         autoCorrect = true
@@ -325,6 +310,7 @@ fun CreateGuildScreen(
                     value = guildMaxAge,
                     onValueChange = { guildMaxAge = it },
                     label = { Text("최대 연령") },
+                    placeholder = { Text(text = "100") },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                         autoCorrect = true
@@ -362,7 +348,7 @@ fun CreateGuildScreen(
             ),
             enabled = isInputValid,
         ) {
-            if(isInputValid) {
+            if (isInputValid) {
                 Text(
                     text = "완료",
                     color = Color.White
@@ -376,17 +362,6 @@ fun CreateGuildScreen(
         }
     }
 
-}
-
-private fun getFileNameWithExtension(context: Context, uri: Uri): String {
-    val mimeType = context.contentResolver.getType(uri) ?: "application/octet-stream"
-    val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: ""
-    val fileName = uri.lastPathSegment ?: "upload"
-    return if (extension.isNotEmpty()) {
-        "$fileName.$extension"
-    } else {
-        fileName
-    }
 }
 
 private fun createMultiPartBody(uri: Uri?, context: Context): MultipartBody.Part? {

@@ -73,8 +73,8 @@ import com.santeut.ui.guild.regionName
 @Composable
 fun JoinGuildScreen(
     guildViewModel: GuildViewModel = hiltViewModel(),
-    guildId:Int,
-    onClearData:()->Unit
+    guildId: Int,
+    onClearData: () -> Unit
 ) {
     val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
 
@@ -193,8 +193,7 @@ fun JoinGuildScreen(
                         onClick = {
                             if (searchFilterRegion == "") {
                                 Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT).show()
-                            }
-                            else if (searchFilterGender == "") {
+                            } else if (searchFilterGender == "") {
                                 Toast.makeText(context, "성별을 선택해주세요", Toast.LENGTH_SHORT).show()
                             } else {
                                 guildViewModel.searchGuilds(searchFilterRegion, searchFilterGender)
@@ -219,7 +218,12 @@ fun JoinGuildScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int, onClearData: ()->Unit) {
+fun GuildCard(
+    guild: GuildResponse,
+    guildViewModel: GuildViewModel,
+    guildId: Int,
+    onClearData: () -> Unit
+) {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -316,7 +320,7 @@ fun GuildCard(guild: GuildResponse, guildViewModel: GuildViewModel, guildId:Int,
                 ModalBottomSheet(
                     onDismissRequest = {
                         showBottomSheet = false
-                        if(guildId != 0 && onClearData != {})
+                        if (guildId != 0 && onClearData != {})
                             onClearData()
                     },
                     sheetState = sheetState
@@ -346,7 +350,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
     ) {
 
         AsyncImage(
-            model = guild.guildProfile?: R.drawable.logo,
+            model = guild.guildProfile ?: R.drawable.logo,
             contentDescription = "동호회 사진",
             modifier = Modifier
                 .fillMaxWidth()
@@ -413,18 +417,18 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
         ) {
             if (guild.joinStatus === 'N') {
                 Text(
-                    text = "가입 요청하기",
+                    text = "가입 신청 하기",
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
             } else if (guild.joinStatus == 'R') {
                 Text(
-                    text = "가입 요청 완료",
+                    text = "가입 신청 완료",
                     fontWeight = FontWeight.SemiBold
                 )
             } else {
                 Text(
-                    text = "이미 가입한 동호회입니다",
+                    text = "이미 가입한 동호회",
                     fontWeight = FontWeight.SemiBold
                 )
             }

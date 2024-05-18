@@ -49,25 +49,10 @@ class GuildRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun searchGuilds(regionName: String, gender: String): List<GuildResponse> {
-        return try {
-            val response = guildApiService.searchGuilds(regionName, gender)
-            if (response.status == "200") {
-                response.data.searchList
-            } else {
-                throw Exception("검색 동호회 조회 성공: ${response.status} ${response.data}")
-            }
-        } catch (e: Exception) {
-            Log.e("GuildRepository", "Network error: ${e.message}", e)
-            emptyList()
-        }
-    }
-
     override suspend fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
     ): Flow<Unit> = flow {
-        Log.d("", "레포짇토리 ")
         val response =
             guildApiService.createGuild(guildProfile, createGuildPart(createGuildRequest))
         Log.d("response status", response?.status ?: "Response is null")
