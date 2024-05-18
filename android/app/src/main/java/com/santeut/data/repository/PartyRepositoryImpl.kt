@@ -8,6 +8,7 @@ import com.santeut.data.model.response.ChatMessage
 import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
+import com.santeut.data.model.response.PartyCourseResponse
 import com.santeut.data.model.response.PartyResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -124,13 +125,13 @@ class PartyRepositoryImpl @Inject constructor(
                 response.data.chatRoomList ?: emptyList()
             } else {
                 Log.e(
-                    "ChatRepository",
+                    "PartyRepository",
                     "채팅방 목록 조회 실패: ${response.status} - ${response.data}"
                 )
                 emptyList()
             }
         } catch (e: Exception) {
-            Log.e("ChatRepository", "Network error while fetching get: ${e.message}", e)
+            Log.e("PartyRepository", "Network error while fetching get: ${e.message}", e)
             throw e
         }
 
@@ -143,13 +144,27 @@ class PartyRepositoryImpl @Inject constructor(
                 response.data.chatMessageList.toMutableList() ?: mutableListOf()
             } else {
                 Log.e(
-                    "ChatRepository",
+                    "PartyRepository",
                     "채팅방 대화내용 조회 실패: ${response.status} - ${response.data}"
                 )
                 mutableListOf()
             }
         } catch (e: Exception) {
-            Log.e("ChatRepository", "Network error while fetching get: ${e.message}", e)
+            Log.e("PartyRepository", "Network error while fetching get: ${e.message}", e)
+            throw e
+        }
+    }
+
+    override suspend fun getSelectedCourseOfParty(partyId: Int): PartyCourseResponse {
+        return try {
+            val response = partyApiService.getSelectedCourseOfParty(partyId)
+            if (response.status == "200") {
+                response.data
+            } else {
+                throw Exception("소모임에서 선택한 등산로 정보 조회 실패: ${response.status} - ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("PartyRepository", "Network error while fetching get: ${e.message}", e)
             throw e
         }
     }

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalNaverMapApi::class)
+
 package com.santeut.ui.community.party
 
 import android.app.DatePickerDialog
@@ -6,9 +8,11 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,9 +61,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.NaverMap
+import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapProperties
+import com.naver.maps.map.compose.MapType
+import com.naver.maps.map.compose.PathOverlay
+import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
@@ -178,7 +192,8 @@ fun JoinPartyScreen(
                             .fillMaxWidth()
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(8.dp, 0.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -293,6 +308,26 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
+    val coords by partyViewModel.selectedCourseOfParty.observeAsState(emptyList())
+    val distanceInKm by partyViewModel.distanceInKm.observeAsState(0.0)
+    val initialPosition = if (coords.isNotEmpty()) coords[0] else LatLng(35.116824651798, 128.99110450587247)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition(initialPosition, 15.0)
+    }
+
+
+    LaunchedEffect(showBottomSheet) {
+        if (showBottomSheet) {
+            partyViewModel.getSelectedCourseInfoOfParty(party.partyId)
+        }
+    }
+
+    LaunchedEffect(coords) {
+        if (coords.isNotEmpty()) {
+            cameraPositionState.position = CameraPosition(coords[0], 15.0)
+        }
+    }
+
     Card (
         modifier = Modifier
             .clickable(onClick = { showBottomSheet = true })
@@ -373,14 +408,58 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
         }
     }
 
+
+
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = sheetState
         ) {
-            Surface(modifier = Modifier.padding(16.dp)) {
-                Column {
-                    // 동호회 상세 정보
+
+            Box(modifier = Modifier
+                .padding(16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // 소모임 상세 정보
+                    if(coords.size==0) {
+                        Text(text = "선택한 등산로가 없습니다",
+                            modifier = Modifier
+                                .fillMaxWidth(),
+//                                .fillMaxHeight(.3f),
+                            textAlign = TextAlign.Center)
+                        Spacer(Modifier.height(16.dp))
+                    } else {
+                        NaverMap(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(.3f)
+                                .padding(vertical = 8.dp),
+                            cameraPositionState = cameraPositionState,
+                            properties = MapProperties(
+//                            locationTrackingMode = LocationTrackingMode.Follow,
+                                mapType = MapType.Terrain,
+                                isMountainLayerGroupEnabled = true
+                            )
+                        ) {
+                            if(coords.size >= 2) {
+                                PathOverlay(
+                                    coords = coords,
+                                    width = 3.dp,
+                                    color = Color.Green,
+                                    outlineWidth = 1.dp,
+                                    outlineColor = Color.Red,
+                                )
+                            }
+                        }
+                        Text(text="총 ${distanceInKm}km")
+
+                    }
+                    Spacer(Modifier.height(4.dp))
+
+                    // 가입 버튼
                     Button(
                         onClick = {
                             showBottomSheet = false
