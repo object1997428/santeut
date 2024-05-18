@@ -16,6 +16,7 @@ import com.santeut.mountain.entity.MountainEntity;
 import com.santeut.mountain.repository.CourseRepository;
 import com.santeut.mountain.repository.MountainRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -58,19 +59,39 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public PartyCourseResponse findCourseCoordsByCourseId(PartyTrackDataReginRequest request) {
-    List<LocationData> coords = new ArrayList<>();
+    List<LocationData> allCoords = new ArrayList<>();
     double totalDistance = 0L;
 
     log.info("[mountain] 등산로 좌표 모음 조회");
     for(int courseId : request.getCourseIdList()) {
       CourseEntity course = courseRepository.findById(courseId)
-              .orElseThrow(() -> new NotFoundException("해당 등산로는 존재하지 않습니다"));
+          .orElseThrow(() -> new NotFoundException("해당 등산로는 존재하지 않습니다"));
       log.info(course.getCourseId()+"번 등산로");
       totalDistance += course.getDistance();
-      coords.addAll(GeometryUtils.convertGeometryToListLocationData(course.getCoursePoints()));
+
+      List<LocationData> coordList = GeometryUtils.convertGeometryToListLocationData(course.getCoursePoints());
+      if(!allCoords.isEmpty()) {
+        LocationData lastCoord = allCoords.get(allCoords.size()-1);
+        LocationData startPointOfCourse = coordList.get(0);
+        LocationData endPointOfCourse = coordList.get(coordList.size() - 1);
+
+        double distanceBetweenStartPoint = GeometryUtils.getDistance(lastCoord.lat, lastCoord.lng, startPointOfCourse.lat, startPointOfCourse.lng, "meter");
+        double distanceBetweenEndPoint = GeometryUtils.getDistance(lastCoord.lat, lastCoord.lng, endPointOfCourse.lat, endPointOfCourse.lng, "meter");
+
+        if(distanceBetweenStartPoint<=distanceBetweenEndPoint) {
+          // lastCoord와 startPointOfCourse가 더 가까우면 coordList 0번 인덱스부터 coords에 추가
+          allCoords.addAll(coordList);
+        } else {
+          // lastCoord와 endPointOfCourse가 더 가까우면 coordList 마지막 인덱스부터 coords에 추가
+          Collections.reverse(coordList);
+          allCoords.addAll(coordList);
+        }
+      } else {
+        allCoords.addAll(coordList);
+      }
     }
-    log.info("등산로 개수: "+coords.size());
-    return new PartyCourseResponse(totalDistance, coords);
+    log.info("등산로 개수: "+allCoords.size());
+    return new PartyCourseResponse(totalDistance, allCoords);
   }
 
   private static List<Coord> convertGeometryToCoordinateList(Geometry geometry) {
