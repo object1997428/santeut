@@ -119,14 +119,14 @@ fun MyGuildScreen(
             ) {
                 Surface(modifier = Modifier.padding(16.dp)) {
                     Column {
-                        Row(modifier = Modifier.clickable {
+                        TextButton(onClick = {
                             // 동호회 생성 로직
                             navController.navigate("createGuild")
                             coroutineScope.launch { sheetState.hide() }
                         }) {
                             Text("동호회 만들기", style = MaterialTheme.typography.titleMedium)
                         }
-                        Row(modifier = Modifier.clickable {
+                        TextButton(onClick = {
                             // 소모임 생성 로직
                             navController.navigate("createParty")
                             coroutineScope.launch { sheetState.hide() }

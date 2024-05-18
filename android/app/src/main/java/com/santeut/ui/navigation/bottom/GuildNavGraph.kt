@@ -32,7 +32,7 @@ fun NavGraphBuilder.GuildNavGraph(
         }
 
         composable("createGuild") {
-            CreateGuildScreen()
+            CreateGuildScreen(navController)
         }
 
         // 동호회 상세 페이지

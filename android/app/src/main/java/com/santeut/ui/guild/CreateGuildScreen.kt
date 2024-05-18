@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -35,6 +36,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +53,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.santeut.R
 import com.santeut.data.model.request.CreateGuildRequest
 import com.santeut.designsystem.theme.Green
@@ -61,6 +64,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 @Composable
 fun CreateGuildScreen(
+    navController: NavController,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     var guildName by remember { mutableStateOf("") }
@@ -72,7 +76,6 @@ fun CreateGuildScreen(
     var guildMinAge by remember { mutableStateOf("") }
     var guildMaxAge by remember { mutableStateOf("") }
     var isDropdownExpanded by remember { mutableStateOf(false) }
-
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -328,7 +331,6 @@ fun CreateGuildScreen(
 
         Button(
             onClick = {
-                // Toast.makeText(context, "동호회를 생성했습니다!", Toast.LENGTH_SHORT).show()
                 guildViewModel.createGuild(
                     multipartImage, CreateGuildRequest(
                         guildName,
@@ -340,6 +342,7 @@ fun CreateGuildScreen(
                         guildMaxAge.toIntOrNull() ?: 100
                     )
                 )
+                navController.navigate("guild")
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -359,7 +362,10 @@ fun CreateGuildScreen(
                     color = Color.Black
                 )
             }
+
         }
+
+
     }
 
 }
