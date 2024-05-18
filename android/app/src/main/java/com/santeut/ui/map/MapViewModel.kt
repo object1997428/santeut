@@ -102,6 +102,7 @@ class MapViewModel @Inject constructor(
 
         // 웹소켓 접속
         val webSocketUrl = "wss://k10e201.p.ssafy.io/api/hiking/chat/rooms/${_partyId.value}"
+        Log.d("웹소켓 접속", "파티 아이디 : " + _partyId.value.toString())
 
         val request = Request.Builder()
             .header(
@@ -113,7 +114,6 @@ class MapViewModel @Inject constructor(
 
         val listener = object : WebSocketListener() {
             override fun onMessage(webSocket: WebSocket, text: String) {
-                Log.d("WebSocket", "Received message: $text")
                 try {
                     val message = Gson().fromJson(text, WebSocketMessageResponse::class.java)
 //                    updateLocation(
@@ -128,6 +128,9 @@ class MapViewModel @Inject constructor(
                     }
                     else if (message.type == "offCourse") {
                         Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
+                    }
+                    else if(message.type == "healthLisk"){
+                        Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
                     }
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
@@ -225,8 +228,8 @@ class MapViewModel @Inject constructor(
     }
 
     private fun sendLocationUpdate(location: LatLng) {
-        Log.d("sendLocationUpdate", "위치 업데이트 전송")
         webSocket?.let { socket ->
+            Log.d("sendLocationUpdate", "위치 업데이트 전송")
             val message = Gson().toJson(mapOf(
                 "type" to "locationShare",
                 "lat" to location.latitude,

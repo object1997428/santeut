@@ -35,6 +35,9 @@ class MainActivity : ComponentActivity() {
     private var isCameraPermissionGranted = false
     private var isForegroundServiceGranted = false
     private var isPostNotificationsPermissionGranted = false
+    private var isAccessFineLocationGranted = false
+    private var isAccessCoarseLocationGranted = false
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ){
@@ -90,6 +93,9 @@ class MainActivity : ComponentActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 isPostNotificationsPermissionGranted = permissions[android.Manifest.permission.POST_NOTIFICATIONS] ?: isPostNotificationsPermissionGranted
             }
+            isForegroundServiceGranted = permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
+            isAccessFineLocationGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] ?: isAccessFineLocationGranted
+            isAccessCoarseLocationGranted = permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] ?: isAccessCoarseLocationGranted
         }
 
         requestPermission()
@@ -117,6 +123,26 @@ class MainActivity : ComponentActivity() {
 
     private fun requestPermission() {
         val permissionRequest : MutableList<String> = ArrayList()
+
+        isAccessFineLocationGranted = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if(!isAccessFineLocationGranted){
+            permissionRequest.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            Log.d("Permission Check", "Need ACCESS_FINE_LOCATION")
+        }
+
+        isAccessCoarseLocationGranted = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if(!isAccessCoarseLocationGranted){
+            permissionRequest.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+            Log.d("Permission Check", "Need ACCESS_COARSE_LOCATION")
+        }
 
         isCameraPermissionGranted = ContextCompat.checkSelfPermission(
             this,
@@ -150,6 +176,8 @@ class MainActivity : ComponentActivity() {
                 Log.d("Permission Check", "Need Post Notifications Permission")
             }
         }
+
+
 
         if(permissionRequest.isNotEmpty()){
             permissionLauncher.launch(permissionRequest.toTypedArray())
