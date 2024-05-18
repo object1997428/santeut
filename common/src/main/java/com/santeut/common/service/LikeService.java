@@ -70,7 +70,7 @@ public class LikeService {
                 .userId(postUserId)
                 .referenceId(likeEntity.getLikeReferenceId())
                 .referenceType(likeEntity.getLikeReferenceType() + "L")
-                .alarmTitle("👍 좋아요 알림")
+                .alarmTitle("좋아요 알림")
                 .alarmContent(commentUserNickname+"님이 좋아요를 누르셨습니다.")
                 .build();
 

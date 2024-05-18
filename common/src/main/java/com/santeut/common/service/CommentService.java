@@ -58,7 +58,7 @@ public class CommentService {
                     .userId(postUserId)
                     .referenceId(comment.getCommentReferenceId())
                     .referenceType(comment.getCommentReferenceType() + "C")
-                    .alarmTitle("✉ 댓글 알림")
+                    .alarmTitle("댓글 알림")
                     .alarmContent(commentUserNickname+"님이 댓글을 남기셨습니다.")
                     .build();
 
