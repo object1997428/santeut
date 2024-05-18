@@ -43,7 +43,7 @@ fun CreatePostScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(12.dp, 70.dp, 12.dp, 0.dp)  // 탑바에 의해 제목이 가려지는 것을 방지
+                .padding(top = 70.dp)  // 탑바에 의해 제목이 가려지는 것을 방지
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
