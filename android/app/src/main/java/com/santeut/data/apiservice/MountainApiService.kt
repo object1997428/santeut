@@ -1,11 +1,10 @@
 package com.santeut.data.apiservice
 
 import com.santeut.data.model.CustomResponse
-import com.santeut.data.model.response.AllcourseResponse
+import com.santeut.data.model.response.AllCourseResponse
 import com.santeut.data.model.response.HikingCourseListResponse
 import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MountainListResponse
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -34,5 +33,5 @@ interface MountainApiService {
     @GET("/api/mountain/v2/{mountainId}/all-course")
     suspend fun getAllCourses(
         @Path("mountainId") mountainId: Int
-    ): CustomResponse<AllcourseResponse>
+    ): CustomResponse<AllCourseResponse>
 }

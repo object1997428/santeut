@@ -17,7 +17,7 @@ data class NotificationListResponse(
 data class NotificationResponse(
     @SerializedName("alarmTitle") val alarmTitle: String,
     @SerializedName("alarmContent") val alarmContent: String,
-    @SerializedName("referenceType") val referenceType: Char,
+    @SerializedName("referenceType") val referenceType: String,
     @SerializedName("referenceId") val referenceId: Int,
     @SerializedName("createdAt") val createdAt: LocalDateTime
 )

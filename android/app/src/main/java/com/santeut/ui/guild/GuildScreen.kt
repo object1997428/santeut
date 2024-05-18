@@ -1,8 +1,14 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.util.Log
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
@@ -14,6 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -23,6 +32,8 @@ import com.google.accompanist.pager.rememberPagerState
 import com.santeut.ui.community.party.JoinPartyScreen
 import com.santeut.ui.navigation.top.GuildTopBar
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -42,20 +53,34 @@ fun GuildScreen(
         guildViewModel.getGuild(guildId)
     }
 
-    Scaffold() {
+    Scaffold {
         Column(modifier = Modifier.fillMaxWidth()) {
             guild?.let { it1 -> GuildTopBar(navController, it1) }
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
+                backgroundColor = Color.White,
+                divider = {},
                 indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-                    )
+//                    TabRowDefaults.Indicator(
+//                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+//                    )
+                    Canvas(modifier = Modifier
+                        .pagerTabIndicatorOffset(pagerState, tabPositions)
+                        .fillMaxWidth()
+                        .height(2.dp)) {
+                        drawRoundRect(
+                            color = Color(0xff678C40),
+                            cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx())
+                        )
+                    }
                 }
             ) {
                 pages.forEachIndexed { index, title ->
                     Tab(
-                        text = { Text(text = title) },
+                        text = { Text(text = title,
+                            color = if (pagerState.currentPage == index)  Color(0xff678C40) else Color(0xff666E7A),
+                            )
+                               },
                         selected = pagerState.currentPage == index,
                         onClick = {
                             coroutineScope.launch {
@@ -72,6 +97,7 @@ fun GuildScreen(
             ) { page ->
                 when (page) {
                     0 -> GuildInfoScreen(guild)
+//                    0 -> CameraUI ()
                     1 -> GuildCommunityScreen(guildId, navController)
                     2 -> JoinPartyScreen(guildId)
                     3 -> GuildRankingScreen()
@@ -80,4 +106,6 @@ fun GuildScreen(
             }
         }
     }
+
 }
+

@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.santeut"
-        minSdk = 30
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -64,6 +64,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.database.ktx)
+
+//    implementation(libs.androidx.material3.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -109,6 +113,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
     implementation("com.google.accompanist:accompanist-pager:0.20.1")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.20.1")
+    implementation("com.google.accompanist:accompanist-flowlayout:0.26.3-beta")
 
     // icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
@@ -118,6 +123,16 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Camera
+    implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
+    implementation("androidx.camera:camera-lifecycle:1.4.0-alpha02")
+    implementation("androidx.camera:camera-view:1.4.0-alpha02")
+    implementation("io.github.ujizin:camposer:0.4.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.3.1")
+
+    // Translate
+    implementation("com.deepl.api:deepl-java:1.5.0")
 
     // Accompanist Pager
     implementation ("com.google.accompanist:accompanist-pager:<version>")
@@ -130,7 +145,10 @@ dependencies {
     implementation ("io.github.fornewid:naver-map-location:21.0.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
+    implementation ("org.locationtech.jts:jts-core:1.18.2")
+
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
 
 }

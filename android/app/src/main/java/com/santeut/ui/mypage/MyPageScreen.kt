@@ -33,7 +33,7 @@ fun MyPageScreen(
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold() {
+    Scaffold {
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,

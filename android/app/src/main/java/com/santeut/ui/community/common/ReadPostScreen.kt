@@ -1,10 +1,12 @@
 package com.santeut.ui.community.common
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -113,3 +115,45 @@ fun ContentSection(post: PostResponse?) {
     }
 }
 
+@Composable
+fun CommentSection(
+    postId: Int,
+    postType: Char,
+    comment: String,
+    onCommentChange: (String) -> Unit,
+    onSend: () -> Unit,
+    commonViewModel: CommonViewModel,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+//        CommentScreen(postId, postType, commonViewModel)
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
+        fun onSend() {
+            commonViewModel.createComment(postId, postType, comment)
+        }
+        TextField(
+            value = comment,
+            onValueChange = onCommentChange,
+            placeholder = { Text("내용") },
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.Transparent),
+//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { onSend() })
+        )
+        IconButton(onClick = { onSend() }) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.Send,
+                contentDescription = "Send"
+            )
+        }
+    }
+}

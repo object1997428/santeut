@@ -64,7 +64,7 @@ fun SanteutTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = customTypography,
         content = content
     )
 }
