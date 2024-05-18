@@ -140,7 +140,7 @@ fun JoinPartyScreen(
     var isFiltered by remember {mutableStateOf(false)}
 
     LaunchedEffect(key1 = null) {
-        partyViewModel.getPartyList(guildId = null, name = null, start = null, end = null)
+        partyViewModel.getPartyList(guildId = guildId, name = null, start = null, end = null)
     }
 
     Scaffold(

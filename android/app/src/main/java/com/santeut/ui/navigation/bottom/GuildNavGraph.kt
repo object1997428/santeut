@@ -113,6 +113,11 @@ fun NavGraphBuilder.GuildNavGraph(
         }
 
         // 소모임 생성 시 산 선택하기
+        composable("createParty") {
+            SelectedMountain(null, navController)
+        }
+
+        // 소모임 생성 시 산 선택하기
         composable(
             route = "createParty/{guildId}",
             arguments = listOf(navArgument("guildId") { type = NavType.IntType })
