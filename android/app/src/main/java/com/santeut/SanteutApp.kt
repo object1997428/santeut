@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.santeut.ui.map.MapViewModel
 import com.santeut.ui.navigation.SanteutNavGraph
 import com.santeut.ui.navigation.bottom.BottomNavBar
 import com.santeut.ui.navigation.top.TopBar
@@ -24,6 +23,7 @@ fun SanteutApp(
     onClearData:()->Unit
 ) {
     val navController = rememberNavController()
+    val mapViewModel = hiltViewModel<MapViewModel>()
 
     Scaffold(
         modifier = Modifier
@@ -50,6 +50,7 @@ fun SanteutApp(
                 SanteutNavGraph(
                     navController = navController,
                     wearableViewModel = wearableViewModel,
+                    mapViewModel = mapViewModel,
                     guildId = guildId,
                     onClearData = onClearData
                 )

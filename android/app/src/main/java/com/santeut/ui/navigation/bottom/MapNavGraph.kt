@@ -9,19 +9,26 @@ import androidx.navigation.navigation
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.santeut.ui.map.HikingScreen
 import com.santeut.ui.map.MapScreen
-
+import com.santeut.ui.map.MapViewModel
+import com.santeut.ui.wearable.WearableViewModel
 
 @ExperimentalNaverMapApi
 fun NavGraphBuilder.MapNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    mapViewModel: MapViewModel,
+    wearableViewModel: WearableViewModel
 ) {
     navigation(
         startDestination = "map",
         route = "map_graph"
     ) {
-
-        composable(route = "map") {
-            MapScreen()
+        composable(
+            route = "map"
+        ) {
+            MapScreen(
+                mapViewModel = mapViewModel,
+                wearableViewModel= wearableViewModel
+            )
         }
         composable(
             route = "hiking/{partyId}",

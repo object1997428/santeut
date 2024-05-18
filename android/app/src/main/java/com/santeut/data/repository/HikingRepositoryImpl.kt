@@ -28,10 +28,9 @@ class HikingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun endHiking(endHikingRequest: EndHikingRequest): Flow<Unit> = flow {
-
         val response = hikingApiService.endHiking(endHikingRequest)
         if (response.status == "200") {
-            response.data
+            emit(Unit)
         } else {
             throw Exception("등산 종료 실패: ${response.status} ${response.data}")
         }

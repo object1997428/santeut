@@ -8,22 +8,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.santeut.data.model.request.CreatePartyRequest
-import com.santeut.data.model.response.CoordResponse
-import com.santeut.data.model.response.MountainDetailResponse
+import com.santeut.data.model.request.StartHikingRequest
+import com.santeut.data.model.response.LocationDataResponse
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
-import com.santeut.data.model.response.PartyCourseResponse
 import com.santeut.data.model.response.PartyResponse
+import com.santeut.domain.usecase.HikingUseCase
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class PartyViewModel @Inject constructor(
-    private val partyUseCase: PartyUseCase
+    private val partyUseCase: PartyUseCase,
+    private val hikingUseCase: HikingUseCase
 ) : ViewModel() {
 
     private val _error = MutableLiveData<String>()
@@ -52,6 +52,10 @@ class PartyViewModel @Inject constructor(
 
     private val _distanceInKm = MutableLiveData<Double>(0.0)
     val distanceInKm: LiveData<Double> = _distanceInKm
+
+    val distance = mutableStateOf(0.0)
+    val courseList = mutableStateOf<List<LocationDataResponse>>(emptyList())
+    val startHikingPartyId = mutableStateOf(0)
 
     fun getPartyList(
         guildId: Int?,
@@ -180,6 +184,25 @@ class PartyViewModel @Inject constructor(
                 Log.d("PartyViewModel", "소모임 선택 등산로 정보 조회 시도")
             } catch (e: Exception) {
                 _error.postValue("소모임 선택 등산로 정보 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun startHiking(partyId: Int) {
+        viewModelScope.launch {
+            try {
+                hikingUseCase.startHiking(
+                    StartHikingRequest(
+                        partyId,
+                        LocalDateTime.now()
+                    )
+                ).let {data ->
+                    distance.value = data.distance
+                    courseList.value = data.courseList
+                    startHikingPartyId.value = partyId
+                }
+            } catch (e: Exception) {
+                _error.postValue("소모임 시작 실패: ${e.message}")
             }
         }
     }

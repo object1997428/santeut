@@ -18,6 +18,6 @@ interface HikingApiService {
     @POST("/api/party/hiking/end")
     suspend fun endHiking(
         @Body endHikingRequest: EndHikingRequest
-    ): CustomResponse<Unit>
+    ): CustomResponse<String>
 
 }

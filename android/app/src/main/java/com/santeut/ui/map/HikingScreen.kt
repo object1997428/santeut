@@ -268,7 +268,6 @@ fun HikingScreen(
                         icon = resizedIcon
                     )
                 }
-
                 if (courseList.isNotEmpty()) {
                     val path = courseList.map { LatLng(it.lat, it.lng) }
                     if (path.size >= 2) {
@@ -460,7 +459,6 @@ fun resizeMarkerIcon(context: Context, drawableResId: Int, width: Int, height: I
 
     return OverlayImage.fromBitmap(bitmapResized)
 }
-
 
 suspend fun getCurrentLocation(context: Context): UserLocationDataResponse? {
     val fusedLocationProviderClient: FusedLocationProviderClient =
