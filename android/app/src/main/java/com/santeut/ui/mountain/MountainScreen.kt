@@ -4,22 +4,23 @@ package com.santeut.ui.mountain
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
+import androidx.compose.material.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -37,17 +38,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.naver.maps.geometry.LatLng
@@ -60,9 +65,24 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
-import com.santeut.data.model.response.CourseDetailRespnse
+import com.santeut.data.apiservice.WeatherApi
+import com.santeut.data.model.response.CourseDetailResponse
 import com.santeut.data.model.response.HikingCourseResponse
 import com.santeut.data.model.response.MountainDetailResponse
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONObject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -158,11 +178,12 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
     }
 }
 
+@OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun HikingCourse(
     courseCount: Int,
     courseList: List<HikingCourseResponse>,
-    pathData: List<CourseDetailRespnse>
+    pathData: List<CourseDetailResponse>
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
@@ -201,7 +222,6 @@ fun HikingCourse(
                             outlineColor = Color.Red,
                             tag = courseDetail.courseId
                         )
-                        Log.d("제발", "${pathData}")
                     }
                 }
             }
@@ -257,6 +277,9 @@ fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
+                .background(
+                    color = Color(0xFFE5DD90)
+                )
         ) {
             Column {
                 Row(
@@ -351,7 +374,470 @@ fun getColorForLevel(level: String?): Color {
     }
 }
 
+class WeatherApiViewModel : ViewModel() {
+    private val _currentWeather = MutableLiveData<CurrentWeather>()
+    val currentWeather: LiveData<CurrentWeather> = _currentWeather
+
+    private val _dailyWeather = MutableLiveData<List<DailyWeather>>()
+    val dailyWeather: LiveData<List<DailyWeather>> = _dailyWeather
+
+    private val _hourlyWeather = MutableLiveData<List<HourlyWeather>>()
+    val hourlyWeather: LiveData<List<HourlyWeather>> = _hourlyWeather
+
+
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY // 로깅 레벨 설정
+        })
+        .build()
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://api.openweathermap.org/")
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val weatherApi = retrofit.create(WeatherApi::class.java)
+    private val apiKey = "ec73a8bf74a350c22c3659fd6c371854"  // Replace with actual API key
+
+    fun getWeatherInfo(lat: Double, lon: Double) {
+        Log.i("getWeatherInfo", "getWeatherInfo: $lat, $lon")
+        viewModelScope.launch {
+            try {
+                val response = weatherApi.getWeather(
+                    35.29828453330066,
+                    129.16142967035825,
+                    "minutely",
+                    "metric",
+                    apiKey
+                )
+                if (response.isSuccessful) {
+                    val responseBody = response.body()?.string()
+                    Log.d("API Response", "Success: ${responseBody}")
+
+                    // JSON 객체 파싱
+                    val jsonObject = JSONObject(responseBody)
+
+                    //[current 추출] 현재
+                    val currentObject = jsonObject.getJSONObject("current")
+                    val weatherArray = currentObject.getJSONArray("weather")
+                    val icon = if (weatherArray.length() > 0) weatherArray.getJSONObject(0)
+                        .getString("icon") else "No icon"
+                    val temp = Math.round(currentObject.getDouble("temp")).toInt()
+                    Log.d("Current Weather", "temp: $temp")
+                    Log.d("Current Weather", "weather.icon: $icon")
+                    _currentWeather.postValue(CurrentWeather(temp, icon))
+
+                    //[daily 추출]현재요일부터 7일
+                    val dailylist = mutableListOf<DailyWeather>()
+                    val dailyArray = jsonObject.getJSONArray("daily")
+//                    Log.d("API Response", "dailyArray: ${dailyArray}")
+                    // `daily` 배열을 순회하며 각 날짜를 로깅
+                    for (i in 0 until dailyArray.length() - 1) {
+                        val dailyObject = dailyArray.getJSONObject(i)
+                        val dateTimestamp = dailyObject.getLong("dt")
+                        val formattedDate = formatDate(dateTimestamp)
+                        val parts = formattedDate.split(" ") // "10/05"와 "화" 분리
+                        val datePart = parts[0]
+                        val dayPart = parts[1]
+//                        Log.d("Daily Weather", "Date datePart: $datePart")
+//                        Log.d("Daily Weather", "Date dayPart: $dayPart")
+
+                        val tempObject = dailyObject.getJSONObject("temp")
+                        val weatherArray = dailyObject.getJSONArray("weather")
+                        // 각 요소의 값을 가져옴
+                        val tempMin = Math.round(tempObject.getDouble("min")).toInt()
+                        val tempMax = Math.round(tempObject.getDouble("max")).toInt()
+                        val humidity = dailyObject.getInt("humidity")
+                        val icon = if (weatherArray.length() > 0) weatherArray.getJSONObject(0)
+                            .getString("icon") else "No icon"
+//                        Log.d("Daily Weather", "temp.min: ${tempMin}")
+//                        Log.d("Daily Weather", "temp.max: ${tempMax}")
+//                        Log.d("Daily Weather", "humidity: ${humidity}")
+//                        Log.d("Daily Weather", "weather.icon: ${icon}")
+                        dailylist.add(
+                            DailyWeather(
+                                datePart,
+                                dayPart,
+                                tempMin,
+                                tempMax,
+                                humidity,
+                                icon
+                            )
+                        )
+                        _dailyWeather.postValue(dailylist)
+                    }
+                    //[hourly 추출]현재요일부터 7일
+                    val hourlylist = mutableListOf<HourlyWeather>()
+                    val hourlyArray = jsonObject.getJSONArray("hourly")
+//                    Log.d("API Response", "hourlyArray: ${hourlyArray}")
+                    // `hourly` 배열을 순회하며 각 날짜를 로깅
+                    for (i in 0 until hourlyArray.length() step 3) {
+                        if (i < 24) {
+                            val hourlyObject = hourlyArray.getJSONObject(i)
+                            val dateTimestamp = hourlyObject.getLong("dt")
+                            val formattedDate = formatTime(dateTimestamp)
+//                            Log.d("Hourly Weather", "Time: $formattedDate")
+
+
+                            val weatherArray = hourlyObject.getJSONArray("weather")
+                            val icon = if (weatherArray.length() > 0) weatherArray.getJSONObject(0)
+                                .getString("icon") else "No icon"
+                            val temp = Math.round(hourlyObject.getDouble("temp")).toInt()
+//                            Log.d("Hourly Weather", "temp: $temp")
+//                            Log.d("Hourly Weather", "weather.icon: $icon")
+
+                            hourlylist.add(
+                                HourlyWeather(
+                                    formattedDate,
+                                    temp,
+                                    icon
+                                )
+                            )
+                        }
+                    }
+                    _hourlyWeather.postValue(hourlylist)
+                } else {
+                    Log.d("API Response", "Failure: ${response.errorBody()?.string()}")
+                }
+                // Handle your response further
+            } catch (e: Exception) {
+                Log.d("API Response", "Error: ${e.message}")
+            }
+        }
+    }
+}
+
+data class CurrentWeather(
+    val temperature: Int,
+    val iconUrl: String
+)
+
+data class DailyWeather(
+    val date: String,
+    val day: String,
+    val minTemp: Int,
+    val maxTemp: Int,
+    val humidity: Int,
+    val iconUrl: String
+)
+
+data class HourlyWeather(
+    val time: String,
+    val temperature: Int,
+    val iconUrl: String
+)
+
+fun formatDate(timestamp: Long): String {
+    val instant = Instant.ofEpochSecond(timestamp)
+    val zoneId = ZoneId.of("Asia/Seoul")
+    val formatter = DateTimeFormatter.ofPattern("MM/dd EEE")
+        .withLocale(Locale.KOREAN)
+    return formatter.format(instant.atZone(zoneId).toLocalDate())
+}
+
+fun formatTime(timestamp: Long): String {
+    val instant = Instant.ofEpochSecond(timestamp)
+    val zoneId = ZoneId.of("Asia/Seoul")
+    val formatter = DateTimeFormatter.ofPattern("HH")
+        .withLocale(Locale.KOREAN)
+    return formatter.format(instant.atZone(zoneId).toLocalDateTime())
+}
+
 @Composable
 fun MountainWeather(mountain: MountainDetailResponse?) {
-    Text(text = "날씨 정보")
+    val context = LocalContext.current
+    val weatherApiViewModel: WeatherApiViewModel =
+        viewModel()
+    val currentWeather by weatherApiViewModel.currentWeather.observeAsState()
+    val dailyWeather by weatherApiViewModel.dailyWeather.observeAsState()
+    val hourlyWeather by weatherApiViewModel.hourlyWeather.observeAsState()
+
+    if (mountain != null) {
+//        Text(text = "날씨 정보, lat: ${mountain.lat}, lng: ${mountain.lng}")
+        Log.i("mountain", "MountainWeather: $mountain")
+
+        LaunchedEffect(key1 = mountain) {
+            weatherApiViewModel.getWeatherInfo(mountain.lat, mountain.lng)
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+        ) {
+            Card(
+                modifier = Modifier
+                    .height(310.dp),
+                shape = RoundedCornerShape(16.dp),  // 둥근 모서리의 반경을 16.dp로 설정
+                elevation = 4.dp  // 선택적으로 카드의 높이(그림자) 설정
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .background(
+                                color = Color.White,
+                            )
+                    ) {
+                        val iconName = "weather_" + (currentWeather?.iconUrl?.dropLast(1) ?: "01")
+                        // 왼쪽 섹션
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+//                                .background(Color.DarkGray)  // 왼쪽 섹션의 배경색 설정
+                        ) {
+                            val resourceId = context.resources.getIdentifier(
+                                iconName,
+                                "drawable",
+                                context.packageName
+                            )
+                            Image(
+                                painter = painterResource(id = resourceId),
+                                contentDescription = "Weather Icon",
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .padding(top = 20.dp, bottom = 20.dp, start = 30.dp)
+                            )
+                        }
+                        // 오른쪽 섹션
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                                .padding(vertical = 33.dp, horizontal = 10.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = getWeatherDescription(iconName),
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    style = TextStyle(
+                                        fontSize = 13.sp, // 텍스트 크기 설정
+                                    )
+                                )
+                                Text(
+                                    text = "${currentWeather?.temperature ?: "데이터 없음"}°C",
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 5.dp, bottom = 2.dp),
+                                    style = TextStyle(
+                                        fontSize = 28.sp, // 텍스트 크기 설정
+                                        fontWeight = FontWeight.Bold // 텍스트 굵기 설정
+                                    )
+                                )
+                                Text(
+                                    text = "${dailyWeather?.get(0)?.minTemp ?: "데이터 없음"}°C / ${
+                                        dailyWeather?.get(
+                                            0
+                                        )?.maxTemp ?: "데이터 없음"
+                                    }°C",
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    style = TextStyle(
+                                        fontSize = 14.sp, // 텍스트 크기 설정
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                )
+                            }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .background(
+                                color = Color(0xFFE5DD90),
+                            )
+                    ) {
+                        LazyRow(
+                            modifier = Modifier
+                                .background(
+                                    color = Color(0xFFE5DD90),
+                                )
+                        ) {
+                            hourlyWeather?.let {
+                                items(count = it.size) { index ->
+                                    Card(
+                                        modifier = Modifier
+                                            .width(70.dp)
+                                            .padding(5.dp)
+                                            .background(
+                                                color = Color(0xFFE5DD90),
+                                            ),
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(color = Color(0xFFE5DD90)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            val iconName = hourlyWeather?.get(index)?.iconUrl
+                                            Column {
+                                                Text(
+                                                    text = "${hourlyWeather?.get(index)?.time}시",
+                                                    color = Color(0xFF335C49),
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Normal,
+                                                    lineHeight = 24.sp,
+                                                    fontFamily = FontFamily.SansSerif
+                                                )
+                                                Image(
+                                                    painter = rememberImagePainter(
+                                                        data = "https://openweathermap.org/img/wn/${iconName}@2x.png",
+                                                        builder = {
+                                                            crossfade(true)
+                                                        }
+                                                    ),
+                                                    contentDescription = "Weather Icon",
+                                                    contentScale = ContentScale.Fit
+                                                )
+
+                                                Text(
+                                                    text = "${hourlyWeather?.get(index)?.temperature}°C",
+                                                    color = Color(0xFF335C49),
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight.Normal,
+                                                    lineHeight = 24.sp,
+                                                    fontFamily = FontFamily.SansSerif
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }//날씨 카드
+            //주간예보
+            Column(
+                modifier = Modifier
+                    .padding(top = 20.dp)
+            ) {
+                Text(
+                    text = "주간예보",
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 24.sp,
+                    fontFamily = FontFamily.SansSerif
+                )
+//                }
+
+                dailyWeather?.forEach { daily ->
+                    DailyItem(
+                        weather = daily,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+            }
+        }
+    }
+}
+
+
+@Composable
+fun DailyItem(weather: DailyWeather, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .background(
+                color = Color(0xFFE5DD90),
+                shape = RoundedCornerShape(10.dp)
+            )
+            .fillMaxWidth()
+            .padding(10.dp) // Internal padding
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 15.dp, vertical = 4.dp) // 오른쪽 섹션과의 간격
+                    .background(
+                        color = Color(0xFFE5DD90)
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = weather.day,
+                    color = Color.Black,
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Text(
+                    text = weather.date,
+                    color = Color.Black,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            val iconName = weather.iconUrl ?: "01d"
+            Image(
+                painter = rememberImagePainter(
+                    data = "https://openweathermap.org/img/wn/${iconName}@2x.png",
+                    builder = {
+                        crossfade(true)
+                    }
+                ),
+                contentDescription = "Weather Icon",
+                modifier = Modifier.size(50.dp)
+            )
+            Text(
+                text = "${weather.minTemp}°C",
+                modifier = Modifier.padding(start = 30.dp, end = 20.dp),
+                color = Color.Black,
+                style = TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            )
+            Text(
+                text = "${weather.maxTemp}°C",
+                modifier = Modifier.padding(end = 55.dp),
+                color = Color.Black,
+                style = TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            )
+            Text(
+                text = "${weather.humidity}%",
+                modifier = Modifier.padding(end = 20.dp),
+                color = Color.Black,
+                style = TextStyle(
+                    fontSize = 15.sp, // 텍스트 크기 설정
+                    fontWeight = FontWeight.Normal
+                )
+            )
+        }
+
+    }
+}
+
+fun getWeatherDescription(iconCode: String): String {
+    return when (iconCode) {
+        "weather_01" -> "맑음"
+        "weather_02" -> "구름 조금"
+        "weather_03" -> "구름"
+        "weather_04" -> "흐림"
+        "weather_05" -> "가벼운 비"
+        "weather_06" -> "비"
+        "weather_07" -> "눈"
+        "weather_07" -> "안개"
+        else -> "알 수 없음"
+    }
 }

@@ -7,6 +7,7 @@ import com.santeut.data.model.response.ChatMessage
 import com.santeut.data.model.response.ChatRoomInfo
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
+import com.santeut.data.model.response.PartyCourseResponse
 import com.santeut.data.model.response.PartyResponse
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
@@ -49,4 +50,6 @@ interface PartyRepository {
     suspend fun getChatList(): List<ChatRoomInfo>
 
     suspend fun getChatMessageList(partyId: Int): MutableList<ChatMessage>
+
+    suspend fun getSelectedCourseOfParty(partyId: Int) : PartyCourseResponse
 }

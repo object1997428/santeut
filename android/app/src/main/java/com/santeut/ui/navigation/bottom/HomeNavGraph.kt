@@ -25,7 +25,7 @@ fun NavGraphBuilder.HomeNavGraph(
             arguments = listOf(navArgument("initialPage") { type = NavType.IntType })
         ) { backStackEntry ->
             val initialPage = backStackEntry.arguments?.getInt("initialPage") ?: 0
-            CommunityScreen(navController, initialPage)
+            CommunityScreen(navController, initialPage, guildId=0 , onClearData = {})
         }
     }
 }

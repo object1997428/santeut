@@ -27,7 +27,35 @@ class GuildRepositoryImpl @Inject constructor(
             if (response.status == "200") {
                 response.data.guildList
             } else {
-                throw Exception("Failed to load post: ${response.status} ${response.data}")
+                throw Exception("동호회 조회 성공: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun searchGuilds(regionName: String, gender: String): List<GuildResponse> {
+        return try {
+            val response = guildApiService.searchGuilds(regionName, gender)
+            if (response.status == "200") {
+                response.data.searchList
+            } else {
+                throw Exception("검색 동호회 조회 성공: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    override suspend fun searchGuildByName(name: String?): List<GuildResponse> {
+        return try {
+            val response = guildApiService.searchGuildByName(name)
+            if (response.status == "200") {
+                response.data.searchList
+            } else {
+                throw Exception("동호회 이름으로 검색 성공: ${response.status} ${response.data}")
             }
         } catch (e: Exception) {
             Log.e("GuildRepository", "Network error: ${e.message}", e)
@@ -39,15 +67,30 @@ class GuildRepositoryImpl @Inject constructor(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
     ): Flow<Unit> = flow {
-        Log.d("", "레포짇토리 ")
         val response =
             guildApiService.createGuild(guildProfile, createGuildPart(createGuildRequest))
-        Log.d("response status", response?.status ?: "Response is null")
+        Log.d("response status", response.status ?: "Response is null")
         if (response.status == "200") {
             Log.d("Guild Repository", "동호회 생성 성공")
             emit(response.data)
         } else {
             throw Exception("동호회 생성 실패: ${response.status} ${response.data}")
+        }
+    }
+
+    override suspend fun updateguild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = flow {
+        val response =
+            guildApiService.updateGuild(guildId, guildProfile, createGuildPart(updateGuildRequest))
+        Log.d("response status", response.status ?: "Response is null")
+        if (response.status == "200") {
+            Log.d("Guild Repository", "동호회 정보 수정 성공")
+            emit(response.data)
+        } else {
+            throw Exception("동호회 정보 수정 실패: ${response.status} ${response.data}")
         }
     }
 
@@ -62,7 +105,7 @@ class GuildRepositoryImpl @Inject constructor(
         return try {
             val response = guildApiService.myGuilds()
             if (response.status == "200") {
-                response.data.guildList ?: emptyList()
+                response.data.guildList
             } else {
                 throw Exception("Failed to load post: ${response.status} ${response.data}")
             }

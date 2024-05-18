@@ -51,4 +51,8 @@ class PartyUseCase @Inject constructor(
     suspend fun getChatMessageList(
         partyId: Int
     ) = partyRepository.getChatMessageList(partyId)
+
+    suspend fun getSelectedCourseOfParty(
+        partyId: Int
+    ) = partyRepository.getSelectedCourseOfParty(partyId)
 }

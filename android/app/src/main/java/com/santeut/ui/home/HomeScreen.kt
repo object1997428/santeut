@@ -1,6 +1,7 @@
 package com.santeut.ui.home
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,10 +26,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -40,9 +41,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +60,8 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.data.model.response.MyPartyResponse
+import com.santeut.designsystem.theme.CustomGray
+import com.santeut.designsystem.theme.customTypography
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.mountain.MountainViewModel
 import com.santeut.ui.party.PartyViewModel
@@ -81,8 +86,9 @@ fun HomeScreen(
     ) {
         item {
             SearchMountainBar(
-                navController,
-                onClickMap = {}
+                null,
+                null,
+                navController
             )
         }
         item {
@@ -102,11 +108,15 @@ fun HomeScreen(
 
 @Composable
 fun SearchMountainBar(
-    navController: NavController,
-    onClickMap: () -> Unit
+    guildId: Int?,
+    type: String?,
+    navController: NavController
 ) {
     var name by remember { mutableStateOf("") }
     var region by remember { mutableStateOf("") }
+
+    var showToastMessage by remember { mutableStateOf(false) }
+    var toastMessageText by remember { mutableStateOf<String?>(null) }
 
     Row(
         modifier = Modifier
@@ -117,13 +127,14 @@ fun SearchMountainBar(
     ) {
         OutlinedTextField(
             modifier = Modifier
-                .fillMaxWidth(0.9f),
+                .fillMaxWidth(),
             textStyle = TextStyle(fontSize = 12.sp),
             value = name,
             onValueChange = { name = it },
             placeholder = {
                 Text(
-                    text = "어느 산을 찾으시나요?"
+                    text = "어느 산을 찾으시나요?",
+                    color = Color(0xff666E7A)
                 )
             },
             singleLine = true,
@@ -131,32 +142,39 @@ fun SearchMountainBar(
                 imeAction = ImeAction.Done // 완료 액션 지정
             ),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color(0xFF678C40),
-                unfocusedContainerColor = Color(0xFFFBF9ED),
-                focusedBorderColor = Color(0xFF678C40),
-                focusedContainerColor = Color(0xFFFBF9ED),
+                unfocusedBorderColor = Color(0xFFD6D8DB),
+                unfocusedContainerColor = Color(0xFFEFEFF0),
+                focusedBorderColor = Color(0xFFD6D8DB),
+                focusedContainerColor = Color(0xFFEFEFF0),
             ),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
             trailingIcon = {
-                Icon(
+                androidx.compose.material3.Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
-                    tint = Color.Black,
-                    modifier = Modifier.clickable {
-                        val path =
-                            if (region.isNullOrEmpty()) "mountainList/$name" else "mountainList/$name/$region"
-                        navController.navigate(path)
-                    }
+                    tint = Color(0xff33363F),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            if (name == null || name == "") {
+                                showToastMessage = true
+                                toastMessageText = "검색어를 입력하세요"
+                            } else {
+                                val path = if (type == "create") {
+                                    "create/mountainList/$name/$guildId"
+                                } else {
+                                    if (region.isEmpty()) "mountainList/$name" else "mountainList/$name/$region"
+                                }
+                                navController.navigate(path)
+                            }
+                        }
                 )
             }
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Image(
-            imageVector = Icons.Default.Map,
-            contentDescription = "지도",
-            modifier = Modifier.clickable { onClickMap() }
-        )
-        Spacer(modifier = Modifier.width(6.dp))
+    }
+
+    if (showToastMessage) {
+        showToast(toastMessageText!!)
     }
 }
 
@@ -223,7 +241,7 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -234,17 +252,31 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${mountain.height}m ${mountain.regionName}",
+                    text = mountain.regionName,
                     fontSize = 12.sp,
-                    color = Color.LightGray
+                    color = CustomGray
                 )
             }
-            Text(
-                text = "${mountain.courseCount}개 코스",
-                fontSize = 12.sp,
-                color = Color.LightGray,
-                modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top=0.dp, start = 6.dp, end =6.dp, bottom = 0.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${mountain.courseCount}개 코스",
+                    fontSize = 12.sp,
+                    color = CustomGray,
+                )
+
+                Text(
+                    text = "${mountain.height}m",
+                    fontSize = 12.sp,
+                    color = CustomGray
+                )
+            }
+
         }
     }
 }
@@ -286,15 +318,28 @@ fun MyGuildCard(
                 modifier = Modifier.clickable(onClick = { navController.navigate("guild") })
             )
         }
-        LazyRow(
-            modifier = Modifier
-                .height(180.dp)
-                .fillMaxWidth()
-        ) {
-            items(guilds.take(3)) { guild ->
-                HomeGuildItem(guild,
-                    onClick = { navController.navigate("getGuild/${guild.guildId}") }
-                )
+
+        if (guilds.isEmpty()) {
+            Row(
+                modifier = Modifier
+                    .height(180.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "가입한 동호회가 없습니다.")
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier
+                    .height(180.dp)
+                    .fillMaxWidth()
+            ) {
+                items(guilds.take(3)) { guild ->
+                    HomeGuildItem(guild,
+                        onClick = { navController.navigate("getGuild/${guild.guildId}") }
+                    )
+                }
             }
         }
     }
@@ -371,9 +416,19 @@ fun TodayHikingCard(
         }
         Spacer(modifier = Modifier.height(4.dp))
 
-        LazyRow {
-            items(todayParty) { party ->
-                PartyCard(party)
+        if (todayParty.isEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "등산 일정이 없습니다.")
+            }
+        } else {
+            LazyRow {
+                items(todayParty) { party ->
+                    PartyCard(party)
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
             }
         }
     }
@@ -381,12 +436,20 @@ fun TodayHikingCard(
 
 @Composable
 fun PartyCard(party: MyPartyResponse) {
-    Card {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+    ){
         Column(
             modifier = Modifier
                 .padding(20.dp)
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 // 일정 추가
                 Image(
                     imageVector = Icons.Default.CalendarMonth,
@@ -502,4 +565,11 @@ fun CommunityItem(
             )
         }
     }
+}
+
+@Composable
+fun showToast(message: String) {
+    val ctx = LocalContext.current
+
+    Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()
 }

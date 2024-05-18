@@ -1,18 +1,23 @@
 package com.santeut.ui.mypage
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.outlined.Healing
 import androidx.compose.material.icons.outlined.Timer
@@ -22,7 +27,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -51,31 +58,47 @@ fun MyProfileScreen(userViewModel: UserViewModel = hiltViewModel()) {
 
 @Composable
 fun ProfileHeader(myProfile: MyProfileResponse?) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            model = myProfile?.userProfile ?: R.drawable.logo,
-            contentDescription = "프로필 사진",
+        // 첫번째 Column: 원형 프로필 사진
+        Box(
             modifier = Modifier
                 .size(100.dp)
-                .padding(end = 16.dp)
-        )
-        Column {
-            Text(
-                text = "${myProfile?.userNickname}",
-                style = MaterialTheme.typography.h6
+                .clip(CircleShape)
+        ) {
+            AsyncImage(
+                model = myProfile?.userProfile ?: R.drawable.logo,
+                contentDescription = "프로필 사진",
+                modifier = Modifier.fillMaxSize()
             )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 두번째 Column: 닉네임
+        Text(
+            text = "${myProfile?.userNickname}",
+            style = MaterialTheme.typography.h6,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // 세번째 Column: 레벨과 포인트
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "Lv. ${myProfile?.userTierName}",
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center
             )
             Text(
                 text = "포인트 ${myProfile?.userTierPoint}P",
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -84,7 +107,7 @@ fun ProfileHeader(myProfile: MyProfileResponse?) {
 @Composable
 fun ProfileStats(myProfile: MyProfileResponse?) {
     StatCard(
-        icon = Icons.Filled.DirectionsWalk,
+        icon = Icons.AutoMirrored.Filled.DirectionsWalk,
         contentDescription = "걸음",
         statText = "총 ${myProfile?.userDistance ?: 0}m 걸었어요!"
     )

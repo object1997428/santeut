@@ -1,7 +1,6 @@
 package com.santeut.ui.navigation.bottom
 
 import CommunityScreen
-import CreatePostScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,23 +9,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.santeut.ui.community.CommonViewModel
-import com.santeut.ui.community.tips.PostTipsScreen
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.common.ReadPostScreen
-import com.santeut.ui.community.party.JoinPartyScreen
-import com.santeut.ui.guild.CreateGuildPostScreen
-import com.santeut.ui.navigation.top.TopBar
-import com.santeut.ui.party.PartyViewModel
+import com.santeut.ui.community.tips.CreateTipPostScreen
+import com.santeut.ui.community.tips.PostTipsScreen
 
 fun NavGraphBuilder.CommunityNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    guildId: Int,
+    onClearData: () -> Unit
 ) {
     navigation(
         startDestination = "community",
         route = "community_graph"
     ) {
         composable("community") {
-            CommunityScreen(navController)
+            CommunityScreen(navController, guildId = guildId, onClearData = onClearData)
         }
         composable("postTips") {
             PostTipsScreen(navController)
@@ -37,7 +35,7 @@ fun NavGraphBuilder.CommunityNavGraph(
         ) { backStackEntry ->
             val postType = backStackEntry.arguments?.getString("postType") ?: "T"
             val postViewModel = hiltViewModel<PostViewModel>()
-            CreatePostScreen(navController, postViewModel, postType.first())
+            CreateTipPostScreen(navController, postViewModel, postType.first())
         }
         composable(
             route = "readPost/{postId}/{postType}",

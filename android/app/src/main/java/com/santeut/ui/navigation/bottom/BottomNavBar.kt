@@ -20,11 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.AccountBalance
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -49,7 +50,7 @@ fun BottomNavBarPreview(
     SanteutTheme {
         BottomNavBar(
             currentTap = "Home",
-            onTabClick = {}
+            onTabClick = {},
         )
     }
 }
@@ -64,7 +65,7 @@ fun BottomNavBar(
 
     AnimatedVisibility(
         modifier = Modifier
-            .background(color = Color.White)
+            .background(color = Color(0xffFEFEFE))
             .padding(8.dp),
         visible = currentTap != null && !NoBottomScreen.contains(currentTap),
         enter = fadeIn() + slideIn { IntOffset(it.width, 0) },
@@ -111,15 +112,18 @@ fun RowScope.BottomBarItem(
             ) {
                 Icon(
                     imageVector = tab.icon,
-                    contentDescription = tab.description
+                    contentDescription = tab.description,
+                    tint = if(selected) Color(0xff678C40) else Color(0xff76797D)
                 )
                 Spacer(
                     modifier = Modifier
-                        .height(2.dp)
+                        .height(4.dp)
                 )
                 Text(
                     text = tab.title,
-                    fontSize = 12.sp
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if(selected) Color(0xff678C40) else Color(0xff76797D)
                 )
             }
         }
@@ -129,7 +133,7 @@ fun RowScope.BottomBarItem(
                 .width(80.dp)
                 .selectable(
                     selected = selected,
-                    onClick = onClick
+                    onClick = onClick,
                 ),
             contentAlignment = Alignment.Center,
         ) {
@@ -153,13 +157,13 @@ enum class BottomTap(
     val description: String
 ) {
     HOME(
-        icon = Icons.Default.Home,
+        icon = Icons.Outlined.Home,
         route = "home_graph",
         title = "홈",
         description = "home"
     ),
     COMMUNITY(
-        icon = Icons.Default.Mail,
+        icon = Icons.Outlined.Groups,
         route = "community_graph",
         title = "커뮤니티",
         description = "community"
@@ -171,13 +175,13 @@ enum class BottomTap(
         description = "map"
     ),
     GUILD(
-        icon = Icons.Default.AccountBalance,
+        icon = Icons.Outlined.AccountBalance,
         route = "guild_graph",
         title = "동호회",
         description = "guild"
     ),
     MYPAGE(
-        icon = Icons.Default.Person,
+        icon = Icons.Outlined.Person,
         route = "mypage_graph",
         title = "마이페이지",
         description = "mypage"

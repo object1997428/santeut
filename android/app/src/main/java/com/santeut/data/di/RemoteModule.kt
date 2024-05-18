@@ -3,9 +3,12 @@ package com.santeut.data.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializer
 import com.santeut.data.apiservice.AuthApiService
 import com.santeut.data.apiservice.CommonApiService
 import com.santeut.data.apiservice.GuildApiService
+import com.santeut.data.apiservice.HikingApiService
 import com.santeut.data.apiservice.MountainApiService
 import com.santeut.data.apiservice.PartyApiService
 import com.santeut.data.apiservice.PostApiService
@@ -19,6 +22,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -66,10 +70,16 @@ object RemoteModule {
 
     @Provides
     @Singleton
+    fun providerHikingApiService(@Named("retrofit") retrofit: Retrofit): HikingApiService =
+        retrofit.create(HikingApiService::class.java)
+
+    @Provides
+    @Singleton
     @Named("retrofit")
     fun provideRetrofitInstance(gson: Gson, client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://k10e201.p.ssafy.io")
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson)).client(client)
             .build()
     }
@@ -84,6 +94,11 @@ object RemoteModule {
                     DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 )
             })
+            .registerTypeAdapter(
+                LocalDateTime::class.java,
+                JsonSerializer<LocalDateTime> { src, _, _ ->
+                    JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                })
             .setLenient().create()
     }
 

@@ -76,10 +76,10 @@ class SignUpViewModel @Inject constructor(
                         )
                     ).catch { e ->
                         Log.d("SignUp Error", "${e.message}")
-                        _uiEvent.value = SignUpUiEvent.SignUp(false);
+                        _uiEvent.value = SignUpUiEvent.SignUp(false)
                     }.collectLatest { data ->
                         Log.d("SignUp Success", "Success")
-                        _uiEvent.value = SignUpUiEvent.SignUp(true);
+                        _uiEvent.value = SignUpUiEvent.SignUp(true)
                     }
                 }
             }

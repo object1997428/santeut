@@ -13,6 +13,10 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
@@ -31,6 +35,17 @@ class MainActivity : ComponentActivity() {
     private var isCameraPermissionGranted = false
     private var isForegroundServiceGranted = false
     private var isPostNotificationsPermissionGranted = false
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){
+        isGranted ->
+        if (isGranted) {
+            Log.i("kilo", "Permission granted")
+        }
+        else {
+            Log.i("kilo", "Permission denied")
+        }
+    }
 
     private val dataClient by lazy { Wearable.getDataClient(this) }
     private val messageClient by lazy { Wearable.getMessageClient(this) }
@@ -46,14 +61,25 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Deep Link 링크를 통해 길드 가입 신청화면으로 바로 가기 기능
+        val uri = intent.data
+        var deepLinkGuildId = uri?.getQueryParameter("param") // null 안전 호출
+        if(deepLinkGuildId == null) {
+            deepLinkGuildId = "0";
+        }
+
         setContent {
+            var guildId by remember {mutableStateOf(Integer.parseInt(deepLinkGuildId))}
             SanteutTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     SanteutApp(
-                        wearableViewModel = wearableViewModel
+                        wearableViewModel = wearableViewModel,
+                        guildId,
+                        onClearData={guildId=0}
                     )
                 }
             }

@@ -4,5 +4,4 @@ data class CreatePostRequest(
     val postContent: String,
     val postType: Char,
     val userPartyId: Int,
-    val images: List<String>
 )

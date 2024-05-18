@@ -17,3 +17,7 @@ val Pink80 = Color(0xFFEFB8C8)
 val DarkGreen = Color(0xFF335C49)
 val Green = Color(0xFF678C40)
 val YellowGreen = Color(0xFFBDBE36)
+
+val Red = Color(0xffE92B2B)
+
+val CustomGray = Color(0xff666E7A)
