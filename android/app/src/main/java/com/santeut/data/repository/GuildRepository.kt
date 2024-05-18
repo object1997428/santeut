@@ -19,6 +19,8 @@ interface GuildRepository {
 
     suspend fun searchGuilds(regionName: String, gender: String): List<GuildResponse>
 
+    suspend fun searchGuildByName(name: String?) : List<GuildResponse>
+
     suspend fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest

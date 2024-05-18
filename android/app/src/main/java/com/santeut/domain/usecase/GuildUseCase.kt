@@ -23,6 +23,9 @@ class GuildUseCase @Inject constructor(
     suspend fun searchGuilds(regionName: String, gender: String): List<GuildResponse> =
         guildRepository.searchGuilds(regionName, gender)
 
+    suspend fun searchGuildByName(name: String?): List<GuildResponse> =
+        guildRepository.searchGuildByName(name)
+
     suspend fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest

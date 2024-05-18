@@ -188,15 +188,18 @@ fun JoinGuildScreen(
                                     if (searchFilterRegion == "") {
                                         Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT)
                                             .show()
+                                        isFiltered = false
                                     } else if (searchFilterGender == "") {
                                         Toast.makeText(context, "성별을 선택해주세요", Toast.LENGTH_SHORT)
                                             .show()
+                                        isFiltered = false
                                     } else {
                                         guildViewModel.searchGuilds(
                                             searchFilterRegion,
                                             searchFilterGender
                                         )
                                         showBottomFilterSheet = false
+                                        isFiltered = true
                                         Log.d("동호회 검색) 지역", searchFilterRegion)
                                         Log.d("동호회 검색) 성별", searchFilterGender)
                                     }
@@ -481,7 +484,7 @@ fun GuildSearchBar (
                         .size(30.dp)
                         .clickable {
                             Log.d("동호회 검색 버튼 클릭", enteredText)
-                            // TODO: 동호회 이름으로 검색
+                            guildViewModel.searchGuildByName(enteredText)
                         }
                 )
             }
