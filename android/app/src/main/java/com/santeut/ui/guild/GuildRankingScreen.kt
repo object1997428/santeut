@@ -1,11 +1,6 @@
 package com.santeut.ui.guild
 
-import android.graphics.Paint
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,13 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.Button
-import androidx.compose.material3.Button
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -147,7 +140,6 @@ fun GuildRankingScreen(
 fun RankingItem(rank: RankingResponse) {
     Card(
         modifier = Modifier
-
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
             .padding(8.dp)   // 카드 주변 여백
