@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -409,6 +410,7 @@ fun TodayHikingCard(
             LazyRow {
                 items(todayParty) { party ->
                     PartyCard(party)
+                    Spacer(modifier = Modifier.width(4.dp))
                 }
             }
         }
@@ -417,12 +419,20 @@ fun TodayHikingCard(
 
 @Composable
 fun PartyCard(party: MyPartyResponse) {
-    Card {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+    ){
         Column(
             modifier = Modifier
                 .padding(20.dp)
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 // 일정 추가
                 Image(
                     imageVector = Icons.Default.CalendarMonth,
