@@ -82,6 +82,7 @@ import java.util.Locale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import coil.compose.rememberImagePainter
+import com.naver.maps.map.CameraUpdate
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -97,7 +98,6 @@ fun MountainScreen(
     val mountain by mountainViewModel.mountain.observeAsState()
     val courseList by mountainViewModel.courseList.observeAsState(emptyList())
     val pathData by mountainViewModel.pathList.observeAsState(listOf())
-
 
     LaunchedEffect(key1 = mountainId) {
         mountainViewModel.mountainDetail(mountainId)
@@ -141,7 +141,7 @@ fun MountainScreen(
             }
 
             when (selectedTab) {
-                0 -> item { HikingCourse(mountain?.courseCount ?: 0, courseList, pathData) }
+                0 -> item { HikingCourse(mountain, courseList, pathData) }
                 1 -> item { MountainWeather(mountain) }
             }
         }
@@ -180,14 +180,25 @@ fun MountainDetail(mountain: MountainDetailResponse?) {
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun HikingCourse(
-    courseCount: Int,
+    mountain: MountainDetailResponse?,
     courseList: List<HikingCourseResponse>,
     pathData: List<CourseDetailResponse>
 ) {
+    val courseCount = mountain?.courseCount ?: 0
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 12.0)
+        mountain?.let {
+            position = CameraPosition(LatLng(it.lat, it.lng), 11.0)
+        }
     }
+
+    LaunchedEffect(mountain) {
+        mountain?.let {
+            cameraPositionState.position = CameraPosition(LatLng(it.lat, it.lng), 11.0)
+        }
+    }
+
+
     Column(
         modifier = Modifier.padding(20.dp) // 전체 Column에 패딩 적용
     ) {
@@ -295,6 +306,22 @@ fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
                     )
                     Text(
                         buildAnnotatedString {
+//                            withStyle(style = SpanStyle(color = Color.Gray)) {
+//                                append("거리 ")
+//                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    color = Color.Black,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("${course.distance ?: "?"}km")
+                            }
+                        }
+                    )
+                    Text(
+                        buildAnnotatedString {
                             withStyle(style = SpanStyle(color = Color.Gray)) {
                                 append("난이도 ")
                             }
@@ -313,20 +340,6 @@ fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
                         .padding(5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color.Gray)) {
-                                append("거리 ")
-                            }
-                            withStyle(
-                                style = SpanStyle(
-                                    color = Color.Black,
-                                )
-                            ) {
-                                append("${course.distance ?: "?"}km")
-                            }
-                        }
-                    )
                     Text(
                         buildAnnotatedString {
                             withStyle(style = SpanStyle(color = Color.Gray)) {

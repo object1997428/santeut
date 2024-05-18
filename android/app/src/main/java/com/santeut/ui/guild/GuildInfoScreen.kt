@@ -101,13 +101,10 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                 // 동호회 인원, 성별, 연령
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
                     ) {
                         Text(
                             text = "인원 ",
@@ -122,9 +119,6 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
                     ) {
                         Text(
                             text = "성별 ",
@@ -138,9 +132,6 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
                     ) {
                         Text(
                             text = "연령 ",
