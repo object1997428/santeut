@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,16 +29,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.santeut.R
 import com.santeut.data.model.response.MountainResponse
+import com.santeut.designsystem.theme.Green
 import com.santeut.ui.home.SearchMountainBar
 import com.santeut.ui.party.SelectedMountainCard
 
 @Composable
 fun MountainListScreen(
+    guildId: Int?,
     type: String?,
     name: String, region: String?,
     navController: NavController,
@@ -54,8 +57,8 @@ fun MountainListScreen(
         if (type != "create") {
             SearchMountainBar(
                 null,
-                navController,
-                onClickMap = {}
+                null,
+                navController
             )
 
             LazyColumn {
@@ -65,14 +68,14 @@ fun MountainListScreen(
             }
         } else {
             SearchMountainBar(
+                guildId,
                 "create",
-                navController,
-                onClickMap = {}
+                navController
             )
 
             LazyColumn {
                 items(mountains) { mountain ->
-                    SelectedMountainCard(navController, mountain)
+                    SelectedMountainCard(guildId, navController, mountain)
                 }
             }
         }
@@ -81,66 +84,83 @@ fun MountainListScreen(
 
 @Composable
 fun MountainCard(navController: NavController, mountain: MountainResponse) {
-    Card(
-        modifier = Modifier
-            .clickable(onClick = { navController.navigate("mountain/${mountain.mountainId}") })
-            .fillMaxWidth()
-            .height(100.dp)  // 카드 높이 조정
-            .padding(8.dp),  // 카드 주변 여백
-    ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // 이미지 부분
-            AsyncImage(
-                model = mountain.image ?: R.drawable.logo,
-                contentDescription = "산 사진",
-                modifier = Modifier
-                    .size(100.dp),  // 이미지 크기 고정
-                contentScale = ContentScale.Crop  // 이미지 채우기 방식
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .fillMaxWidth(),
+        contentAlignment = Alignment.Center)
+    {
+        Card (
+            shape = RoundedCornerShape(30.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable(onClick = { navController.navigate("mountain/${mountain.mountainId}") }),
+            elevation = CardDefaults.cardElevation(10.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
             )
-
-            Spacer(modifier = Modifier.width(16.dp))  // 이미지와 텍스트 사이 간격
-
-            // 텍스트 정보 부분
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)  // 텍스트 내부 여백
-                    .weight(1f),  // 남은 공간 모두 사용
-                verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(modifier = Modifier
+                .fillMaxSize()
             ) {
-                Text(
-                    text = mountain.mountainName,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodyMedium
+                // 이미지 부분
+                AsyncImage(
+                    model = mountain.image ?: R.drawable.logo,
+                    contentDescription = "산 사진",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp),
+                    contentScale = ContentScale.Crop  // 이미지 채우기 방식
                 )
-                Text(
-                    text = "${mountain.height}m",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = mountain.regionName,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                // 텍스트 정보 부분
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                ) {
+                    // 산 이름
+                    Text(text = mountain.mountainName,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    // 높이
+                    Text(
+                        text = "${mountain.height}m",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    // 지역
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = mountain.regionName,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                // 코스 개수, 명산?
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp, end = 18.dp, top = 0.dp, bottom = 16.dp)
+//                        .padding(vertical = 4.dp, horizontal = 8.dp)
                 ) {
                     Text(
                         text = "${mountain.courseCount}개 코스",
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 10.dp)
                     )
                     if (mountain.isTop100) {
                         Box(
                             modifier = Modifier
-                                .background(color = Color.Green, shape = RoundedCornerShape(4.dp))
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                                .background(color = Green, shape = RoundedCornerShape(10.dp))
+                                .padding(vertical = 4.dp, horizontal = 8.dp)
                         ) {
                             Text(
                                 text = "100대 명산",
                                 color = Color.White,
-                                style = MaterialTheme.typography.labelMedium
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }

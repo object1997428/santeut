@@ -23,7 +23,7 @@ fun NavGraphBuilder.MountainNavGraph(navController: NavController) {
             )
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""
-            MountainListScreen(null, name, null, navController)
+            MountainListScreen(null, null, name, null, navController)
         }
         composable(
             route = "mountainList/{name}/{region}",
@@ -37,7 +37,7 @@ fun NavGraphBuilder.MountainNavGraph(navController: NavController) {
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""
             val region = backStackEntry.arguments?.getString("region")
-            MountainListScreen(null, name, region, navController)
+            MountainListScreen(null, null, name, region, navController)
         }
         composable(route = "mountain/{mountainId}", arrayListOf(
             navArgument("mountainId") { type = NavType.IntType }
@@ -48,26 +48,30 @@ fun NavGraphBuilder.MountainNavGraph(navController: NavController) {
 
         // 산 선택하기
         composable(
-            route = "create/mountainList/{name}",
+            route = "create/mountainList/{name}/{guildId}",
             arguments = listOf(
-                navArgument("name") { type = NavType.StringType }
+                navArgument("name") { type = NavType.StringType },
+                navArgument("guildId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""
-            MountainListScreen("create", name, null, navController)
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            MountainListScreen(guildId, "create", name, null, navController)
         }
 
         // 코스 선택하기
         composable(
-            route = "create/courseList/{mountainId}/{mountainName}",
+            route = "create/courseList/{mountainId}/{mountainName}/{guildId}",
             arguments = listOf(
                 navArgument("mountainId") { type = NavType.IntType },
-                navArgument("mountainName") { type = NavType.StringType }
+                navArgument("mountainName") { type = NavType.StringType },
+                navArgument("guildId") { type = NavType.IntType },
             )
         ) { backStackEntry ->
             val mountainId = backStackEntry.arguments?.getInt("mountainId") ?: 0
             val mountainName = backStackEntry.arguments?.getString("mountainName") ?: "'"
-            SelectedCourse(mountainId, mountainName, navController)
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            SelectedCourse(guildId, mountainId, mountainName, navController)
         }
     }
 }

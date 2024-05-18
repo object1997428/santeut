@@ -14,6 +14,7 @@ import com.santeut.ui.guild.GuildMemberListScreen
 import com.santeut.ui.guild.GuildPostDetailScreen
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.MyGuildScreen
+import com.santeut.ui.guild.UpdateGuildScreen
 import com.santeut.ui.party.InputPartyInfoScreen
 import com.santeut.ui.party.SelectedMountain
 
@@ -31,8 +32,20 @@ fun NavGraphBuilder.GuildNavGraph(
             MyGuildScreen(navController)
         }
 
+        // 동호회 만들기
         composable("createGuild") {
-            CreateGuildScreen()
+            CreateGuildScreen(navController)
+        }
+
+        // 동호회 수정하기 (동호회 관리)
+        composable(
+            route = "updateGuild/{guildId}",
+            arguments = listOf(
+                navArgument("guildId") { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            UpdateGuildScreen(navController, guildId)
         }
 
         // 동호회 상세 페이지
@@ -99,11 +112,32 @@ fun NavGraphBuilder.GuildNavGraph(
             GuildApplyListScreen(guildId, navController)
         }
 
-        // 동호회 전용 소모임 생성
-        composable("createParty") {
-            SelectedMountain(null, navController, onClickMap = { navController.navigate("") })
+        // 소모임 생성 시 산 선택하기
+        composable(
+            route = "createParty/{guildId}",
+            arguments = listOf(navArgument("guildId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            SelectedMountain(guildId, navController)
         }
 
+        // 동호회가 있는 소모임 생성
+        composable(
+            route = "createParty/{guildId}/{mountainId}/{courseIds}",
+            arguments = listOf(
+                navArgument("guildId") { type = NavType.IntType },
+                navArgument("mountainId") { type = NavType.IntType },
+                navArgument("courseIds") { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val guildId = backStackEntry.arguments?.getInt("guildId") ?: 0
+            val mountainId = backStackEntry.arguments?.getInt("mountainId") ?: 0
+            val courseIdsString = backStackEntry.arguments?.getString("courseIds") ?: ""
+            val selectedCourseIds = courseIdsString.split(",").map { it.toIntOrNull() ?: 0 }
+            InputPartyInfoScreen(guildId, mountainId, selectedCourseIds, navController)
+        }
+
+        // 동호회가 없는 소모임 생성
         composable(
             route = "createParty/{mountainId}/{courseIds}",
             arguments = listOf(
@@ -114,7 +148,7 @@ fun NavGraphBuilder.GuildNavGraph(
             val mountainId = backStackEntry.arguments?.getInt("mountainId") ?: 0
             val courseIdsString = backStackEntry.arguments?.getString("courseIds") ?: ""
             val selectedCourseIds = courseIdsString.split(",").map { it.toIntOrNull() ?: 0 }
-            InputPartyInfoScreen(mountainId, selectedCourseIds, navController)
+            InputPartyInfoScreen(null, mountainId, selectedCourseIds, navController)
         }
 
     }

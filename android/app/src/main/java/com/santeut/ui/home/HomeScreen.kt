@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -59,6 +60,8 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.data.model.response.MyPartyResponse
+import com.santeut.designsystem.theme.CustomGray
+import com.santeut.designsystem.theme.customTypography
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.mountain.MountainViewModel
 import com.santeut.ui.party.PartyViewModel
@@ -84,8 +87,8 @@ fun HomeScreen(
         item {
             SearchMountainBar(
                 null,
-                navController,
-                onClickMap = {}
+                null,
+                navController
             )
         }
         item {
@@ -105,9 +108,9 @@ fun HomeScreen(
 
 @Composable
 fun SearchMountainBar(
+    guildId: Int?,
     type: String?,
-    navController: NavController,
-    onClickMap: () -> Unit
+    navController: NavController
 ) {
     var name by remember { mutableStateOf("") }
     var region by remember { mutableStateOf("") }
@@ -158,7 +161,7 @@ fun SearchMountainBar(
                                 toastMessageText = "검색어를 입력하세요"
                             } else {
                                 val path = if (type == "create") {
-                                    "create/mountainList/$name"
+                                    "create/mountainList/$name/$guildId"
                                 } else {
                                     if (region.isEmpty()) "mountainList/$name" else "mountainList/$name/$region"
                                 }
@@ -170,7 +173,7 @@ fun SearchMountainBar(
         )
     }
 
-    if(showToastMessage) {
+    if (showToastMessage) {
         showToast(toastMessageText!!)
     }
 }
@@ -238,7 +241,7 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -249,17 +252,31 @@ fun MountainCard(mountain: MountainResponse, navController: NavController) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${mountain.height}m ${mountain.regionName}",
+                    text = mountain.regionName,
                     fontSize = 12.sp,
-                    color = Color.LightGray
+                    color = CustomGray
                 )
             }
-            Text(
-                text = "${mountain.courseCount}개 코스",
-                fontSize = 12.sp,
-                color = Color.LightGray,
-                modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top=0.dp, start = 6.dp, end =6.dp, bottom = 0.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${mountain.courseCount}개 코스",
+                    fontSize = 12.sp,
+                    color = CustomGray,
+                )
+
+                Text(
+                    text = "${mountain.height}m",
+                    fontSize = 12.sp,
+                    color = CustomGray
+                )
+            }
+
         }
     }
 }
@@ -302,17 +319,17 @@ fun MyGuildCard(
             )
         }
 
-        if(guilds.isEmpty()){
-            Row (
+        if (guilds.isEmpty()) {
+            Row(
                 modifier = Modifier
                     .height(180.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(text = "가입한 동호회가 없습니다.")
             }
-        }else{
+        } else {
             LazyRow(
                 modifier = Modifier
                     .height(180.dp)
@@ -399,14 +416,14 @@ fun TodayHikingCard(
         }
         Spacer(modifier = Modifier.height(4.dp))
 
-        if(todayParty.isEmpty()){
-            Row (
+        if (todayParty.isEmpty()) {
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(text = "등산 일정이 없습니다.")
             }
-        }else{
+        } else {
             LazyRow {
                 items(todayParty) { party ->
                     PartyCard(party)

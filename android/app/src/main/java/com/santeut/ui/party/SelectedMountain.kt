@@ -1,9 +1,6 @@
 package com.santeut.ui.party
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,14 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,17 +26,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,33 +47,30 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
-import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MountainResponse
+import com.santeut.designsystem.theme.Green
 import com.santeut.ui.home.SearchMountainBar
 import com.santeut.ui.mountain.MountainViewModel
 import com.santeut.ui.navigation.top.SimpleTopBar
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 @Composable
 fun SelectedMountain(
     guildId: Int?,
     navController: NavController,
-    onClickMap: () -> Unit,
 ) {
     Column {
-        SearchMountainBar(type = "create", navController, onClickMap)
+        SearchMountainBar(guildId, type = "create", navController)
     }
 }
 
 @Composable
 fun SelectedMountainCard(
+    guildId: Int?,
     navController: NavController, mountain: MountainResponse
 ) {
     Card(
         modifier = Modifier
-            .clickable(onClick = { navController.navigate("create/courseList/${mountain.mountainId}/${mountain.mountainName}") })
+            .clickable(onClick = { navController.navigate("create/courseList/${mountain.mountainId}/${mountain.mountainName}/${guildId}") })
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
             .padding(8.dp),  // 카드 주변 여백
@@ -126,26 +110,25 @@ fun SelectedMountainCard(
                     text = mountain.regionName,
                     style = MaterialTheme.typography.bodySmall
                 )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "${mountain.courseCount}개 코스",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    if (mountain.isTop100) {
-                        Box(
-                            modifier = Modifier
-                                .background(color = Color.Green, shape = RoundedCornerShape(4.dp))
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                text = "100대 명산",
-                                color = Color.White,
-                                style = MaterialTheme.typography.labelMedium
+                Text(
+                    text = "${mountain.courseCount}개 코스",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                if (mountain.isTop100) {
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = Green,
+                                shape = RoundedCornerShape(10.dp)
                             )
-                        }
+                            .padding(vertical = 4.dp, horizontal = 8.dp)
+                    ) {
+                        Text(
+                            text = "100대 명산",
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -156,6 +139,7 @@ fun SelectedMountainCard(
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun SelectedCourse(
+    guildId: Int?,
     mountainId: Int,
     mountainName: String,
     navController: NavController,
@@ -234,7 +218,12 @@ fun SelectedCourse(
                     Button(onClick = {
                         val selectedCourses = selectedCourseIds.joinToString(",")
                         Log.d("등산로", selectedCourses)
-                        navController.navigate("createParty/${mountainId}/${selectedCourses}")
+
+                        if (guildId != null) {
+                            navController.navigate("createParty/${guildId}/${mountainId}/${selectedCourses}")
+                        } else {
+                            navController.navigate("createParty/${mountainId}/${selectedCourses}")
+                        }
                     }) {
                         Text(text = "선택완료")
                     }
