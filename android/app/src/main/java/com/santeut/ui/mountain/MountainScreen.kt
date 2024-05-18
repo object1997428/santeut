@@ -660,7 +660,7 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                         LazyRow(
                             modifier = Modifier
                                 .background(
-                                    color = Color.Transparent,
+                                    color = Color(0xFFE5DD90),
                                 )
                         ) {
                             hourlyWeather?.let {
@@ -672,6 +672,7 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                                             .background(
                                                 color = Color(0xFFE5DD90),
                                             ),
+                                        elevation = 0.dp,
                                     ) {
                                         Box(
                                             modifier = Modifier
@@ -680,7 +681,9 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                                             contentAlignment = Alignment.Center
                                         ) {
                                             val iconName = hourlyWeather?.get(index)?.iconUrl
-                                            Column {
+                                            Column (
+                                                modifier = Modifier.background(color = Color.Transparent)
+                                            ){
                                                 Text(
                                                     text = "${hourlyWeather?.get(index)?.time}시",
                                                     color = Color(0xFF335C49),
