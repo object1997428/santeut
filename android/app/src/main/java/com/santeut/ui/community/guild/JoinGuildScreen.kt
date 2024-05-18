@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -88,7 +89,11 @@ fun JoinGuildScreen(
     LaunchedEffect(key1 = null) {
         guildViewModel.getGuilds()
     }
-    Column {
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.Start
+    ){
         var name by remember { mutableStateOf("") }
         Row(
             modifier = Modifier
@@ -135,9 +140,22 @@ fun JoinGuildScreen(
         }
 
         // 동호회 카드 필드
-        LazyColumn {
-            items(guilds) { guild ->
-                GuildCard(guild, guildViewModel, guildId, onClearData)
+        if (guilds.isEmpty()){
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "검색결과가 없습니다.",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }else{
+            LazyColumn {
+                items(guilds) { guild ->
+                    GuildCard(guild, guildViewModel, guildId, onClearData)
+                }
             }
         }
     }
