@@ -14,6 +14,7 @@ import com.santeut.data.model.response.PostResponse
 import com.santeut.domain.usecase.PostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,12 +50,10 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun createPost(postTitle: String, postContent: String, postType: Char, userPartyId: Int) {
+    fun createPost(images: List<MultipartBody.Part>?, createPostRequest: CreatePostRequest) {
         viewModelScope.launch {
             try {
-                val createPostRequest =
-                    CreatePostRequest(postTitle, postContent, postType, userPartyId)
-                postUseCase.createPost(createPostRequest).collect {
+                postUseCase.createPost(images, createPostRequest).collect {
                     _postCreationSuccess.value = true
                     Log.d("PostViewModel", "Navigating to postTips Ready")
                 }
