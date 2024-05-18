@@ -1,14 +1,18 @@
 package com.santeut.ui.party
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -72,13 +76,15 @@ fun MyPartyListScreen(
                 )
             }
         } else {
-            LazyColumn(modifier = Modifier.align(alignment = Alignment.CenterHorizontally)) {
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxSize()
+            ) {
                 items(myPartyList) { party ->
                     MyPartyCard(party, navController)
                 }
             }
         }
-
     }
 }
 
@@ -101,132 +107,157 @@ fun MyPartyCard(party: MyPartyResponse, navController: NavController) {
             defaultElevation = 6.dp
         ),
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .padding(16.dp)
+                .fillMaxWidth()
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row {
-                    Text(
-                        text = party.partyName,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = DarkGreen
-                    )
-                    Spacer(modifier = Modifier.size(10.dp))
-                    Text(
-                        text = party.guildName,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Gray
-                    )
-                }
-                // 진행 중인 경우 보인다
-                if (party.status == "P") {
-                    Icon(
-                        imageVector = Icons.Default.Sensors,
-                        contentDescription = "진행 중",
-                        tint = Color.Red,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-            // 일정
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    contentDescription = "일정",
-                    tint = Green,
-                    modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
-                )
-                Text(text = party.schedule)
-            }
-            // 모임장소
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "위치",
-                    tint = Green,
-                    modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
-                )
-                Text(text = party.place)
-            }
-            // 산, 인원수
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+            Column(
                 modifier = Modifier
-                    .padding(0.dp, 4.dp, 0.dp, 0.dp)
-                    .fillMaxWidth()
+                    .weight(0.7f)
             ) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Outlined.KeyboardDoubleArrowUp,
-                        contentDescription = "산",
-                        tint = Green,
-                        modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
-                    )
-                    Text(text = party.mountainName)
-                }
-                Row {
-                    Icon(
-                        imageVector = Icons.Outlined.Person,
-                        contentDescription = "인원 수",
-                        tint = Green,
-                        modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
-                    )
-                    Text(text = "${party.curPeople} / ${party.maxPeople} 명")
-                }
-
-                if ((party.status == "P") || (party.status == "B" && isMeetingTimePassed(
-                        party.schedule
-                    ))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Button(
-                        onClick = { navController.navigate("hiking/${party.partyId}") },
-                        colors = ButtonDefaults.buttonColors(containerColor = Green),
-                        modifier = Modifier.size(36.dp),
-                        contentPadding = PaddingValues(0.dp),
-                        shape = RoundedCornerShape(50)
-                    ) {
+                    Row {
+                        Text(
+                            text = party.partyName,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = DarkGreen
+                        )
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Text(
+                            text = party.guildName,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Gray
+                        )
+                    }
+                }
+                // 일정
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.CalendarMonth,
+                        contentDescription = "일정",
+                        tint = Green,
+                        modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
+                    )
+                    Text(text = party.schedule)
+                }
+                // 모임장소
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.LocationOn,
+                        contentDescription = "위치",
+                        tint = Green,
+                        modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
+                    )
+                    Text(text = party.place)
+                }
+                // 산, 인원수
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .padding(0.dp, 4.dp, 0.dp, 0.dp)
+                        .fillMaxWidth()
+                ) {
+                    Row {
                         Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "시작 버튼",
-                            tint = Color.White,
+                            imageVector = Icons.Outlined.KeyboardDoubleArrowUp,
+                            contentDescription = "산",
+                            tint = Green,
+                            modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
+                        )
+                        Text(text = party.mountainName)
+                    }
+                    Row {
+                        Icon(
+                            imageVector = Icons.Outlined.Person,
+                            contentDescription = "인원 수",
+                            tint = Green,
+                            modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
+                        )
+                        Text(text = "${party.curPeople} / ${party.maxPeople} 명")
+                    }
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .weight(0.3f)
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(0.3f).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (party.status == "P") {
+                        Icon(
+                            imageVector = Icons.Default.Sensors,
+                            contentDescription = "진행 중",
+                            tint = Color.Red,
                             modifier = Modifier.size(24.dp)
                         )
                     }
-                } else {
-                    Button(
-                        onClick = {
-                            Toast.makeText(context, "시작할 수 없는 소모임입니다.", Toast.LENGTH_SHORT).show()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
-                        modifier = Modifier.size(36.dp),
-                        contentPadding = PaddingValues(0.dp),
-                        shape = RoundedCornerShape(50)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "시작 버튼",
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(0.7f).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if ((party.status == "P") || (party.status == "B" && isMeetingTimePassed(party.schedule))) {
+                        Button(
+                            onClick = { navController.navigate("hiking/${party.partyId}") },
+                            colors = ButtonDefaults.buttonColors(containerColor = Green),
+                            modifier = Modifier.size(36.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "시작 버튼",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                Toast.makeText(context, "시작할 수 없는 소모임입니다.", Toast.LENGTH_SHORT).show()
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
+                            modifier = Modifier.size(36.dp),
+                            contentPadding = PaddingValues(0.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "시작 버튼",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
 
 fun isMeetingTimePassed(meetingTime: String): Boolean {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
