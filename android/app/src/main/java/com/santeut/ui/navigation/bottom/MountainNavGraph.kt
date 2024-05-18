@@ -49,7 +49,7 @@ fun NavGraphBuilder.MountainNavGraph(navController: NavController) {
 
         // 산 선택하기
         composable(
-            route = "create/mountainList/{name}/{guildId}",
+            route = "create/mountainList/{name}",
             arguments = listOf(
                 navArgument("name") { type = NavType.StringType },
             )
@@ -61,7 +61,7 @@ fun NavGraphBuilder.MountainNavGraph(navController: NavController) {
 
         // 코스 선택하기
         composable(
-            route = "create/courseList/{mountainId}/{mountainName}/{guildId}",
+            route = "create/courseList/{mountainId}/{mountainName}",
             arguments = listOf(
                 navArgument("mountainId") { type = NavType.IntType },
                 navArgument("mountainName") { type = NavType.StringType },
