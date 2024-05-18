@@ -16,6 +16,7 @@ import com.santeut.ui.navigation.bottom.MountainNavGraph
 import com.santeut.ui.navigation.bottom.MyPageNavGraph
 import com.santeut.ui.wearable.WearableViewModel
 
+@OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun SanteutNavGraph(
     navController: NavHostController,
@@ -33,7 +34,7 @@ fun SanteutNavGraph(
         )
         HomeNavGraph(navController)
         CommunityNavGraph(navController, guildId = guildId, onClearData = onClearData )
-        MapNavGraph(navController = navController, mapViewModel = mapViewModel)
+        MapNavGraph(navController = navController, mapViewModel = mapViewModel, wearableViewModel = wearableViewModel)
         GuildNavGraph(navController = navController, mapViewModel = mapViewModel)
         MyPageNavGraph(navController)
         TopNavGraph(navController)

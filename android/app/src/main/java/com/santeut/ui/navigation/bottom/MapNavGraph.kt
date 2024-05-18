@@ -10,11 +10,13 @@ import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.santeut.ui.map.HikingScreen
 import com.santeut.ui.map.MapScreen
 import com.santeut.ui.map.MapViewModel
+import com.santeut.ui.wearable.WearableViewModel
 
 @ExperimentalNaverMapApi
 fun NavGraphBuilder.MapNavGraph(
     navController: NavHostController,
-    mapViewModel: MapViewModel
+    mapViewModel: MapViewModel,
+    wearableViewModel: WearableViewModel
 ) {
     navigation(
         startDestination = "map",
@@ -24,7 +26,8 @@ fun NavGraphBuilder.MapNavGraph(
             route = "map"
         ) {
             MapScreen(
-                mapViewModel = mapViewModel
+                mapViewModel = mapViewModel,
+                wearableViewModel= wearableViewModel
             )
         }
         composable(

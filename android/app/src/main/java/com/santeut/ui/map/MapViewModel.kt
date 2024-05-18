@@ -25,6 +25,7 @@ import com.santeut.data.model.request.EndHikingRequest
 import com.santeut.data.model.response.LocationDataResponse
 import com.santeut.data.model.response.WebSocketMessageResponse
 import com.santeut.domain.usecase.HikingUseCase
+import com.santeut.ui.wearable.HealthData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -85,6 +86,14 @@ class MapViewModel @Inject constructor(
     // 최고 고도
     private val _bestHeight = mutableStateOf(0)
 
+    // 칼로리
+    private val _calorie = mutableStateOf(0)
+    val calorie = _calorie
+
+    // 심장
+    private val _heartRate = mutableStateOf(0)
+    val heartRate = _heartRate
+
     // 유저 위치
     private val _userPositions = mutableStateOf<Map<String, LatLng>>(mapOf())
     val userPositions = _userPositions
@@ -136,11 +145,11 @@ class MapViewModel @Inject constructor(
                                     + " / " + message.lng
                         )
                     } else if (message.type == "offCourse") {
-                        Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
+//                        Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
                     } else if (message.type == "healthLisk") {
-                        Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
+//                        Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
                     } else if(message.type == "hikingEnd"){
-                        Log.d("소모임 종료", "방장이 종료헀어용")
+//                        Log.d("소모임 종료", "방장이 종료헀어용")
                         endedHiking()
                     }
                 } catch (e: Exception) {
@@ -234,6 +243,7 @@ class MapViewModel @Inject constructor(
                         Log.d("위치 변경됨", "${it.latitude} / ${it.longitude} / ${it.altitude}")
                         _myLocation.value = newLocation
                         _altitude.value = it.altitude.toInt()
+                        if(_bestHeight.value < _altitude.value) _bestHeight.value = _altitude.value
                         sendLocationUpdate(newLocation)
                         checkRouteDeviation(newLocation)
 //                    }
@@ -357,6 +367,8 @@ class MapViewModel @Inject constructor(
     fun checkRouteDeviation(
         latLng: LatLng
     ) {
+        if(_partyId.value == 0) return
+
         val geometryFactory = GeometryFactory()
         val userLocation: Point = geometryFactory.createPoint(Coordinate(latLng.latitude, latLng.longitude))
 
@@ -368,24 +380,28 @@ class MapViewModel @Inject constructor(
             val distanceInMeters = minDistance * 111319.9
 
             val isDeviated = distanceInMeters > 20.0
-            Log.d("경로 계산", "경로와 떨어진 거리 : $distanceInMeters")
+//            Log.d("경로 계산", "경로와 떨어진 거리 : $distanceInMeters")
 
             if (isDeviated) {
-                Log.d("경로 이탈", "경로 이탈했어용")
+//                Log.d("경로 이탈", "경로 이탈했어용")
                 sendMessage("offCourse")
             }
         } else {
-            Log.d("경로 이탈", "경로가 존재하지 않음.")
+//            Log.d("경로 이탈", "경로가 존재하지 않음.")
         }
     }
 
+    fun updateHealthData(healthData: HealthData) {
+        Log.d("updateHealthData", "Data : " + healthData.heartRate.toInt().toString() + " / " + healthData.distance.toString() + " / " + healthData.calories.toInt().toString())
+        _heartRate.value = healthData.heartRate.toInt()
+        _movedDistance.value = healthData.distance
+        _calorie.value = healthData.calories.toInt()
+    }
 
-
-
-
-
-
-
+    override fun onCleared() {
+        endedHiking()
+        super.onCleared()
+    }
 
 }
 
