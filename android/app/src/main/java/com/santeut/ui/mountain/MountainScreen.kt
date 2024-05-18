@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -188,7 +187,7 @@ fun HikingCourse(
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 15.0)
+        position = CameraPosition(LatLng(35.116824651798, 128.99110450587247), 12.0)
     }
     Column(
         modifier = Modifier.padding(20.dp) // 전체 Column에 패딩 적용
@@ -269,17 +268,18 @@ fun CourseItem(course: HikingCourseResponse, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .background(
-                color = Color(0xFFE5DD90), // Box와 Card의 배경색을 동일하게 설정
+                color = Color(0xFFE5DD90),
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(8.dp) // Internal padding
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp), // Card 모양을 Box와 동일하게 설정
-            backgroundColor = Color.Transparent, // Card의 배경색을 투명하게 설정
-            elevation = 0.dp // 필요시 elevation 제거
+                .fillMaxWidth()
+                .padding(8.dp)
+                .background(
+                    color = Color(0xFFE5DD90)
+                )
         ) {
             Column {
                 Row(
@@ -655,11 +655,14 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
+                            .background(
+                                color = Color(0xFFE5DD90),
+                            )
                     ) {
                         LazyRow(
                             modifier = Modifier
                                 .background(
-                                    color = Color.White,
+                                    color = Color(0xFFE5DD90),
                                 )
                         ) {
                             hourlyWeather?.let {
@@ -671,7 +674,6 @@ fun MountainWeather(mountain: MountainDetailResponse?) {
                                             .background(
                                                 color = Color(0xFFE5DD90),
                                             ),
-                                        shape = RoundedCornerShape(16.dp),
                                     ) {
                                         Box(
                                             modifier = Modifier
