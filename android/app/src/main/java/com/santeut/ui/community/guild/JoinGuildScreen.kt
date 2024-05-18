@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,12 +24,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme.typography
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FilterListOff
 import androidx.compose.material.icons.filled.PersonOutline
 import androidx.compose.material.icons.filled.PinDrop
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,6 +68,8 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
+import com.santeut.ui.community.party.PartyCard
+import com.santeut.ui.guild.GuildCard
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.genderToString
 import com.santeut.ui.guild.regionName
@@ -76,72 +83,174 @@ fun JoinGuildScreen(
     guildId: Int,
     onClearData: () -> Unit
 ) {
-    val guilds by guildViewModel.guilds.observeAsState(initial = emptyList())
+    val guildList by guildViewModel.guilds.observeAsState(initial = emptyList())
 
     // 필터 bottom sheet
     var showBottomFilterSheet by remember { mutableStateOf(false) }
     val filterSheetState = rememberModalBottomSheetState()
-
     var searchFilterRegion by remember { mutableStateOf("") }
     var searchFilterGender by remember { mutableStateOf("") }
+    // 필터 적용 되었는지?
+    var isFiltered by remember { mutableStateOf(false) }
+
+    // 검색어
+    var searchWord by remember { mutableStateOf("") }
+
 
     LaunchedEffect(key1 = null) {
         guildViewModel.getGuilds()
     }
-    Column {
-        var name by remember { mutableStateOf("") }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { showBottomFilterSheet = true },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            OutlinedTextField(
-                enabled = false,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(top = 8.dp, bottom = 8.dp),
-                textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
-                value = name,
-                onValueChange = { name = it },
-                placeholder = {
-                    Text(
-                        text = "어느 동호회를 찾으시나요?",
-                        color = Color(0xff666E7A)
-                    )
+
+    Scaffold(
+        topBar = {
+            GuildSearchBar(
+                guildViewModel,
+                searchWord,
+                onSearchTextChanged = { searchWord = it },
+                onClickFilter = {
+                    showBottomFilterSheet = true
                 },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done // 완료 액션 지정
-                ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFD6D8DB),
-                    unfocusedContainerColor = Color(0xFFEFEFF0),
-                    focusedBorderColor = Color(0xFFD6D8DB),
-                    focusedContainerColor = Color(0xFFEFEFF0),
-                ),
-                shape = RoundedCornerShape(16.dp),
+                isFiltered = isFiltered,
             )
-            Spacer(modifier = Modifier.width(15.dp))
-            androidx.compose.material3.Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = "필터",
-                tint = Color(0xff335C49),
+        }, content = { paddingValues ->
+
+            Column(
                 modifier = Modifier
-                    .size(30.dp)
-            )
+                    .padding(paddingValues)
+                    .fillMaxSize()
+            ) {
+                if (guildList.isEmpty()) {
+                    Text(
+                        text = "동호회가 없습니다",
+                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(alignment = Alignment.CenterHorizontally),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        items(guildList) { guild ->
+                            GuildCard(guild, guildViewModel, guildId, onClearData)
+                        }
+                    }
+                }
+            }
 
-        }
-
-        // 동호회 카드 필드
-        LazyColumn {
-            items(guilds) { guild ->
-                GuildCard(guild, guildViewModel, guildId, onClearData)
+            // 검색 필터
+            val context = LocalContext.current
+            if (showBottomFilterSheet) {
+                ModalBottomSheet(
+                    modifier = Modifier
+                        .fillMaxHeight(.8f),
+                    onDismissRequest = {
+                        showBottomFilterSheet = false
+                        searchFilterGender = ""
+                        searchFilterRegion = ""
+                    },
+                    sheetState = filterSheetState,
+                ) {
+                    Surface(modifier = Modifier.padding(16.dp)) {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp, 0.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "필터 검색",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.padding(
+                                        0.dp, 8.dp
+                                    )
+                                )
+                                Text(
+                                    text = "초기화",
+                                    color = Color.DarkGray,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.clickable {
+                                        searchFilterRegion = ""
+                                        searchFilterGender = ""
+                                    }
+                                )
+                            }
+                            // 지역 필터
+                            Text(
+                                text = "지역",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
+                            )
+                            CustomRadioGroup(
+                                6,
+                                3,
+                                region,
+                                selectedOption = searchFilterRegion,
+                                onSelectionChange = { searchFilterRegion = it })
+                            // 성별 필터
+                            Text(
+                                text = "성별",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(0.dp, 8.dp, 0.dp, 8.dp)
+                            )
+                            CustomRadioGroup(
+                                1,
+                                3,
+                                gender,
+                                selectedOption = searchFilterGender,
+                                onSelectionChange = { searchFilterGender = it })
+                            // 적용 버튼
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Green,
+                                    contentColor = Color.White
+                                ),
+                                onClick = {
+                                    if (searchFilterRegion =="" && searchFilterGender==""){
+                                        guildViewModel.getGuilds()
+                                        showBottomFilterSheet = false
+                                        isFiltered = false
+                                    }
+                                    else if (searchFilterRegion == "") {
+                                        Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT)
+                                            .show()
+                                        isFiltered = false
+                                    } else if (searchFilterGender == "") {
+                                        Toast.makeText(context, "성별을 선택해주세요", Toast.LENGTH_SHORT)
+                                            .show()
+                                        isFiltered = false
+                                    } else {
+                                        guildViewModel.searchGuilds(
+                                            searchFilterRegion,
+                                            searchFilterGender
+                                        )
+                                        showBottomFilterSheet = false
+                                        isFiltered = true
+                                        Log.d("동호회 검색) 지역", searchFilterRegion)
+                                        Log.d("동호회 검색) 성별", searchFilterGender)
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    text = "적용하기",
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
-    }
-
+    )
     // 검색 필터
     val context = LocalContext.current
     if (showBottomFilterSheet) {
@@ -435,6 +544,85 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
         }
     }
 
+}
+
+@Composable
+fun GuildSearchBar (
+    guildViewModel: GuildViewModel,
+    enteredText: String,
+    onSearchTextChanged: (String) -> Unit,
+    onClickFilter: () -> Unit,
+    isFiltered: Boolean,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(top = 8.dp, bottom = 8.dp),
+            textStyle = TextStyle(fontSize = 12.sp, color = Color(0xff666E7A)),
+            value = enteredText,
+            onValueChange = { text ->
+                onSearchTextChanged(text)
+            },
+            placeholder = {
+                androidx.compose.material.Text(
+                    text = "어느 동호회를 찾으시나요?",
+                    color = Color(0xff666E7A)
+                )
+            },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done // 완료 액션 지정
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color(0xFFD6D8DB),
+                unfocusedContainerColor = Color(0xFFEFEFF0),
+                focusedBorderColor = Color(0xFFD6D8DB),
+                focusedContainerColor = Color(0xFFEFEFF0),
+            ),
+            shape = RoundedCornerShape(16.dp),
+            trailingIcon = {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "검색",
+                    tint = Color(0xff33363F),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            Log.d("동호회 검색 버튼 클릭", enteredText)
+                            guildViewModel.searchGuildByName(enteredText)
+                        }
+                )
+            }
+        )
+        Spacer(modifier = Modifier.width(15.dp))
+        IconButton(
+            onClick = {
+                onClickFilter()
+            }
+        ) {
+            if(!isFiltered) {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.FilterListOff,
+                    contentDescription = "필터",
+                    tint = Color.DarkGray,
+                    modifier = Modifier.size(30.dp),
+                )
+            } else {
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.FilterList,
+                    contentDescription = "필터",
+                    tint = Green,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
+        }
+    }
 }
 
 @Composable

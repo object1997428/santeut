@@ -121,5 +121,9 @@ interface GuildApiService {
         @Path("type") type: Char
     ): CustomResponse<RankingListResponse>
 
+    @GET("/api/guild/search/guild")
+    suspend fun searchGuildByName(
+        @Query("name") name: String?
+    ): CustomResponse<SearchGuildListResponse>
 
 }
