@@ -39,6 +39,7 @@ import com.santeut.ui.party.SelectedMountainCard
 
 @Composable
 fun MountainListScreen(
+    guildId: Int?,
     type: String?,
     name: String, region: String?,
     navController: NavController,
@@ -54,8 +55,8 @@ fun MountainListScreen(
         if (type != "create") {
             SearchMountainBar(
                 null,
-                navController,
-                onClickMap = {}
+                null,
+                navController
             )
 
             LazyColumn {
@@ -65,14 +66,14 @@ fun MountainListScreen(
             }
         } else {
             SearchMountainBar(
+                guildId,
                 "create",
-                navController,
-                onClickMap = {}
+                navController
             )
 
             LazyColumn {
                 items(mountains) { mountain ->
-                    SelectedMountainCard(navController, mountain)
+                    SelectedMountainCard(guildId, navController, mountain)
                 }
             }
         }

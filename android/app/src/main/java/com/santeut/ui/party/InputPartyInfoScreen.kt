@@ -41,7 +41,7 @@ import java.util.Locale
 
 @Composable
 fun InputPartyInfoScreen(
-    /*guildId: Int?,*/
+    guildId: Int?,
     mountainId: Int,
     selectedCourseIds: List<Int>,
     navController: NavController,
@@ -158,7 +158,7 @@ fun InputPartyInfoScreen(
                     mountainId, // mountainId,
                     mountain?.mountainName ?: "", //mountainName,
                     maxPeople.toInt(),
-                    null, // guildId,
+                    guildId, // guildId,
                     place,
                     selectedCourseIds
                 )

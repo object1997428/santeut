@@ -83,8 +83,8 @@ fun HomeScreen(
         item {
             SearchMountainBar(
                 null,
-                navController,
-                onClickMap = {}
+                null,
+                navController
             )
         }
         item {
@@ -104,9 +104,9 @@ fun HomeScreen(
 
 @Composable
 fun SearchMountainBar(
+    guildId: Int?,
     type: String?,
-    navController: NavController,
-    onClickMap: () -> Unit
+    navController: NavController
 ) {
     var name by remember { mutableStateOf("") }
     var region by remember { mutableStateOf("") }
@@ -157,7 +157,7 @@ fun SearchMountainBar(
                                 toastMessageText = "검색어를 입력하세요"
                             } else {
                                 val path = if (type == "create") {
-                                    "create/mountainList/$name"
+                                    "create/mountainList/$name/$guildId"
                                 } else {
                                     if (region.isEmpty()) "mountainList/$name" else "mountainList/$name/$region"
                                 }
@@ -169,7 +169,7 @@ fun SearchMountainBar(
         )
     }
 
-    if(showToastMessage) {
+    if (showToastMessage) {
         showToast(toastMessageText!!)
     }
 }
@@ -301,17 +301,17 @@ fun MyGuildCard(
             )
         }
 
-        if(guilds.isEmpty()){
-            Row (
+        if (guilds.isEmpty()) {
+            Row(
                 modifier = Modifier
                     .height(180.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(text = "가입한 동호회가 없습니다.")
             }
-        }else{
+        } else {
             LazyRow(
                 modifier = Modifier
                     .height(180.dp)
@@ -398,14 +398,14 @@ fun TodayHikingCard(
         }
         Spacer(modifier = Modifier.height(4.dp))
 
-        if(todayParty.isEmpty()){
-            Row (
+        if (todayParty.isEmpty()) {
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(text = "등산 일정이 없습니다.")
             }
-        }else{
+        } else {
             LazyRow {
                 items(todayParty) { party ->
                     PartyCard(party)

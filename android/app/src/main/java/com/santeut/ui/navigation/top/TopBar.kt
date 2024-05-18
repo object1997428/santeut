@@ -438,7 +438,9 @@ fun GuildTopBar(
                         text = "소모임 만들기",
                         style = MaterialTheme.typography.titleMedium
                     )
-                }, onClick = { /*TODO*/ })
+                }, onClick = {
+                    navController.navigate("createParty/${guild.guildId}")
+                })
 
                 if (guild.isPresident) {
                     DropdownMenuItem(

@@ -1,9 +1,6 @@
 package com.santeut.ui.party
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.util.Log
-import android.widget.DatePicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -34,19 +25,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -60,33 +45,29 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.R
-import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.ui.home.SearchMountainBar
 import com.santeut.ui.mountain.MountainViewModel
 import com.santeut.ui.navigation.top.SimpleTopBar
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 @Composable
 fun SelectedMountain(
     guildId: Int?,
     navController: NavController,
-    onClickMap: () -> Unit,
 ) {
     Column {
-        SearchMountainBar(type = "create", navController, onClickMap)
+        SearchMountainBar(guildId, type = "create", navController)
     }
 }
 
 @Composable
 fun SelectedMountainCard(
+    guildId: Int?,
     navController: NavController, mountain: MountainResponse
 ) {
     Card(
         modifier = Modifier
-            .clickable(onClick = { navController.navigate("create/courseList/${mountain.mountainId}/${mountain.mountainName}") })
+            .clickable(onClick = { navController.navigate("create/courseList/${mountain.mountainId}/${mountain.mountainName}/${guildId}") })
             .fillMaxWidth()
             .height(100.dp)  // 카드 높이 조정
             .padding(8.dp),  // 카드 주변 여백
@@ -156,6 +137,7 @@ fun SelectedMountainCard(
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun SelectedCourse(
+    guildId: Int?,
     mountainId: Int,
     mountainName: String,
     navController: NavController,
@@ -234,7 +216,12 @@ fun SelectedCourse(
                     Button(onClick = {
                         val selectedCourses = selectedCourseIds.joinToString(",")
                         Log.d("등산로", selectedCourses)
-                        navController.navigate("createParty/${mountainId}/${selectedCourses}")
+
+                        if (guildId != null) {
+                            navController.navigate("createParty/${guildId}/${mountainId}/${selectedCourses}")
+                        } else {
+                            navController.navigate("createParty/${mountainId}/${selectedCourses}")
+                        }
                     }) {
                         Text(text = "선택완료")
                     }
