@@ -151,5 +151,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
+    implementation("org.jsoup:jsoup:1.15.3")
 
 }
