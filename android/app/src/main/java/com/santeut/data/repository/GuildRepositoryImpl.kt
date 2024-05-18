@@ -49,6 +49,20 @@ class GuildRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun searchGuildByName(name: String?): List<GuildResponse> {
+        return try {
+            val response = guildApiService.searchGuildByName(name)
+            if (response.status == "200") {
+                response.data.searchList
+            } else {
+                throw Exception("동호회 이름으로 검색 성공: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("GuildRepository", "Network error: ${e.message}", e)
+            emptyList()
+        }
+    }
+
     override suspend fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
