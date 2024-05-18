@@ -71,21 +71,38 @@ public class CourseServiceImpl implements CourseService {
 
       List<LocationData> coordList = GeometryUtils.convertGeometryToListLocationData(course.getCoursePoints());
       if(!allCoords.isEmpty()) {
+        LocationData firstCoord = allCoords.get(0);
         LocationData lastCoord = allCoords.get(allCoords.size()-1);
         LocationData startPointOfCourse = coordList.get(0);
         LocationData endPointOfCourse = coordList.get(coordList.size() - 1);
 
-        double distanceBetweenStartPoint = GeometryUtils.getDistance(lastCoord.lat, lastCoord.lng, startPointOfCourse.lat, startPointOfCourse.lng, "meter");
-        double distanceBetweenEndPoint = GeometryUtils.getDistance(lastCoord.lat, lastCoord.lng, endPointOfCourse.lat, endPointOfCourse.lng, "meter");
+        double distanceBetweenFirstAndStart = GeometryUtils.getDistance(firstCoord.lat, firstCoord.lng, startPointOfCourse.lat, startPointOfCourse.lng, "meter");
+        double distanceBetweenFirstAndEnd = GeometryUtils.getDistance(firstCoord.lat, firstCoord.lng, endPointOfCourse.lat, endPointOfCourse.lng, "meter") ;
+        double distanceBetweenLastAndStart = GeometryUtils.getDistance(lastCoord.lat, lastCoord.lng, startPointOfCourse.lat, startPointOfCourse.lng, "meter");
+        double distanceBetweenLastAndEnd = GeometryUtils.getDistance(lastCoord.lat, lastCoord.lng, endPointOfCourse.lat, endPointOfCourse.lng, "meter");
+        double minimumDistance = Math.min(
+            Math.min(distanceBetweenFirstAndStart, distanceBetweenFirstAndEnd),
+            Math.min(distanceBetweenLastAndStart, distanceBetweenLastAndEnd));
 
-        if(distanceBetweenStartPoint<=distanceBetweenEndPoint) {
-          // lastCoord와 startPointOfCourse가 더 가까우면 coordList 0번 인덱스부터 coords에 추가
+        if(minimumDistance == distanceBetweenFirstAndStart) {
+          Collections.reverse(coordList);
+          allCoords.addAll(0, coordList);
+        } else if(minimumDistance == distanceBetweenFirstAndEnd) {
+          allCoords.addAll(0, coordList);
+        } else if(minimumDistance == distanceBetweenLastAndStart) {
           allCoords.addAll(coordList);
-        } else {
-          // lastCoord와 endPointOfCourse가 더 가까우면 coordList 마지막 인덱스부터 coords에 추가
+        } else if(minimumDistance == distanceBetweenLastAndEnd) {
           Collections.reverse(coordList);
           allCoords.addAll(coordList);
         }
+        /*
+        if(distanceBetweenStartPoint<=distanceBetweenEndPoint) {
+          allCoords.addAll(coordList);
+        } else {
+          Collections.reverse(coordList);
+          allCoords.addAll(coordList);
+        }
+        */
       } else {
         allCoords.addAll(coordList);
       }
