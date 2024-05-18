@@ -23,7 +23,9 @@ data class GuildResponse(
     @SerializedName("guildMaxAge") val guildMaxAge: Int,
     @SerializedName("createdAt") val createdAt: LocalDateTime,
     @SerializedName("joinStatus") val joinStatus: Char,
-    @SerializedName("isPresident") val isPresident: Boolean
+    @SerializedName("isPresident") val isPresident: Boolean,
+    @SerializedName("guildIsPrivate") val guildIsPrivate: Boolean
+
 )
 
 data class GuildPostListResponse(

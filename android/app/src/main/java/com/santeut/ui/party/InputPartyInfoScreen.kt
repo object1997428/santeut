@@ -41,7 +41,7 @@ import java.util.Locale
 
 @Composable
 fun InputPartyInfoScreen(
-    /*guildId: Int?,*/
+    guildId: Int?,
     mountainId: Int,
     selectedCourseIds: List<Int>,
     navController: NavController,
@@ -60,6 +60,12 @@ fun InputPartyInfoScreen(
     val mountain by mountainViewModel.mountain.observeAsState()
     LaunchedEffect(key1 = null) {
         mountainViewModel.mountainDetail(mountainId)
+    }
+
+    LaunchedEffect(partyCreationSuccess) {
+        if (partyCreationSuccess == true) {
+            navController.navigate("guild")
+        }
     }
 
     val calendar = Calendar.getInstance()
@@ -158,14 +164,11 @@ fun InputPartyInfoScreen(
                     mountainId, // mountainId,
                     mountain?.mountainName ?: "", //mountainName,
                     maxPeople.toInt(),
-                    null, // guildId,
+                    guildId, // guildId,
                     place,
                     selectedCourseIds
                 )
             )
-            if (partyCreationSuccess == true) {
-                navController.navigate("guild")
-            }
         }) {
             Text("완료", fontSize = 18.sp)
         }

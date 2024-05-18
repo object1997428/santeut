@@ -62,7 +62,11 @@ fun MyGuildListScreen(
             )
         }
     } else {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start
+        ) {
             items(guilds) { guild ->
                 GuildCard(guild, navController)
             }

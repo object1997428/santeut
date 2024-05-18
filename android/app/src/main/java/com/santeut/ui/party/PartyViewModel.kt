@@ -1,17 +1,23 @@
 package com.santeut.ui.party
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naver.maps.geometry.LatLng
 import com.santeut.data.model.request.CreatePartyRequest
+import com.santeut.data.model.response.CoordResponse
+import com.santeut.data.model.response.MountainDetailResponse
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
+import com.santeut.data.model.response.PartyCourseResponse
 import com.santeut.data.model.response.PartyResponse
 import com.santeut.domain.usecase.PartyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +29,7 @@ class PartyViewModel @Inject constructor(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    private val _partyCreationSuccess = MutableLiveData<Boolean>()
+    private val _partyCreationSuccess = MutableLiveData<Boolean>(false)
     val partyCreationSuccess: LiveData<Boolean> = _partyCreationSuccess
 
     private val _partyList = MutableLiveData<List<PartyResponse>>()
@@ -37,6 +43,12 @@ class PartyViewModel @Inject constructor(
 
     private val _myScheduleList = MutableLiveData<List<String>>()
     val myScheduleList: LiveData<List<String>> = _myScheduleList
+
+    private val _selectedCourseOfParty = MutableLiveData<List<LatLng>>()
+    val selectedCourseOfParty: LiveData<List<LatLng>> = _selectedCourseOfParty
+
+    private val _distanceInKm = MutableLiveData<Double>(0.0)
+    val distanceInKm: LiveData<Double> = _distanceInKm
 
     fun getPartyList(
         guildId: Int?,
@@ -141,6 +153,20 @@ class PartyViewModel @Inject constructor(
                 Log.d("PartyViewModel", "날짜별 소모임 조회 시도")
             } catch (e: Exception) {
                 _error.postValue("날짜별 소모임 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun getSelectedCourseInfoOfParty(partyId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = partyUseCase.getSelectedCourseOfParty(partyId)
+                _selectedCourseOfParty.postValue(response.courseList.map { LatLng(it.lat, it.lng) }
+                    .toMutableList())
+                _distanceInKm.postValue(response.distance)
+                Log.d("PartyViewModel", "소모임 선택 등산로 정보 조회 시도")
+            } catch (e: Exception) {
+                _error.postValue("소모임 선택 등산로 정보 조회 실패: ${e.message}")
             }
         }
     }

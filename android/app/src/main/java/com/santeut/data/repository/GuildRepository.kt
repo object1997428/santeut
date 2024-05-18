@@ -19,9 +19,17 @@ interface GuildRepository {
 
     suspend fun searchGuilds(regionName: String, gender: String): List<GuildResponse>
 
+    suspend fun searchGuildByName(name: String?) : List<GuildResponse>
+
     suspend fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
+    ): Flow<Unit>
+
+    suspend fun updateguild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
     ): Flow<Unit>
 
     suspend fun myGuilds(): List<GuildResponse>

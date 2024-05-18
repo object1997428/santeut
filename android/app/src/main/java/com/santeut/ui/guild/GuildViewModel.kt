@@ -70,6 +70,16 @@ class GuildViewModel @Inject constructor(
         }
     }
 
+    fun searchGuildByName(name: String?) {
+        viewModelScope.launch {
+            try {
+                _guilds.postValue(guildUseCase.searchGuildByName(name))
+            } catch (e:Exception) {
+                _error.postValue("동호회 이름으로 검색 실패: ${e.message}")
+            }
+        }
+    }
+
     fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
@@ -84,6 +94,23 @@ class GuildViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateGuild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                guildUseCase.updateGuild(guildId, guildProfile, updateGuildRequest).collect {
+                    Log.d("GuildViewModel", "동호회 정보 수정 성공")
+                }
+            } catch (e: Exception) {
+                _error.postValue("동호회 정보 수정 실패: ${e.message}")
+            }
+        }
+    }
+
 
     fun myGuilds() {
         viewModelScope.launch {

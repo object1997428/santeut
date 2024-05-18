@@ -38,6 +38,14 @@ interface GuildApiService {
         @Part request: MultipartBody.Part
     ): CustomResponse<Unit>
 
+    @PATCH("/api/guild/{guildId}")
+    @Multipart
+    suspend fun updateGuild(
+        @Path("guildId") guildId: Int,
+        @Part guildProfile: MultipartBody.Part?,
+        @Part request: MultipartBody.Part
+    ): CustomResponse<Unit>
+
     @GET("/api/guild/myguild")
     suspend fun myGuilds(): CustomResponse<GuildListResponse>
 
@@ -113,5 +121,9 @@ interface GuildApiService {
         @Path("type") type: Char
     ): CustomResponse<RankingListResponse>
 
+    @GET("/api/guild/search/guild")
+    suspend fun searchGuildByName(
+        @Query("name") name: String?
+    ): CustomResponse<SearchGuildListResponse>
 
 }

@@ -23,10 +23,19 @@ class GuildUseCase @Inject constructor(
     suspend fun searchGuilds(regionName: String, gender: String): List<GuildResponse> =
         guildRepository.searchGuilds(regionName, gender)
 
+    suspend fun searchGuildByName(name: String?): List<GuildResponse> =
+        guildRepository.searchGuildByName(name)
+
     suspend fun createGuild(
         guildProfile: MultipartBody.Part?,
         createGuildRequest: CreateGuildRequest
     ): Flow<Unit> = guildRepository.createGuild(guildProfile, createGuildRequest)
+
+    suspend fun updateGuild(
+        guildId: Int,
+        guildProfile: MultipartBody.Part?,
+        updateGuildRequest: CreateGuildRequest
+    ): Flow<Unit> = guildRepository.updateguild(guildId, guildProfile, updateGuildRequest)
 
     suspend fun myGuilds(): List<GuildResponse> =
         guildRepository.myGuilds()
