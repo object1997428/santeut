@@ -16,5 +16,10 @@ data class PostResponse(
     @SerializedName("createdAt") val createdAt: LocalDateTime,
     @SerializedName("likeCnt") val likeCnt: Int,
     @SerializedName("commentCnt") val commentCnt: Int,
-    @SerializedName("hitCnt") val hitCnt: Int
+    @SerializedName("hitCnt") val hitCnt: Int,
+    @SerializedName("userId") val userId: Int,
+    @SerializedName("commentList") val commentList: List<CommentResponse>,
+    @SerializedName("images") val images: List<String>,
+    @SerializedName("writer") val writer: Boolean,
+    @SerializedName("like") val like: Boolean,
 )
