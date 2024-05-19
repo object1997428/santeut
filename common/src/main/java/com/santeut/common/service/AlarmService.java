@@ -51,7 +51,7 @@ public class AlarmService {
         log.info("referenceId: "+ referenceId + " / referenceType: "+ referenceType+" / userId: "+ alarmRequestDto.getUserId());
         Optional<AlarmTokenEntity> alarmToken = alarmTokenRepository.findById(alarmRequestDto.getUserId());
 
-        if(alarmToken.isEmpty()) {
+        if(alarmToken.isPresent()) {
             log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]", alarmToken.get().getId());
             boolean a = fcmUtils.sendNotificationByToken(alarmToken.get(), FCMRequestDto.of("PUSH", alarmRequestDto.getAlarmTitle(),
                     String.format(alarmRequestDto.getAlarmContent()),
