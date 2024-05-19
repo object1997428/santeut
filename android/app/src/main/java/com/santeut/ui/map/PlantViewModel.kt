@@ -3,17 +3,23 @@ package com.santeut.ui.map
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.apiservice.PlantIdApi
 import com.santeut.data.model.request.PlantIdentificationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -32,11 +38,7 @@ class PlantViewModel @Inject constructor()
     val crawlPlantName = mutableStateOf("")
     val crawlPlantDescription = mutableStateOf("")
     val name = mutableStateOf("")
-    val description = mutableStateOf("")
     val isLoading = mutableStateOf(true)
-
-//    val authKey = "897064a0-60a9-45ac-a0b8-2bc9e8ec0837:fx"
-//    val translator = Translator(authKey)
 
     fun identifyPlant(file: File) {
 
@@ -89,14 +91,12 @@ class PlantViewModel @Inject constructor()
                             Log.d("crawlPlant Name", "${keywordText}")
                             crawlPlantName.value = keywordText.toString()
 
-//                                        val description = docs.selectFirst("p.desc")?.text()
                             val description = docs.selectFirst("p.desc.__ellipsis")?.text()
-//                                        val description = descElement?.text()
 
                             if (description != null) {
                                 Log.d("Plant Description", description)
                                 crawlPlantDescription.value = description
-                                // 가져온 텍스트를 변수에 저장하거나 다른 작업을 수행할 수 있습니다.
+
                             } else {
                                 Log.d("Description", "Description not found")
                             }
@@ -120,4 +120,6 @@ class PlantViewModel @Inject constructor()
         fileInputStreamReader.close()
         return "data:image/jpeg;base64," + Base64.encodeToString(bytes, Base64.DEFAULT)
     }
+
 }
+
