@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
     private var isPostNotificationsPermissionGranted = false
     private var isAccessFineLocationGranted = false
     private var isAccessCoarseLocationGranted = false
+    private var isVibrateGranted = false
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -96,6 +97,7 @@ class MainActivity : ComponentActivity() {
             isForegroundServiceGranted = permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
             isAccessFineLocationGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] ?: isAccessFineLocationGranted
             isAccessCoarseLocationGranted = permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] ?: isAccessCoarseLocationGranted
+            isVibrateGranted = permissions[android.Manifest.permission.VIBRATE] ?: isVibrateGranted
         }
 
         requestPermission()
@@ -177,7 +179,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        isVibrateGranted = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.VIBRATE
+        ) == PackageManager.PERMISSION_GRANTED
 
+        if(!isVibrateGranted){
+            permissionRequest.add(android.Manifest.permission.VIBRATE)
+            Log.d("Permission Check", "Need VIBRATE")
+        }
 
         if(permissionRequest.isNotEmpty()){
             permissionLauncher.launch(permissionRequest.toTypedArray())

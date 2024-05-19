@@ -41,6 +41,7 @@ import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.operation.distance.DistanceOp
 import java.io.ByteArrayOutputStream
+import java.time.Duration
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -111,6 +112,9 @@ class MapViewModel @Inject constructor(
     private val _alertMessage = mutableStateOf("")
     val alertMessage = _alertMessage
 
+    // 이전 위험 알림 신호
+    private val _previousAlertTime = mutableStateOf<LocalDateTime?>(null)
+
     // 여기에 하면 안되는데...
     init {
         startLocationUpdates()
@@ -142,19 +146,13 @@ class MapViewModel @Inject constructor(
                             message.lng.toDouble(),
                             message.userProfile
                         )
-                        Log.d(
-                            "위치 바듬", message.userNickname + " / " + message.lat
-                                    + " / " + message.lng
-                        )
+//                        Log.d("위치 업데이트", "${message.userNickname} 위치 업데이트")
                     } else if (message.type == "offCourse") {
-//                        Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
-                        _alertMessage.value = message.userNickname + "님이 경로 이탈"
+                        onAlertMessage(message.userNickname + "님이 경로를 이탈하였습니다.")
                     } else if (message.type == "healthLisk") {
-//                        Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
-                        _alertMessage.value = message.userNickname + "님이 건강 이상"
-                    } else if(message.type == "hikingEnd"){
-//                        Log.d("소모임 종료", "방장이 종료헀어용")
-                        _alertMessage.value = "방장이 나감"
+                        onAlertMessage(message.userNickname + "님의 심박수가 비정상적입니다.")
+                    } else if (message.type == "hikingEnd") {
+                        onAlertMessage("방장이 소모임을 종료하였습니다.")
                         endedHiking()
                     }
                 } catch (e: Exception) {
@@ -176,6 +174,13 @@ class MapViewModel @Inject constructor(
         }
 
         webSocket = OkHttpClient().newWebSocket(request, listener)
+    }
+
+    private fun onAlertMessage(message: String) {
+        Log.d("onAlertMessage", message)
+        _alertMessage.value = message
+
+        // 진동 or 알림 추가
     }
 
     fun endedHiking() {
@@ -202,7 +207,7 @@ class MapViewModel @Inject constructor(
         stopWebSocket()
     }
 
-    fun initData(){
+    fun initData() {
         _partyId.value = 0
         _distance.value = 0.0
         _courseList.value = emptyList()
@@ -214,6 +219,7 @@ class MapViewModel @Inject constructor(
         _userPositions.value = mapOf()
         _userIcons.value = mutableMapOf()
         _deviation.value = 0
+        _previousAlertTime.value == null
     }
 
     fun stopWebSocket() {
@@ -244,14 +250,13 @@ class MapViewModel @Inject constructor(
                 result ?: return
                 result.locations.lastOrNull()?.let {
                     val newLocation = LatLng(it.latitude, it.longitude)
-//                    if (_myLocation.value == null || (_myLocation.value != newLocation && it.accuracy < 30)) {
-                        Log.d("위치 변경됨", "${it.latitude} / ${it.longitude} / ${it.altitude}")
+                    if (_myLocation.value == null || (_myLocation.value != newLocation && it.accuracy < 30)) {
                         _myLocation.value = newLocation
                         _altitude.value = it.altitude.toInt()
-                        if(_bestHeight.value < _altitude.value) _bestHeight.value = _altitude.value
+                        if (_bestHeight.value < _altitude.value) _bestHeight.value = _altitude.value
                         sendLocationUpdate(newLocation)
                         checkRouteDeviation(newLocation)
-//                    }
+                    }
                 }
             }
         }
@@ -283,16 +288,33 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    private fun sendMessage(type: String){
+    private fun sendAlertMessage(type: String) {
         webSocket?.let { socket ->
-            val message = Gson().toJson(
-                mapOf(
-                    "type" to type,
-                    "lat" to _myLocation.value?.latitude,
-                    "lng" to _myLocation.value?.longitude
+            // 5분 안에 위험 신호를 보낸 적이 있는지 확인.
+
+            if (_previousAlertTime.value == null
+                || (_previousAlertTime.value != null && Duration.between(_previousAlertTime.value, LocalDateTime.now()).toMinutes() >= 3)
+            ) {
+                _previousAlertTime.value = LocalDateTime.now()
+
+                Log.d(
+                    "위험 신호 체크",
+                    _previousAlertTime.value.toString() + " / " + Duration.between(
+                        _previousAlertTime.value,
+                        LocalDateTime.now()
+                    ).toMinutes()
                 )
-            )
-            socket.send(message)
+                Log.d("sendAlertMessage", "$type 위험 신호 보냄.")
+
+                val message = Gson().toJson(
+                    mapOf(
+                        "type" to type,
+                        "lat" to _myLocation.value?.latitude,
+                        "lng" to _myLocation.value?.longitude
+                    )
+                )
+                socket.send(message)
+            }
         }
     }
 
@@ -372,35 +394,35 @@ class MapViewModel @Inject constructor(
     fun checkRouteDeviation(
         latLng: LatLng
     ) {
-        if(_partyId.value == 0) return
+        if (_partyId.value == 0) return
 
         val geometryFactory = GeometryFactory()
-        val userLocation: Point = geometryFactory.createPoint(Coordinate(latLng.latitude, latLng.longitude))
+        val userLocation: Point =
+            geometryFactory.createPoint(Coordinate(latLng.latitude, latLng.longitude))
 
         if (_courseList.value.isNotEmpty()) {
-            val coordinates = _courseList.value.map { Coordinate(it.latitude, it.longitude) }.toTypedArray()
+            val coordinates =
+                _courseList.value.map { Coordinate(it.latitude, it.longitude) }.toTypedArray()
             val predefinedRoute: LineString = geometryFactory.createLineString(coordinates)
             val distanceOp = DistanceOp(predefinedRoute, userLocation)
             val minDistance = distanceOp.distance()
             val distanceInMeters = minDistance * 111319.9
 
-            val isDeviated = distanceInMeters > 20.0
+            val isDeviated = distanceInMeters > 10.0
             _deviation.value = distanceInMeters.toInt()
-//            Log.d("경로 계산", "경로와 떨어진 거리 : $distanceInMeters")
-
             if (isDeviated) {
-//                Log.d("경로 이탈", "경로 이탈했어용")
-                sendMessage("offCourse")
+                Log.d("경로 이탈", "경로 이탈 : ${distanceInMeters.toInt()}")
+                sendAlertMessage("offCourse")
             }
         } else {
-//            Log.d("경로 이탈", "경로가 존재하지 않음.")
+            Log.d("경로 이탈", "경로가 존재하지 않음.")
         }
     }
 
     fun updateHealthData(healthData: HealthData) {
-        Log.d("updateHealthData", "Data : " + healthData.heartRate.toInt().toString() + " / " + healthData.distance.toString() + " / " + healthData.calories.toInt().toString())
         _heartRate.value = healthData.heartRate.toInt()
-        _movedDistance.value = healthData.distance
+        _movedDistance.value = (healthData.distance / 1000)
+        _stepCount.value = healthData.stepsTotal.toInt()
         _calorie.value = healthData.calories.toInt()
     }
 
@@ -409,5 +431,8 @@ class MapViewModel @Inject constructor(
         super.onCleared()
     }
 
+    fun checkAlertMessage() {
+        _alertMessage.value = ""
+    }
 }
 
