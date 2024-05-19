@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.santeut.data.apiservice.PostApiService
 import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.request.CreatePostRequest
+import com.santeut.data.model.response.CoursePostDetailResponse
 import com.santeut.data.model.response.PostResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -64,6 +65,25 @@ class PostRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e("PostRepository", "Network error while fetching post: ${e.message}", e)
+            throw e
+        }
+    }
+
+    override suspend fun readCoursePostDetail(
+        postId: Int,
+        postType: Char,
+        partyUserId: Int
+    ): CoursePostDetailResponse {
+        try {
+            val response = postApiService.readCoursePostDetail(postId, postType, partyUserId)
+            if (response.status == "200") {
+                response.data.let {
+                    return it
+                }
+            } else {
+                throw Exception("Failed to load post: ${response.status} ${response.data}")
+            }
+        } catch (e: Exception) {
             throw e
         }
     }
