@@ -34,8 +34,6 @@ fun HealthScreen(
     state: Boolean,
     uiState: HealthScreenState
 ) {
-
-
     if (uiState.error == null){
         if(!state){
             PrepareScreen()
@@ -115,38 +113,6 @@ fun HealthDataScreen(
                     title = "고도",
                     value = uiState.exerciseState?.exerciseMetrics?.absoluteElevation?.toInt()?.toString() ?: "--",
                     unit = "m"
-                )
-            }
-            item {
-                HealthItem(
-                    title = "위도",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.latitude?.let {
-                        String.format("%.6f", it)
-                    } ?: "--",
-                    unit = ""
-                )
-            }
-            item {
-                HealthItem(
-                    title = "경도",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.longitude?.let {
-                        String.format("%.6f", it)
-                    } ?: "--",
-                    unit = ""
-                )
-            }
-            item {
-                HealthItem(
-                    title = "고도",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.altitude?.toLong()?.toString() ?: "--",
-                    unit = ""
-                )
-            }
-            item {
-                HealthItem(
-                    title = "방향",
-                    value = uiState.exerciseState?.exerciseMetrics?.location?.bearing?.toInt()?.toString() ?: "--",
-                    unit = ""
                 )
             }
         }
