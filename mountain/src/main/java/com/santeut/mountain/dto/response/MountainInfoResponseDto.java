@@ -19,14 +19,17 @@ public class MountainInfoResponseDto {
   public String image;
 
   public static MountainInfoResponseDto from(MountainEntity m) {
+    double latitude = Math.min(m.getMountainTop().getX(), m.getMountainTop().getY());  // 위도
+    double longitude = Math.max(m.getMountainTop().getX(), m.getMountainTop().getY()); // 경도
+
     return MountainInfoResponseDto.builder()
         .mountainName(m.getMountainName())
         .address(m.getAddress())
         .description(m.getDescription())
         .height(m.getHeight())
         .courseCount(m.getCourseEntityList().size())
-        .lat(m.getMountainTop().getX())
-        .lng(m.getMountainTop().getY())
+        .lat(latitude)
+        .lng(longitude)
         .views(m.getViews())
         .image(m.getImage())
         .build();

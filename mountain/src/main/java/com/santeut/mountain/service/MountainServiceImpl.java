@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MountainServiceImpl implements MountainService {
 
   private final MountainRepository mountainRepository;
