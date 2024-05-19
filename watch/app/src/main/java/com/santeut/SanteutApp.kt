@@ -1,6 +1,7 @@
 package com.santeut
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
+import com.santeut.ui.HealthDataViewModel
 import com.santeut.ui.HealthScreen
 import com.santeut.ui.MainScreen
 import com.santeut.ui.map.MapScreen
@@ -31,6 +33,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun SanteutApp(
+    healthDataViewModel: HealthDataViewModel,
     onFinishActivity: () -> Unit,
     onMoveTaskBack: () -> Unit
 ) {
@@ -83,6 +86,7 @@ fun SanteutApp(
                     uiState = uiState
                 )
                 2 -> MapScreen(
+                    healthDataViewModel = healthDataViewModel,
                     state = state,
                     uiState = uiState
                 )
@@ -93,10 +97,10 @@ fun SanteutApp(
 
 fun determinePermissions(): List<String> {
     val permissions = mutableListOf(
+        android.Manifest.permission.FOREGROUND_SERVICE,
         android.Manifest.permission.BODY_SENSORS,
         android.Manifest.permission.ACCESS_FINE_LOCATION,
         android.Manifest.permission.ACTIVITY_RECOGNITION,
-        android.Manifest.permission.FOREGROUND_SERVICE,
         android.Manifest.permission.BLUETOOTH
     )
     if (Build.VERSION.SDK_INT >= 33) {

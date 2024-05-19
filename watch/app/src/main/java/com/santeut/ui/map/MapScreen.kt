@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,10 +30,12 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.santeut.R
+import com.santeut.ui.HealthDataViewModel
 import com.santeut.ui.health.HealthScreenState
 
 @Composable
 fun MapScreen(
+    healthDataViewModel: HealthDataViewModel,
     state: Boolean,
     uiState: HealthScreenState
 ) {
@@ -51,12 +54,14 @@ fun MapScreen(
         Log.d("Map Screen LatLng : ", "$latitude / $longitude")
     }
 
+    val userPositions by healthDataViewModel.userPositions
+
     val mapProperties = MapProperties(
         mapType = MapType.TERRAIN,
         mapStyleOptions = MapStyleOptions(mapStyleJson)
     )
 
-    if (!state || latitude == 0.0 || longitude == 0.0) {
+    if (!state || ((latitude == 0.0 || longitude == 0.0) && userPositions.isEmpty()) ) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -82,11 +87,18 @@ fun MapScreen(
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
             properties = mapProperties
         ) {
-            Marker(
-                state = markerState,
-                title = "Me",
-                icon = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_blue)
-            )
+//            Marker(
+//                state = markerState,
+//                title = "Me",
+//                icon = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_blue)
+//            )
+            userPositions.forEach { (userNickname, position) ->
+                Marker(
+                    state = MarkerState(position = position),
+                    title = userNickname,
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_blue)
+                )
+            }
         }
     }
 }

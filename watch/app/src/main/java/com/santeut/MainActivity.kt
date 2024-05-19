@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SanteutApp (
+                healthDataViewModel = healthDataViewModel,
                 onFinishActivity = {
                     this.finish()
                 },

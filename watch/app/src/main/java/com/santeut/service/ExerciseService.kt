@@ -74,7 +74,7 @@ class ExerciseService : LifecycleService() {
                 try {
                     val exerciseMetrics = exerciseServiceMonitor.exerciseServiceState.value.exerciseMetrics
                     toSend(exerciseMetrics)
-                    Log.d("To Send Heart Rate", exerciseMetrics.heartRate.toString())
+//                    Log.d("To Send Heart Rate", exerciseMetrics.heartRate.toString())
                     delay(2000)
                 } catch (e: Exception) {
                     Log.e(TAG, "Error sending data: ${e.localizedMessage}")
@@ -147,7 +147,7 @@ class ExerciseService : LifecycleService() {
 
             val result = dataClient.putDataItem(request).await()
 
-            Log.d("toSend ", "DataItem saved: $result")
+//            Log.d("toSend ", "DataItem saved: $result")
         } catch (cancellationException: CancellationException) {
             throw cancellationException
         } catch (exception: Exception) {

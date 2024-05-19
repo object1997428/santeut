@@ -3,13 +3,17 @@ package com.santeut.ui
 import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.PutDataMapRequest
@@ -25,9 +29,37 @@ class HealthDataViewModel(
 ) : AndroidViewModel(application), DataClient.OnDataChangedListener,
     MessageClient.OnMessageReceivedListener, CapabilityClient.OnCapabilityChangedListener {
 
+    private val _userPositions = mutableStateOf<Map<String, LatLng>>(mapOf())
+    val userPositions = _userPositions
+
     @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataEvents: DataEventBuffer) {
-        Log.d("onDataChanged ", dataEvents.toString())
+        val newUserPositions = mutableMapOf<String, LatLng>()
+
+        dataEvents.forEach { dataEvent ->
+            if (dataEvent.type == DataEvent.TYPE_CHANGED) {
+                val dataItem = dataEvent.dataItem
+                val path = dataItem.uri.path
+                if (path.equals("/position")) {
+                    Log.d("onDataChanged", "위치 변화 받음 ${dataItem.toString()}")
+                    val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
+
+                    dataMap.keySet().forEach { key ->
+                        if (key.endsWith("_latitude") || key.endsWith("_longitude")) {
+                            val baseKey = key.substring(0, key.indexOf("_"))
+
+                            val latitude = dataMap.getDouble(baseKey + "_latitude", 0.0)
+                            val longitude = dataMap.getDouble(baseKey + "_longitude", 0.0)
+
+                            newUserPositions[baseKey] = LatLng(latitude, longitude)
+                            Log.d("user position", "$baseKey : $latitude / $longitude")
+                        }
+                    }
+
+                    _userPositions.value = newUserPositions
+                }
+            }
+        }
     }
 
     override fun onMessageReceived(messageEvent: MessageEvent) {

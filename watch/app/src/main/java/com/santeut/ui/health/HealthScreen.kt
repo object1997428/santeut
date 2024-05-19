@@ -34,6 +34,8 @@ fun HealthScreen(
     state: Boolean,
     uiState: HealthScreenState
 ) {
+
+
     if (uiState.error == null){
         if(!state){
             PrepareScreen()
