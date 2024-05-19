@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,10 +49,11 @@ public class AlarmService {
 
         //알람 보내기
         log.info("referenceId: "+ referenceId + " / referenceType: "+ referenceType+" / userId: "+ alarmRequestDto.getUserId());
-        AlarmTokenEntity alarmToken = alarmTokenRepository.findById(alarmRequestDto.getUserId()).orElseGet(null);
-        if(alarmToken != null) {
-            log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]", alarmToken.getId());
-            boolean a = fcmUtils.sendNotificationByToken(alarmToken, FCMRequestDto.of("PUSH", alarmRequestDto.getAlarmTitle(),
+        Optional<AlarmTokenEntity> alarmToken = alarmTokenRepository.findById(alarmRequestDto.getUserId());
+
+        if(alarmToken.isEmpty()) {
+            log.info("[Alarm Server][sendAlarm()-- alarmToken.getId()={}]", alarmToken.get().getId());
+            boolean a = fcmUtils.sendNotificationByToken(alarmToken.get(), FCMRequestDto.of("PUSH", alarmRequestDto.getAlarmTitle(),
                     String.format(alarmRequestDto.getAlarmContent()),
                     FCMCategory.HIKING_START));
             log.info(" : {}", a);
