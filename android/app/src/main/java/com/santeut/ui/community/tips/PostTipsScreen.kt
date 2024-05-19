@@ -26,6 +26,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +56,9 @@ fun PostTipsScreen(
     var searchText by remember { mutableStateOf("") }
 
     val posts by postViewModel.posts.observeAsState(initial = emptyList())
+    LaunchedEffect(key1 = 'T') {
+        postViewModel.getPosts('T')
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),

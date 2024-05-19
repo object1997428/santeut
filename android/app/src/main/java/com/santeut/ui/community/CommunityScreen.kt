@@ -95,7 +95,7 @@ fun CommunityScreen(
                     0 -> JoinGuildScreen(guildId = guildId, onClearData = onClearData)
                     1 -> JoinPartyScreen(null)
                     2 -> PostTipsScreen(navController)
-                    3 -> PostCourseScreen()
+                    3 -> PostCourseScreen(navController)
                     else -> Text("Unknown page")
                 }
             }
