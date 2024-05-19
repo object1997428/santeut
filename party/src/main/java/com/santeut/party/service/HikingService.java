@@ -151,12 +151,12 @@ public class HikingService {
             //소모임 회원들한테 알림보내기 요청
             alertHikingEnd(hikingExitRequest,party);
             //소모임장 퇴장 처리
-            exitHiking(hikingExitRequest,userId,party.isLinked());
+            exitHiking(hikingExitRequest,userId,party.getGuildId());
         }
         //P인데 파티원이 그냥 먼저 퇴장하거나, E라서 알림받고 파티원이 나가거나
         else {
             //파티원 퇴장 처리
-            exitHiking(hikingExitRequest,userId,party.isLinked());
+            exitHiking(hikingExitRequest,userId,party.getGuildId());
         }
     }
 
@@ -176,7 +176,7 @@ public class HikingService {
         log.info("[Party Server][Common response ={}",responseEntity);
     }
 
-    private void exitHiking(HikingExitRequest hikingExitRequest,int userId,boolean isLinked) {
+    private void exitHiking(HikingExitRequest hikingExitRequest,int userId,Integer guildId) {
         PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingExitRequest.getPartyId(), userId)
                 .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
         if (partyUser.getStatus() == 'E') throw new DataMismatchException("해당 유저는 이미 소모임을 종료했습니다.");
@@ -202,25 +202,25 @@ public class HikingService {
         }
 
         //랭킹 갱신
-        if(isLinked){
-            updateRank(hikingExitRequest, userId, partyUser);
+        if(guildId!=null&&guildId>0){
+            updateRank(userId, partyUser,guildId);
         }
     }
 
-    private void updateRank(HikingExitRequest hikingExitRequest, int userId, PartyUser partyUser) {
+    private void updateRank(int userId, PartyUser partyUser,int guildId) {
         //1. 최다등반
-        String key1 = "guild/" + hikingExitRequest.getPartyId() + "/mostHiking";
+        String key1 = "guild/" + guildId + "/mostHiking";
         String value=Integer.toString(userId);
         redisTemplate.opsForZSet().incrementScore(key1, value, 1);
         //2. 최고고도
-        String key2 = "guild/" + hikingExitRequest.getPartyId() + "/bestHeight";
+        String key2 = "guild/" + guildId + "/bestHeight";
         Integer newHeight= partyUser.getBestHeight();
         Double currentHeight = redisTemplate.opsForZSet().score(key2, value);
         if (currentHeight == null || currentHeight < newHeight) {
             redisTemplate.opsForZSet().add(key2, value, newHeight);
         }
         //3. 최장거리
-        String key3 = "guild/" + hikingExitRequest.getPartyId() + "/bestDistance";
+        String key3 = "guild/" + guildId + "/bestDistance";
         Double currentDistance=redisTemplate.opsForZSet().score(key3, value);
         Double newDistance= partyUser.getDistance()+((currentDistance==null)?0:currentDistance);
         redisTemplate.opsForZSet().add(key3, value, newDistance);
