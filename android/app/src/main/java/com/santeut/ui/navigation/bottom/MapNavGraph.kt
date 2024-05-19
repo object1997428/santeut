@@ -9,8 +9,13 @@ import androidx.navigation.navigation
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.santeut.ui.map.HikingScreen
 import com.santeut.ui.map.MapScreen
+<<<<<<< HEAD
 import com.santeut.ui.map.MapViewModel
 import com.santeut.ui.wearable.WearableViewModel
+=======
+import com.santeut.ui.map.SearchPlant
+
+>>>>>>> android-feat/plant
 
 @ExperimentalNaverMapApi
 fun NavGraphBuilder.MapNavGraph(
@@ -22,6 +27,7 @@ fun NavGraphBuilder.MapNavGraph(
         startDestination = "map",
         route = "map_graph"
     ) {
+<<<<<<< HEAD
         composable(
             route = "map"
         ) {
@@ -29,6 +35,11 @@ fun NavGraphBuilder.MapNavGraph(
                 mapViewModel = mapViewModel,
                 wearableViewModel= wearableViewModel
             )
+=======
+
+        composable(route = "map") {
+            MapScreen(navController)
+>>>>>>> android-feat/plant
         }
         composable(
             route = "hiking/{partyId}",
@@ -36,6 +47,10 @@ fun NavGraphBuilder.MapNavGraph(
         ) { backStackEntry ->
             val partyId = backStackEntry.arguments?.getInt("partyId") ?: 0
             HikingScreen(partyId)
+        }
+
+        composable("searchPlant") {
+            SearchPlant()
         }
     }
 }
