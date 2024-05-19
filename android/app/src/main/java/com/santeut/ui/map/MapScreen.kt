@@ -90,6 +90,10 @@ fun MapScreen(
     val calorie by mapViewModel.calorie
     val heartRate by mapViewModel.heartRate
 
+    // 임시
+    val alertMessage by mapViewModel.alertMessage
+    val deviation by mapViewModel.deviation
+
     // 헬스...
     val healthData by wearableViewModel.healthData
 
@@ -179,6 +183,12 @@ fun MapScreen(
         }
         // 인포 창
         if (partyId != 0) {
+            Text(text = "Deviation : " + deviation.toString() + "m")
+            if(alertMessage.isEmpty()){
+                Text(text = "신호 없음")
+            }else{
+                Text(text = alertMessage)
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

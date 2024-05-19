@@ -108,6 +108,8 @@ class MapViewModel @Inject constructor(
 
     // 알림 처리
     // 나중에
+    private val _alertMessage = mutableStateOf("")
+    val alertMessage = _alertMessage
 
     // 여기에 하면 안되는데...
     init {
@@ -146,10 +148,13 @@ class MapViewModel @Inject constructor(
                         )
                     } else if (message.type == "offCourse") {
 //                        Log.d("경로 이탈 알림", "${message.userNickname}님이 경로를 이탈하셨습니다.")
+                        _alertMessage.value = message.userNickname + "님이 경로 이탈"
                     } else if (message.type == "healthLisk") {
 //                        Log.d("건강 이상 알림", "${message.userNickname}님이 건강 신호가 좋지 않습니다!")
+                        _alertMessage.value = message.userNickname + "님이 건강 이상"
                     } else if(message.type == "hikingEnd"){
 //                        Log.d("소모임 종료", "방장이 종료헀어용")
+                        _alertMessage.value = "방장이 나감"
                         endedHiking()
                     }
                 } catch (e: Exception) {
@@ -380,6 +385,7 @@ class MapViewModel @Inject constructor(
             val distanceInMeters = minDistance * 111319.9
 
             val isDeviated = distanceInMeters > 20.0
+            _deviation.value = distanceInMeters.toInt()
 //            Log.d("경로 계산", "경로와 떨어진 거리 : $distanceInMeters")
 
             if (isDeviated) {
