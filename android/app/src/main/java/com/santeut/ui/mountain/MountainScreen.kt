@@ -416,8 +416,8 @@ class WeatherApiViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = weatherApi.getWeather(
-                    35.29828453330066,
-                    129.16142967035825,
+                    lat,
+                    lon,
                     "minutely",
                     "metric",
                     apiKey
