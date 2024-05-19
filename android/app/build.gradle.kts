@@ -155,4 +155,6 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.15.3")
 
+    implementation("androidx.compose.material3:material3:1.0.0")
+    implementation("com.google.accompanist:accompanist-pager:0.26.5-rc")
 }
