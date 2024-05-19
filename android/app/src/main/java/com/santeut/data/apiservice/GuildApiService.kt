@@ -116,8 +116,9 @@ interface GuildApiService {
         @Path("guildId") guildId: Int
     ): CustomResponse<Unit>
 
-    @GET("/api/guild/rank/{type}")
+    @GET("/api/guild/{guildId}/rank/{type}")
     suspend fun getRanking(
+        @Path("guildId") guildId: Int,
         @Path("type") type: Char
     ): CustomResponse<RankingListResponse>
 

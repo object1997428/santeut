@@ -260,10 +260,10 @@ class GuildViewModel @Inject constructor(
         }
     }
 
-    fun getRanking(type: Char) {
+    fun getRanking(guildId: Int, type: Char) {
         viewModelScope.launch {
             try {
-                _rankingList.postValue(guildUseCase.getRanking(type))
+                _rankingList.postValue(guildUseCase.getRanking(guildId, type))
             } catch (e: Exception) {
                 _error.postValue("랭킹 조회 실패: ${e.message}")
             }

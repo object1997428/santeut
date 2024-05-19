@@ -450,7 +450,12 @@ fun GuildTopBar(
                             )
                         },
                         onClick = { navController.navigate("guildApplyList/${guild.guildId}") })
-                    DropdownMenuItem(text = { Text(text = "동호회 관리", style = MaterialTheme.typography.titleMedium) }, onClick = {
+                    DropdownMenuItem(text = {
+                        Text(
+                            text = "동호회 관리",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }, onClick = {
                         navController.navigate("updateGuild/${guild.guildId}")
                     })
                 }

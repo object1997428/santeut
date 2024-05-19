@@ -61,6 +61,6 @@ interface GuildRepository {
 
     suspend fun quitGuild(guildId: Int): Flow<Unit>
 
-    suspend fun getRanking(type: Char): List<RankingResponse>   // C: 최다등반, H: 최고높이, D: 최장거리
+    suspend fun getRanking(guildId: Int,type: Char): List<RankingResponse>   // C: 최다등반, H: 최고높이, D: 최장거리
 
 }

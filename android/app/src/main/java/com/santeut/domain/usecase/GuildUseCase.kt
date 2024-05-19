@@ -81,6 +81,6 @@ class GuildUseCase @Inject constructor(
 
     suspend fun quitGuild(guildId: Int): Flow<Unit> = guildRepository.quitGuild(guildId)
 
-    suspend fun getRanking(type: Char): List<RankingResponse> = guildRepository.getRanking(type)
+    suspend fun getRanking(guildId: Int,type: Char): List<RankingResponse> = guildRepository.getRanking(guildId,type)
 
 }

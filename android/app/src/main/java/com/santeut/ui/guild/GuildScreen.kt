@@ -99,7 +99,7 @@ fun GuildScreen(
                     0 -> GuildInfoScreen(guild)
                     1 -> GuildCommunityScreen(guildId, navController)
                     2 -> JoinPartyScreen(guildId)
-                    3 -> GuildRankingScreen()
+                    3 -> GuildRankingScreen(guildId)
                     else -> Text("Unknown page")
                 }
             }
