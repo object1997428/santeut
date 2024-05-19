@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -43,8 +45,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.santeut.R
 import com.ujizin.camposer.CameraPreview
 import com.ujizin.camposer.state.ImageCaptureResult
 import com.ujizin.camposer.state.rememberCameraState
@@ -78,33 +82,44 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
     CameraPreview(
         cameraState = cameraState,
     ) {
-        Button(onClick = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(30.dp),
+            contentAlignment = Alignment.BottomCenter
+        ){
+            Image(
+                painter = painterResource(id = R.drawable.camera_button),
+                contentDescription = "사진 촬영",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clickable(
+                        onClick = {
+                            coroutineScope.launch {
+                                if (sheetState.isVisible) {
+                                    sheetState.hide()
+                                } else {
+                                    sheetState.show()
+                                }
+                            }
 
-            coroutineScope.launch {
-                if (sheetState.isVisible) {
-                    sheetState.hide()
-                } else {
-                    sheetState.show()
-                }
-            }
+                            val file = File(directory, fileName)
+                            cameraState.takePicture(file) { result ->
+                                if (result is ImageCaptureResult.Success) {
+                                    imageFile.value = file
 
-            val file = File(directory, fileName)
-            cameraState.takePicture(file) { result ->
-                if (result is ImageCaptureResult.Success) {
-                    imageFile.value = file
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        plantViewModel.identifyPlant(file)
-                        isButton.value = true;
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        plantViewModel.identifyPlant(file)
+                                        isButton.value = true;
 //                                sheetState.show()
-                    }
-                } else {
-                    Toast.makeText(context, "사진 촬영에 실패했습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-        ) {
-            Icon(Icons.Rounded.Add, contentDescription = "사진 촬영")
+                                    }
+                                } else {
+                                    Toast.makeText(context, "사진 촬영에 실패했습니다", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    )
+            )
         }
     }
 

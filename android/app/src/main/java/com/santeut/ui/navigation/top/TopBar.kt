@@ -82,6 +82,7 @@ fun TopBar(
                 currentBackStackEntry?.arguments?.getString("partyName") ?: "소모임 제목"
             )
         }
+        "map" -> SimpleTopBar_2(navController, "등산")
     }
 }
 
@@ -186,6 +187,27 @@ fun SimpleTopBar(navController: NavController, pageName: String) {
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Back"
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun SimpleTopBar_2(navController: NavController, pageName: String) {
+    TopAppBar(
+        title = { Text(pageName, style = MaterialTheme.typography.titleLarge) },
+        contentColor = Color.Black,
+        backgroundColor = Color.White,
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.navigate("home") {
+                    popUpTo(0) { inclusive = true }
+                }
             }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBackIosNew,
