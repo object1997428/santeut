@@ -31,7 +31,7 @@ public class RankServiceImpl implements RankService {
     private final UserFeign userFeign;
     private final int maxN = 5;
 
-    public RankMembersInfoResponse getRankList(int loginUserId, int partyId, char type) {
+    public RankMembersInfoResponse getRankList(int loginUserId, int guildId, char type) {
         List<Integer> userList = new ArrayList<>();
         List<RankUserInfo> rankList = new ArrayList<>();
         List<ZSetOperations.TypedTuple<String>> rankHikers = new ArrayList<>();
@@ -39,19 +39,19 @@ public class RankServiceImpl implements RankService {
         switch (type) {
             case 'C':
                 // 최다등반
-                String key = "guild/" + partyId + "/mostHiking";
+                String key = "guild/" + guildId + "/mostHiking";
                 rankHikers = getTopUsersFromSortedSetWithScores(key, 5);
                 scoreTail = "번";
                 break;
             case 'H':
                 // 최고고도
-                String bestHeightKey = "guild/" + partyId + "/bestHeight";
+                String bestHeightKey = "guild/" + guildId + "/bestHeight";
                 rankHikers = getTopUsersFromSortedSetWithScores(bestHeightKey, 5);
                 scoreTail = "m";
                 break;
             case 'D':
                 // 최장거리
-                String bestDistanceKey = "guild/" + partyId + "/bestDistance";
+                String bestDistanceKey = "guild/" + guildId + "/bestDistance";
                 rankHikers = getTopUsersFromSortedSetWithScores(bestDistanceKey, 5);
                 scoreTail = "km";
                 break;
