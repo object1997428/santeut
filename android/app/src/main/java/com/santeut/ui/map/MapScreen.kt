@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,7 +46,6 @@ import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
 import com.santeut.R
-import com.santeut.designsystem.theme.Green
 import com.santeut.ui.wearable.WearableViewModel
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
@@ -100,6 +98,7 @@ fun MapScreen(
     val heartRate by mapViewModel.heartRate
 
     // 임시
+    val alertTitle by mapViewModel.alertTitle
     val alertMessage by mapViewModel.alertMessage
     val deviation by mapViewModel.deviation
 
@@ -110,9 +109,9 @@ fun MapScreen(
         mapViewModel.updateHealthData(healthData)
     }
 
-    LaunchedEffect (alertMessage) {
-        if(alertMessage.isNotBlank()){
-            wearableViewModel.sendAlertMessage(alertMessage)
+    LaunchedEffect (alertMessage, alertTitle) {
+        if(alertMessage.isNotBlank() && alertTitle.isNotBlank()){
+            wearableViewModel.sendAlertMessage(alertTitle, alertMessage)
         }
     }
 
@@ -211,14 +210,16 @@ fun MapScreen(
                 )
             }
         }
-        if(alertMessage.isNotBlank()){
+        if(alertTitle.isNotBlank() && alertMessage.isNotBlank()){
             AlertDialog(
                 onDismissRequest = { mapViewModel.checkAlertMessage() },
-                title = { Text(text = "경고") },
+                title = { Text(text = alertTitle) },
                 text = { Text(text = alertMessage) },
                 confirmButton = {
                     Button(onClick = { mapViewModel.checkAlertMessage() }) {
-                        Text("확인")
+                        Text(
+                            text = "확인"
+                        )
                     }
                 }
             )

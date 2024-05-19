@@ -9,6 +9,8 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -107,8 +109,9 @@ class MapViewModel @Inject constructor(
     private val _deviation = mutableStateOf(0)
     val deviation = _deviation
 
-    // 알림 처리
-    // 나중에
+    // 알림
+    private val _alertTitle = mutableStateOf("")
+    val alertTitle = _alertTitle
     private val _alertMessage = mutableStateOf("")
     val alertMessage = _alertMessage
 
@@ -148,12 +151,14 @@ class MapViewModel @Inject constructor(
                         )
 //                        Log.d("위치 업데이트", "${message.userNickname} 위치 업데이트")
                     } else if (message.type == "offCourse") {
-                        onAlertMessage(message.userNickname + "님이 경로를 이탈하였습니다.")
+                        onAlertMessage("경고", message.userNickname + "님이 경로를 이탈하였습니다.")
                     } else if (message.type == "healthLisk") {
-                        onAlertMessage(message.userNickname + "님의 심박수가 비정상적입니다.")
+                        onAlertMessage("경고", message.userNickname + "님의 심박수가 비정상적입니다.")
                     } else if (message.type == "hikingEnd") {
-                        onAlertMessage("방장이 소모임을 종료하였습니다.")
-                        endedHiking()
+                        onAlertMessage("종료", "방장이 소모임을 종료하였습니다.")
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            endedHiking()
+                        }, 2000L)
                     }
                 } catch (e: Exception) {
                     Log.e("WebSocket", "Error parsing message: ${e.localizedMessage}", e)
@@ -176,14 +181,27 @@ class MapViewModel @Inject constructor(
         webSocket = OkHttpClient().newWebSocket(request, listener)
     }
 
-    private fun onAlertMessage(message: String) {
-        Log.d("onAlertMessage", message)
+    private fun onAlertMessage(title: String, message: String) {
+        Log.d("onAlertMessage", "$title : $message")
+        _alertTitle.value = title
         _alertMessage.value = message
 
         // 진동 or 알림 추가
     }
 
     fun endedHiking() {
+        val duration = Duration.between(_startTime.value, LocalDateTime.now())
+        val hours = duration.toHours()
+        val minutes = (duration.toMinutes() % 60)
+        val seconds = (duration.seconds % 60)
+        val msg = "경과시간 : %02d:%02d:%02d \n".format(
+            hours,
+            minutes,
+            seconds
+        ) + "이동거리 : " + _movedDistance.value.toString() + "km \n" + "최고고도 : " + _bestHeight.value.toString() + "m"
+
+        onAlertMessage("등산 결과", msg)
+
         // back server 로 종료 요청
         viewModelScope.launch {
             try {
@@ -293,7 +311,10 @@ class MapViewModel @Inject constructor(
             // 5분 안에 위험 신호를 보낸 적이 있는지 확인.
 
             if (_previousAlertTime.value == null
-                || (_previousAlertTime.value != null && Duration.between(_previousAlertTime.value, LocalDateTime.now()).toMinutes() >= 3)
+                || (_previousAlertTime.value != null && Duration.between(
+                    _previousAlertTime.value,
+                    LocalDateTime.now()
+                ).toMinutes() >= 3)
             ) {
                 _previousAlertTime.value = LocalDateTime.now()
 
@@ -408,7 +429,7 @@ class MapViewModel @Inject constructor(
             val minDistance = distanceOp.distance()
             val distanceInMeters = minDistance * 111319.9
 
-            val isDeviated = distanceInMeters > 10.0
+            val isDeviated = distanceInMeters > 20.0
             _deviation.value = distanceInMeters.toInt()
             if (isDeviated) {
                 Log.d("경로 이탈", "경로 이탈 : ${distanceInMeters.toInt()}")
@@ -432,6 +453,7 @@ class MapViewModel @Inject constructor(
     }
 
     fun checkAlertMessage() {
+        _alertTitle.value = ""
         _alertMessage.value = ""
     }
 }
