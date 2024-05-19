@@ -32,6 +32,10 @@ class HealthDataViewModel(
     private val _userPositions = mutableStateOf<Map<String, LatLng>>(mapOf())
     val userPositions = _userPositions
 
+    fun initUserPositions(){
+        _userPositions.value = mapOf()
+    }
+
     @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents.forEach { dataEvent ->

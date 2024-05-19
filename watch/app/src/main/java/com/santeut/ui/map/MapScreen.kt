@@ -47,6 +47,12 @@ fun MapScreen(
         position = CameraPosition.fromLatLngZoom(LatLng(latitude, longitude), 15f)
     }
 
+    LaunchedEffect (state){
+        if(state == false){
+            healthDataViewModel.initUserPositions()
+        }
+    }
+
     LaunchedEffect(key1 = latitude, key2 = longitude) {
         markerState.position = LatLng(latitude, longitude)
         cameraPositionState.position =
@@ -81,8 +87,9 @@ fun MapScreen(
         }
     } else {
         GoogleMap(
-            modifier = Modifier.fillMaxSize()
-            .background(color = Color(0xFF335C49)),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color(0xFF335C49)),
             cameraPositionState = cameraPositionState,
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
             properties = mapProperties
