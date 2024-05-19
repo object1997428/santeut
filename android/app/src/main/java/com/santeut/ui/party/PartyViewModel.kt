@@ -57,6 +57,9 @@ class PartyViewModel @Inject constructor(
     val courseList = mutableStateOf<List<LocationDataResponse>>(emptyList())
     val startHikingPartyId = mutableStateOf(0)
 
+    private val _myCourse = MutableLiveData<List<LatLng>>()
+    val myCourse = _myCourse
+
     fun getPartyList(
         guildId: Int?,
         name: String?,
@@ -205,5 +208,27 @@ class PartyViewModel @Inject constructor(
                 _error.postValue("소모임 시작 실패: ${e.message}")
             }
         }
+    }
+
+    fun getMyCourse(partyUserId: Int){
+        viewModelScope.launch {
+            try {
+                val response = partyUseCase.getMyCourse(partyUserId)
+
+                if(response.courseList.size == 0){
+                    _myCourse.postValue(listOf(LatLng(0.0, 0.0)))
+                }else{
+                    _myCourse.postValue(response.courseList.map { LatLng(it.lat, it.lng) }
+                        .toMutableList())
+                }
+                Log.d("PartyViewModel", "내 산행기록 등산로 정보 조회 시도")
+            } catch (e: Exception) {
+                _error.postValue("내 산행기록 등산로 정보 조회 실패: ${e.message}")
+            }
+        }
+    }
+
+    fun initMyCourse() {
+        _myCourse.value = emptyList()
     }
 }

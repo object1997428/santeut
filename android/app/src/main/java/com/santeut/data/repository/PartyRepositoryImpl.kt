@@ -6,6 +6,7 @@ import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.request.PartyIdRequest
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.data.model.response.ChatRoomInfo
+import com.santeut.data.model.response.MyCourseResponse
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.data.model.response.MyRecordResponse
 import com.santeut.data.model.response.PartyCourseResponse
@@ -180,6 +181,20 @@ class PartyRepositoryImpl @Inject constructor(
                 response.data
             } else {
                 throw Exception("소모임에서 선택한 등산로 정보 조회 실패: ${response.status} - ${response.data}")
+            }
+        } catch (e: Exception) {
+            Log.e("PartyRepository", "Network error while fetching get: ${e.message}", e)
+            throw e
+        }
+    }
+
+    override suspend fun getMyCourse(partyUserId: Int): MyCourseResponse {
+        return try {
+            val response = partyApiService.getMyCourse(partyUserId)
+            if (response.status == "200") {
+                response.data
+            } else {
+                throw Exception("마이페이지 등산로 정보 조회 실패: ${response.status} - ${response.data}")
             }
         } catch (e: Exception) {
             Log.e("PartyRepository", "Network error while fetching get: ${e.message}", e)

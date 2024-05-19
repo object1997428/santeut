@@ -55,4 +55,8 @@ class PartyUseCase @Inject constructor(
     suspend fun getSelectedCourseOfParty(
         partyId: Int
     ) = partyRepository.getSelectedCourseOfParty(partyId)
+
+    suspend fun getMyCourse(
+        partyUserId: Int
+    ) = partyRepository.getMyCourse(partyUserId)
 }

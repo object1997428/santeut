@@ -5,6 +5,7 @@ import com.santeut.data.model.request.CreatePartyRequest
 import com.santeut.data.model.request.PartyIdRequest
 import com.santeut.data.model.response.ChatResponse
 import com.santeut.data.model.response.ChatRoomResponse
+import com.santeut.data.model.response.MyCourseResponse
 import com.santeut.data.model.response.MyPartyListResponse
 import com.santeut.data.model.response.MyRecordListResponse
 import com.santeut.data.model.response.MyScheduleList
@@ -83,4 +84,8 @@ interface PartyApiService {
         @Path("partyId") partyId: Int
     ): CustomResponse<PartyCourseResponse>
 
+    @GET("/api/party/user/{partyUserId}")
+    suspend fun getMyCourse(
+        @Path("partyUserId") partyUserId: Int
+    ): CustomResponse<MyCourseResponse>
 }

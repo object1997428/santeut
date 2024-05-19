@@ -172,6 +172,7 @@ fun CreateCoursePostScreen(
                             FindHikingHistory(navController = navController, selectedPartyId,{value: Boolean ->showBottomSheet = value}) { newId -> selectedPartyId = newId}
                         }
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }
