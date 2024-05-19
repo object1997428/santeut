@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-<<<<<<< HEAD
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,31 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-=======
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
->>>>>>> android-feat/plant
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-<<<<<<< HEAD
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-=======
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.naver.maps.geometry.LatLng
->>>>>>> android-feat/plant
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
@@ -70,15 +52,10 @@ import java.time.temporal.ChronoUnit
 
 @ExperimentalNaverMapApi
 @Composable
-<<<<<<< HEAD
 fun MapScreen(
     mapViewModel: MapViewModel,
     wearableViewModel: WearableViewModel
 ) {
-=======
-fun MapScreen(navController: NavController) {
-
->>>>>>> android-feat/plant
     val context = LocalContext.current
 
     val partyId by mapViewModel.partyId
@@ -233,7 +210,6 @@ fun MapScreen(navController: NavController) {
     }
 }
 
-<<<<<<< HEAD
 @Composable
 fun HikingInfoPanel(
     startTime: LocalDateTime?,
@@ -264,32 +240,6 @@ fun HikingInfoPanel(
                 elapsedTime = "00:00:00"
             }
             delay(1000L)
-=======
-    Box(modifier = Modifier.fillMaxSize()) {
-        NaverMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(
-                locationTrackingMode = LocationTrackingMode.Follow,
-                mapType = MapType.Terrain,
-                isMountainLayerGroupEnabled = true
-            )
-        )
-
-        Button(
-            onClick = {
-                navController.navigate("searchPlant")
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Camera,
-                contentDescription = "Camera",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
->>>>>>> android-feat/plant
         }
     }
 
@@ -344,7 +294,6 @@ fun HikingInfoPanel(
             )
         }
     }
-
 }
 
 @Composable
