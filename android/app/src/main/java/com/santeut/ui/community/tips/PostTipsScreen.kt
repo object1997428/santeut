@@ -105,6 +105,7 @@ fun PostTipsScreen(
 
 @Composable
 fun TipDetail(post: PostResponse, navController: NavController) {
+    val commentList = post
     Column(
         modifier = Modifier
             .fillMaxWidth()

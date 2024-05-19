@@ -60,8 +60,6 @@ class WearableViewModel (
 
                     // 로그에 데이터 출력
                     Log.d("onDataChanged", "Received health data: Heart Rate = ${newHealthData.heartRate}, Distance = $newHealthData.distance, Steps = $newHealthData.stepsTotal, Calories = $newHealthData.calories, Heart Rate Average = $newHealthData.heartRateAverage, Elevation = $newHealthData.absoluteElevation, Elevation Gain = $newHealthData.elevationGainTotal")
-
-                    // 어딘 가의 값 변경
                 }
             }
         }
@@ -76,6 +74,10 @@ class WearableViewModel (
     }
 
     suspend fun toSend(text: String){
+
+    }
+
+    fun sendAlertMessage(alertMessage: String) {
 
     }
 }

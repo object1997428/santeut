@@ -13,8 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,15 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,9 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
@@ -66,10 +59,9 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun MapScreen(
     mapViewModel: MapViewModel,
-    wearableViewModel: WearableViewModel
+    wearableViewModel: WearableViewModel,
+    onNavigateSearchPlant: () -> Unit
 ) {
-fun MapScreen(navController: NavController) {
-
     val context = LocalContext.current
 
     val partyId by mapViewModel.partyId
@@ -104,10 +96,14 @@ fun MapScreen(navController: NavController) {
     val calorie by mapViewModel.calorie
     val heartRate by mapViewModel.heartRate
 
+    // 임시
+    val alertMessage by mapViewModel.alertMessage
+    val deviation by mapViewModel.deviation
+
     // 헬스...
     val healthData by wearableViewModel.healthData
 
-    LaunchedEffect (healthData) {
+    LaunchedEffect(healthData) {
         mapViewModel.updateHealthData(healthData)
     }
 
@@ -190,9 +186,30 @@ fun MapScreen(navController: NavController) {
                     )
                 }
             }
+
+            Button(
+                onClick = {
+                    onNavigateSearchPlant()
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Camera,
+                    contentDescription = "Camera",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
         // 인포 창
         if (partyId != 0) {
+            Text(text = "Deviation : " + deviation.toString() + "m")
+            if (alertMessage.isEmpty()) {
+                Text(text = "신호 없음")
+            } else {
+                Text(text = alertMessage)
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,6 +230,7 @@ fun MapScreen(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 fun HikingInfoPanel(
@@ -238,40 +256,18 @@ fun HikingInfoPanel(
                 val minutes = (duration % 3600) / 60
                 val seconds = duration % 60
 
-                formattedTime = LocalDateTime.of(0, 1, 1, hours.toInt(), minutes.toInt(), seconds.toInt()).format(formatter)
+                formattedTime =
+                    LocalDateTime.of(0, 1, 1, hours.toInt(), minutes.toInt(), seconds.toInt())
+                        .format(formatter)
                 elapsedTime = formattedTime
             } else {
                 elapsedTime = "00:00:00"
             }
             delay(1000L)
-    Box(modifier = Modifier.fillMaxSize()) {
-        NaverMap(
-            modifier = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(
-                locationTrackingMode = LocationTrackingMode.Follow,
-                mapType = MapType.Terrain,
-                isMountainLayerGroupEnabled = true
-            )
-        )
-
-        Button(
-            onClick = {
-                navController.navigate("searchPlant")
-            },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Camera,
-                contentDescription = "Camera",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
         }
     }
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(6.dp)
@@ -283,9 +279,9 @@ fun HikingInfoPanel(
             text = formattedTime,
             color = Color.Black
         )
-        Row (
+        Row(
 
-        ){
+        ) {
             HikingInfoItem(
                 title = "걸음수",
                 value = stepCount.toString(),
@@ -302,9 +298,9 @@ fun HikingInfoPanel(
                 unit = "m"
             )
         }
-        Row (
+        Row(
 
-        ){
+        ) {
             HikingInfoItem(
                 title = "칼로리",
                 value = calorie.toString(),
@@ -322,7 +318,6 @@ fun HikingInfoPanel(
             )
         }
     }
-
 }
 
 @Composable
@@ -330,8 +325,8 @@ fun HikingInfoItem(
     title: String,
     value: String,
     unit: String
-){
-    Column (
+) {
+    Column(
         modifier = Modifier
             .height(70.dp)
             .width(120.dp)
@@ -340,7 +335,7 @@ fun HikingInfoItem(
             .background(Color(0xFFE5DD90)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ){
+    ) {
         Text(text = title, color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Normal)
         Text(text = value, color = Color.Black, fontSize = 13.sp, fontWeight = FontWeight.Bold)
         Text(text = unit, color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Normal)

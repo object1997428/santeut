@@ -56,7 +56,7 @@ import java.io.File
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchPlant(hikingViewModel: HikingViewModel = hiltViewModel()) {
+fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
 
     val cameraState = rememberCameraState()
     val context = LocalContext.current
@@ -94,7 +94,7 @@ fun SearchPlant(hikingViewModel: HikingViewModel = hiltViewModel()) {
                     imageFile.value = file
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        hikingViewModel.identifyPlant(file)
+                        plantViewModel.identifyPlant(file)
                         isButton.value = true;
 //                                sheetState.show()
                     }
@@ -108,7 +108,7 @@ fun SearchPlant(hikingViewModel: HikingViewModel = hiltViewModel()) {
         }
     }
 
-    if(hikingViewModel.isLoading.value && isButton.value) {
+    if(plantViewModel.isLoading.value && isButton.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -129,10 +129,9 @@ fun SearchPlant(hikingViewModel: HikingViewModel = hiltViewModel()) {
             }
         }
 
-
     }
 
-    if (!hikingViewModel.isLoading.value) {
+    if (!plantViewModel.isLoading.value) {
 
         imageFile.value?.let { file ->
             loadAndRotateImage(file.absolutePath, 90f)?.let { imageBitmap ->
@@ -166,11 +165,11 @@ fun SearchPlant(hikingViewModel: HikingViewModel = hiltViewModel()) {
 //                                .background(Color.Black.copy(alpha = 0.7f))
                 ) {
                     Text(
-                        text = hikingViewModel.crawlPlantName.value,
+                        text = plantViewModel.crawlPlantName.value,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = hikingViewModel.crawlPlantDescription.value,
+                        text = plantViewModel.crawlPlantDescription.value,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
