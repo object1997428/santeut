@@ -31,7 +31,7 @@ class CommonViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val createCommentRequest = CreateCommentRequest(commentContent)
-                commonUseCase.createComment(postId, postType, createCommentRequest).let {
+                commonUseCase.createComment(postId, postType, createCommentRequest).collect {
                     Log.d("CommonViewModel", "Create Comment")
                 }
             } catch (e: Exception) {

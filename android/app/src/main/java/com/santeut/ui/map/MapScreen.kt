@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -105,6 +106,12 @@ fun MapScreen(
 
     LaunchedEffect(healthData) {
         mapViewModel.updateHealthData(healthData)
+    }
+
+    LaunchedEffect (alertMessage) {
+        if(alertMessage.isNotBlank()){
+            wearableViewModel.sendAlertMessage(alertMessage)
+        }
     }
 
     Column(
@@ -202,14 +209,20 @@ fun MapScreen(
                 )
             }
         }
+        if(alertMessage.isNotBlank()){
+            AlertDialog(
+                onDismissRequest = { mapViewModel.checkAlertMessage() },
+                title = { Text(text = "경고") },
+                text = { Text(text = alertMessage) },
+                confirmButton = {
+                    Button(onClick = { mapViewModel.checkAlertMessage() }) {
+                        Text("확인")
+                    }
+                }
+            )
+        }
         // 인포 창
         if (partyId != 0) {
-            Text(text = "Deviation : " + deviation.toString() + "m")
-            if (alertMessage.isEmpty()) {
-                Text(text = "신호 없음")
-            } else {
-                Text(text = alertMessage)
-            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -239,7 +252,7 @@ fun HikingInfoPanel(
     movedDistance: Double,
     altitude: Int,
     calorie: Int,
-    dist: Double,
+    remainDistance: Double,
     heartRate: Int
 ) {
     var elapsedTime by remember { mutableStateOf("") }
@@ -289,7 +302,7 @@ fun HikingInfoPanel(
             )
             HikingInfoItem(
                 title = "이동거리",
-                value = movedDistance.toString(),
+                value = String.format("%.2f", movedDistance),
                 unit = "km"
             )
             HikingInfoItem(
@@ -308,7 +321,7 @@ fun HikingInfoPanel(
             )
             HikingInfoItem(
                 title = "남은거리",
-                value = dist.toString(),
+                value = String.format("%.2f", remainDistance),
                 unit = "km"
             )
             HikingInfoItem(
