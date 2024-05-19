@@ -25,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,8 +55,9 @@ fun GuildApplyListScreen(
 
     val guild by guildViewModel.guild.observeAsState()
     val applyList by guildViewModel.applyList.observeAsState(emptyList())
+    var refreshTrigger by remember { mutableStateOf(0) }
 
-    LaunchedEffect(key1 = guildId) {
+    LaunchedEffect(key1 = guildId, key2 = refreshTrigger) {
         guildViewModel.getGuild(guildId)
         guildViewModel.getGuildApplyList(guildId)
     }
@@ -86,7 +90,7 @@ fun GuildApplyListScreen(
 //                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
-                Divider (
+                Divider(
                     color = Color.LightGray,
                     modifier = Modifier
                         .height(1.dp)
@@ -94,7 +98,7 @@ fun GuildApplyListScreen(
                 )
                 LazyColumn() {
                     items(applyList) { apply ->
-                        guild?.let { ApplyRow(it, apply) }
+                        guild?.let { ApplyRow(it, apply) { refreshTrigger++ } }
                     }
                 }
             }
@@ -107,7 +111,8 @@ fun GuildApplyListScreen(
 fun ApplyRow(
     guild: GuildResponse,
     apply: GuildApplyResponse,
-    guildViewModel: GuildViewModel = hiltViewModel()
+    guildViewModel: GuildViewModel = hiltViewModel(),
+    onActionComplete: () -> Unit
 ) {
 
     Row(
@@ -153,14 +158,20 @@ fun ApplyRow(
             modifier = Modifier.padding(start = 8.dp)
         ) {
             Button(
-                onClick = { guildViewModel.denyMember(guild.guildId, apply.userId) },
+                onClick = {
+                    guildViewModel.denyMember(guild.guildId, apply.userId)
+                    onActionComplete()
+                },
                 colors = ButtonDefaults.buttonColors(Red)
             ) {
                 Text(text = "거절")
             }
             Spacer(Modifier.width(8.dp))
             Button(
-                onClick = { guildViewModel.approveMember(guild.guildId, apply.userId) },
+                onClick = {
+                    guildViewModel.approveMember(guild.guildId, apply.userId)
+                    onActionComplete()
+                },
                 colors = ButtonDefaults.buttonColors(Color(0xFF678C40))
             ) {
                 Text(text = "승인")
