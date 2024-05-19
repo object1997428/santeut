@@ -42,23 +42,31 @@ class SignUpViewModel @Inject constructor(
     private val _uiEvent = MutableStateFlow<SignUpUiEvent>(SignUpUiEvent.Idle)
     val uiEvent: StateFlow<SignUpUiEvent> = _uiEvent
 
+    private val _errorMessage = mutableStateOf("")
+    val errorMessage = _errorMessage
+
     fun onEvent(event: SignUpEvent) {
         when (event) {
             is SignUpEvent.EnteredUserLoginId -> {
                 _userLoginId.value = event.value
             }
+
             is SignUpEvent.EnteredUserNickName -> {
                 _userNickName.value = event.value
             }
+
             is SignUpEvent.EnteredUserPassword -> {
                 _userPassword.value = event.value
             }
+
             is SignUpEvent.EnteredUserPassword2 -> {
                 _userPassword2.value = event.value
             }
+
             is SignUpEvent.EnteredUserBirth -> {
                 _userBirth.value = event.value
             }
+
             is SignUpEvent.EnteredUserGender -> {
                 _userGender.value = event.value
             }
@@ -76,6 +84,7 @@ class SignUpViewModel @Inject constructor(
                         )
                     ).catch { e ->
                         Log.d("SignUp Error", "${e.message}")
+                        _errorMessage.value = e.message.toString()
                         _uiEvent.value = SignUpUiEvent.SignUp(false)
                     }.collectLatest { data ->
                         Log.d("SignUp Success", "Success")
@@ -86,10 +95,15 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    fun clearErrorMessage() {
+        _errorMessage.value = ""
+    }
+
     @Stable
     sealed interface SignUpUiEvent {
         @Immutable
         data object Idle : SignUpUiEvent
+
         @Immutable
         data class SignUp(val success: Boolean) : SignUpUiEvent
     }

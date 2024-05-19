@@ -19,8 +19,8 @@ import com.santeut.ui.wearable.WearableViewModel
 @Composable
 fun SanteutApp(
     wearableViewModel: WearableViewModel,
-    guildId:Int,
-    onClearData:()->Unit
+    guildId: Int,
+    onClearData: () -> Unit
 ) {
     val navController = rememberNavController()
     val mapViewModel = hiltViewModel<MapViewModel>()
@@ -30,10 +30,10 @@ fun SanteutApp(
             .fillMaxSize()
             .fillMaxHeight(),
         topBar = {
-                 TopBar(
-                     navController,
-                     currentTap = navController.currentBackStackEntryAsState().value?.destination?.route
-                 )
+            TopBar(
+                navController,
+                currentTap = navController.currentBackStackEntryAsState().value?.destination?.route
+            )
         },
         bottomBar = {
             BottomNavBar(

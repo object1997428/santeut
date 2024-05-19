@@ -41,12 +41,10 @@ class MainActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ){
-        isGranted ->
+    ) { isGranted ->
         if (isGranted) {
             Log.i("kilo", "Permission granted")
-        }
-        else {
+        } else {
             Log.i("kilo", "Permission denied")
         }
     }
@@ -69,12 +67,12 @@ class MainActivity : ComponentActivity() {
         // Deep Link 링크를 통해 길드 가입 신청화면으로 바로 가기 기능
         val uri = intent.data
         var deepLinkGuildId = uri?.getQueryParameter("param") // null 안전 호출
-        if(deepLinkGuildId == null) {
+        if (deepLinkGuildId == null) {
             deepLinkGuildId = "0";
         }
 
         setContent {
-            var guildId by remember {mutableStateOf(Integer.parseInt(deepLinkGuildId))}
+            var guildId by remember { mutableStateOf(Integer.parseInt(deepLinkGuildId)) }
             SanteutTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -83,22 +81,32 @@ class MainActivity : ComponentActivity() {
                     SanteutApp(
                         wearableViewModel = wearableViewModel,
                         guildId,
-                        onClearData={guildId=0}
+                        onClearData = { guildId = 0 }
                     )
                 }
             }
         }
 
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){ permissions ->
-            isCameraPermissionGranted = permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                isPostNotificationsPermissionGranted = permissions[android.Manifest.permission.POST_NOTIFICATIONS] ?: isPostNotificationsPermissionGranted
+        permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                isCameraPermissionGranted =
+                    permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    isPostNotificationsPermissionGranted =
+                        permissions[android.Manifest.permission.POST_NOTIFICATIONS]
+                            ?: isPostNotificationsPermissionGranted
+                }
+                isForegroundServiceGranted =
+                    permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
+                isAccessFineLocationGranted =
+                    permissions[android.Manifest.permission.ACCESS_FINE_LOCATION]
+                        ?: isAccessFineLocationGranted
+                isAccessCoarseLocationGranted =
+                    permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION]
+                        ?: isAccessCoarseLocationGranted
+                isVibrateGranted =
+                    permissions[android.Manifest.permission.VIBRATE] ?: isVibrateGranted
             }
-            isForegroundServiceGranted = permissions[android.Manifest.permission.CAMERA] ?: isCameraPermissionGranted
-            isAccessFineLocationGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] ?: isAccessFineLocationGranted
-            isAccessCoarseLocationGranted = permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] ?: isAccessCoarseLocationGranted
-            isVibrateGranted = permissions[android.Manifest.permission.VIBRATE] ?: isVibrateGranted
-        }
 
         requestPermission()
 
@@ -124,14 +132,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun requestPermission() {
-        val permissionRequest : MutableList<String> = ArrayList()
+        val permissionRequest: MutableList<String> = ArrayList()
 
         isAccessFineLocationGranted = ContextCompat.checkSelfPermission(
             this,
             android.Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        if(!isAccessFineLocationGranted){
+        if (!isAccessFineLocationGranted) {
             permissionRequest.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
             Log.d("Permission Check", "Need ACCESS_FINE_LOCATION")
         }
@@ -141,7 +149,7 @@ class MainActivity : ComponentActivity() {
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-        if(!isAccessCoarseLocationGranted){
+        if (!isAccessCoarseLocationGranted) {
             permissionRequest.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
             Log.d("Permission Check", "Need ACCESS_COARSE_LOCATION")
         }
@@ -151,7 +159,7 @@ class MainActivity : ComponentActivity() {
             android.Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
 
-        if(!isCameraPermissionGranted){
+        if (!isCameraPermissionGranted) {
             permissionRequest.add(android.Manifest.permission.CAMERA)
             Log.d("Permission Check", "Need Camera Permission")
         }
@@ -161,7 +169,7 @@ class MainActivity : ComponentActivity() {
             android.Manifest.permission.FOREGROUND_SERVICE
         ) == PackageManager.PERMISSION_GRANTED
 
-        if(!isForegroundServiceGranted){
+        if (!isForegroundServiceGranted) {
             permissionRequest.add(android.Manifest.permission.FOREGROUND_SERVICE)
             Log.d("Permission Check", "Need Camera Permission")
         }
@@ -172,7 +180,7 @@ class MainActivity : ComponentActivity() {
                 android.Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
 
-            if(!isPostNotificationsPermissionGranted){
+            if (!isPostNotificationsPermissionGranted) {
                 permissionRequest.add(android.Manifest.permission.POST_NOTIFICATIONS)
                 permissionRequest.add(android.Manifest.permission.CAMERA)
                 Log.d("Permission Check", "Need Post Notifications Permission")
@@ -184,12 +192,12 @@ class MainActivity : ComponentActivity() {
             android.Manifest.permission.VIBRATE
         ) == PackageManager.PERMISSION_GRANTED
 
-        if(!isVibrateGranted){
+        if (!isVibrateGranted) {
             permissionRequest.add(android.Manifest.permission.VIBRATE)
             Log.d("Permission Check", "Need VIBRATE")
         }
 
-        if(permissionRequest.isNotEmpty()){
+        if (permissionRequest.isNotEmpty()) {
             permissionLauncher.launch(permissionRequest.toTypedArray())
         }
     }

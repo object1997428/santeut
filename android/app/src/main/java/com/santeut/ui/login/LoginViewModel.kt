@@ -5,7 +5,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.MainApplication
@@ -40,6 +39,9 @@ class LoginViewModel @Inject constructor(
     private val _uiEvent = MutableStateFlow<LoginUiEvent>(LoginUiEvent.Idle)
     val uiEvent: StateFlow<LoginUiEvent> = _uiEvent
 
+    private val _errorMessage = mutableStateOf("")
+    val errorMessage = _errorMessage
+
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EnteredUserLoginId -> {
@@ -51,7 +53,7 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginEvent.Login -> {
-                viewModelScope.launch(Dispatchers.IO) {
+                viewModelScope.launch {
                     Log.d("Login ViewModel", "이벤트 발생")
                     loginUseCase.excute(
                         LoginRequest(
@@ -64,6 +66,8 @@ class LoginViewModel @Inject constructor(
 
                         _userLoginId.value = ""
                         _userPassword.value = ""
+
+                        _errorMessage.value = e.message.toString()
                     }.collectLatest { data ->
                         Log.d("Login Success", "Success ${data.accessToken}")
 
@@ -88,6 +92,11 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = ""
+        _uiEvent.value = LoginUiEvent.Idle
     }
 
     @Stable

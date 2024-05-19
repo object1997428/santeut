@@ -18,7 +18,7 @@ import com.naver.maps.geometry.LatLng
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.cancellation.CancellationException
 
-class WearableViewModel (
+class WearableViewModel(
     private val dataClient: DataClient,
     private val messageClient: MessageClient,
     private val capabilityClient: CapabilityClient
@@ -43,15 +43,24 @@ class WearableViewModel (
                         distance = if (dataMap.containsKey("distance")) dataMap.getDouble("distance") else healthData.value.distance,
                         stepsTotal = if (dataMap.containsKey("stepsTotal")) dataMap.getLong("stepsTotal") else healthData.value.stepsTotal,
                         calories = if (dataMap.containsKey("calories")) dataMap.getDouble("calories") else healthData.value.calories,
-                        heartRateAverage = if (dataMap.containsKey("heartRateAverage")) dataMap.getDouble("heartRateAverage") else healthData.value.heartRateAverage,
-                        absoluteElevation = if (dataMap.containsKey("absoluteElevation")) dataMap.getDouble("absoluteElevation") else healthData.value.absoluteElevation,
-                        elevationGainTotal = if (dataMap.containsKey("elevationGainTotal")) dataMap.getDouble("elevationGainTotal") else healthData.value.elevationGainTotal
+                        heartRateAverage = if (dataMap.containsKey("heartRateAverage")) dataMap.getDouble(
+                            "heartRateAverage"
+                        ) else healthData.value.heartRateAverage,
+                        absoluteElevation = if (dataMap.containsKey("absoluteElevation")) dataMap.getDouble(
+                            "absoluteElevation"
+                        ) else healthData.value.absoluteElevation,
+                        elevationGainTotal = if (dataMap.containsKey("elevationGainTotal")) dataMap.getDouble(
+                            "elevationGainTotal"
+                        ) else healthData.value.elevationGainTotal
                     )
 
                     healthData.value = newHealthData
 
                     // 로그에 데이터 출력
-                    Log.d("onDataChanged", "Received health data: Heart Rate = ${newHealthData.heartRate}, Distance = $newHealthData.distance, Steps = $newHealthData.stepsTotal, Calories = $newHealthData.calories, Heart Rate Average = $newHealthData.heartRateAverage, Elevation = $newHealthData.absoluteElevation, Elevation Gain = $newHealthData.elevationGainTotal")
+                    Log.d(
+                        "onDataChanged",
+                        "Received health data: Heart Rate = ${newHealthData.heartRate}, Distance = $newHealthData.distance, Steps = $newHealthData.stepsTotal, Calories = $newHealthData.calories, Heart Rate Average = $newHealthData.heartRateAverage, Elevation = $newHealthData.absoluteElevation, Elevation Gain = $newHealthData.elevationGainTotal"
+                    )
                 }
             }
         }
@@ -65,7 +74,7 @@ class WearableViewModel (
         Log.d("onCapabilityChanged ", capabilityInfo.toString())
     }
 
-    suspend fun toSend(userPositions: Map<String, LatLng> ){
+    suspend fun toSend(userPositions: Map<String, LatLng>) {
         try {
             val request = PutDataMapRequest.create("/position").apply {
                 dataMap.apply {
@@ -79,9 +88,9 @@ class WearableViewModel (
             val result = dataClient.putDataItem(request).await()
 
             Log.d("toSend ", "DataItem saved: $result")
-        } catch (cancellationException: CancellationException){
+        } catch (cancellationException: CancellationException) {
             throw cancellationException
-        } catch (exception: Exception){
+        } catch (exception: Exception) {
             Log.d("toSend ", "Send DataItem failed: $exception")
         }
     }

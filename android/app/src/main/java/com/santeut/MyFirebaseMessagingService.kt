@@ -4,9 +4,9 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-class MyFirebaseMessagingService: FirebaseMessagingService()  {
+class MyFirebaseMessagingService : FirebaseMessagingService() {
 
-    override fun onNewToken(token: String){
+    override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM Log", "Registration token: " + token)
     }
