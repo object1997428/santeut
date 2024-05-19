@@ -1,6 +1,7 @@
 package com.santeut.ui.party
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,11 +73,11 @@ fun SelectedMountainCard(
     Card(
         modifier = Modifier
             .clickable(onClick = {
-                if(guildId==null){
+                if (guildId == null) {
                     navController.navigate(
                         "create/courseList/${mountain.mountainId}/${mountain.mountainName}"
                     )
-                }else {
+                } else {
                     navController.navigate(
                         "create/courseList/${mountain.mountainId}/${mountain.mountainName}/${guildId}"
                     )
@@ -155,6 +157,7 @@ fun SelectedCourse(
     navController: NavController,
     mountainViewModel: MountainViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
 
     val pathList by mountainViewModel.pathList.observeAsState(emptyList())
 
@@ -206,7 +209,7 @@ fun SelectedCourse(
                             tag = courseDetail.courseId,
                             onClick = {
                                 if (isSelected) {
-                                    selectedCourseIds.add(courseDetail.courseId)
+                                    selectedCourseIds.remove(courseDetail.courseId)
                                 } else {
                                     selectedCourseIds.add(courseDetail.courseId)
                                 }
@@ -220,19 +223,26 @@ fun SelectedCourse(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(12.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
                     Text(text = "등산로를 선택해주세요")
+                    Spacer(modifier = Modifier.height(6.dp))
                     Button(onClick = {
                         val selectedCourses = selectedCourseIds.joinToString(",")
                         Log.d("등산로", selectedCourses)
 
-                        if (guildId != null) {
-                            navController.navigate("createParty/${guildId}/${mountainId}/${selectedCourses}")
-                        } else {
-                            navController.navigate("createParty/${mountainId}/${selectedCourses}")
+                        if(selectedCourseIds.size != 0){
+                            if (guildId != null) {
+                                navController.navigate("createParty/${guildId}/${mountainId}/${selectedCourses}")
+                            } else {
+                                navController.navigate("createParty/${mountainId}/${selectedCourses}")
+                            }
+                        }else{
+                            Toast.makeText(context, "등산로를 1개 이상 선택해 주세요", Toast.LENGTH_SHORT).show()
                         }
                     }) {
                         Text(text = "선택완료")
