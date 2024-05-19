@@ -1,4 +1,4 @@
-package com.santeut.ui.community.common
+package com.santeut.ui.community.course
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
 import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostViewModel
+import com.santeut.ui.community.common.CommentScreen
 import com.santeut.ui.community.tips.formatTime
 import com.santeut.ui.navigation.top.DefaultTopBar
 import com.santeut.ui.navigation.top.TopBar

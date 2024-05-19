@@ -11,6 +11,7 @@ import androidx.navigation.navigation
 import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.common.ReadPostScreen
+import com.santeut.ui.community.course.CreateCoursePostScreen
 import com.santeut.ui.community.tips.CreateTipPostScreen
 import com.santeut.ui.community.tips.PostTipsScreen
 
@@ -35,7 +36,10 @@ fun NavGraphBuilder.CommunityNavGraph(
         ) { backStackEntry ->
             val postType = backStackEntry.arguments?.getString("postType") ?: "T"
             val postViewModel = hiltViewModel<PostViewModel>()
-            CreateTipPostScreen(navController, postViewModel, postType.first())
+            if(postType == "T")
+                CreateTipPostScreen(navController, postViewModel, postType.first())
+            else
+                CreateCoursePostScreen(navController, postViewModel, postType.first())
         }
         composable(
             route = "readPost/{postId}/{postType}",

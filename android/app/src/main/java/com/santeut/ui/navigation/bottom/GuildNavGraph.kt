@@ -15,12 +15,14 @@ import com.santeut.ui.guild.GuildPostDetailScreen
 import com.santeut.ui.guild.GuildScreen
 import com.santeut.ui.guild.MyGuildScreen
 import com.santeut.ui.guild.UpdateGuildScreen
+import com.santeut.ui.map.MapViewModel
 import com.santeut.ui.party.InputPartyInfoScreen
 import com.santeut.ui.party.SelectedMountain
 
 
 fun NavGraphBuilder.GuildNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    mapViewModel: MapViewModel
 ) {
     navigation(
         startDestination = "guild",
@@ -29,7 +31,7 @@ fun NavGraphBuilder.GuildNavGraph(
 
         // 나의 모임 페이지
         composable("guild") {
-            MyGuildScreen(navController)
+            MyGuildScreen(navController = navController, mapViewModel = mapViewModel)
         }
 
         // 동호회 만들기

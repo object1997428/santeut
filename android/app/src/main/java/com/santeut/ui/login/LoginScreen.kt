@@ -1,6 +1,7 @@
 package com.santeut.ui.login
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,22 +30,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.santeut.R
-import com.santeut.ui.wearable.HealthData
-import com.santeut.ui.wearable.WearableViewModel
-import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(
@@ -52,12 +49,16 @@ fun LoginScreen(
     onNavigateHome: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val effect by viewModel.uiEvent.collectAsStateWithLifecycle()
 
     val userLoginId = viewModel.userLoginId.value
     val userPassword = viewModel.userPassword.value
+
+    val errorMessage = viewModel.errorMessage.value
 
     LaunchedEffect(effect) {
         if (effect is LoginViewModel.LoginUiEvent.Login) {
@@ -67,7 +68,9 @@ fun LoginScreen(
                 onNavigateHome()
             } else {
                 Log.d("Login Screen", "실패")
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
+            viewModel.clearErrorMessage()
         }
     }
 

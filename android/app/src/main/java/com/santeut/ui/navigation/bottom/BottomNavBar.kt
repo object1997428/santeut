@@ -60,8 +60,7 @@ fun BottomNavBar(
     currentTap: String?,
     onTabClick: (BottomTap) -> Unit
 ) {
-
-    val NoBottomScreen = listOf("landing", "login", "signup", "noti", "chatRoom/{partyId}", "getGuildPost/{guildPostId}")
+    val NoBottomScreen = listOf("landing", "login", "signup", "noti", "chatRoom/{partyId}", "getGuildPost/{guildPostId}", "searchPlant", "map")
 
     AnimatedVisibility(
         modifier = Modifier

@@ -247,6 +247,7 @@ fun JoinGuildScreen(
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }
@@ -440,6 +441,7 @@ fun GuildCard(
                             GuildDetail(guild, guildViewModel)
                         }
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }

@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+//    implementation(libs.androidx.material3.android)
     implementation(libs.firebase.database.ktx)
 
 //    implementation(libs.androidx.material3.android)
@@ -152,5 +153,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
+    implementation("org.jsoup:jsoup:1.15.3")
 
+    implementation("androidx.compose.material3:material3:1.0.0")
+    implementation("com.google.accompanist:accompanist-pager:0.26.5-rc")
 }

@@ -269,5 +269,4 @@ class GuildViewModel @Inject constructor(
             }
         }
     }
-
 }

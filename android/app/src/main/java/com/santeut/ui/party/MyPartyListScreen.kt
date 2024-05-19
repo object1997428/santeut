@@ -1,7 +1,6 @@
 package com.santeut.ui.party
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -47,6 +45,7 @@ import androidx.navigation.NavController
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
+import com.santeut.ui.map.MapViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -54,12 +53,28 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MyPartyListScreen(
     navController: NavController,
-    partyViewModel: PartyViewModel = hiltViewModel()
+    partyViewModel: PartyViewModel = hiltViewModel(),
+    mapViewModel: MapViewModel
 ) {
     val myPartyList by partyViewModel.myPartyList.observeAsState(emptyList())
 
     LaunchedEffect(key1 = null) {
         partyViewModel.getMyPartyList(date = null, includeEnd = false, page = null, size = null)
+    }
+
+    val startHikingPartyId by partyViewModel.startHikingPartyId
+    val distance by partyViewModel.distance
+    val courseList by partyViewModel.courseList
+
+    LaunchedEffect (startHikingPartyId) {
+        if(startHikingPartyId != 0){
+            mapViewModel.setHikingData(
+                startHikingPartyId,
+                distance,
+                courseList
+            )
+            navController.navigate("map")
+        }
     }
 
     Column {
@@ -81,7 +96,7 @@ fun MyPartyListScreen(
                 .fillMaxSize()
             ) {
                 items(myPartyList) { party ->
-                    MyPartyCard(party, navController)
+                    MyPartyCard(party, navController, partyViewModel, mapViewModel)
                 }
             }
         }
@@ -90,8 +105,7 @@ fun MyPartyListScreen(
 
 
 @Composable
-fun MyPartyCard(party: MyPartyResponse, navController: NavController) {
-
+fun MyPartyCard(party: MyPartyResponse, navController: NavController, partyViewModel: PartyViewModel, mapViewModel: MapViewModel) {
     val context = LocalContext.current
 
     Card(
@@ -200,7 +214,9 @@ fun MyPartyCard(party: MyPartyResponse, navController: NavController) {
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(0.3f).fillMaxWidth(),
+                    modifier = Modifier
+                        .weight(0.3f)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     if (party.status == "P") {
@@ -215,12 +231,16 @@ fun MyPartyCard(party: MyPartyResponse, navController: NavController) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(0.7f).fillMaxWidth(),
+                    modifier = Modifier
+                        .weight(0.7f)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     if ((party.status == "P") || (party.status == "B" && isMeetingTimePassed(party.schedule))) {
                         Button(
-                            onClick = { navController.navigate("hiking/${party.partyId}") },
+                            onClick = {
+                                partyViewModel.startHiking(party.partyId)
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = Green),
                             modifier = Modifier.size(36.dp),
                             contentPadding = PaddingValues(0.dp),

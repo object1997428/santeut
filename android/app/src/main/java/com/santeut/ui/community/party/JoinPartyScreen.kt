@@ -294,6 +294,8 @@ fun JoinPartyScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }
@@ -485,6 +487,7 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }

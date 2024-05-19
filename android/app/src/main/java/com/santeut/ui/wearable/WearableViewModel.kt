@@ -1,13 +1,8 @@
 package com.santeut.ui.wearable
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.util.Log
-import androidx.annotation.StringRes
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.wearable.CapabilityClient
@@ -15,18 +10,15 @@ import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMap
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.PutDataMapRequest
-import com.santeut.R
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.naver.maps.geometry.LatLng
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class WearableViewModel (
+class WearableViewModel(
     private val dataClient: DataClient,
     private val messageClient: MessageClient,
     private val capabilityClient: CapabilityClient
@@ -51,17 +43,24 @@ class WearableViewModel (
                         distance = if (dataMap.containsKey("distance")) dataMap.getDouble("distance") else healthData.value.distance,
                         stepsTotal = if (dataMap.containsKey("stepsTotal")) dataMap.getLong("stepsTotal") else healthData.value.stepsTotal,
                         calories = if (dataMap.containsKey("calories")) dataMap.getDouble("calories") else healthData.value.calories,
-                        heartRateAverage = if (dataMap.containsKey("heartRateAverage")) dataMap.getDouble("heartRateAverage") else healthData.value.heartRateAverage,
-                        absoluteElevation = if (dataMap.containsKey("absoluteElevation")) dataMap.getDouble("absoluteElevation") else healthData.value.absoluteElevation,
-                        elevationGainTotal = if (dataMap.containsKey("elevationGainTotal")) dataMap.getDouble("elevationGainTotal") else healthData.value.elevationGainTotal
+                        heartRateAverage = if (dataMap.containsKey("heartRateAverage")) dataMap.getDouble(
+                            "heartRateAverage"
+                        ) else healthData.value.heartRateAverage,
+                        absoluteElevation = if (dataMap.containsKey("absoluteElevation")) dataMap.getDouble(
+                            "absoluteElevation"
+                        ) else healthData.value.absoluteElevation,
+                        elevationGainTotal = if (dataMap.containsKey("elevationGainTotal")) dataMap.getDouble(
+                            "elevationGainTotal"
+                        ) else healthData.value.elevationGainTotal
                     )
 
                     healthData.value = newHealthData
 
                     // 로그에 데이터 출력
-                    Log.d("onDataChanged", "Received health data: Heart Rate = ${newHealthData.heartRate}, Distance = $newHealthData.distance, Steps = $newHealthData.stepsTotal, Calories = $newHealthData.calories, Heart Rate Average = $newHealthData.heartRateAverage, Elevation = $newHealthData.absoluteElevation, Elevation Gain = $newHealthData.elevationGainTotal")
-
-                    // 어딘 가의 값 변경
+                    Log.d(
+                        "onDataChanged",
+                        "Received health data: Heart Rate = ${newHealthData.heartRate}, Distance = $newHealthData.distance, Steps = $newHealthData.stepsTotal, Calories = $newHealthData.calories, Heart Rate Average = $newHealthData.heartRateAverage, Elevation = $newHealthData.absoluteElevation, Elevation Gain = $newHealthData.elevationGainTotal"
+                    )
                 }
             }
         }
@@ -75,7 +74,28 @@ class WearableViewModel (
         Log.d("onCapabilityChanged ", capabilityInfo.toString())
     }
 
-    suspend fun toSend(text: String){
+    suspend fun toSend(userPositions: Map<String, LatLng>) {
+        try {
+            val request = PutDataMapRequest.create("/position").apply {
+                dataMap.apply {
+                    userPositions.forEach { (key, value) ->
+                        putDouble(key + "_latitude", value.latitude)
+                        putDouble(key + "_longitude", value.longitude)
+                    }
+                }
+            }.asPutDataRequest().setUrgent()
+
+            val result = dataClient.putDataItem(request).await()
+
+            Log.d("toSend ", "DataItem saved: $result")
+        } catch (cancellationException: CancellationException) {
+            throw cancellationException
+        } catch (exception: Exception) {
+            Log.d("toSend ", "Send DataItem failed: $exception")
+        }
+    }
+
+    fun sendAlertMessage(alertTitle: String, alertMessage: String) {
 
     }
 }

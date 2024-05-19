@@ -242,7 +242,7 @@ fun MemberRow(
                         )
                     }
                 }
-
+                Spacer(modifier = Modifier.height(30.dp))
             }
 
             if (showChangeDialog.value) {

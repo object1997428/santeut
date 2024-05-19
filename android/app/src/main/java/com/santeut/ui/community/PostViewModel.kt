@@ -40,7 +40,7 @@ class PostViewModel @Inject constructor(
         getPosts(postType)
     }
 
-    private fun getPosts(postType: Char) {
+     fun getPosts(postType: Char) {
         viewModelScope.launch {
             try {
                 _posts.value = postUseCase.getPosts(postType)

@@ -9,9 +9,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface PlantIdApi {
-//    @Headers("Content-Type: application/json")
-    @Headers("api-key: GznA9rJgHH4y61et2aOkIOc112CkaYa9prbrGe94BBtXItzWHO")
+    @Headers("api-key: ZJqq15KzqMMpMnHjGq0JEQy6zCQ2IJ5sKt8nzEoWj6plWhx0tc")
     @POST("v3/identification?details=description")
     suspend fun identifyPlant(@Body request: PlantIdentificationRequest): Response<ResponseBody>
-
 }
