@@ -4,15 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.Environment
-import android.os.Handler
-import android.os.Looper
-import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,26 +18,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-<<<<<<< HEAD
-=======
-import androidx.compose.foundation.shape.CircleShape
->>>>>>> a9840810b023abb474fd3e0b1333ebd2c06c104e
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -62,7 +47,6 @@ import com.ujizin.camposer.state.ImageCaptureResult
 import com.ujizin.camposer.state.rememberCameraState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -84,7 +68,8 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
     fun loadAndRotateImage(filePath: String, rotationDegrees: Float): ImageBitmap? {
         val bitmap = BitmapFactory.decodeFile(filePath) ?: return null
         val matrix = Matrix().apply { postRotate(rotationDegrees) }
-        val rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        val rotatedBitmap =
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
         return rotatedBitmap.asImageBitmap()
     }
 
@@ -96,7 +81,7 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
                 .fillMaxSize()
                 .padding(30.dp),
             contentAlignment = Alignment.BottomCenter
-        ){
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.camera_button),
                 contentDescription = "사진 촬영",
@@ -123,7 +108,9 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
 //                                sheetState.show()
                                     }
                                 } else {
-                                    Toast.makeText(context, "사진 촬영에 실패했습니다", Toast.LENGTH_SHORT).show()
+                                    Toast
+                                        .makeText(context, "사진 촬영에 실패했습니다", Toast.LENGTH_SHORT)
+                                        .show()
                                 }
                             }
                         }
@@ -140,7 +127,7 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
 //      }
 //    }
 
-    if(plantViewModel.isLoading.value && isButton.value) {
+    if (plantViewModel.isLoading.value && isButton.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -205,8 +192,8 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
-                    }
-        ){}
+            }
+        ) {}
 
     }
 
