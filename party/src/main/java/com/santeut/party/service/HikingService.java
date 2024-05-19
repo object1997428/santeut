@@ -81,7 +81,7 @@ public class HikingService {
             //입장 처리
             PartyUser partyUser = partyUserRepository.findByPartyIdAndUserId(hikingEnterRequest.getPartyId(), userId)
                     .orElseThrow(() -> new DataNotFoundException("해당 소모임이나 유저가 존재하지 않습니다."));
-            if (partyUser.getStatus() == 'P') throw new DataMismatchException("해당 유저는 이미 소모임을 진행 중입니다.");
+//            if (partyUser.getStatus() == 'P') throw new DataMismatchException("해당 유저는 이미 소모임을 진행 중입니다.");
             partyUser.setStatus('P',hikingEnterRequest.getStartTime());
             partyUserRepository.save(partyUser);
 
