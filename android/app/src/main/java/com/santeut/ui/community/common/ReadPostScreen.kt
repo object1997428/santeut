@@ -36,6 +36,7 @@ fun ReadPostScreen(
     val focusManager = LocalFocusManager.current
     var comment by remember { mutableStateOf("") }
     val post by postViewModel.post.observeAsState()
+    val commentList = post?.commentList
 
     LaunchedEffect(key1 = postId) {
         postViewModel.readPost(postId, postType)
@@ -47,6 +48,11 @@ fun ReadPostScreen(
             DefaultTopBar(navController, "커뮤니티")
         },
 
+        bottomBar = {
+            if (post != null) {
+                com.santeut.ui.guild.CommentSection(postId, postType)
+            }
+        },
         content = { innerPadding ->
             Surface(
                 modifier = Modifier
@@ -57,7 +63,9 @@ fun ReadPostScreen(
                 Column {
                     HeaderSection(post)
                     ContentSection(post)
-
+                    commentList?.let{
+                        CommentScreen(commentList)
+                    }
                 }
             }
         }
