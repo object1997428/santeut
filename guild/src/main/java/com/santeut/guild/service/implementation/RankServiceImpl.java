@@ -62,7 +62,7 @@ public class RankServiceImpl implements RankService {
         for (int i = 0; i < rankHikers.size(); i++) {
 
             ZSetOperations.TypedTuple<String> typedTuple = rankHikers.get(i);
-            String formattedScore = (type=='C')?Math.floor(typedTuple.getScore())+"":formatter.format(typedTuple.getScore());
+            String formattedScore = (type=='C')?((int) Math.floor(typedTuple.getScore()) +""):formatter.format(typedTuple.getScore());
             String finalScore = formattedScore + scoreTail;
             RankUserInfo rankUserInfo = RankUserInfo.builder()
                     .order(i + 1)
