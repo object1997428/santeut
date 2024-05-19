@@ -34,8 +34,6 @@ class HealthDataViewModel(
 
     @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataEvents: DataEventBuffer) {
-        val newUserPositions = mutableMapOf<String, LatLng>()
-
         dataEvents.forEach { dataEvent ->
             if (dataEvent.type == DataEvent.TYPE_CHANGED) {
                 val dataItem = dataEvent.dataItem
@@ -51,12 +49,13 @@ class HealthDataViewModel(
                             val latitude = dataMap.getDouble(baseKey + "_latitude", 0.0)
                             val longitude = dataMap.getDouble(baseKey + "_longitude", 0.0)
 
-                            newUserPositions[baseKey] = LatLng(latitude, longitude)
                             Log.d("user position", "$baseKey : $latitude / $longitude")
+
+                            _userPositions.value = _userPositions.value.toMutableMap().apply {
+                                this[baseKey] = LatLng(latitude, longitude)
+                            }
                         }
                     }
-
-                    _userPositions.value = newUserPositions
                 }
             }
         }

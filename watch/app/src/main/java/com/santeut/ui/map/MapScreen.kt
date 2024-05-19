@@ -50,7 +50,7 @@ fun MapScreen(
     LaunchedEffect(key1 = latitude, key2 = longitude) {
         markerState.position = LatLng(latitude, longitude)
         cameraPositionState.position =
-            CameraPosition.fromLatLngZoom(LatLng(latitude, longitude), 15f)
+            CameraPosition.fromLatLngZoom(LatLng(latitude, longitude), 13f)
         Log.d("Map Screen LatLng : ", "$latitude / $longitude")
     }
 
