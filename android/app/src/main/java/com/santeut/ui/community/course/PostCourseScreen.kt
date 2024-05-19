@@ -111,6 +111,7 @@ fun PostCourseScreen(
         )
     }
 }
+
 @Composable
 fun CourseDetail(post: PostResponse, navController: NavController) {
     val commentList = post
