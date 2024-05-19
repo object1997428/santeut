@@ -193,6 +193,7 @@ fun GuildPostContent(post: GuildPostDetailResponse) {
 @Composable
 fun CommentSection(
     postId: Int,
+    postType:Char='G',
     commonViewModel: CommonViewModel = hiltViewModel()
 ) {
 
@@ -208,7 +209,7 @@ fun CommentSection(
                 .background(Color.White)
         ) {
             fun onSend() {
-                commonViewModel.createComment(postId, 'G', comment)
+                commonViewModel.createComment(postId, postType, comment)
             }
             TextField(
                 value = comment,
