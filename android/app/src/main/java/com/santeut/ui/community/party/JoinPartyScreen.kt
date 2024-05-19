@@ -485,6 +485,7 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }
