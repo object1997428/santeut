@@ -268,9 +268,9 @@ class GuildRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRanking(type: Char): List<RankingResponse> {
+    override suspend fun getRanking(guildId: Int,type: Char): List<RankingResponse> {
         return try {
-            val response = guildApiService.getRanking(type)
+            val response = guildApiService.getRanking(guildId,type)
             if (response.status == "200") {
                 Log.d("GuildRepository", "랭킹 조회 성공")
                 response.data.partyMembers ?: emptyList()

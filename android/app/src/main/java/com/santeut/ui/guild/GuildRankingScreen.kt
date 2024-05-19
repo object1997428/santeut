@@ -42,6 +42,7 @@ import com.santeut.designsystem.theme.customTypography
 
 @Composable
 fun GuildRankingScreen(
+    guildId: Int,
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val rankingList by guildViewModel.rankingList.observeAsState()
@@ -110,11 +111,11 @@ fun GuildRankingScreen(
             }
         }
         if (showHeight) {
-            guildViewModel.getRanking('H') // 최고고도
+            guildViewModel.getRanking(guildId, 'H') // 최고고도
         } else if (showDistance) {
-            guildViewModel.getRanking('D') // 최장거리
+            guildViewModel.getRanking(guildId, 'D') // 최장거리
         } else if (showCount) {
-            guildViewModel.getRanking('C') // 최다등반
+            guildViewModel.getRanking(guildId, 'C') // 최다등반
         }
 
         Spacer(modifier = Modifier.height(16.dp))
