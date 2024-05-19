@@ -1,13 +1,8 @@
 package com.santeut.ui.wearable
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.util.Log
-import androidx.annotation.StringRes
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.wearable.CapabilityClient
@@ -15,16 +10,12 @@ import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMap
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.naver.maps.geometry.LatLng
-import com.santeut.R
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 class WearableViewModel (
@@ -95,7 +86,7 @@ class WearableViewModel (
         }
     }
 
-    fun sendAlertMessage(alertMessage: String) {
+    fun sendAlertMessage(alertTitle: String, alertMessage: String) {
 
     }
 }
