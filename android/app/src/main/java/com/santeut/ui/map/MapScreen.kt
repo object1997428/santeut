@@ -77,6 +77,10 @@ fun MapScreen(
     val userPosition by mapViewModel.userPositions
     val userIcons by mapViewModel.userIcons
 
+    LaunchedEffect (userPosition){
+        wearableViewModel.toSend(userPosition)
+    }
+
     val defaultIcon =
         remember { resizeMarkerIcon(context, R.drawable.logo, 100, 100) }
 

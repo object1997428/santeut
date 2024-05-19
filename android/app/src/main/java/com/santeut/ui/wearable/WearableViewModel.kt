@@ -20,6 +20,7 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.PutDataMapRequest
+import com.naver.maps.geometry.LatLng
 import com.santeut.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
@@ -73,8 +74,25 @@ class WearableViewModel (
         Log.d("onCapabilityChanged ", capabilityInfo.toString())
     }
 
-    suspend fun toSend(text: String){
+    suspend fun toSend(userPositions: Map<String, LatLng> ){
+        try {
+            val request = PutDataMapRequest.create("/position").apply {
+                dataMap.apply {
+                    userPositions.forEach { (key, value) ->
+                        putDouble(key + "_latitude", value.latitude)
+                        putDouble(key + "_longitude", value.longitude)
+                    }
+                }
+            }.asPutDataRequest().setUrgent()
 
+            val result = dataClient.putDataItem(request).await()
+
+            Log.d("toSend ", "DataItem saved: $result")
+        } catch (cancellationException: CancellationException){
+            throw cancellationException
+        } catch (exception: Exception){
+            Log.d("toSend ", "Send DataItem failed: $exception")
+        }
     }
 
     fun sendAlertMessage(alertMessage: String) {
