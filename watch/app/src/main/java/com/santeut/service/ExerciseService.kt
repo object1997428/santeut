@@ -132,6 +132,7 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun toSend(exerciseMetrics: ExerciseMetrics) {
+        Log.d("toSEnd", "toSAend")
         try {
             val request = PutDataMapRequest.create("/health").apply {
                 dataMap.apply {
