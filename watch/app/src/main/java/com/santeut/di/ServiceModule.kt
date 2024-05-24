@@ -26,9 +26,6 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 
-/**
- * Hilt module that provides singleton (application-scoped) objects.
- */
 @Module
 @InstallIn(ServiceComponent::class)
 class ServiceModule {

@@ -2,12 +2,10 @@ package com.santeut.ui.map
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,8 +45,8 @@ fun MapScreen(
         position = CameraPosition.fromLatLngZoom(LatLng(latitude, longitude), 15f)
     }
 
-    LaunchedEffect (state){
-        if(state == false){
+    LaunchedEffect(state) {
+        if (state == false) {
             healthDataViewModel.initUserPositions()
         }
     }
@@ -67,13 +65,13 @@ fun MapScreen(
         mapStyleOptions = MapStyleOptions(mapStyleJson)
     )
 
-    if (!state || ((latitude == 0.0 || longitude == 0.0) && userPositions.isEmpty()) ) {
-        Column (
+    if (!state || ((latitude == 0.0 || longitude == 0.0) && userPositions.isEmpty())) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color(0xFF335C49)),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Spacer(modifier = Modifier.height(24.dp))
             androidx.wear.compose.material.Text(
                 text = "지도",
@@ -94,11 +92,6 @@ fun MapScreen(
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
             properties = mapProperties
         ) {
-//            Marker(
-//                state = markerState,
-//                title = "Me",
-//                icon = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_blue)
-//            )
             userPositions.forEach { (userNickname, position) ->
                 Marker(
                     state = MarkerState(position = position),

@@ -30,7 +30,6 @@ class ExerciseNotificationManager @Inject constructor(
     }
 
     fun buildNotification(duration: Duration): Notification {
-        // Make an intent that will take the user straight to the exercise UI.
         val notificationIntent = Intent(applicationContext, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
@@ -38,7 +37,6 @@ class ExerciseNotificationManager @Inject constructor(
             notificationIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        // Build the notification.
         val notificationBuilder =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL)
                 .setContentTitle(NOTIFICATION_TITLE)

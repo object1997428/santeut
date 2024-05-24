@@ -1,7 +1,6 @@
 package com.santeut.data
 
 import android.content.Context
-import android.util.Log
 import androidx.health.services.client.data.LocationAvailability
 import com.santeut.di.bindService
 import com.santeut.service.ExerciseLogger
@@ -31,17 +30,19 @@ class HealthServicesRepository @Inject constructor(
     private val binderConnection =
         lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
-    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> = binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
+    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> =
+        binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
 
     private var errorState: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    val serviceState: StateFlow<ServiceState> = exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
-        ServiceState.Connected(exerciseServiceState.copy(error = errorString))
-    }.stateIn(
-        coroutineScope,
-        started = SharingStarted.Eagerly,
-        initialValue = ServiceState.Disconnected
-    )
+    val serviceState: StateFlow<ServiceState> =
+        exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
+            ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+        }.stateIn(
+            coroutineScope,
+            started = SharingStarted.Eagerly,
+            initialValue = ServiceState.Disconnected
+        )
 
     suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
 

@@ -1,7 +1,6 @@
 package com.santeut
 
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,9 +23,9 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.santeut.ui.HealthDataViewModel
 import com.santeut.ui.HealthScreen
 import com.santeut.ui.MainScreen
-import com.santeut.ui.map.MapScreen
 import com.santeut.ui.health.HealthViewModel
 import com.santeut.ui.main.MainViewModel
+import com.santeut.ui.map.MapScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -68,23 +67,25 @@ fun SanteutApp(
         modifier = Modifier
             .fillMaxSize(),
         state = pagerState
-    ) {page ->
-        Scaffold (
+    ) { page ->
+        Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.Black),
             timeText = { TimeText() }
-        ){
+        ) {
             when (page) {
                 0 -> MainScreen(
                     onStart = { viewModel.startExercise() },
                     onEnd = { viewModel.endExercise() },
                     state = state
                 )
+
                 1 -> HealthScreen(
                     state = state,
                     uiState = uiState
                 )
+
                 2 -> MapScreen(
                     healthDataViewModel = healthDataViewModel,
                     state = state,

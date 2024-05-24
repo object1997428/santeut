@@ -1,6 +1,5 @@
 package com.santeut.service
 
-import android.util.Log
 import androidx.health.services.client.data.DataPointContainer
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.ExerciseState
@@ -26,23 +25,19 @@ data class ExerciseMetrics(
 //        Log.d("ABSOLUTE_ELEVATION", "ABSOLUTE_ELEVATION : " + latestMetrics.getData(DataType.ABSOLUTE_ELEVATION).lastOrNull()?.value.toString())
 //        Log.d("ELEVATION_GAIN_TOTAL", "ELEVATION_GAIN_TOTAL : " + latestMetrics.getData(DataType.ELEVATION_GAIN_TOTAL)?.total.toString())
 //        Log.d("LOCATION", "LOCATION : " + latestMetrics.getData(DataType.LOCATION).lastOrNull()?.value.toString())
-//
-//        if (latestMetrics.getData(DataType.LOCATION).lastOrNull() != null) {
-//            Log.d("위치 정보",
-//                latestMetrics.getData(DataType.LOCATION).lastOrNull()?.value?.latitude.toString()
-//                + " / "
-//                + latestMetrics.getData(DataType.LOCATION).lastOrNull()?.value?.longitude.toString()
-//            )
-//        }
 
         val updatedMetrics = copy(
-            heartRate = latestMetrics.getData(DataType.HEART_RATE_BPM).lastOrNull()?.value ?: heartRate,
+            heartRate = latestMetrics.getData(DataType.HEART_RATE_BPM).lastOrNull()?.value
+                ?: heartRate,
             distance = latestMetrics.getData(DataType.DISTANCE_TOTAL)?.total ?: distance,
             stepsTotal = latestMetrics.getData(DataType.STEPS_TOTAL)?.total ?: stepsTotal,
             calories = latestMetrics.getData(DataType.CALORIES_TOTAL)?.total ?: calories,
-            heartRateAverage = latestMetrics.getData(DataType.HEART_RATE_BPM_STATS)?.average ?: heartRateAverage,
-            absoluteElevation = latestMetrics.getData(DataType.ABSOLUTE_ELEVATION).lastOrNull()?.value ?: absoluteElevation,
-            elevationGainTotal = latestMetrics.getData(DataType.ELEVATION_GAIN_TOTAL)?.total ?: elevationGainTotal,
+            heartRateAverage = latestMetrics.getData(DataType.HEART_RATE_BPM_STATS)?.average
+                ?: heartRateAverage,
+            absoluteElevation = latestMetrics.getData(DataType.ABSOLUTE_ELEVATION)
+                .lastOrNull()?.value ?: absoluteElevation,
+            elevationGainTotal = latestMetrics.getData(DataType.ELEVATION_GAIN_TOTAL)?.total
+                ?: elevationGainTotal,
             location = latestMetrics.getData(DataType.LOCATION).lastOrNull()?.value ?: location
         )
 
@@ -50,7 +45,7 @@ data class ExerciseMetrics(
     }
 }
 
-data class  ExerciseServiceState(
+data class ExerciseServiceState(
     val exerciseState: ExerciseState? = null,
     val exerciseMetrics: ExerciseMetrics = ExerciseMetrics(),
     val exerciseLaps: Int = 0,

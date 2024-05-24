@@ -36,16 +36,15 @@ fun HealthScreen(
 ) {
 
 
-    if (uiState.error == null){
-        if(!state){
+    if (uiState.error == null) {
+        if (!state) {
             PrepareScreen()
-        }
-        else {
+        } else {
             HealthDataScreen(
                 uiState = uiState
             )
         }
-    }else{
+    } else {
         NotSupportedScreen()
     }
 }
@@ -53,39 +52,42 @@ fun HealthScreen(
 @Composable
 fun HealthDataScreen(
     uiState: HealthScreenState,
-){
+) {
     val listState = rememberScalingLazyListState()
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFF335C49)),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "건강 정보",
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
-        ScalingLazyColumn (
+        ScalingLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp, 0.dp, 20.dp, 0.dp),
             state = listState,
             autoCentering = AutoCenteringParams(0)
-        ){
+        ) {
             item {
                 HealthItem(
                     title = "심박수",
-                    value = uiState.exerciseState?.exerciseMetrics?.heartRate?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.heartRate?.toInt()?.toString()
+                        ?: "--",
                     unit = "bpm"
                 )
             }
             item {
                 HealthItem(
                     title = "이동거리",
-                    value = "%.2f".format(uiState.exerciseState?.exerciseMetrics?.distance?.div(1000) ?: 0.0).takeIf { it != "0.00" } ?: "--",
+                    value = "%.2f".format(
+                        uiState.exerciseState?.exerciseMetrics?.distance?.div(1000) ?: 0.0
+                    ).takeIf { it != "0.00" } ?: "--",
                     unit = "km"
                 )
             }
@@ -99,21 +101,24 @@ fun HealthDataScreen(
             item {
                 HealthItem(
                     title = "칼로리",
-                    value = uiState.exerciseState?.exerciseMetrics?.calories?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.calories?.toInt()?.toString()
+                        ?: "--",
                     unit = "kcal"
                 )
             }
             item {
                 HealthItem(
                     title = "오른 높이",
-                    value = uiState.exerciseState?.exerciseMetrics?.elevationGainTotal?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.elevationGainTotal?.toInt()
+                        ?.toString() ?: "--",
                     unit = "m"
                 )
             }
             item {
                 HealthItem(
                     title = "고도",
-                    value = uiState.exerciseState?.exerciseMetrics?.absoluteElevation?.toInt()?.toString() ?: "--",
+                    value = uiState.exerciseState?.exerciseMetrics?.absoluteElevation?.toInt()
+                        ?.toString() ?: "--",
                     unit = "m"
                 )
             }
@@ -126,20 +131,20 @@ fun HealthItem(
     title: String,
     value: String,
     unit: String
-){
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(44.dp)
             .border(0.dp, color = Color(0xFF335C49), shape = RoundedCornerShape(20.dp))
             .clip(shape = RoundedCornerShape(20.dp)),
-    ){
-        Row (
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color(0xFFE5DD90)),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = title,
@@ -164,13 +169,13 @@ fun HealthItem(
 }
 
 @Composable
-fun PrepareScreen(){
-    Column (
+fun PrepareScreen() {
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFF335C49)),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "건강 정보",
@@ -185,13 +190,13 @@ fun PrepareScreen(){
 }
 
 @Composable
-fun NotSupportedScreen(){
-    Column (
+fun NotSupportedScreen() {
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color(0xFF335C49)),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "건강 정보",

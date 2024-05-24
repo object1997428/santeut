@@ -31,7 +31,7 @@ fun MainScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(0.5f))
-        if(!state){
+        if (!state) {
             Button(
                 onClick = { onStart() },
                 modifier = Modifier
@@ -49,8 +49,7 @@ fun MainScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
-        }
-        else{
+        } else {
             Button(
                 onClick = { onEnd() },
                 modifier = Modifier

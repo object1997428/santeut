@@ -32,7 +32,7 @@ class HealthDataViewModel(
     private val _userPositions = mutableStateOf<Map<String, LatLng>>(mapOf())
     val userPositions = _userPositions
 
-    fun initUserPositions(){
+    fun initUserPositions() {
         _userPositions.value = mapOf()
     }
 
@@ -89,7 +89,6 @@ class HealthDataViewModel(
 
             val result = dataClient.putDataItem(request).await()
 
-//            Log.d("toSend ", "DataItem saved: $result")
         } catch (cancellationException: CancellationException) {
             throw cancellationException
         } catch (exception: Exception) {

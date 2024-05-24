@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
-            SanteutApp (
+            SanteutApp(
                 healthDataViewModel = healthDataViewModel,
                 onFinishActivity = {
                     this.finish()
