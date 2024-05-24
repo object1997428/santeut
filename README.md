@@ -79,14 +79,14 @@
 <br />
 
 
-#### IDE
+#### **IDE**
 
 ![Android Studio](https://img.shields.io/badge/android%20studio-346ac1?style=for-the-badge&logo=android%20studio&logoColor=white) ![IntelliJ](https://img.shields.io/badge/intellijidea-000000?style=for-the-badge&logo=intellijidea&logoColor=white)
 
 <br />
 
 
-#### Frontend
+#### **Frontend**
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)  
 ![jetpack_compose](https://img.shields.io/badge/jetpack_compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white) ![coroutine](https://img.shields.io/badge/coroutine-8A9296?style=for-the-badge&logo=coroutine&logoColor=white)  
 ![okHttp](https://img.shields.io/badge/okHttp-009020?style=for-the-badge&logo=okHttp&logoColor=white) ![Retrofit](https://img.shields.io/badge/Retrofit-CC0000?style=for-the-badge&logo=Retrofit&logoColor=white)
@@ -96,7 +96,7 @@
 <br />
 
 
-#### Backend
+#### **Backend**
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)  
 ![SpringBoot](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![SpringSecurity](https://img.shields.io/badge/springsecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)  
@@ -105,7 +105,7 @@
 <br />
 
 
-#### DevOPS
+#### **DevOPS**
 
 ![docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=Jenkins&logoColor=white) ![nginx](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![amazonec2](https://img.shields.io/badge/amazonec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
 
