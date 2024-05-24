@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -28,9 +29,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
     @Override
     public GatewayFilter apply(Config config) {
 
-        // Global PreFilter
         return ((exchange, chain) -> {
-            log.debug("Global PreFilter");
 
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
@@ -44,10 +43,8 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             // Header에 Token있는지 확인
             if (request.getHeaders().containsKey("Authorization")) {
                 accessToken = request.getHeaders().getFirst("Authorization").substring(7);
-                log.debug("accessToken: " + accessToken);
 
                 String userId = authorizationToken.extractAllClaims(accessToken).getSubject();
-                log.debug("userId: "+ userId);
 
                 ServerHttpRequest serverHttpRequest = exchange.getRequest().mutate()
                         .header("userId", userId)

@@ -20,19 +20,15 @@ public class CustomFilter extends AbstractGatewayFilterFactory<CustomFilter.Conf
     @Override
     public GatewayFilter apply(Config config) {
 
-//        // Custom PreFilter
         return (exchange, chain)  -> {
             log.info("Custom Pre Filter");
 
-            // Custom PostFilter
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 log.info("Custom POST Filter");
-
             }));
         };
     }
 
     public static class Config{
-
     }
 }
