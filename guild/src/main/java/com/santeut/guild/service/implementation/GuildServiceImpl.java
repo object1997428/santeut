@@ -130,7 +130,6 @@ public class GuildServiceImpl implements GuildService {
         List<GuildRequestEntity> guildRequestList = new ArrayList<>();
         for (GuildEntity guildEntity : guildList){
 
-            // Entity마다 값 변경 메서드 호출 VS List 2개 넣어서 메서드 호출 1회만 하기
             GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
                     .orElse(null);
             if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
@@ -149,7 +148,6 @@ public class GuildServiceImpl implements GuildService {
         List<GuildRequestEntity> guildRequestList = new ArrayList<>();
         for (GuildEntity guildEntity : myguildList){
 
-            // Entity마다 값 변경 메서드 호출 VS List 2개 넣어서 메서드 호출 1회만 하기
             GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
                     .orElse(null);
             if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
@@ -176,7 +174,6 @@ public class GuildServiceImpl implements GuildService {
         List<GuildRequestEntity> guildRequestList = new ArrayList<>();
         for (GuildEntity guildEntity : searchGuildList){
 
-            // Entity마다 값 변경 메서드 호출 VS List 2개 넣어서 메서드 호출 1회만 하기
             GuildRequestEntity guildRequestEntity = guildRequestRepository.findByGuildIdAndUserId(guildEntity.getGuildId(), userId)
                     .orElse(null);
             if(guildRequestEntity != null) guildRequestList.add(guildRequestEntity);
@@ -204,12 +201,5 @@ public class GuildServiceImpl implements GuildService {
         }
 
         return new SearchGuildNameListResponse(GetDetailGuildResponse.guildList(searchGuildList, guildRequestList, userId));
-    }
-
-    @Override
-    public ShareLinkResponse shareLink(int guildId) {
-
-        String url = "https://www.google.com/search?q=%EA%B3%A0%EC%96%91%EC%9D%B4&oq=%EA%B3%A0%EC%96%91%EC%9D%B4&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTM5MzFqMGoxNagCALACAA&sourceid=chrome&ie=UTF-8";
-        return new ShareLinkResponse(url);
     }
 }

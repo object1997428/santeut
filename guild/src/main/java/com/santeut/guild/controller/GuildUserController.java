@@ -31,7 +31,6 @@ public class GuildUserController {
         return new BasicResponse(HttpStatus.OK.value(), guildUserService.applyGuildList(guildId, request.getHeader("userId")));
     }
 
-    // userId는 가입 신청 리스트에 있는 userId에서 가져와
     @PatchMapping("/{guildId}/{userId}/approve")
     public BasicResponse approveApply(@PathVariable int guildId,
                                       @PathVariable int userId,

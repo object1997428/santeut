@@ -13,7 +13,6 @@ public class PostListResponseDto {
 
     private List<Post> postList;
 
-
     @Data
     @AllArgsConstructor
     @Builder

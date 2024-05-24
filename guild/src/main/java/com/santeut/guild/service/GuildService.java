@@ -18,5 +18,4 @@ public interface GuildService {
     GetMyGuildResponse myGuildList(int userId);
     SearchGuildListResponse searchGuildList(String regionName, String gender, int userId);
     SearchGuildNameListResponse searchGuildName(String guildName, int userId);
-    ShareLinkResponse shareLink(int guildId);
 }

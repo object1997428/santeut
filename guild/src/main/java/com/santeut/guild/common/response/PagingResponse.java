@@ -2,7 +2,6 @@ package com.santeut.guild.common.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-//이건 쓸지말지 고민중
 @Data
 @AllArgsConstructor
 public class PagingResponse<T> {

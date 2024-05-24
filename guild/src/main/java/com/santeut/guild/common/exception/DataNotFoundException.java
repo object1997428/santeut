@@ -19,10 +19,4 @@ public class DataNotFoundException extends RuntimeException{
         this.message = responseCode.getMessage();
     }
 
-    public DataNotFoundException(int code, String message){
-        super(message);
-        this.code = code;
-        this.message = message;
-    }
-
 }

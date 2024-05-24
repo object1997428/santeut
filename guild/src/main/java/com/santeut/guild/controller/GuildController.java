@@ -99,10 +99,4 @@ public class GuildController {
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, guildService.searchGuildName(guildName, userId));
     }
 
-    @GetMapping("/{guildId}/link")
-    public BasicResponse shareLink(@PathVariable int guildId){
-
-        log.debug("링크 공유");
-        return new BasicResponse(HttpStatus.OK.value(), guildService.shareLink(guildId));
-    }
 }

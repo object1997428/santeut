@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "userFeign", url="http://k10e201.p.ssafy.io:52711/api")
+@FeignClient(name = "userFeign", url="${user-service.url}")
 public interface UserFeign {
 
     @GetMapping(path = "auth/user/login/info")

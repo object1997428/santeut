@@ -2,9 +2,6 @@ package com.santeut.guild.service;
 
 import com.santeut.guild.dto.response.ApplyGuildListResponse;
 import com.santeut.guild.dto.response.GuildMemberListResponse;
-import com.santeut.guild.dto.response.ShareLinkResponse;
-
-import java.util.List;
 
 public interface GuildUserService {
 

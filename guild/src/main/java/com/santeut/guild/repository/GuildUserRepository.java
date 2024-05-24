@@ -11,11 +11,8 @@ import java.util.Optional;
 @Repository
 public interface GuildUserRepository extends JpaRepository<GuildUserEntity, Integer> {
 
-    List<GuildUserEntity> findByUserId(int userId);
     Optional<GuildUserEntity> findByGuildIdAndUserId(int guildId, int userId);
-
     Optional<GuildUserEntity> findByGuildId(int guildId);
-
     @Query("SELECT gu FROM GuildUserEntity gu WHERE gu.guildId = :guildId AND gu.isDeleted = false")
     List<GuildUserEntity> findByGuildUserList(int guildId);
 }

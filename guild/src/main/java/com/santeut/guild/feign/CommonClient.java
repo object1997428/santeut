@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@FeignClient(name = "commonClient", url="http://k10e201.p.ssafy.io:52717/api/common")
+@FeignClient(name = "commonClient", url="${common-service.url}")
 public interface CommonClient {
 
     // 좋아요 수 가져오기
