@@ -112,26 +112,249 @@
 <br />
 
 ## 🏢 아키텍처
-<img src="./documents/산뜻_아키텍처.png">
+<img src="./documents/산뜻_아키텍처.png" style="background-color: white;">
 
 
 
 ## 📂 프로젝트 파일 구조
 
 <details>
-<summary><b>FrontEnd-Android</b></summary>
+<summary><b>FrontEnd - Android</b></summary>
 
 ```
-
+📦santeut
+ ┣ 📂data
+ ┃ ┣ 📂apiservice
+ ┃ ┃ ┣ 📜AuthApiService.kt
+ ┃ ┃ ┣ 📜CommonApiService.kt
+ ┃ ┃ ┣ 📜GuildApiService.kt
+ ┃ ┃ ┣ 📜HikingApiService.kt
+ ┃ ┃ ┣ 📜MountainApiService.kt
+ ┃ ┃ ┣ 📜PartyApiService.kt
+ ┃ ┃ ┣ 📜PlantIdApi.kt
+ ┃ ┃ ┣ 📜PostApiService.kt
+ ┃ ┃ ┣ 📜UserApiService.kt
+ ┃ ┃ ┗ 📜WeatherApi.kt
+ ┃ ┣ 📂di
+ ┃ ┃ ┣ 📜AppModule.kt
+ ┃ ┃ ┣ 📜RemoteModule.kt
+ ┃ ┃ ┣ 📜RepositoryModule.kt
+ ┃ ┃ ┗ 📜WebSocketClient.kt
+ ┃ ┣ 📂model
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┣ 📜CreateCommentRequest.kt
+ ┃ ┃ ┃ ┣ 📜CreatePartyRequest.kt
+ ┃ ┃ ┃ ┣ 📜CreatePostRequest.kt
+ ┃ ┃ ┃ ┣ 📜EndHikingRequest.kt
+ ┃ ┃ ┃ ┣ 📜FCMTokenRequest.kt
+ ┃ ┃ ┃ ┣ 📜GuildRequest.kt
+ ┃ ┃ ┃ ┣ 📜LoginRequest.kt
+ ┃ ┃ ┃ ┣ 📜PartyIdRequest.kt
+ ┃ ┃ ┃ ┣ 📜PlantIdentificationRequest.kt
+ ┃ ┃ ┃ ┣ 📜SignUpRequest.kt
+ ┃ ┃ ┃ ┣ 📜StartHikingRequest.kt
+ ┃ ┃ ┃ ┗ 📜WebSocketSendMessageRequest.kt
+ ┃ ┃ ┣ 📂response
+ ┃ ┃ ┃ ┣ 📜AllcourseResponse.kt
+ ┃ ┃ ┃ ┣ 📜ChatResponse.kt
+ ┃ ┃ ┃ ┣ 📜CommentResponse.kt
+ ┃ ┃ ┃ ┣ 📜CoursePostDetailResponse.kt
+ ┃ ┃ ┃ ┣ 📜GuildResponse.kt
+ ┃ ┃ ┃ ┣ 📜HikingResponse.kt
+ ┃ ┃ ┃ ┣ 📜LocationData.kt
+ ┃ ┃ ┃ ┣ 📜LoginResponse.kt
+ ┃ ┃ ┃ ┣ 📜MountainResponse.kt
+ ┃ ┃ ┃ ┣ 📜MyCourseResponse.kt
+ ┃ ┃ ┃ ┣ 📜MyProfileResponse.kt
+ ┃ ┃ ┃ ┣ 📜PartyCourseResponse.kt
+ ┃ ┃ ┃ ┣ 📜PartyResponse.kt
+ ┃ ┃ ┃ ┣ 📜PostResponse.kt
+ ┃ ┃ ┃ ┣ 📜ReadPostResponse.kt
+ ┃ ┃ ┃ ┣ 📜UserLocationDataResponse.kt
+ ┃ ┃ ┃ ┗ 📜WebSocketMessageResponse.kt
+ ┃ ┃ ┣ 📜ApiResult.kt
+ ┃ ┃ ┗ 📜CustomResponse.kt
+ ┃ ┣ 📂repository
+ ┃ ┃ ┣ 📜AuthRepository.kt
+ ┃ ┃ ┣ 📜AuthRepositoryImpl.kt
+ ┃ ┃ ┣ 📜CommonRepository.kt
+ ┃ ┃ ┣ 📜CommonRepositoryImpl.kt
+ ┃ ┃ ┣ 📜GuildRepository.kt
+ ┃ ┃ ┣ 📜GuildRepositoryImpl.kt
+ ┃ ┃ ┣ 📜HikingRepository.kt
+ ┃ ┃ ┣ 📜HikingRepositoryImpl.kt
+ ┃ ┃ ┣ 📜MountainRepository.kt
+ ┃ ┃ ┣ 📜MountainRepositoryImpl.kt
+ ┃ ┃ ┣ 📜PartyRepository.kt
+ ┃ ┃ ┣ 📜PartyRepositoryImpl.kt
+ ┃ ┃ ┣ 📜PostRepository.kt
+ ┃ ┃ ┣ 📜PostRepositoryImpl.kt
+ ┃ ┃ ┣ 📜UserRepository.kt
+ ┃ ┃ ┗ 📜UserRepositoryImpl.kt
+ ┃ ┗ 📂util
+ ┃ ┃ ┣ 📜AuthInterceptor.kt
+ ┃ ┃ ┣ 📜CameraX.kt
+ ┃ ┃ ┣ 📜CameraXFactory.kt
+ ┃ ┃ ┣ 📜CameraXImpl.kt
+ ┃ ┃ ┣ 📜RecordingInfo.kt
+ ┃ ┃ ┣ 📜RecordingState.kt
+ ┃ ┃ ┗ 📜SharedPreferencesUtil.kt
+ ┣ 📂designsystem
+ ┃ ┗ 📂theme
+ ┃ ┃ ┣ 📜Color.kt
+ ┃ ┃ ┣ 📜Theme.kt
+ ┃ ┃ ┣ 📜Type.kt
+ ┃ ┃ ┗ 📜Typography.kt
+ ┣ 📂domain
+ ┃ ┗ 📂usecase
+ ┃ ┃ ┣ 📜CommonUseCase.kt
+ ┃ ┃ ┣ 📜FCMTokenUseCase.kt
+ ┃ ┃ ┣ 📜GuildUseCase.kt
+ ┃ ┃ ┣ 📜HikingUseCase.kt
+ ┃ ┃ ┣ 📜LoginUseCase.kt
+ ┃ ┃ ┣ 📜MountainUseCase.kt
+ ┃ ┃ ┣ 📜PartyUseCase.kt
+ ┃ ┃ ┣ 📜PostUseCase.kt
+ ┃ ┃ ┣ 📜SignUpUseCase.kt
+ ┃ ┃ ┗ 📜UserUseCase.kt
+ ┣ 📂ui
+ ┃ ┣ 📂chat
+ ┃ ┃ ┣ 📜ChatListScreen.kt
+ ┃ ┃ ┣ 📜ChatScreen.kt
+ ┃ ┃ ┣ 📜ChatViewModel.kt
+ ┃ ┃ ┗ 📜Message.kt
+ ┃ ┣ 📂community
+ ┃ ┃ ┣ 📂common
+ ┃ ┃ ┃ ┣ 📜CommentScreen.kt
+ ┃ ┃ ┃ ┗ 📜ReadPostScreen.kt
+ ┃ ┃ ┣ 📂course
+ ┃ ┃ ┃ ┣ 📜CreateCoursePostScreen.kt
+ ┃ ┃ ┃ ┣ 📜FindHikingHistory.kt
+ ┃ ┃ ┃ ┣ 📜PostCourseScreen.kt
+ ┃ ┃ ┃ ┗ 📜ReadCoursePostScreen.kt
+ ┃ ┃ ┣ 📂guild
+ ┃ ┃ ┃ ┗ 📜JoinGuildScreen.kt
+ ┃ ┃ ┣ 📂party
+ ┃ ┃ ┃ ┗ 📜JoinPartyScreen.kt
+ ┃ ┃ ┣ 📂tips
+ ┃ ┃ ┃ ┣ 📜CreateTipPostScreen.kt
+ ┃ ┃ ┃ ┗ 📜PostTipsScreen.kt
+ ┃ ┃ ┣ 📜CommonViewModel.kt
+ ┃ ┃ ┣ 📜CommunityScreen.kt
+ ┃ ┃ ┗ 📜PostViewModel.kt
+ ┃ ┣ 📂guild
+ ┃ ┃ ┣ 📜CreateGuildPostScreen.kt
+ ┃ ┃ ┣ 📜CreateGuildScreen.kt
+ ┃ ┃ ┣ 📜GuildApplyListScreen.kt
+ ┃ ┃ ┣ 📜GuildCommunityScreen.kt
+ ┃ ┃ ┣ 📜GuildInfoScreen.kt
+ ┃ ┃ ┣ 📜GuildMemberListScreen.kt
+ ┃ ┃ ┣ 📜GuildPostDetailScreen.kt
+ ┃ ┃ ┣ 📜GuildRankingScreen.kt
+ ┃ ┃ ┣ 📜GuildScreen.kt
+ ┃ ┃ ┣ 📜GuildViewModel.kt
+ ┃ ┃ ┣ 📜MyGuildListScreen.kt
+ ┃ ┃ ┣ 📜MyGuildScreen.kt
+ ┃ ┃ ┗ 📜UpdateGuildScreen.kt
+ ┃ ┣ 📂home
+ ┃ ┃ ┣ 📜HomeScreen.kt
+ ┃ ┃ ┗ 📜HomeViewModel.kt
+ ┃ ┣ 📂landing
+ ┃ ┃ ┣ 📜LandingScreen.kt
+ ┃ ┃ ┣ 📜UserState.kt
+ ┃ ┃ ┗ 📜UserViewModel.kt
+ ┃ ┣ 📂login
+ ┃ ┃ ┣ 📜LoginEvent.kt
+ ┃ ┃ ┣ 📜LoginScreen.kt
+ ┃ ┃ ┗ 📜LoginViewModel.kt
+ ┃ ┣ 📂map
+ ┃ ┃ ┣ 📜LocationModule.kt
+ ┃ ┃ ┣ 📜MapScreen.kt
+ ┃ ┃ ┣ 📜MapViewModel.kt
+ ┃ ┃ ┣ 📜PlantViewModel.kt
+ ┃ ┃ ┗ 📜SearchPlant.kt
+ ┃ ┣ 📂mountain
+ ┃ ┃ ┣ 📜MountainListScreen.kt
+ ┃ ┃ ┣ 📜MountainScreen.kt
+ ┃ ┃ ┗ 📜MountainViewModel.kt
+ ┃ ┣ 📂mypage
+ ┃ ┃ ┣ 📜MyHikingScreen.kt
+ ┃ ┃ ┣ 📜MyPageScreen.kt
+ ┃ ┃ ┣ 📜MyProfileScreen.kt
+ ┃ ┃ ┣ 📜MyScheduleScreen.kt
+ ┃ ┃ ┗ 📜UserViewModel.kt
+ ┃ ┣ 📂navigation
+ ┃ ┃ ┣ 📂bottom
+ ┃ ┃ ┃ ┣ 📜BottomNavBar.kt
+ ┃ ┃ ┃ ┣ 📜CommunityNavGraph.kt
+ ┃ ┃ ┃ ┣ 📜GuildNavGraph.kt
+ ┃ ┃ ┃ ┣ 📜HomeNavGraph.kt
+ ┃ ┃ ┃ ┣ 📜MapNavGraph.kt
+ ┃ ┃ ┃ ┣ 📜MountainNavGraph.kt
+ ┃ ┃ ┃ ┗ 📜MyPageNavGraph.kt
+ ┃ ┃ ┣ 📂top
+ ┃ ┃ ┃ ┣ 📜TopBar.kt
+ ┃ ┃ ┃ ┗ 📜TopNavGraph.kt
+ ┃ ┃ ┣ 📜SanteutNavGraph.kt
+ ┃ ┃ ┗ 📜UnAuthNavGraph.kt
+ ┃ ┣ 📂noti
+ ┃ ┃ ┗ 📜NotiScreen.kt
+ ┃ ┣ 📂party
+ ┃ ┃ ┣ 📜InputPartyInfoScreen.kt
+ ┃ ┃ ┣ 📜MyPartyListScreen.kt
+ ┃ ┃ ┣ 📜PartyViewModel.kt
+ ┃ ┃ ┗ 📜SelectedMountain.kt
+ ┃ ┣ 📂signup
+ ┃ ┃ ┣ 📜SIgnUpEvent.kt
+ ┃ ┃ ┣ 📜SignUpScreen.kt
+ ┃ ┃ ┗ 📜SignUpViewModel.kt
+ ┃ ┗ 📂wearable
+ ┃ ┃ ┗ 📜WearableViewModel.kt
+ ┣ 📜MainActivity.kt
+ ┣ 📜MainApplication.kt
+ ┣ 📜MyFirebaseMessagingService.kt
+ ┗ 📜SanteutApp.kt
 ```
 
 </details>
 
 <details>
-<summary><b>FrontEnd-Watch</b></summary>
+<summary><b>FrontEnd - Watch</b></summary>
 
 ```
-
+📦santeut
+ ┣ 📂data
+ ┃ ┣ 📜ExerciseClientKtx.kt
+ ┃ ┣ 📜ExerciseClientManager.kt
+ ┃ ┗ 📜HealthServicesRepository.kt
+ ┣ 📂design
+ ┃ ┗ 📂theme
+ ┃ ┃ ┗ 📜Theme.kt
+ ┣ 📂di
+ ┃ ┣ 📜BindService.kt
+ ┃ ┣ 📜MainModule.kt
+ ┃ ┗ 📜ServiceModule.kt
+ ┣ 📂service
+ ┃ ┣ 📜ExerciseLogger.kt
+ ┃ ┣ 📜ExerciseNotificationManager.kt
+ ┃ ┣ 📜ExerciseService.kt
+ ┃ ┣ 📜ExerciseServiceMonitor.kt
+ ┃ ┗ 📜ExerciseState.kt
+ ┣ 📂ui
+ ┃ ┣ 📂health
+ ┃ ┃ ┣ 📜HealthScreen.kt
+ ┃ ┃ ┣ 📜HealthScreenState.kt
+ ┃ ┃ ┗ 📜HealthViewModel.kt
+ ┃ ┣ 📂main
+ ┃ ┃ ┣ 📜MainScreen.kt
+ ┃ ┃ ┗ 📜MainViewModel.kt
+ ┃ ┣ 📂map
+ ┃ ┃ ┗ 📜MapScreen.kt
+ ┃ ┣ 📜HealthDataViewModel.kt
+ ┃ ┗ 📜WearableModule.kt
+ ┣ 📜MainActivity.kt
+ ┣ 📜MainApplication.kt
+ ┗ 📜SanteutApp.kt
 ```
 
 </details>
