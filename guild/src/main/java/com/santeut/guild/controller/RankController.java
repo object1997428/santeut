@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/rank")
 public class RankController {
     private final RankService rankService;
 
-    @GetMapping("/{type}")
-    public ResponseEntity<?> getRank(@PathVariable("type") char type){
-        return ResponseUtil.buildBasicResponse(HttpStatus.OK,rankService.getRankList(3,1,type));
+    @GetMapping("/{guildId}/rank/{type}")
+    public ResponseEntity<?> getRank(@PathVariable("guildId") int guildId,@PathVariable("type") char type){
+        return ResponseUtil.buildBasicResponse(HttpStatus.OK,rankService.getRankList(3,guildId,type));
     }
 
 
