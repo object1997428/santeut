@@ -1,13 +1,5 @@
 package com.santeut.ui.guild
 
-import android.graphics.BitmapFactory
-import android.os.Environment
-import android.util.Base64
-import android.util.Log
-import android.widget.Toast
-import androidx.camera.core.AspectRatio
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,43 +9,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.deepl.api.Translator
 import com.santeut.R
-import com.santeut.data.apiservice.PlantIdApi
-import com.santeut.data.model.request.PlantIdentificationRequest
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.designsystem.theme.DarkGreen
-import com.ujizin.camposer.CameraPreview
-import com.ujizin.camposer.state.ImageCaptureResult
-import com.ujizin.camposer.state.rememberCameraState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
-import java.io.FileInputStream
 
 @Composable
 fun GuildInfoScreen(guild: GuildResponse?) {
@@ -70,17 +39,16 @@ fun GuildInfoScreen(guild: GuildResponse?) {
                 contentDescription = "동호회 사진",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-//                    .align(Alignment.TopStart)
                     .fillMaxWidth()
-//                    .height(300.dp)  // 이미지 크기를 지정하여 UI에 맞게 조절
                     .clip(RoundedCornerShape(8.dp))
                     .fillMaxHeight(.3f)
             )
 
-            Column(modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .fillMaxHeight()
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
             ) {
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -154,7 +122,7 @@ fun GuildInfoScreen(guild: GuildResponse?) {
     }
 }
 
-fun genderToString(guild: GuildResponse?):String {
+fun genderToString(guild: GuildResponse?): String {
     return when (guild?.guildGender) {
         'F' -> "여"
         'M' -> "남"

@@ -84,12 +84,14 @@ fun MountainListScreen(
 
 @Composable
 fun MountainCard(navController: NavController, mountain: MountainResponse) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .fillMaxWidth(),
-        contentAlignment = Alignment.Center)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    )
     {
-        Card (
+        Card(
             shape = RoundedCornerShape(30.dp),
             modifier = Modifier
                 .padding(16.dp)
@@ -99,36 +101,33 @@ fun MountainCard(navController: NavController, mountain: MountainResponse) {
                 containerColor = Color.White
             )
         ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
-                // 이미지 부분
                 AsyncImage(
                     model = mountain.image ?: R.drawable.logo,
                     contentDescription = "산 사진",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
-                    contentScale = ContentScale.Crop  // 이미지 채우기 방식
+                    contentScale = ContentScale.Crop
                 )
-                // 텍스트 정보 부분
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
                 ) {
-                    // 산 이름
-                    Text(text = mountain.mountainName,
+                    Text(
+                        text = mountain.mountainName,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(10.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    // 높이
                     Text(
                         text = "${mountain.height}m",
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    // 지역
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = mountain.regionName,
@@ -136,14 +135,12 @@ fun MountainCard(navController: NavController, mountain: MountainResponse) {
                     )
                 }
 
-                // 코스 개수, 명산?
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 8.dp, end = 18.dp, top = 0.dp, bottom = 16.dp)
-//                        .padding(vertical = 4.dp, horizontal = 8.dp)
+                        .padding(start = 8.dp, end = 18.dp, top = 0.dp, bottom = 16.dp),
                 ) {
                     Text(
                         text = "${mountain.courseCount}개 코스",

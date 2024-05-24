@@ -81,13 +81,11 @@ fun GuildApplyListScreen(
                         text = "가입 요청",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-//                        style = MaterialTheme.typography.headlineSmall
                     )
                     Text(
                         text = "${applyList.size}건",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-//                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
                 Divider(
@@ -121,7 +119,6 @@ fun ApplyRow(
             .padding(horizontal = 24.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(4.dp))
             .background(Color.White),
-//            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -41,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -61,7 +60,6 @@ import com.santeut.data.model.response.GuildResponse
 import com.santeut.data.model.response.MountainResponse
 import com.santeut.data.model.response.MyPartyResponse
 import com.santeut.designsystem.theme.CustomGray
-import com.santeut.designsystem.theme.customTypography
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.mountain.MountainViewModel
 import com.santeut.ui.party.PartyViewModel
@@ -139,7 +137,7 @@ fun SearchMountainBar(
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done // 완료 액션 지정
+                imeAction = ImeAction.Done
             ),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xFFD6D8DB),

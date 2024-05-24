@@ -34,16 +34,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.layout.ContentScale
-import coil.compose.AsyncImage
-import com.santeut.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import com.santeut.R
 import com.santeut.data.model.response.ChatMessage
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
@@ -65,8 +65,8 @@ fun ChatScreen(
     LaunchedEffect(key1 = partyId, key2 = chatmessages.size) {
         chatViewModel.getChatMessageList(partyId)
         chatViewModel.connect(partyId)
-        if(chatmessages.isNotEmpty()) {
-            listState.scrollToItem(chatmessages.size-1)
+        if (chatmessages.isNotEmpty()) {
+            listState.scrollToItem(chatmessages.size - 1)
         }
         userViewModel.getMyProfile()
     }
@@ -83,7 +83,7 @@ fun ChatScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Surface (
+                Surface(
                     modifier = Modifier.weight(1f)
                 ) {
                     LazyColumn(
@@ -121,26 +121,26 @@ fun MyChatMessage(message: ChatMessage) {
                 .padding(8.dp, 0.dp, 0.dp, 0.dp)
                 .fillMaxWidth()
         ) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 48f,
-                                topEnd = 48f,
-                                bottomStart = 48f,
-                                bottomEnd = 0f
-                            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 48f,
+                            topEnd = 48f,
+                            bottomStart = 48f,
+                            bottomEnd = 0f
                         )
-                        .background(DarkGreen)
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = message.content,
-                        color = Color.White,
-                        softWrap = true
                     )
-                }
+                    .background(DarkGreen)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = message.content,
+                    color = Color.White,
+                    softWrap = true
+                )
+            }
 
             Text(
                 message.createdAt,
@@ -161,8 +161,8 @@ fun OthersChatMessage(message: ChatMessage) {
             .padding(16.dp, 8.dp)
             .fillMaxWidth()
     ) {
-        if(message.userProfile != null && message.userProfile.equals("null")) {
-            message.userProfile.let { message.userProfile = null}
+        if (message.userProfile != null && message.userProfile.equals("null")) {
+            message.userProfile.let { message.userProfile = null }
         }
         AsyncImage(
             model = message.userProfile ?: R.drawable.logo,
@@ -174,8 +174,7 @@ fun OthersChatMessage(message: ChatMessage) {
                 .border(
                     BorderStroke(1.dp, Green),
                     CircleShape
-                )
-            ,
+                ),
             contentScale = ContentScale.Crop
         )
 
@@ -188,25 +187,25 @@ fun OthersChatMessage(message: ChatMessage) {
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 4.dp)
             )
-                Box(
-                    modifier = Modifier
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 48f,
-                                topEnd = 48f,
-                                bottomStart = 0f,
-                                bottomEnd = 48f
-                            )
+            Box(
+                modifier = Modifier
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 48f,
+                            topEnd = 48f,
+                            bottomStart = 0f,
+                            bottomEnd = 48f
                         )
-                        .background(Color.LightGray)
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = message.content,
-                        color = Color.Black,
-                        softWrap = true
                     )
-                }
+                    .background(Color.LightGray)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = message.content,
+                    color = Color.Black,
+                    softWrap = true
+                )
+            }
 
             Text(
                 message.createdAt,
@@ -233,9 +232,9 @@ fun ChatBox(
         onValueChange = { chatBoxValue = it },
         shape = CircleShape,
         trailingIcon = {
-            IconButton (
+            IconButton(
                 onClick = {
-                    if(chatBoxValueHasValue){
+                    if (chatBoxValueHasValue) {
                         // send
                         Log.d("SEND", chatBoxValue.text)
                         chatViewModel.sendMessage(

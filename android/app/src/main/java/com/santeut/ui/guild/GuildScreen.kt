@@ -1,17 +1,12 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -32,8 +27,6 @@ import com.google.accompanist.pager.rememberPagerState
 import com.santeut.ui.community.party.JoinPartyScreen
 import com.santeut.ui.navigation.top.GuildTopBar
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
-import java.io.File
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalPagerApi::class)
@@ -61,13 +54,12 @@ fun GuildScreen(
                 backgroundColor = Color.White,
                 divider = {},
                 indicator = { tabPositions ->
-//                    TabRowDefaults.Indicator(
-//                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
-//                    )
-                    Canvas(modifier = Modifier
-                        .pagerTabIndicatorOffset(pagerState, tabPositions)
-                        .fillMaxWidth()
-                        .height(2.dp)) {
+                    Canvas(
+                        modifier = Modifier
+                            .pagerTabIndicatorOffset(pagerState, tabPositions)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                    ) {
                         drawRoundRect(
                             color = Color(0xff678C40),
                             cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx())
@@ -77,10 +69,14 @@ fun GuildScreen(
             ) {
                 pages.forEachIndexed { index, title ->
                     Tab(
-                        text = { Text(text = title,
-                            color = if (pagerState.currentPage == index)  Color(0xff678C40) else Color(0xff666E7A),
+                        text = {
+                            Text(
+                                text = title,
+                                color = if (pagerState.currentPage == index) Color(0xff678C40) else Color(
+                                    0xff666E7A
+                                ),
                             )
-                               },
+                        },
                         selected = pagerState.currentPage == index,
                         onClick = {
                             coroutineScope.launch {

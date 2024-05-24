@@ -65,41 +65,42 @@ fun PostTipsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Scaffold(
-           floatingActionButton = {
-              FloatingActionButton(
-                   onClick = {
-                       // Define what happens when the button is clicked
-                       // Example: navigate to a writing screen
-                       navController.navigate("createPost/T")
-                   },
-                   modifier = Modifier
-                       .padding(16.dp),
-                   backgroundColor = Color(0xff678C40),
-                   contentColor = Color.White,
-               ) {
-                   Icon(
-                       imageVector = Icons.Filled.Edit,
-                       contentDescription = "Write Post",
-                       modifier = Modifier.size(24.dp)
-                   )
-               }
-           },
-            floatingActionButtonPosition = FabPosition.End, // 버튼을 하단 중앙에 배치
-            content = {innerPadding ->
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate("createPost/T")
+                    },
+                    modifier = Modifier
+                        .padding(16.dp),
+                    backgroundColor = Color(0xff678C40),
+                    contentColor = Color.White,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Write Post",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            },
+            floatingActionButtonPosition = FabPosition.End,
+            content = { innerPadding ->
                 // 게시글 목록
                 LazyColumn(
                     modifier = Modifier
                         .background(color = Color.White)
                         .padding(innerPadding)
                         .fillMaxWidth(),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     itemsIndexed(posts) { index, post ->
-                        if(index == 0) {
+                        if (index == 0) {
                             Spacer(modifier = Modifier.padding(top = 10.dp))
                         }
                         TipDetail(post, navController)
-                        Divider(color = Color(0xff76797D), thickness = 1.dp, modifier = Modifier.padding(horizontal = 5.dp))  // 각 게시물 아래에 구분선 추가
+                        Divider(
+                            color = Color(0xff76797D),
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
                     }
                 }
             }
@@ -157,7 +158,7 @@ fun TipDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -177,7 +178,7 @@ fun TipDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -197,7 +198,7 @@ fun TipDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Text(
                 text = post.userNickname,
@@ -208,7 +209,7 @@ fun TipDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Text(
                 text = formatTime(post.createdAt),

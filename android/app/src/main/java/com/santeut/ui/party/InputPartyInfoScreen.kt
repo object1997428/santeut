@@ -161,10 +161,10 @@ fun InputPartyInfoScreen(
                 CreatePartyRequest(
                     schedule,
                     partyName,
-                    mountainId, // mountainId,
-                    mountain?.mountainName ?: "", //mountainName,
+                    mountainId,
+                    mountain?.mountainName ?: "",
                     maxPeople.toInt(),
-                    guildId, // guildId,
+                    guildId,
                     place,
                     selectedCourseIds
                 )

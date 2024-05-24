@@ -16,7 +16,6 @@ import com.santeut.data.model.response.RankingResponse
 import com.santeut.domain.usecase.GuildUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -74,7 +73,7 @@ class GuildViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _guilds.postValue(guildUseCase.searchGuildByName(name))
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 _error.postValue("동호회 이름으로 검색 실패: ${e.message}")
             }
         }

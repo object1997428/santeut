@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,15 +32,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.santeut.data.model.response.NotificationResponse
 import com.santeut.ui.community.CommonViewModel
-import java.time.LocalDateTime
-
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun NotiScreen(
     navController: NavController,
-    commonViewModel:CommonViewModel=hiltViewModel()
+    commonViewModel: CommonViewModel = hiltViewModel()
 ) {
 
     val notiList by commonViewModel.notiList.observeAsState(emptyList())
@@ -54,17 +50,19 @@ fun NotiScreen(
 
     Scaffold {
         Column {
-            Box(modifier = Modifier
-                .height(45.dp)
-                .fillMaxWidth()
-                .padding(bottom = 10.dp)
-                .background(Color(0xFFEFEFF0)),
+            Box(
+                modifier = Modifier
+                    .height(45.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)
+                    .background(Color(0xFFEFEFF0)),
                 contentAlignment = Alignment.CenterEnd
-            ){
+            ) {
                 Text(text = "모두 읽기",
-                    color = Color.Black ,
+                    color = Color.Black,
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(end = 20.dp)
+                    modifier = Modifier
+                        .padding(end = 20.dp)
                         .clickable {
                             /*
                             *  누르면 알림 모두 삭제 되도록 구현
@@ -72,18 +70,17 @@ fun NotiScreen(
                         }
                 )
             }
-//            Spacer(modifier = Modifier.height(10.dp))
             if (notiList.isNotEmpty()) {
-                LazyColumn (
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize(),
                     horizontalAlignment = Alignment.Start
-                ){
+                ) {
                     items(notiList) { noti ->
                         NotiMessage(noti, navController)
                     }
                 }
-            }else {
+            } else {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -119,22 +116,20 @@ fun NotiMessage(noti: NotificationResponse, navController: NavController) {
     Row(
         modifier = Modifier
             .padding(vertical = 10.dp)
-//            .background(Color.LightGray)
-            .fillMaxWidth()
-        ,
+            .fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
                 .clickable {
                     // 팁 게시판 좋아요이면
-                    if(noti.referenceType[0] == 'T')
+                    if (noti.referenceType[0] == 'T')
                         navController.navigate("readPost/${noti.referenceId}/${noti.referenceType}")
-                    else if(noti.referenceType[0] == 'G' && noti.referenceType[1] !='R')
+                    else if (noti.referenceType[0] == 'G' && noti.referenceType[1] != 'R')
                         navController.navigate("getGuildPost/${noti.referenceId}")
-                    else if(noti.referenceType == "GR")
+                    else if (noti.referenceType == "GR")
                         navController.navigate("getGuild/${noti.referenceId}")
                 }
-                    .padding(horizontal = 40.dp, vertical = 10.dp),
+                .padding(horizontal = 40.dp, vertical = 10.dp),
         ) {
             Text(text = emoji)
             Spacer(modifier = Modifier.width(5.dp))

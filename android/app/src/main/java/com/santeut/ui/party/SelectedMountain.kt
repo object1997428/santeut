@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,7 +34,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -84,29 +82,27 @@ fun SelectedMountainCard(
                 }
             })
             .fillMaxWidth()
-            .height(100.dp)  // 카드 높이 조정
-            .padding(8.dp),  // 카드 주변 여백
+            .height(100.dp)
+            .padding(8.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 이미지 부분
             AsyncImage(
                 model = mountain.image ?: R.drawable.logo,
                 contentDescription = "산 사진",
                 modifier = Modifier
-                    .size(100.dp),  // 이미지 크기 고정
-                contentScale = ContentScale.Crop  // 이미지 채우기 방식
+                    .size(100.dp),
+                contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(16.dp))  // 이미지와 텍스트 사이 간격
+            Spacer(modifier = Modifier.width(16.dp))
 
-            // 텍스트 정보 부분
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)  // 텍스트 내부 여백
-                    .weight(1f),  // 남은 공간 모두 사용
+                    .padding(horizontal = 8.dp)
+                    .weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
@@ -226,22 +222,22 @@ fun SelectedCourse(
                     .padding(12.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column (
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     Text(text = "등산로를 선택해주세요")
                     Spacer(modifier = Modifier.height(6.dp))
                     Button(onClick = {
                         val selectedCourses = selectedCourseIds.joinToString(",")
                         Log.d("등산로", selectedCourses)
 
-                        if(selectedCourseIds.size != 0){
+                        if (selectedCourseIds.size != 0) {
                             if (guildId != null) {
                                 navController.navigate("createParty/${guildId}/${mountainId}/${selectedCourses}")
                             } else {
                                 navController.navigate("createParty/${mountainId}/${selectedCourses}")
                             }
-                        }else{
+                        } else {
                             Toast.makeText(context, "등산로를 1개 이상 선택해 주세요", Toast.LENGTH_SHORT).show()
                         }
                     }) {

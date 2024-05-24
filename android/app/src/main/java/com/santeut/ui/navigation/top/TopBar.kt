@@ -21,14 +21,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Message
-import androidx.compose.material.icons.filled.AddAlert
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material.icons.outlined.Message
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
@@ -82,6 +78,7 @@ fun TopBar(
                 currentBackStackEntry?.arguments?.getString("partyName") ?: "소모임 제목"
             )
         }
+
         "map" -> SimpleTopBar_2(navController, "등산")
     }
 }
@@ -234,9 +231,7 @@ fun MenuTopBar(
             ) {
                 DropdownMenuItem(
                     text = { Text(text = "소모임 정보", style = MaterialTheme.typography.titleMedium) },
-                    // TODO: 소모임 상세 조회
                     onClick = { Log.d("소모임 정보", "클릭") }
-                    // onClick = { navController.navigate("guildMemberList/${guild.guildId}") }
                 )
 
                 DropdownMenuItem(
@@ -262,7 +257,6 @@ fun MenuTopBar(
                     confirmButton = {
                         Button(
                             onClick = {
-//                                partyViewModel.// TODO: 소모임 나가기
                                 Log.d("소모임", "나감")
                                 showDialog = false
                             }
@@ -355,8 +349,6 @@ fun GuildTopBar(
             if (showLinkModal) {
                 Dialog(
                     onDismissRequest = { showLinkModal = false },
-//                    text = { Text(text = "${guild.guildName}의 공유 링크", fontWeight = FontWeight.Bold ) },
-
                     content = {
                         Column(
                             Modifier
@@ -410,7 +402,7 @@ fun GuildTopBar(
                                                 "https://k10e201.p.ssafy.io/hi.html?param=" + guild.guildId
                                             )
                                             clipboardManager.setPrimaryClip(clip)
-                                        },  // 아이콘과 텍스트 사이에 간격 추가
+                                        },
                                     tint = Color(0xff76797D)
                                 )
                             }
@@ -515,13 +507,11 @@ fun CustomAlertDialog(
             title = {
                 Text(
                     text = "공유 링크", style = MaterialTheme.typography.titleMedium
-//                    style = MaterialTheme.typography.h6
                 )
             },
             text = {
                 Column {
                     Text("공유하고 싶은 링크를 선택하세요.", style = MaterialTheme.typography.titleMedium)
-                    // 여기에 추가적인 컴포넌트를 배치할 수 있습니다.
                 }
             },
             confirmButton = {

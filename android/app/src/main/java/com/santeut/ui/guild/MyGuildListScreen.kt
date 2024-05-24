@@ -1,6 +1,5 @@
 package com.santeut.ui.guild
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,8 +79,8 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)  // 카드 높이 조정
-            .padding(8.dp)  // 카드 주변 여백
+            .height(100.dp)
+            .padding(8.dp)
             .clickable {
                 navController.navigate("getGuild/${guild.guildId}")
             },
@@ -97,19 +96,19 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
                 model = guild.guildProfile ?: R.drawable.logo,
                 contentDescription = "동호회 사진",
                 modifier = Modifier
-                    .size(100.dp),  // 이미지 크기 고정
-                contentScale = ContentScale.Crop  // 이미지 채우기 방식
+                    .size(100.dp),
+                contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
+            Spacer(modifier = Modifier.width(10.dp))
 
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)  // 텍스트 내부 여백
-                    .weight(1f),  // 남은 공간 모두 사용
+                    .padding(horizontal = 8.dp)
+                    .weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                androidx.compose.material.Text(
+                Text(
                     text = guild.guildName,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyMedium,
@@ -125,15 +124,14 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
                         modifier = Modifier.size(20.dp),
                         tint = Color(0xff76797D),
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
-                    androidx.compose.material3.Text(
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
                         text = "${guild.guildMember ?: 0} 명",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xff76797D)
                     )
                 }
 //                --------------------------
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 10.dp)
@@ -144,7 +142,7 @@ fun GuildCard(guild: GuildResponse, navController: NavController) {
                         modifier = Modifier.size(20.dp),
                         tint = Color(0xff76797D)
                     )
-                    Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = regionName(guild.regionId),
                         color = Color(0xff76797D),

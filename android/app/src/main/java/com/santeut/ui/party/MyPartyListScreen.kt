@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.outlined.CalendarMonth
+
 import androidx.compose.material.icons.outlined.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
@@ -66,8 +67,8 @@ fun MyPartyListScreen(
     val distance by partyViewModel.distance
     val courseList by partyViewModel.courseList
 
-    LaunchedEffect (startHikingPartyId) {
-        if(startHikingPartyId != 0){
+    LaunchedEffect(startHikingPartyId) {
+        if (startHikingPartyId != 0) {
             mapViewModel.setHikingData(
                 startHikingPartyId,
                 distance,
@@ -91,9 +92,10 @@ fun MyPartyListScreen(
                 )
             }
         } else {
-            LazyColumn(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxSize()
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxSize()
             ) {
                 items(myPartyList) { party ->
                     MyPartyCard(party, navController, partyViewModel, mapViewModel)
@@ -105,14 +107,19 @@ fun MyPartyListScreen(
 
 
 @Composable
-fun MyPartyCard(party: MyPartyResponse, navController: NavController, partyViewModel: PartyViewModel, mapViewModel: MapViewModel) {
+fun MyPartyCard(
+    party: MyPartyResponse,
+    navController: NavController,
+    partyViewModel: PartyViewModel,
+    mapViewModel: MapViewModel
+) {
     val context = LocalContext.current
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp)  // 카드 높이 조정
-            .padding(8.dp), // 카드 주변 여백
+            .height(160.dp)
+            .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
@@ -256,7 +263,8 @@ fun MyPartyCard(party: MyPartyResponse, navController: NavController, partyViewM
                     } else {
                         Button(
                             onClick = {
-                                Toast.makeText(context, "시작할 수 없는 소모임입니다.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "시작할 수 없는 소모임입니다.", Toast.LENGTH_SHORT)
+                                    .show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
                             modifier = Modifier.size(36.dp),
@@ -276,7 +284,6 @@ fun MyPartyCard(party: MyPartyResponse, navController: NavController, partyViewM
         }
     }
 }
-
 
 
 fun isMeetingTimePassed(meetingTime: String): Boolean {

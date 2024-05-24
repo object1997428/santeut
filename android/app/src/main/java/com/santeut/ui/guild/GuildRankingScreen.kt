@@ -12,10 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -142,8 +142,8 @@ fun RankingItem(rank: RankingResponse) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)  // 카드 높이 조정
-            .padding(8.dp)   // 카드 주변 여백
+            .height(100.dp)
+            .padding(8.dp)
             .shadow(spotColor = LightGray, elevation = 10.dp)
 
             .clip(RoundedCornerShape(20.dp)),

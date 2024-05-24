@@ -68,8 +68,6 @@ import com.santeut.R
 import com.santeut.data.model.response.GuildResponse
 import com.santeut.designsystem.theme.DarkGreen
 import com.santeut.designsystem.theme.Green
-import com.santeut.ui.community.party.PartyCard
-import com.santeut.ui.guild.GuildCard
 import com.santeut.ui.guild.GuildViewModel
 import com.santeut.ui.guild.genderToString
 import com.santeut.ui.guild.regionName
@@ -214,12 +212,11 @@ fun JoinGuildScreen(
                                     contentColor = Color.White
                                 ),
                                 onClick = {
-                                    if (searchFilterRegion =="" && searchFilterGender==""){
+                                    if (searchFilterRegion == "" && searchFilterGender == "") {
                                         guildViewModel.getGuilds()
                                         showBottomFilterSheet = false
                                         isFiltered = false
-                                    }
-                                    else if (searchFilterRegion == "") {
+                                    } else if (searchFilterRegion == "") {
                                         Toast.makeText(context, "지역을 선택해주세요", Toast.LENGTH_SHORT)
                                             .show()
                                         isFiltered = false
@@ -345,8 +342,8 @@ fun GuildCard(
         modifier = Modifier
             .clickable(onClick = { showBottomSheet = true })
             .fillMaxWidth()
-            .height(100.dp)  // 카드 높이 조정
-            .padding(8.dp),  // 카드 주변 여백
+            .height(100.dp)
+            .padding(8.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = 8.dp,
 
@@ -355,25 +352,20 @@ fun GuildCard(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 이미지 부분
             AsyncImage(
                 model = guild.guildProfile ?: R.drawable.logo,
                 contentDescription = "동호회 사진",
                 modifier = Modifier
-                    .size(100.dp),  // 이미지 크기 고정
-                contentScale = ContentScale.Crop  // 이미지 채우기 방식
+                    .size(100.dp),
+                contentScale = ContentScale.Crop
             )
 
             Column {
-
-                Spacer(modifier = Modifier.width(10.dp))  // 이미지와 텍스트 사이 간격
-
-
-                // 텍스트 정보 부분
+                Spacer(modifier = Modifier.width(10.dp))
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)  // 텍스트 내부 여백
-                        .weight(1f),  // 남은 공간 모두 사용
+                        .padding(horizontal = 8.dp)
+                        .weight(1f),
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(
@@ -393,7 +385,7 @@ fun GuildCard(
                             modifier = Modifier.size(20.dp),
                             tint = Color(0xff76797D),
                         )
-                        Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                        Spacer(modifier = Modifier.width(8.dp))
                         androidx.compose.material3.Text(
                             text = "${guild.guildMember ?: 0} 명",
                             style = MaterialTheme.typography.bodySmall,
@@ -412,7 +404,7 @@ fun GuildCard(
                             modifier = Modifier.size(20.dp),
                             tint = Color(0xff76797D)
                         )
-                        Spacer(modifier = Modifier.width(8.dp)) // Adds spacing between icon and text
+                        Spacer(modifier = Modifier.width(8.dp))
                         androidx.compose.material3.Text(
                             text = regionName(guild.regionId),
                             color = Color(0xff76797D),
@@ -437,7 +429,6 @@ fun GuildCard(
                 ) {
                     Surface {
                         Column {
-                            // 동호회 상세 정보
                             GuildDetail(guild, guildViewModel)
                         }
                     }
@@ -549,7 +540,7 @@ fun GuildDetail(guild: GuildResponse, guildViewModel: GuildViewModel) {
 }
 
 @Composable
-fun GuildSearchBar (
+fun GuildSearchBar(
     guildViewModel: GuildViewModel,
     enteredText: String,
     onSearchTextChanged: (String) -> Unit,
@@ -579,7 +570,7 @@ fun GuildSearchBar (
             },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done // 완료 액션 지정
+                imeAction = ImeAction.Done
             ),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color(0xFFD6D8DB),
@@ -608,7 +599,7 @@ fun GuildSearchBar (
                 onClickFilter()
             }
         ) {
-            if(!isFiltered) {
+            if (!isFiltered) {
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Default.FilterListOff,
                     contentDescription = "필터",
@@ -649,7 +640,7 @@ fun CustomRadioGroup(
                         all = 4.dp,
                     )
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)//Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 for (j in 0 until col) {
                     val optionIndex = i * col + j
@@ -681,8 +672,8 @@ fun CustomRadioGroup(
                                     }
                                 )
                                 .border(
-                                    width = 1.dp, // 너비 5dp
-                                    color = Green, // 색상 파란색
+                                    width = 1.dp,
+                                    color = Green,
                                     shape = RoundedCornerShape(
                                         size = 12.dp,
                                     ),

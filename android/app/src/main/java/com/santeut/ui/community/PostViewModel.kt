@@ -1,15 +1,12 @@
 package com.santeut.ui.community
 
-import android.adservices.adid.AdId
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.santeut.data.apiservice.PostApiService
 import com.santeut.data.model.request.CreatePostRequest
-import com.santeut.data.model.response.PostListResponse
 import com.santeut.data.model.response.PostResponse
 import com.santeut.domain.usecase.PostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,7 +37,7 @@ class PostViewModel @Inject constructor(
         getPosts(postType)
     }
 
-     fun getPosts(postType: Char) {
+    fun getPosts(postType: Char) {
         viewModelScope.launch {
             try {
                 _posts.value = postUseCase.getPosts(postType)

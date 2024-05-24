@@ -1,7 +1,6 @@
 package com.santeut.ui.community.course
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,12 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
-import com.santeut.ui.community.CommonViewModel
 import com.santeut.ui.community.PostViewModel
-import com.santeut.ui.community.tips.TipDetail
 import com.santeut.ui.community.tips.formatTime
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -60,7 +56,6 @@ fun PostCourseScreen(
 
     val posts by postViewModel.posts.observeAsState(initial = emptyList())
 
-//    val posts = postViewModel.getPosts();
     LaunchedEffect(key1 = 'C') {
         postViewModel.getPosts('C')
     }
@@ -73,8 +68,6 @@ fun PostCourseScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        // Define what happens when the button is clicked
-                        // Example: navigate to a writing screen
                         navController.navigate("createPost/C")
                     },
                     modifier = Modifier
@@ -89,22 +82,24 @@ fun PostCourseScreen(
                     )
                 }
             },
-            floatingActionButtonPosition = FabPosition.End, // 버튼을 하단 중앙에 배치
-            content = {innerPadding ->
-                // 게시글 목록
+            floatingActionButtonPosition = FabPosition.End,
+            content = { innerPadding ->
                 LazyColumn(
                     modifier = Modifier
                         .background(color = Color.White)
                         .padding(innerPadding)
                         .fillMaxWidth(),
-//            verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     itemsIndexed(posts) { index, post ->
-                        if(index == 0) {
+                        if (index == 0) {
                             Spacer(modifier = Modifier.padding(top = 10.dp))
                         }
                         CourseDetail(post, navController)
-                        Divider(color = Color(0xff76797D), thickness = 1.dp, modifier = Modifier.padding(horizontal = 5.dp))  // 각 게시물 아래에 구분선 추가
+                        Divider(
+                            color = Color(0xff76797D),
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
                     }
                 }
             }
@@ -162,7 +157,7 @@ fun CourseDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -182,7 +177,7 @@ fun CourseDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -202,7 +197,7 @@ fun CourseDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Text(
                 text = post.userNickname,
@@ -213,7 +208,7 @@ fun CourseDetail(post: PostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Text(
                 text = formatTime(post.createdAt),

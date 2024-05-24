@@ -14,7 +14,6 @@ import com.santeut.domain.usecase.FCMTokenUseCase
 import com.santeut.domain.usecase.LoginUseCase
 import com.santeut.ui.landing.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -74,16 +73,16 @@ class LoginViewModel @Inject constructor(
                         MainApplication.sharedPreferencesUtil.saveToken(data)
 
                         val fcmToken = MainApplication.sharedPreferencesUtil.getFcmToken()
-                        if(fcmToken != null){
+                        if (fcmToken != null) {
                             Log.d("Fcm Token", fcmToken)
                             fcmTokenUseCase.execute(
                                 FCMTokenRequest(fcmToken)
-                            ).catch {e ->
+                            ).catch { e ->
                                 Log.d("FCM Token 저장 실패", "${e.message}")
                             }
-                            .collect { result ->
-                                Log.d("FCM Token 저장 성공", "$result")
-                            }
+                                .collect { result ->
+                                    Log.d("FCM Token 저장 성공", "$result")
+                                }
                         }
 
                         _userState.value.copy(token = data.accessToken, isLoggedIn = true)

@@ -39,7 +39,7 @@ fun ChatListScreen(
     Column {
         LazyColumn {
             chatrooms.forEach {
-                item { ChatRoom(chatRoomInfo = it, navController = navController)}
+                item { ChatRoom(chatRoomInfo = it, navController = navController) }
             }
         }
     }
@@ -57,7 +57,7 @@ fun ChatRoom(chatRoomInfo: ChatRoomInfo, navController: NavController) {
             )
     ) {
         Column() {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(

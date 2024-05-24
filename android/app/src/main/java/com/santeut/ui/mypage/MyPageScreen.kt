@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,13 +36,15 @@ fun MyPageScreen(
         Column(modifier = Modifier.fillMaxWidth()) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
-                backgroundColor =Color.White,
+                backgroundColor = Color.White,
                 divider = {},
                 indicator = { tabPositions ->
-                    Canvas(modifier = Modifier
-                        .pagerTabIndicatorOffset(pagerState, tabPositions)
-                        .fillMaxWidth()
-                        .height(2.dp)) {
+                    Canvas(
+                        modifier = Modifier
+                            .pagerTabIndicatorOffset(pagerState, tabPositions)
+                            .fillMaxWidth()
+                            .height(2.dp)
+                    ) {
                         drawRoundRect(
                             color = Color(0xff678C40),
                             cornerRadius = CornerRadius(x = 10.dp.toPx(), y = 10.dp.toPx())

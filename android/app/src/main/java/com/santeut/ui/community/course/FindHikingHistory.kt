@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
@@ -28,7 +27,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -44,9 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.santeut.data.model.response.MyRecordResponse
-import com.santeut.ui.mypage.MyRecord
 import com.santeut.ui.mypage.minuteToHour
-import com.santeut.ui.navigation.top.SimpleTopBar
 import com.santeut.ui.party.PartyViewModel
 
 
@@ -55,28 +51,21 @@ import com.santeut.ui.party.PartyViewModel
 fun FindHikingHistory(
     navController: NavController,
     selectedPartyId: Int,
-    onShowBottomSheet:(Boolean)->Unit,
+    onShowBottomSheet: (Boolean) -> Unit,
     partyViewModel: PartyViewModel = hiltViewModel(),
-    onSelectedPartyId:(Int)->Unit,
+    onSelectedPartyId: (Int) -> Unit,
 ) {
 
     val myRecordList by partyViewModel.myRecordList.observeAsState(emptyList())
 
     // 검색어
     var searchWord by remember { mutableStateOf("") }
-
-    // 선택한 소모임
-//    var selectedPartyId by remember { mutableStateOf(0) }
-
-
+    
     LaunchedEffect(key1 = null) {
         partyViewModel.getMyRecordList()
     }
 
     Scaffold(
-//        topBar = {
-//            SimpleTopBar(navController, "등산 기록")
-//                 },
         bottomBar = {
             Box(
                 modifier = Modifier
@@ -86,14 +75,6 @@ fun FindHikingHistory(
             ) {
                 Column {
                     Button(onClick = {
-//                        val selectedCourses = selectedCourseIds.joinToString(",")
-//                        Log.d("등산로", selectedCourses)
-//
-//                        if (guildId != null) {
-//                            navController.navigate("createParty/${guildId}/${mountainId}/${selectedCourses}")
-//                        } else {
-//                            navController.navigate("createParty/${mountainId}/${selectedCourses}")
-//                        }
                         Log.d("userPartyId : ", selectedPartyId.toString())
                         onShowBottomSheet(false)
                     }) {
@@ -102,17 +83,7 @@ fun FindHikingHistory(
                 }
             }
         },
-        content = {paddingValues ->
-//            PartySearchBar(
-//                partyViewModel,
-//                searchWord,
-//                onSearchTextChanged = { searchWord = it },
-//                onClickFilter = {
-////                    showBottomFilterSheet = true
-//                },
-//                isFiltered = false,
-//                setIsFiltered = {  }
-//            )
+        content = { paddingValues ->
             if (myRecordList.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -128,8 +99,12 @@ fun FindHikingHistory(
                 Spacer(modifier = Modifier.height(20.dp))
                 LazyColumn() {
                     items(myRecordList) { record ->
-//                        MyRecord(record, selectedPartyId, isSelected = record.partyUserId == selectedPartyId){newId -> selectedPartyId = newId}
-                        MyRecord(record, selectedPartyId, isSelected = record.partyUserId == selectedPartyId, onSelectedPartyId)
+                        MyRecord(
+                            record,
+                            selectedPartyId,
+                            isSelected = record.partyUserId == selectedPartyId,
+                            onSelectedPartyId
+                        )
                         Spacer(modifier = Modifier.height(7.dp))
                     }
                 }
@@ -140,10 +115,13 @@ fun FindHikingHistory(
 
 @Composable
 fun MyRecord(
-    record: MyRecordResponse, selectedPartyId: Int,isSelected:Boolean, onPartyIdChange: (Int) -> Unit,
+    record: MyRecordResponse,
+    selectedPartyId: Int,
+    isSelected: Boolean,
+    onPartyIdChange: (Int) -> Unit,
 
 
-) {
+    ) {
     val backgroundColor by animateColorAsState(
         if (isSelected) Color(0xffDADADA).copy(alpha = 0.8f) else Color.White
     )
@@ -165,7 +143,8 @@ fun MyRecord(
             modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp)
         ) {
             Row {
-                Text(text = record.partyName, style = MaterialTheme.typography.headlineSmall,
+                Text(
+                    text = record.partyName, style = MaterialTheme.typography.headlineSmall,
                     color = Color(0xff335C49),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp
@@ -240,7 +219,7 @@ fun MyRecord(
             Row {
                 Text(
                     modifier = Modifier.padding(end = 10.dp),
-                    text = "최고 고도 ", // 최고 고도를 보여줍니다.
+                    text = "최고 고도 ",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(

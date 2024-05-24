@@ -1,6 +1,5 @@
 package com.santeut.ui.landing
 
-import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -29,9 +28,9 @@ class UserViewModel @Inject constructor(
     fun checkAuth() {
         viewModelScope.launch {
             val token = MainApplication.sharedPreferencesUtil.getAccessToken()
-            if(token != null && token != ""){
+            if (token != null && token != "") {
                 _uiEvent.value = AuthUiEvent.Auth(true)
-            }else{
+            } else {
                 _uiEvent.value = AuthUiEvent.Auth(false)
             }
         }
@@ -41,6 +40,7 @@ class UserViewModel @Inject constructor(
     sealed interface AuthUiEvent {
         @Immutable
         data object Idle : AuthUiEvent
+
         @Immutable
         data class Auth(val auth: Boolean) : AuthUiEvent
     }

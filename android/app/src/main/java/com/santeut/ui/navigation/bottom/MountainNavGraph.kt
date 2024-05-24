@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.santeut.data.model.response.MountainResponse
 import com.santeut.ui.mountain.MountainListScreen
 import com.santeut.ui.mountain.MountainScreen
 import com.santeut.ui.party.SelectedCourse

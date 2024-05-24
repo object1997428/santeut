@@ -22,14 +22,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TextField
@@ -39,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -47,13 +44,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.santeut.data.model.request.CreateGuildPostRequest
 import com.santeut.data.model.request.CreatePostRequest
 import com.santeut.ui.community.PostViewModel
-import com.santeut.ui.community.guild.GuildDetail
 import com.santeut.ui.navigation.top.CreateTopBar
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -86,7 +80,6 @@ fun CreateCoursePostScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
 
-
     // 선택한 소모임
     var selectedPartyId by remember { mutableStateOf(0) }
 
@@ -94,7 +87,7 @@ fun CreateCoursePostScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                          showBottomSheet = true
+                    showBottomSheet = true
                 },
             ) {
                 Row {
@@ -169,7 +162,12 @@ fun CreateCoursePostScreen(
                     Surface {
                         Column {
                             // 동호회 상세 정보
-                            FindHikingHistory(navController = navController, selectedPartyId,{value: Boolean ->showBottomSheet = value}) { newId -> selectedPartyId = newId}
+                            FindHikingHistory(
+                                navController = navController,
+                                selectedPartyId,
+                                { value: Boolean ->
+                                    showBottomSheet = value
+                                }) { newId -> selectedPartyId = newId }
                         }
                     }
                     Spacer(modifier = Modifier.height(30.dp))

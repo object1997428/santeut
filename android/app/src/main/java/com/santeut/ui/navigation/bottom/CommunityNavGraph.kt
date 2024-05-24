@@ -36,7 +36,7 @@ fun NavGraphBuilder.CommunityNavGraph(
         ) { backStackEntry ->
             val postType = backStackEntry.arguments?.getString("postType") ?: "T"
             val postViewModel = hiltViewModel<PostViewModel>()
-            if(postType == "T")
+            if (postType == "T")
                 CreateTipPostScreen(navController, postViewModel, postType.first())
             else
                 CreateCoursePostScreen(navController, postViewModel, postType.first())

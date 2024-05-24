@@ -346,7 +346,7 @@ fun UpdateGuildScreen(
                         guildInfo,
                         guildIsPrivate,
                         regionId,
-                        guildGender,  // 성별 정보가 올바르게 전달되는지 확인
+                        guildGender,
                         guildMinAge.toIntOrNull() ?: 0,
                         guildMaxAge.toIntOrNull() ?: 100
                     )

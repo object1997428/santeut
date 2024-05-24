@@ -23,11 +23,11 @@ import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor (
+class ChatViewModel @Inject constructor(
     private val chatUseCase: PartyUseCase
 ) : ViewModel() {
 
-    private val _error= MutableLiveData<String>()
+    private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
     private val _chatrooms = MutableLiveData<List<ChatRoomInfo>>()
@@ -42,7 +42,7 @@ class ChatViewModel @Inject constructor (
                 chatUseCase.getChatRoomList().let {
                     _chatrooms.postValue(chatUseCase.getChatRoomList())
                 }
-            } catch(e:Exception) {
+            } catch (e: Exception) {
                 _error.value = "Failed to load chat rooms: ${e.message}"
             }
         }
@@ -51,10 +51,10 @@ class ChatViewModel @Inject constructor (
     fun getChatMessageList(partyId: Int) {
         viewModelScope.launch {
             try {
-                    chatUseCase.getChatMessageList(partyId).let {
-                        _chatmessages.postValue(it)
+                chatUseCase.getChatMessageList(partyId).let {
+                    _chatmessages.postValue(it)
                 }
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 _error.value = "Failed to load chat messages(party: ${partyId}): ${e.message}}"
             }
         }
@@ -63,11 +63,11 @@ class ChatViewModel @Inject constructor (
     private fun <E> MutableLiveData<MutableList<E>>.setList(element: E?) {
         val tempList: MutableList<E> = mutableListOf()
         this.value.let {
-            if(it != null) {
+            if (it != null) {
                 tempList.addAll(it)
             }
         }
-        if(element != null) {
+        if (element != null) {
             tempList.add(element)
         }
         this.postValue(tempList)
@@ -92,7 +92,12 @@ class ChatViewModel @Inject constructor (
             var json: JSONObject? = null
             json = JSONObject(text)
 
-            Log.d("SENDER: ", "${json.get("userId")}번 유저: ${json.get("userNickname")}, ${json.get("userProfile")}, ${json.get("content")}")
+            Log.d(
+                "SENDER: ",
+                "${json.get("userId")}번 유저: ${json.get("userNickname")}, ${json.get("userProfile")}, ${
+                    json.get("content")
+                }"
+            )
             var msg = ChatMessage(
                 json.get("createdAt").toString(),
                 json.get("userNickname").toString(),
@@ -121,8 +126,11 @@ class ChatViewModel @Inject constructor (
         val webSocketUrl =
             "wss://k10e201.p.ssafy.io/api/party/ws/chat/room/${partyId}"
 
-        val request:Request = Request.Builder()
-            .header("Authorization", "Bearer ${MainApplication.sharedPreferencesUtil.getAccessToken()}")
+        val request: Request = Request.Builder()
+            .header(
+                "Authorization",
+                "Bearer ${MainApplication.sharedPreferencesUtil.getAccessToken()}"
+            )
             .url(webSocketUrl)
             .build()
         webSocket = okHttpClient.newWebSocket(request, webSocketListener)
@@ -137,12 +145,12 @@ class ChatViewModel @Inject constructor (
     }
 
     fun sendMessage(message: Message) {
-        Log.d("sendMessage","${_isConnected.value}")
+        Log.d("sendMessage", "${_isConnected.value}")
         if (_isConnected.value) {
             var gson = Gson()
             var text = gson.toJson(message)
             webSocket?.send(text)
-            if(webSocket != null) {
+            if (webSocket != null) {
                 Log.d("sendMessage", text);
             }
         }

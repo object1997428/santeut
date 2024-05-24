@@ -105,7 +105,6 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
                                     CoroutineScope(Dispatchers.IO).launch {
                                         plantViewModel.identifyPlant(file)
                                         isButton.value = true;
-//                                sheetState.show()
                                     }
                                 } else {
                                     Toast
@@ -118,14 +117,6 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
             )
         }
     }
-
-    // 시연
-//    if (isButton.value){
-//      LaunchedEffect(Unit) {
-//        delay(5000L)
-//        plantViewModel.isLoading.value = false
-//      }
-//    }
 
     if (plantViewModel.isLoading.value && isButton.value) {
         Box(
@@ -182,12 +173,10 @@ fun SearchPlant(plantViewModel: PlantViewModel = hiltViewModel()) {
                         .padding(16.dp)
                 ) {
                     Text(
-//                        text = "넓은잎외잎쑥",
                         text = plantViewModel.crawlPlantName.value,
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-//                        text = "쌍떡잎식물 초롱꽃목 국화과의 여러해살이풀. 산지에서 자란다. 줄기는 곧게 서고, 상부에서 짧은 가지로 갈 라지며 땅속줄기가 사방으로 뻗으면서 퍼져 나가고, 처음에는 식물체가 거미줄 같은 털로 덮인다. 높이 50∼100cm이다. 뿌리잎은 꽃이 필 때쯤 되면 사라지고 줄기잎은 어긋나며 잎자루에 날개가 있다.",
                         text = plantViewModel.crawlPlantDescription.value,
                         style = MaterialTheme.typography.bodyMedium
                     )

@@ -1,7 +1,6 @@
 package com.santeut.ui.guild
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,7 +28,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -81,9 +79,10 @@ fun GuildMemberListScreen(
             }
         },
         content = { padding ->
-            Column(modifier = Modifier
-                .padding(padding)
-                .fillMaxHeight()
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxHeight()
             ) {
                 Row(
                     modifier = Modifier
@@ -96,16 +95,14 @@ fun GuildMemberListScreen(
                         text = "동호회 회원",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-//                        style = MaterialTheme.typography.headlineSmall
                     )
                     Text(
                         text = "${memberList.size}명",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-//                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
-                Divider (
+                Divider(
                     color = Color.LightGray,
                     modifier = Modifier
                         .height(1.dp)
@@ -221,9 +218,11 @@ fun MemberRow(
                         shape = RoundedCornerShape(12.dp),
                         onClick = {
                             showChangeDialog.value = true
-                    }) {
-                        Text(text = "위임하기",
-                            color = Color.White)
+                        }) {
+                        Text(
+                            text = "위임하기",
+                            color = Color.White
+                        )
 
                     }
                     Spacer(modifier = Modifier.width(8.dp))
@@ -237,7 +236,8 @@ fun MemberRow(
                         onClick = {
                             showExileDialog.value = true
                         }) {
-                        Text(text = "추방하기",
+                        Text(
+                            text = "추방하기",
                             color = Color.White
                         )
                     }
@@ -254,7 +254,7 @@ fun MemberRow(
                     guild = guild,
                     guildViewModel = guildViewModel
                 )
-            } else if(showExileDialog.value) {
+            } else if (showExileDialog.value) {
                 showAlertDialog(
                     showDialog = showExileDialog,
                     type = AlertType.EXILE,
@@ -272,12 +272,12 @@ fun MemberRow(
 fun showAlertDialog(
     showDialog: MutableState<Boolean>,//Boolean,
     type: AlertType,
-    text:String,
+    text: String,
     member: GuildMemberResponse,
     guild: GuildResponse,
     guildViewModel: GuildViewModel
 ) {
-    if(showDialog.value == true) {
+    if (showDialog.value == true) {
         AlertDialog(
             onDismissRequest = { showDialog.value = false },
             text = { Text(text = text) }, // "${member.userNickname}님을 추방할까요?"
@@ -285,8 +285,15 @@ fun showAlertDialog(
                 Button(
                     onClick = {
                         when (type) {
-                            AlertType.EXILE -> guildViewModel.exileMember(guild.guildId, member.userId)
-                            AlertType.CHANGE -> guildViewModel.changeLeader(guild.guildId, member.userId)
+                            AlertType.EXILE -> guildViewModel.exileMember(
+                                guild.guildId,
+                                member.userId
+                            )
+
+                            AlertType.CHANGE -> guildViewModel.changeLeader(
+                                guild.guildId,
+                                member.userId
+                            )
                         }
                         showDialog.value = false
                     }

@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
@@ -61,10 +60,13 @@ fun GuildCommunityScreen(
     guildViewModel: GuildViewModel = hiltViewModel()
 ) {
     val postList by guildViewModel.postList.observeAsState(emptyList())
-    var selectedCategoryId by remember { mutableStateOf(0) }  // Default to '공지' category
+    var selectedCategoryId by remember { mutableStateOf(0) }
 
     LaunchedEffect(key1 = guildId, key2 = selectedCategoryId) {
-        Log.d("GuildScreen", "Fetching posts for guildId: $guildId with categoryId $selectedCategoryId")
+        Log.d(
+            "GuildScreen",
+            "Fetching posts for guildId: $guildId with categoryId $selectedCategoryId"
+        )
         guildViewModel.getGuildPostList(guildId, selectedCategoryId)
     }
 
@@ -74,24 +76,31 @@ fun GuildCommunityScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                FloatingActionButton(onClick = {
-                    navController.navigate("createGuildPost/$guildId") },
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate("createGuildPost/$guildId")
+                    },
                     backgroundColor = Color(0xff678C40),
                     contentColor = Color.White,
                     shape = RoundedCornerShape(40.dp),
-//                    modifier = Modifier.padding(top = 5.dp, start = 10.dp,end = 10.dp, bottom = 5.dp)
                     modifier = Modifier
                         .width(100.dp)
                         .height(45.dp)
-                    ) {
-                    Row(modifier = Modifier
+                ) {
+                    Row(
+                        modifier = Modifier
 //                        .padding(horizontal = 10.dp, vertical = 1.dp),
                     ) {
                         Row(
                         ) {
                             Icon(imageVector = Icons.Filled.Edit, contentDescription = "글쓰기")
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = "글쓰기", fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 2.dp))
+                            Text(
+                                text = "글쓰기",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(top = 2.dp)
+                            )
                         }
                     }
                 }
@@ -100,37 +109,46 @@ fun GuildCommunityScreen(
         floatingActionButtonPosition = FabPosition.Center,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Row of buttons for category selection
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                .padding(top = 10.dp),
+                    .padding(top = 10.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Button(
                     onClick = { selectedCategoryId = 0 },
-//                    modifier = Modifier.width(60.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if(selectedCategoryId == 0 ) Color(0xff678C40) else Color.Transparent,
-                        contentColor =if(selectedCategoryId == 1) Color.White else Color(0xff76797D)
+                        containerColor = if (selectedCategoryId == 0) Color(0xff678C40) else Color.Transparent,
+                        contentColor = if (selectedCategoryId == 1) Color.White else Color(
+                            0xff76797D
+                        )
                     ),
                     modifier = Modifier.padding(start = 10.dp),
                     border = BorderStroke(1.dp, Color(0xff76797D))
                 ) {
-                    Text("공 지", fontSize = 13.sp, color =if(selectedCategoryId == 0) Color.White else Color(0xff76797D))
+                    Text(
+                        "공 지",
+                        fontSize = 13.sp,
+                        color = if (selectedCategoryId == 0) Color.White else Color(0xff76797D)
+                    )
                 }
                 Button(
                     onClick = { selectedCategoryId = 1 },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if(selectedCategoryId == 1 ) Color(0xff678C40) else Color.Transparent,
-                        contentColor =if(selectedCategoryId == 1) Color.White else Color(0xff76797D)
+                        containerColor = if (selectedCategoryId == 1) Color(0xff678C40) else Color.Transparent,
+                        contentColor = if (selectedCategoryId == 1) Color.White else Color(
+                            0xff76797D
+                        )
                     ),
                     modifier = Modifier.padding(start = 15.dp),
                     border = BorderStroke(1.dp, Color(0xff76797D))
-//                    modifier = Modifier.width(100.dp)
                 ) {
-                    Text("자 유", fontSize = 13.sp, color = if(selectedCategoryId == 1) Color.White else Color(0xff76797D))
+                    Text(
+                        "자 유",
+                        fontSize = 13.sp,
+                        color = if (selectedCategoryId == 1) Color.White else Color(0xff76797D)
+                    )
                 }
             }
             // Content area
@@ -152,12 +170,16 @@ fun GuildCommunityScreen(
                         .background(color = Color.White)
                         .fillMaxWidth(),
                 ) {
-                    itemsIndexed(postList.filter { it.categoryId == selectedCategoryId }) { index,post ->
-                        if(index == 0) {
+                    itemsIndexed(postList.filter { it.categoryId == selectedCategoryId }) { index, post ->
+                        if (index == 0) {
                             Spacer(modifier = Modifier.padding(top = 10.dp))
                         }
                         GuildPost(post, navController)
-                        Divider(color = Color(0xff76797D), thickness = 1.dp, modifier = Modifier.padding(horizontal = 5.dp))  // 각 게시물 아래에 구분선 추가
+                        Divider(
+                            color = Color(0xff76797D),
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(horizontal = 5.dp)
+                        )
                     }
                 }
             }
@@ -213,7 +235,7 @@ fun GuildPost(post: GuildPostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -233,7 +255,7 @@ fun GuildPost(post: GuildPostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -253,7 +275,7 @@ fun GuildPost(post: GuildPostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Text(
                 text = formatTime(post.createdAt),
@@ -264,7 +286,7 @@ fun GuildPost(post: GuildPostResponse, navController: NavController) {
                 color = Color(0xff76797D),
                 modifier = Modifier
                     .width(dividerWidth)
-                    .height(dividerHeight)  // 두 번째 세로선의 높이를 조절합니다.
+                    .height(dividerHeight)
             )
             Text(
                 text = post.userNickName,

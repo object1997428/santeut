@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userUseCase: UserUseCase
-): ViewModel(){
+) : ViewModel() {
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
@@ -21,7 +21,7 @@ class UserViewModel @Inject constructor(
     private val _myProfile = MutableLiveData<MyProfileResponse>()
     val myProfile: LiveData<MyProfileResponse> = _myProfile
 
-    fun getMyProfile(){
+    fun getMyProfile() {
         viewModelScope.launch {
             try {
                 _myProfile.value = userUseCase.getMyProfile()

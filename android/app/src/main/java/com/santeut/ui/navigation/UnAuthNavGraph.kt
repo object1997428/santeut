@@ -7,7 +7,6 @@ import androidx.navigation.navigation
 import com.santeut.ui.landing.LandingScreen
 import com.santeut.ui.login.LoginScreen
 import com.santeut.ui.signup.SignUpScreen
-import com.santeut.ui.wearable.WearableViewModel
 
 fun NavGraphBuilder.UnAuthNavGraph(
     navController: NavHostController

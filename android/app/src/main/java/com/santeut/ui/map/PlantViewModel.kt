@@ -1,25 +1,14 @@
 package com.santeut.ui.map
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.os.Handler
-import android.os.Looper
 import android.util.Base64
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santeut.data.apiservice.PlantIdApi
 import com.santeut.data.model.request.PlantIdentificationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -30,8 +19,7 @@ import java.io.FileInputStream
 import javax.inject.Inject
 
 @HiltViewModel
-class PlantViewModel @Inject constructor()
-    : ViewModel() {
+class PlantViewModel @Inject constructor() : ViewModel() {
 
     val plantName = mutableStateOf("")
     val plantDescription = mutableStateOf("")
@@ -73,21 +61,18 @@ class PlantViewModel @Inject constructor()
 
                         Log.d("Plant Name", "${plantName.value}")
 
-                        val url = "https://terms.naver.com/search.naver?query=${plantName.value}&searchType=text&dicType=&subject="
+                        val url =
+                            "https://terms.naver.com/search.naver?query=${plantName.value}&searchType=text&dicType=&subject="
                         val docs = Jsoup.connect(url).get()
 
                         val h4Element = docs.selectFirst("h4")
 
-                        // h4 요소가 null이 아닌지 확인
                         if (h4Element != null) {
-                            // keyword와 desc 클래스를 포함한 텍스트를 추출
                             val keywordText = h4Element.selectFirst(".keyword a")?.text()
                             val descText = h4Element.selectFirst(".desc")?.text()
 
-                            // 두 텍스트를 결합하여 제목을 설정
                             val titleText = "$keywordText $descText"
 
-                            // 꽃 이름 출력
                             Log.d("crawlPlant Name", "${keywordText}")
                             crawlPlantName.value = keywordText.toString()
 

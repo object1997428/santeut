@@ -60,7 +60,16 @@ fun BottomNavBar(
     currentTap: String?,
     onTabClick: (BottomTap) -> Unit
 ) {
-    val NoBottomScreen = listOf("landing", "login", "signup", "noti", "chatRoom/{partyId}", "getGuildPost/{guildPostId}", "searchPlant", "map")
+    val NoBottomScreen = listOf(
+        "landing",
+        "login",
+        "signup",
+        "noti",
+        "chatRoom/{partyId}",
+        "getGuildPost/{guildPostId}",
+        "searchPlant",
+        "map"
+    )
 
     AnimatedVisibility(
         modifier = Modifier
@@ -112,7 +121,7 @@ fun RowScope.BottomBarItem(
                 Icon(
                     imageVector = tab.icon,
                     contentDescription = tab.description,
-                    tint = if(selected) Color(0xff678C40) else Color(0xff76797D)
+                    tint = if (selected) Color(0xff678C40) else Color(0xff76797D)
                 )
                 Spacer(
                     modifier = Modifier
@@ -122,7 +131,7 @@ fun RowScope.BottomBarItem(
                     text = tab.title,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if(selected) Color(0xff678C40) else Color(0xff76797D)
+                    color = if (selected) Color(0xff678C40) else Color(0xff76797D)
                 )
             }
         }

@@ -1,7 +1,6 @@
 package com.santeut.ui.mypage
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -103,9 +102,9 @@ fun MyHikingScreen(
                 ) {
                     Text(text = "코스 정보")
 
-                    if(myCourse.size < 2){
+                    if (myCourse.size < 2) {
                         Text(text = "코스 기록이 없습니다.")
-                    }else{
+                    } else {
                         NaverMap(
                             modifier = Modifier
                                 .height(300.dp)
@@ -123,7 +122,12 @@ fun MyHikingScreen(
                                 width = 3.dp,
                                 color = Color.Green,
                                 outlineWidth = 1.dp,
-                                outlineColor = Color.Red.copy(alpha = (Color.Red.alpha.coerceIn(0f, 1f))),
+                                outlineColor = Color.Red.copy(
+                                    alpha = (Color.Red.alpha.coerceIn(
+                                        0f,
+                                        1f
+                                    ))
+                                ),
                             )
                         }
                     }
@@ -220,12 +224,12 @@ fun MyRecord(record: MyRecordResponse, partyViewModel: PartyViewModel, onRecordC
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "이동시간 ${minuteToHour(record.duration ?: 0)}", // 이동 시간을 보여줍니다.
+                    text = "이동시간 ${minuteToHour(record.duration ?: 0)}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
             Text(
-                text = "최고 고도 ${record.height ?: 0}m", // 최고 고도를 보여줍니다.
+                text = "최고 고도 ${record.height ?: 0}m",
                 style = MaterialTheme.typography.bodyMedium
             )
         }

@@ -2,19 +2,37 @@ package com.santeut.ui.community.course
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.santeut.data.model.response.PostResponse
@@ -23,7 +41,6 @@ import com.santeut.ui.community.PostViewModel
 import com.santeut.ui.community.common.CommentScreen
 import com.santeut.ui.community.tips.formatTime
 import com.santeut.ui.navigation.top.DefaultTopBar
-import com.santeut.ui.navigation.top.TopBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -64,7 +81,7 @@ fun ReadPostScreen(
                 Column {
                     HeaderSection(post)
                     ContentSection(post)
-                    commentList?.let{
+                    commentList?.let {
                         CommentScreen(commentList)
                     }
                 }
@@ -135,7 +152,6 @@ fun CommentSection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-//        CommentScreen(postId, postType, commonViewModel)
     }
 
     Row(
@@ -155,7 +171,6 @@ fun CommentSection(
             modifier = Modifier
                 .weight(1f)
                 .background(Color.Transparent),
-//            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { onSend() })
         )
         IconButton(onClick = { onSend() }) {

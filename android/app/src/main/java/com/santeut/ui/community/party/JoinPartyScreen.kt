@@ -45,7 +45,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,11 +66,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapType
+import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PathOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.santeut.data.model.response.PartyResponse
@@ -135,9 +133,9 @@ fun JoinPartyScreen(
     )
 
     // 검색어
-    var searchWord by remember {mutableStateOf("")}
+    var searchWord by remember { mutableStateOf("") }
     // 필터 적용 되었는지?
-    var isFiltered by remember {mutableStateOf(false)}
+    var isFiltered by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = null) {
         partyViewModel.getPartyList(guildId = guildId, name = null, start = null, end = null)
@@ -185,7 +183,7 @@ fun JoinPartyScreen(
                     onDismissRequest = { showBottomFilterSheet = false },
                     sheetState = filterSheetState
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth()
@@ -228,7 +226,10 @@ fun JoinPartyScreen(
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { startDatePickerDialog.show() }) {
-                                    androidx.compose.material.Icon(Icons.Filled.DateRange, contentDescription = "조회 시작 날짜")
+                                    androidx.compose.material.Icon(
+                                        Icons.Filled.DateRange,
+                                        contentDescription = "조회 시작 날짜"
+                                    )
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
@@ -246,7 +247,10 @@ fun JoinPartyScreen(
                             readOnly = true,
                             trailingIcon = {
                                 IconButton(onClick = { endDatePickerDialog.show() }) {
-                                    androidx.compose.material.Icon(Icons.Filled.DateRange, contentDescription = "조회 마지막 날짜")
+                                    androidx.compose.material.Icon(
+                                        Icons.Filled.DateRange,
+                                        contentDescription = "조회 마지막 날짜"
+                                    )
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
@@ -262,17 +266,20 @@ fun JoinPartyScreen(
                                 contentColor = Color.White
                             ),
                             onClick = {
-                                if(searchFilterStartDate == "" && searchFilterEndDate == "") {
-                                    partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
+                                if (searchFilterStartDate == "" && searchFilterEndDate == "") {
+                                    partyViewModel.getPartyList(
+                                        guildId,
+                                        searchWord,
+                                        searchFilterStartDate,
+                                        searchFilterEndDate
+                                    )
                                     showBottomFilterSheet = false
                                     isFiltered = false
-                                }
-                                else if (searchFilterStartDate == "") {
+                                } else if (searchFilterStartDate == "") {
                                     Toast.makeText(context, "시작 날짜를 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
                                     isFiltered = false
-                                }
-                                else if (searchFilterEndDate == "") {
+                                } else if (searchFilterEndDate == "") {
                                     Toast.makeText(context, "종료 날짜를 선택해주세요", Toast.LENGTH_SHORT)
                                         .show()
                                     isFiltered = false
@@ -281,7 +288,12 @@ fun JoinPartyScreen(
                                     Log.d("소모임 목록 검색) 소모임 이름", "${searchWord}")
                                     Log.d("소모임 목록 검색) 시작날짜", searchFilterStartDate)
                                     Log.d("소모임 목록 검색) 종료날짜", searchFilterEndDate)
-                                    partyViewModel.getPartyList(guildId, searchWord,searchFilterStartDate, searchFilterEndDate)
+                                    partyViewModel.getPartyList(
+                                        guildId,
+                                        searchWord,
+                                        searchFilterStartDate,
+                                        searchFilterEndDate
+                                    )
                                     showBottomFilterSheet = false
                                     isFiltered = true
                                 }
@@ -311,7 +323,8 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
 
     val coords by partyViewModel.selectedCourseOfParty.observeAsState(emptyList())
     val distanceInKm by partyViewModel.distanceInKm.observeAsState(0.0)
-    val initialPosition = if (coords.isNotEmpty()) coords[0] else LatLng(35.116824651798, 128.99110450587247)
+    val initialPosition =
+        if (coords.isNotEmpty()) coords[0] else LatLng(35.116824651798, 128.99110450587247)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition(initialPosition, 15.0)
     }
@@ -329,13 +342,13 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
         }
     }
 
-    Card (
+    Card(
         modifier = Modifier
             .clickable(onClick = { showBottomSheet = true })
             .fillMaxWidth()
-            .height(160.dp)  // 카드 높이 조정
-            .padding(8.dp), // 카드 주변 여백
-            colors = CardDefaults.cardColors(
+            .height(160.dp)
+            .padding(8.dp),
+        colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
         shape = RoundedCornerShape(8.dp),
@@ -343,9 +356,9 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
             defaultElevation = 6.dp
         ),
     ) {
-        Column (
-          modifier = Modifier
-              .padding(16.dp)
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
         ) {
             Text(
                 text = party.partyName,
@@ -380,7 +393,7 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                 Text(text = party.place)
             }
             // 산, 인원수
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
@@ -418,19 +431,21 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
             sheetState = sheetState
         ) {
 
-            Box(modifier = Modifier
-                .padding(16.dp)
+            Box(
+                modifier = Modifier
+                    .padding(16.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // 소모임 상세 정보
-                    if(coords.size==0) {
-                        Text(text = "선택한 등산로가 없습니다",
+                    if (coords.size == 0) {
+                        Text(
+                            text = "선택한 등산로가 없습니다",
                             modifier = Modifier
                                 .fillMaxWidth(),
-//                                .fillMaxHeight(.3f),
-                            textAlign = TextAlign.Center)
+                            textAlign = TextAlign.Center
+                        )
                         Spacer(Modifier.height(16.dp))
                     } else {
                         NaverMap(
@@ -440,12 +455,11 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                                 .padding(vertical = 8.dp),
                             cameraPositionState = cameraPositionState,
                             properties = MapProperties(
-//                            locationTrackingMode = LocationTrackingMode.Follow,
                                 mapType = MapType.Terrain,
                                 isMountainLayerGroupEnabled = true
                             )
                         ) {
-                            if(coords.size >= 2) {
+                            if (coords.size >= 2) {
                                 PathOverlay(
                                     coords = coords,
                                     width = 3.dp,
@@ -455,7 +469,7 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                                 )
                             }
                         }
-                        Text(text="총 ${distanceInKm}km")
+                        Text(text = "총 ${distanceInKm}km")
 
                     }
                     Spacer(Modifier.height(4.dp))
@@ -475,7 +489,7 @@ fun PartyCard(party: PartyResponse, partyViewModel: PartyViewModel) {
                             disabledContentColor = Color.Black,
                         )
                     ) {
-                        if(party.isMember) {
+                        if (party.isMember) {
                             Text(
                                 "이미 가입한 소모임입니다",
                                 fontWeight = FontWeight.SemiBold
@@ -520,7 +534,7 @@ fun PartySearchBar(
                 onSearchTextChanged(text)
             },
             placeholder = {
-                androidx.compose.material.Text(
+                Text(
                     text = "어느 소모임을 찾으시나요?",
                     color = Color(0xff666E7A)
                 )
@@ -537,7 +551,7 @@ fun PartySearchBar(
             ),
             shape = RoundedCornerShape(16.dp),
             trailingIcon = {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "검색",
                     tint = Color(0xff33363F),
@@ -556,15 +570,15 @@ fun PartySearchBar(
                 onClickFilter()
             }
         ) {
-            if(!isFiltered) {
-                androidx.compose.material3.Icon(
+            if (!isFiltered) {
+                Icon(
                     imageVector = Icons.Default.FilterListOff,
                     contentDescription = "필터",
                     tint = Color.DarkGray,
                     modifier = Modifier.size(30.dp),
                 )
             } else {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.FilterList,
                     contentDescription = "필터",
                     tint = Green,

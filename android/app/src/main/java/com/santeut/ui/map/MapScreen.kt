@@ -73,12 +73,12 @@ fun MapScreen(
     val userPosition by mapViewModel.userPositions
     val userIcons by mapViewModel.userIcons
 
-    LaunchedEffect (userPosition){
+    LaunchedEffect(userPosition) {
         wearableViewModel.toSend(userPosition)
     }
 
     val defaultIcon =
-        remember { resizeMarkerIcon(context, R.drawable.logo, 100, 100) }
+        remember { mapViewModel.resizeMarkerIcon(context, R.drawable.logo, 100, 100) }
 
     val uiSettings = remember {
         MapUiSettings(
@@ -109,8 +109,8 @@ fun MapScreen(
         mapViewModel.updateHealthData(healthData)
     }
 
-    LaunchedEffect (alertMessage, alertTitle) {
-        if(alertMessage.isNotBlank() && alertTitle.isNotBlank()){
+    LaunchedEffect(alertMessage, alertTitle) {
+        if (alertMessage.isNotBlank() && alertTitle.isNotBlank()) {
             wearableViewModel.sendAlertMessage(alertTitle, alertMessage)
         }
     }
@@ -210,7 +210,7 @@ fun MapScreen(
                 )
             }
         }
-        if(alertTitle.isNotBlank() && alertMessage.isNotBlank()){
+        if (alertTitle.isNotBlank() && alertMessage.isNotBlank()) {
             AlertDialog(
                 onDismissRequest = { mapViewModel.checkAlertMessage() },
                 title = { Text(text = alertTitle) },
@@ -357,4 +357,3 @@ fun HikingInfoItem(
         Text(text = unit, color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Normal)
     }
 }
-

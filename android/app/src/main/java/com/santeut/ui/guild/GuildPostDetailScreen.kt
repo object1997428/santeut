@@ -124,7 +124,7 @@ fun GuildPostTitle(
                 } else {
                     commonViewModel.hitLike(post.guildPostId, post.postType)
                 }
-                isLiked = !isLiked // 상태 변경
+                isLiked = !isLiked
             }
 
             Icon(
@@ -193,7 +193,7 @@ fun GuildPostContent(post: GuildPostDetailResponse) {
 @Composable
 fun CommentSection(
     postId: Int,
-    postType:Char='G',
+    postType: Char = 'G',
     commonViewModel: CommonViewModel = hiltViewModel()
 ) {
 

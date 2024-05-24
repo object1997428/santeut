@@ -194,7 +194,6 @@ fun MyScheduleScreen(
                                     fontSize = 17.sp,
                                     lineHeight = 22.sp,
                                 ),
-//                            color = Color(0xff888888),
                                 modifier = Modifier.weight(1f),
                                 textAlign = TextAlign.Center
                             )
@@ -210,7 +209,6 @@ fun MyScheduleScreen(
                                 top = 10.dp
                             )
                             .fillMaxWidth(),
-//                        horizontalArrangement = Arrangement.Center,
                         maxItemsInEachRow = 7,
                     ) {
                         var select by remember { mutableStateOf("") }
@@ -230,12 +228,8 @@ fun MyScheduleScreen(
                                 val dateLocal = LocalDate.of(date.year, date.month, date.day)
 
                                 Box(
-//                                    contentAlignment = Alignment.Center,
                                     modifier = Modifier
-//                                        .height(20.dp) // 모든 Box에 고정 높이 지정
-//                                        .fillMaxWidth()
-//                                        .padding(4.dp) // 날짜별 간격 조정
-                                        .clip(RoundedCornerShape(40)) // 배경을 원형으로 클립
+                                        .clip(RoundedCornerShape(40))
                                         .background(
                                             if (LocalDate
                                                     .now()
@@ -247,9 +241,9 @@ fun MyScheduleScreen(
                                                         )
                                                     )
                                             )
-                                                Color(0xFFE5DD90) // 오늘 날짜인 경우 배경색 변경
+                                                Color(0xFFE5DD90)
                                             else
-                                                Color.Transparent, // 다른 날짜는 배경 투명 처리
+                                                Color.Transparent,
                                         )
                                 ) {
                                     Text(
@@ -277,7 +271,7 @@ fun MyScheduleScreen(
                                     )
                                 }
                                 else {
-                                    Spacer(Modifier.size(20.dp)) // 아이콘이 없을 경우 같은 크기의 공간을 확보합니다.
+                                    Spacer(Modifier.size(20.dp))
                                 }
                             }
                         }

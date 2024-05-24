@@ -1,9 +1,22 @@
 package com.santeut.ui.mypage
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Hiking
@@ -21,8 +34,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -67,7 +80,6 @@ fun ProfileHeader(myProfile: MyProfileResponse?) {
                 .padding(vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 첫번째 Column: 원형 프로필 사진
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -82,7 +94,6 @@ fun ProfileHeader(myProfile: MyProfileResponse?) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 두번째 Column: 닉네임
             Text(
                 text = "${myProfile?.userNickname}",
                 style = MaterialTheme.typography.h5,
@@ -91,7 +102,6 @@ fun ProfileHeader(myProfile: MyProfileResponse?) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 세번째 Column: 레벨과 포인트
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "Lv. ${myProfile?.userTierName}",

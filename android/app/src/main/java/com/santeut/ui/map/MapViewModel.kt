@@ -1,6 +1,7 @@
 package com.santeut.ui.map
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -455,6 +456,24 @@ class MapViewModel @Inject constructor(
     fun checkAlertMessage() {
         _alertTitle.value = ""
         _alertMessage.value = ""
+    }
+
+    fun resizeMarkerIcon(
+        context: Context,
+        drawableResId: Int,
+        width: Int,
+        height: Int
+    ): OverlayImage {
+        val bitmap = BitmapFactory.decodeResource(context.resources, drawableResId)
+        val circularBitmap = getCircularBitmap(bitmap)
+        val resizedBitmap = Bitmap.createScaledBitmap(circularBitmap, width, height, false)
+
+        val stream = ByteArrayOutputStream()
+        resizedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        val byteArray = stream.toByteArray()
+        val bitmapResized = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+
+        return OverlayImage.fromBitmap(bitmapResized)
     }
 }
 
