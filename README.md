@@ -363,9 +363,167 @@
 <summary><b>BackEnd</b></summary>
 
 ```
+📦gateway
+ ┣ 📂authorize
+ ┃ ┗ 📜AuthorizationToken.java
+ ┣ 📂filter
+ ┃ ┣ 📜CustomFilter.java
+ ┃ ┗ 📜GlobalFilter.java
+ ┗ 📜GatewayApplication.java
+ ```
 
 ```
+📦auth
+ ┣ 📂common
+ ┃ ┣ 📂exception
+ ┃ ┃ ┣ 📜ApiExceptionController.java
+ ┃ ┃ ┗ 📜DataNotFoundException.java
+ ┃ ┣ 📂jwt
+ ┃ ┃ ┣ 📜JwtFilter.java
+ ┃ ┃ ┗ 📜JwtTokenProvider.java
+ ┃ ┣ 📂response
+ ┃ ┃ ┣ 📜BasicResponse.java
+ ┃ ┃ ┣ 📜ErrorResponse.java
+ ┃ ┃ ┣ 📜PagingResponse.java
+ ┃ ┃ ┗ 📜ResponseCode.java
+ ┃ ┣ 📂userDetail
+ ┃ ┃ ┗ 📜CustomUserDetailsService.java
+ ┃ ┗ 📂util
+ ┃ ┃ ┗ 📜ResponseUtil.java
+ ┣ 📂config
+ ┃ ┣ 📜CorsConfig.java
+ ┃ ┣ 📜RedisConfig.java
+ ┃ ┣ 📜S3Config.java
+ ┃ ┗ 📜SecurityConfig.java
+ ┣ 📂controller
+ ┃ ┣ 📜AuthController.java
+ ┃ ┗ 📜UserController.java
+ ┣ 📂dto
+ ┃ ┣ 📂request
+ ┃ ┃ ┣ 📜HikingRecordRequest.java
+ ┃ ┃ ┣ 📜PartyMemberInfoRequest.java
+ ┃ ┃ ┣ 📜SignInRequestDto.java
+ ┃ ┃ ┣ 📜SignUpRequestDto.java
+ ┃ ┃ ┣ 📜UpdatePasswordRequest.java
+ ┃ ┃ ┣ 📜UpdateProfileImageRequest.java
+ ┃ ┃ ┗ 📜UpdateProfileRequest.java
+ ┃ ┗ 📂response
+ ┃ ┃ ┣ 📜GetMountainRecordResponse.java
+ ┃ ┃ ┣ 📜GetMypageProfileResponse.java
+ ┃ ┃ ┣ 📜GetPartyMemberInfoResponse.java
+ ┃ ┃ ┣ 📜GetUserInfoResponse.java
+ ┃ ┃ ┣ 📜GetUserLevelResponse.java
+ ┃ ┃ ┣ 📜JwtTokenResponseDto.java
+ ┃ ┃ ┗ 📜SignInResponse.java
+ ┣ 📂entity
+ ┃ ┣ 📜Image.java
+ ┃ ┣ 📜RefreshToken.java
+ ┃ ┗ 📜UserEntity.java
+ ┣ 📂feign
+ ┣ 📂repository
+ ┃ ┣ 📜RefreshTokenRepository.java
+ ┃ ┗ 📜UserRepository.java
+ ┣ 📂service
+ ┃ ┣ 📂implementation
+ ┃ ┃ ┣ 📜AuthServiceImpl.java
+ ┃ ┃ ┗ 📜UserServiceImpl.java
+ ┃ ┣ 📜AuthService.java
+ ┃ ┗ 📜UserService.java
+ ┣ 📂util
+ ┃ ┣ 📜AgeUtil.java
+ ┃ ┣ 📜ImageUtil.java
+ ┃ ┗ 📜LevelUtil.java
+ ┗ 📜AuthApplication.java
+```
 
+```
+📦guild
+ ┣ 📂common
+ ┃ ┣ 📂exception
+ ┃ ┃ ┣ 📜AccessDeniedException.java
+ ┃ ┃ ┣ 📜ApiExceptionController.java
+ ┃ ┃ ┣ 📜CategoryNotFoundException.java
+ ┃ ┃ ┣ 📜DataNotFoundException.java
+ ┃ ┃ ┗ 📜FeignClientException.java
+ ┃ ┣ 📂response
+ ┃ ┃ ┣ 📜BasicResponse.java
+ ┃ ┃ ┣ 📜ErrorResponse.java
+ ┃ ┃ ┣ 📜PagingResponse.java
+ ┃ ┃ ┗ 📜ResponseCode.java
+ ┃ ┗ 📂util
+ ┃ ┃ ┗ 📜ResponseUtil.java
+ ┣ 📂config
+ ┃ ┣ 📜RedisConfig.java
+ ┃ ┗ 📜S3Config.java
+ ┣ 📂controller
+ ┃ ┣ 📜GuildController.java
+ ┃ ┣ 📜GuildPostController.java
+ ┃ ┣ 📜GuildUserController.java
+ ┃ ┗ 📜RankController.java
+ ┣ 📂dto
+ ┃ ┣ 📂request
+ ┃ ┃ ┣ 📜CreateGuildRequest.java
+ ┃ ┃ ┣ 📜GuildPostUpdateRequestDto.java
+ ┃ ┃ ┣ 📜PatchGuildInfoRequest.java
+ ┃ ┃ ┗ 📜PostCreateRequestDto.java
+ ┃ ┗ 📂response
+ ┃ ┃ ┣ 📜ApplyGuildListResponse.java
+ ┃ ┃ ┣ 📜GetDetailGuildResponse.java
+ ┃ ┃ ┣ 📜GetGuildListResponse.java
+ ┃ ┃ ┣ 📜GetMyGuildResponse.java
+ ┃ ┃ ┣ 📜GuildMemberListResponse.java
+ ┃ ┃ ┣ 📜PartyMemberInfo.java
+ ┃ ┃ ┣ 📜PostListResponseDto.java
+ ┃ ┃ ┣ 📜PostReadResponseDto.java
+ ┃ ┃ ┣ 📜RankMembersInfoResponse.java
+ ┃ ┃ ┣ 📜RankUserInfo.java
+ ┃ ┃ ┣ 📜SearchGuildListResponse.java
+ ┃ ┃ ┣ 📜SearchGuildNameListResponse.java
+ ┃ ┃ ┗ 📜UserInfoResponse.java
+ ┣ 📂entity
+ ┃ ┣ 📜BaseEntity.java
+ ┃ ┣ 📜CategoryEntity.java
+ ┃ ┣ 📜GuildEntity.java
+ ┃ ┣ 📜GuildPostEntity.java
+ ┃ ┣ 📜GuildRequestEntity.java
+ ┃ ┣ 📜GuildUserEntity.java
+ ┃ ┣ 📜Image.java
+ ┃ ┗ 📜RegionEntity.java
+ ┣ 📂feign
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📜AlarmRequestDto.java
+ ┃ ┃ ┣ 📜CommentFeignDto.java
+ ┃ ┃ ┣ 📜CommentListFeignDto.java
+ ┃ ┃ ┣ 📜PartyMemberInfoRequest.java
+ ┃ ┃ ┣ 📜PartyMemberInfoResponse.java
+ ┃ ┃ ┗ 📜UserInfoFeignDto.java
+ ┃ ┣ 📜AuthClient.java
+ ┃ ┣ 📜CommonClient.java
+ ┃ ┣ 📜FeignResponseDto.java
+ ┃ ┗ 📜UserFeign.java
+ ┣ 📂repository
+ ┃ ┣ 📜CategoryRepository.java
+ ┃ ┣ 📜GuildPostRepository.java
+ ┃ ┣ 📜GuildRepository.java
+ ┃ ┣ 📜GuildRequestRepository.java
+ ┃ ┣ 📜GuildUserRepository.java
+ ┃ ┗ 📜RegionRepository.java
+ ┣ 📂service
+ ┃ ┣ 📂implementation
+ ┃ ┃ ┣ 📜GuildServiceImpl.java
+ ┃ ┃ ┣ 📜GuildUserServiceImpl.java
+ ┃ ┃ ┣ 📜PostServiceImpl.java
+ ┃ ┃ ┗ 📜RankServiceImpl.java
+ ┃ ┣ 📜GuildService.java
+ ┃ ┣ 📜GuildUserService.java
+ ┃ ┣ 📜PostService.java
+ ┃ ┗ 📜RankService.java
+ ┣ 📂util
+ ┃ ┣ 📜ImageUtil.java
+ ┃ ┗ 📜RegionUtil.java
+ ┗ 📜GuildApplication.java
+```
+ 
 </details>
 
 <br />
