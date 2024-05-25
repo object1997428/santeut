@@ -2,10 +2,7 @@ package com.santeut.common.controller;
 
 import com.santeut.common.common.response.BasicResponse;
 import com.santeut.common.common.util.ResponseUtil;
-import com.santeut.common.entity.ImageEntity;
-import com.santeut.common.repository.ImageRepository;
 import com.santeut.common.service.ImageService;
-import com.santeut.common.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

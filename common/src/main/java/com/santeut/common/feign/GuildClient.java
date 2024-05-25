@@ -1,7 +1,6 @@
 package com.santeut.common.feign;
 
 import com.santeut.common.common.config.FeignConfiguration;
-import com.santeut.common.dto.request.CommunityFeignDto;
 import com.santeut.common.dto.request.GuildPostFeignDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

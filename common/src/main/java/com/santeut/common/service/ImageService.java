@@ -2,7 +2,6 @@ package com.santeut.common.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.santeut.common.common.exception.DataNotFoundException;
 import com.santeut.common.common.exception.S3Exception;
 import com.santeut.common.entity.ImageEntity;
 import com.santeut.common.repository.ImageRepository;
@@ -16,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

@@ -6,7 +6,6 @@ import lombok.*;
 @Setter
 @Builder
 @AllArgsConstructor
-//@RequiredArgsConstructor
 @NoArgsConstructor
 public class AlarmRequestDto {
 

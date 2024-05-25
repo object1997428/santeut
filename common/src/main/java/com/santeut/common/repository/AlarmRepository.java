@@ -16,7 +16,6 @@ public interface AlarmRepository extends JpaRepository<AlarmEntity, Integer> {
     @Modifying
     @Transactional
     @Query("SELECT a FROM AlarmEntity  a WHERE a.userId=:id and a.isDeleted=FALSE ORDER BY a.createdAt DESC")
-//    @Query("SELECT a FROM AlarmEntity  a WHERE a.id=:id  ORDER BY a.createdAt DESC")
     Optional<List<AlarmEntity>>findAlarmDirectly(int id);
 
     @Modifying

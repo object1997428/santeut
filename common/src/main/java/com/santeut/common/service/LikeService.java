@@ -2,31 +2,17 @@ package com.santeut.common.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.exception.AccessDeniedException;
-import com.santeut.common.common.exception.DataNotFoundException;
 import com.santeut.common.common.exception.FeignClientException;
-import com.santeut.common.common.exception.RepositorySaveException;
-import com.santeut.common.dto.FCMCategory;
-import com.santeut.common.dto.FCMRequestDto;
 import com.santeut.common.dto.request.AlarmRequestDto;
-import com.santeut.common.dto.response.CommentListResponseDto;
-import com.santeut.common.entity.AlarmTokenEntity;
-import com.santeut.common.entity.CommentEntity;
 import com.santeut.common.entity.LikeEntity;
 import com.santeut.common.feign.CommunityClient;
 import com.santeut.common.feign.GuildClient;
 import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.AlarmTokenRepository;
-import com.santeut.common.repository.CommentRepository;
 import com.santeut.common.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

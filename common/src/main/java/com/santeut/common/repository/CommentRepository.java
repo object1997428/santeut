@@ -20,7 +20,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
     @Query("UPDATE CommentEntity c SET c.commentContent = :commentContent WHERE c.id=:commentId")
     void updateCommentDirectly(@Param("commentId") Integer commentId, @Param("commentContent") String commentContent);
 
-    // 댓글 수정 jpa
+    // 댓글 삭제 jpa
     @Modifying
     @Transactional
     @Query("UPDATE CommentEntity c SET c.isDeleted = true , c.deletedAt = :deletedAt WHERE c.id= :commentId")

@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -20,9 +18,5 @@ public class AuthServerService {
     public String getNickname(Integer userId) {
         UserInfoFeignRequestDto userInfoFeignRequestDto = userInfoClient.getUserInfo(userId).orElseThrow(() -> new FeignClientException("닉네임 정보를 불러오는데 실패했습니다.")).getData();
         return userInfoClient.getUserInfo(userId).orElseThrow(() -> new FeignClientException("닉네임 정보를 불러오는데 실패했습니다.")).getData().getUserNickname();
-    }
-
-    public Integer getUserId() {
-        return userInfoClient.getUserInfo().orElseThrow(() -> new FeignClientException("유저 아이디 정보를 불러오는데 실패했습니다.")).getUserId();
     }
 }

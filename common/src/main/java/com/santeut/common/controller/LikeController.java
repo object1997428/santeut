@@ -3,8 +3,6 @@ package com.santeut.common.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.santeut.common.common.response.BasicResponse;
 import com.santeut.common.common.util.ResponseUtil;
-import com.santeut.common.dto.response.CommentListResponseDto;
-import com.santeut.common.service.CommentService;
 import com.santeut.common.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

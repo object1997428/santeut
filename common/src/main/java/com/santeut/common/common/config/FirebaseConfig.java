@@ -32,9 +32,11 @@ public class FirebaseConfig {
         try {
             FirebaseApp firebaseApp = null;
 
+//            로컬 서버에서 실행할 때 필요한 부분 (santeutFirebaseAccountKey.json 파일이 resources 폴더 안에 있어야함)
 //            Resource resource = resourceLoader.getResource("classpath:santeutFirebaseAccountKey.json");
 //            InputStream serviceAccount = resource.getInputStream();
 
+//            로컬로 실행 할 때는 밑의 코드 한 줄을 주석 해야함
             InputStream serviceAccount = new FileInputStream(firebaseConfigPath);
 
             FirebaseOptions options = new FirebaseOptions.Builder()

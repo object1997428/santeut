@@ -1,16 +1,14 @@
 package com.santeut.common.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.santeut.common.common.exception.*;
+import com.santeut.common.common.exception.AccessDeniedException;
+import com.santeut.common.common.exception.DataNotFoundException;
+import com.santeut.common.common.exception.FeignClientException;
 import com.santeut.common.dto.request.AlarmRequestDto;
-import com.santeut.common.dto.request.CommunityFeignDto;
-import com.santeut.common.dto.request.GuildPostFeignDto;
-import com.santeut.common.dto.request.UserInfoFeignRequestDto;
 import com.santeut.common.dto.response.CommentListResponseDto;
 import com.santeut.common.entity.CommentEntity;
 import com.santeut.common.feign.CommunityClient;
 import com.santeut.common.feign.GuildClient;
-import com.santeut.common.feign.UserInfoClient;
 import com.santeut.common.feign.service.AuthServerService;
 import com.santeut.common.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    //    private final UserInfoClient userInfoClient;
     private final AuthServerService authServerService;
     private final AlarmService alarmService;
     private final CommunityClient communityClient;

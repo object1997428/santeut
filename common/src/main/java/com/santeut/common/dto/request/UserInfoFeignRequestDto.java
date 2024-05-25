@@ -4,7 +4,6 @@ import lombok.*;
 
 @Getter @Setter
 @AllArgsConstructor
-//@RequiredArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserInfoFeignRequestDto {
