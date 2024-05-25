@@ -1,12 +1,14 @@
 package com.santeut.community.service;
 
-import com.santeut.community.common.exception.*;
+import com.santeut.community.common.exception.AccessDeniedException;
+import com.santeut.community.common.exception.JpaQueryException;
+import com.santeut.community.common.exception.ZeroDataException;
 import com.santeut.community.dto.request.PostCreateRequestDto;
 import com.santeut.community.dto.request.PostUpdateRequestDto;
-import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
 import com.santeut.community.entity.PostEntity;
+import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.feign.service.AuthServerService;
 import com.santeut.community.feign.service.CommonServerService;
 import com.santeut.community.repository.PostRepository;
@@ -22,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 

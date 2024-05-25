@@ -3,23 +3,13 @@ package com.santeut.community.controller;
 import com.santeut.community.common.response.BasicResponse;
 import com.santeut.community.common.util.ResponseUtil;
 import com.santeut.community.dto.request.PostCreateRequestDto;
-import com.santeut.community.dto.request.PostUpdateRequestDto;
 import com.santeut.community.dto.response.CourseReadResponseDto;
-import com.santeut.community.dto.response.PostListResponseDto;
-import com.santeut.community.dto.response.PostReadResponseDto;
 import com.santeut.community.service.CourseService;
-import com.santeut.community.service.ImageService;
-import com.santeut.community.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
