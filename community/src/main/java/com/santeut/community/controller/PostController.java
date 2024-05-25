@@ -6,8 +6,6 @@ import com.santeut.community.dto.request.PostCreateRequestDto;
 import com.santeut.community.dto.request.PostUpdateRequestDto;
 import com.santeut.community.dto.response.PostListResponseDto;
 import com.santeut.community.dto.response.PostReadResponseDto;
-import com.santeut.community.feign.UserInfoClient;
-import com.santeut.community.repository.PostRepository;
 import com.santeut.community.service.ImageService;
 import com.santeut.community.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +62,7 @@ public class PostController {
     // 게시글 삭제하기 ( DELETE )
     @DeleteMapping("/{postId}/{postType}")
     public ResponseEntity<BasicResponse> deletePost(@PathVariable int postId, @PathVariable char postType, @RequestHeader int userId) {
-        postService.deletePost(postId, postType, userId); // toFix : 3번 째 파라미터 헤더에 담긴 userId로 변환해야함!!!
+        postService.deletePost(postId, postType, userId);
         return ResponseUtil.buildBasicResponse(HttpStatus.OK, "게시글 삭제하기를 성공했습니다.");
     }
 

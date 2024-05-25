@@ -2,7 +2,10 @@ package com.santeut.community.dto.response;
 
 import com.santeut.community.feign.dto.CommentListFeignDto;
 import com.santeut.community.feign.dto.FeignPartyLatLngResponseDto;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,20 +30,6 @@ public class CourseReadResponseDto {
     private char postType;
 
     private LocalDateTime createdAt;
-
-//    private int partyId;
-
-//    private int mountainId;
-
-//    private int partyUserDistance;
-
-//    private int partyUserHeight;
-
-//    private int partyUserMoveTime;
-
-//    private LocalDateTime partyUserStartedAt;
-
-//    private boolean partyUserIsSuccess;
 
     private List<FeignPartyLatLngResponseDto.Point> locationDataList; // 좌표 모음
 

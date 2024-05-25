@@ -1,7 +1,6 @@
 package com.santeut.community.repository;
 
 import com.santeut.community.entity.PostEntity;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
