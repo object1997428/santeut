@@ -1,7 +1,6 @@
 package com.santeut.guild.service.implementation;
 
 import com.santeut.guild.common.exception.AccessDeniedException;
-import com.santeut.guild.common.exception.CategoryNotFoundException;
 import com.santeut.guild.common.exception.DataNotFoundException;
 import com.santeut.guild.common.exception.FeignClientException;
 import com.santeut.guild.dto.request.GuildPostUpdateRequestDto;
@@ -11,12 +10,10 @@ import com.santeut.guild.dto.response.PostReadResponseDto;
 import com.santeut.guild.entity.GuildPostEntity;
 import com.santeut.guild.feign.AuthClient;
 import com.santeut.guild.feign.CommonClient;
-import com.santeut.guild.feign.dto.CommentFeignDto;
 import com.santeut.guild.feign.dto.CommentListFeignDto;
 import com.santeut.guild.repository.CategoryRepository;
 import com.santeut.guild.repository.GuildPostRepository;
 import com.santeut.guild.service.PostService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -100,7 +98,6 @@ public class PostServiceImpl implements PostService {
     public PostReadResponseDto readPost(int guildPostId, int userId) {
 
         // 길드포스트 찾는 query
-//        GuildPostEntity entity = guildPostRepository.findById(guildPostId).orElseThrow(() -> new DataNotFoundException("게시글을 찾을 수 없습니다."));
         GuildPostEntity entity = guildPostRepository.findById(guildPostId).orElseThrow(() -> new DataNotFoundException("게시글을 찾을 수 없습니다."));
 
         // 카테고리 이름 찾는 query

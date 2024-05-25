@@ -1,6 +1,5 @@
 package com.santeut.guild.repository;
 
-import com.santeut.guild.entity.GuildEntity;
 import com.santeut.guild.entity.GuildPostEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

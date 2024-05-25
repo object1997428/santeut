@@ -17,7 +17,6 @@ public interface CommonClient {
 
     // 좋아요 수 가져오기
     @GetMapping("/like/cnt/{postId}/{postType}")
-//    Optional<ApiResponse<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
     Optional<FeignResponseDto<Map<String,Integer>>> getLikeCnt(@PathVariable Integer postId, @PathVariable Character postType);
 
     // 알람 생성
