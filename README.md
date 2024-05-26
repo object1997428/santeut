@@ -830,7 +830,7 @@
 -   [아키텍처](./documents/산뜻_아키텍처.png)
 -   [ER Diagram](./documents/산뜻_ERD.png)
 -   [UCC](https://youtu.be/j2zv7wjKVw4)
--   [포팅메뉴얼](./exec/)
+-   [포팅메뉴얼](./exec/포팅매뉴얼.md)
 
 <br />
 
