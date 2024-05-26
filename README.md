@@ -5,11 +5,13 @@
 <br />
 
 ## 🕞 프로젝트 진행 기간
+
 **2024.04.08 ~ 2024.05.20** (6주)
 
 <br />
 
 ### 기획배경
+
 등산은 가고 싶고, 위험할까 걱정이 되시나요?
 '산뜻'에서 동호회 사람들과 함께 떠나보는 건 어떨까요?
 
@@ -18,10 +20,13 @@
 <br />
 
 ## 💬 주요 기능
+
 1. 등산 관련 정보 제공
+
     - 산, 코스, 날씨 정보
 
 2. 등산 커뮤니티 기능
+
     - 동호회, 소모임
         - 지역별, 나이별, 성별 그룹으로 동호회 생성
         - 실제 산, 코스 정보를 선택하여 등산 일정 생성 및 관리
@@ -30,6 +35,7 @@
         - 동호회, 등산 Tip, 코스 공유
 
 3. 등산 보조 기능
+
     - 사용자 간 실시간 위치 공유
     - 갤럭시 워치를 활용한 건강 데이터 측정
     - 경로 이탈 시 위험 신호
@@ -39,31 +45,29 @@
     - 사진 촬영으로 식물 정보 검색
     - 등산 기록, 랭킹
 
-
 <br />
 
 ## 📱 서비스 화면
 
 0. 로그인, 회원가입
 
-0. 홈 화면
+1. 홈 화면
 
-0. 커뮤니티 (게시판 * 4)
+2. 커뮤니티 (게시판 \* 4)
 
-0. 마이 페이지 (*3)
+3. 마이 페이지 (\*3)
 
-0. 동호회 생성, 관리
+4. 동호회 생성, 관리
 
-0. 소모임 생성, 관리
+5. 소모임 생성, 관리
 
-0. 등산
+6. 등산
 
-0. 식물 검색
+7. 식물 검색
 
-0. 
+8.
 
-0. 
-
+9.
 
 <br />
 
@@ -71,13 +75,11 @@
 
 <a name="item-three"></a>
 
-|일정관리|형상관리|커뮤니케이션|디자인|
-|:---:|:---:|:---:|:---:|
+|                                                일정관리                                                 |                                               형상관리                                                |                                                커뮤니케이션                                                |                                                  디자인                                                   |
+| :-----------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: |
 | ![JIRA](https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jirasoftware&logoColor=white) | ![GITLAB](https://img.shields.io/badge/gitlab-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white) | ![EXCEL](https://img.shields.io/badge/googlesheets-34A853?style=for-the-badge&logo=notion&logoColor=white) | ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white) |
 
-
 <br />
-
 
 #### **IDE**
 
@@ -85,8 +87,8 @@
 
 <br />
 
-
 #### **Frontend**
+
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)  
 ![jetpack_compose](https://img.shields.io/badge/jetpack_compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white) ![coroutine](https://img.shields.io/badge/coroutine-8A9296?style=for-the-badge&logo=coroutine&logoColor=white)  
 ![okHttp](https://img.shields.io/badge/okHttp-009020?style=for-the-badge&logo=okHttp&logoColor=white) ![Retrofit](https://img.shields.io/badge/Retrofit-CC0000?style=for-the-badge&logo=Retrofit&logoColor=white)
@@ -94,7 +96,6 @@
 ![naver_map](https://img.shields.io/badge/naver_map-03C75A?style=for-the-badge&logo=naver&logoColor=white) ![google](https://img.shields.io/badge/google_map-4285F4?style=for-the-badge&logo=google&logoColor=white) ![Firebase](https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white)
 
 <br />
-
 
 #### **Backend**
 
@@ -104,7 +105,6 @@
 
 <br />
 
-
 #### **DevOPS**
 
 ![docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=Jenkins&logoColor=white) ![nginx](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) ![amazonec2](https://img.shields.io/badge/amazonec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
@@ -112,9 +112,8 @@
 <br />
 
 ## 🏢 아키텍처
+
 <img src="./documents/산뜻_아키텍처.png" style="background-color: white;">
-
-
 
 ## 📂 프로젝트 파일 구조
 
@@ -370,7 +369,141 @@
  ┃ ┣ 📜CustomFilter.java
  ┃ ┗ 📜GlobalFilter.java
  ┗ 📜GatewayApplication.java
- ```
+```
+
+```
+📦community
+┣ 📂common
+┃ ┣ 📂config
+┃ ┃ ┣ 📜AmazonConfig.java
+┃ ┃ ┗ 📜FeignConfiguration.java
+┃ ┣ 📂exception
+┃ ┃ ┣ 📜AccessDeniedException.java
+┃ ┃ ┣ 📜ApiExceptionController.java
+┃ ┃ ┣ 📜FeignClientException.java
+┃ ┃ ┣ 📜JpaQueryException.java
+┃ ┃ ┣ 📜S3Exception.java
+┃ ┃ ┗ 📜ZeroDataException.java
+┃ ┣ 📂response
+┃ ┃ ┣ 📜BasicResponse.java
+┃ ┃ ┣ 📜ErrorResponse.java
+┃ ┃ ┗ 📜PagingResponse.java
+┃ ┗ 📂util
+┃ ┃ ┗ 📜ResponseUtil.java
+┣ 📂controller
+┃ ┣ 📜CourseController.java
+┃ ┗ 📜PostController.java
+┣ 📂dto
+┃ ┣ 📂request
+┃ ┃ ┣ 📜PostCreateRequestDto.java
+┃ ┃ ┗ 📜PostUpdateRequestDto.java
+┃ ┗ 📂response
+┃ ┃ ┣ 📜CourseReadResponseDto.java
+┃ ┃ ┣ 📜PostListResponseDto.java
+┃ ┃ ┣ 📜PostReadResponseDto.java
+┃ ┃ ┗ 📜UserInfoFeignRequestDto.java
+┣ 📂entity
+┃ ┣ 📜BaseEntity.java
+┃ ┗ 📜PostEntity.java
+┣ 📂feign
+┃ ┣ 📂dto
+┃ ┃ ┣ 📜CommentListFeignDto.java
+┃ ┃ ┗ 📜FeignPartyLatLngResponseDto.java
+┃ ┣ 📂service
+┃ ┃ ┣ 📜AuthServerService.java
+┃ ┃ ┗ 📜CommonServerService.java
+┃ ┣ 📜CommonClient.java
+┃ ┣ 📜FeignResponseDto.java
+┃ ┣ 📜JwtTokenFilter.java
+┃ ┣ 📜JwtTokenInterceptor.java
+┃ ┣ 📜PartyClient.java
+┃ ┗ 📜UserInfoClient.java
+┣ 📂repository
+┃ ┗ 📜PostRepository.java
+┣ 📂service
+┃ ┣ 📜CourseService.java
+┃ ┣ 📜ImageService.java
+┃ ┗ 📜PostService.java
+┗ 📜CommunityApplication.java
+
+```
+
+```
+📦common
+ ┣ 📂common
+ ┃ ┣ 📂config
+ ┃ ┃ ┣ 📜AmazonConfig.java
+ ┃ ┃ ┣ 📜FeignConfiguration.java
+ ┃ ┃ ┗ 📜FirebaseConfig.java
+ ┃ ┣ 📂exception
+ ┃ ┃ ┣ 📜AccessDeniedException.java
+ ┃ ┃ ┣ 📜ApiExceptionController.java
+ ┃ ┃ ┣ 📜DataNotFoundException.java
+ ┃ ┃ ┣ 📜FeignClientException.java
+ ┃ ┃ ┣ 📜FirebaseSettingFailException.java
+ ┃ ┃ ┣ 📜RepositorySaveException.java
+ ┃ ┃ ┣ 📜S3Exception.java
+ ┃ ┃ ┗ 📜ZeroDataException.java
+ ┃ ┣ 📂response
+ ┃ ┃ ┣ 📜BasicResponse.java
+ ┃ ┃ ┣ 📜ErrorResponse.java
+ ┃ ┃ ┗ 📜PagingResponse.java
+ ┃ ┗ 📂util
+ ┃ ┃ ┣ 📜FcmUtils.java
+ ┃ ┃ ┣ 📜GeoUtils.java
+ ┃ ┃ ┗ 📜ResponseUtil.java
+ ┣ 📂controller
+ ┃ ┣ 📜AlarmController.java
+ ┃ ┣ 📜AlarmTokenController.java
+ ┃ ┣ 📜CommentController.java
+ ┃ ┣ 📜ImageController.java
+ ┃ ┗ 📜LikeController.java
+ ┣ 📂dto
+ ┃ ┣ 📂request
+ ┃ ┃ ┣ 📜AlarmRequestDto.java
+ ┃ ┃ ┣ 📜CommonHikingStartFeignRequest.java
+ ┃ ┃ ┣ 📜CommunityFeignDto.java
+ ┃ ┃ ┣ 📜GuildPostFeignDto.java
+ ┃ ┃ ┣ 📜TokenRequestDto.java
+ ┃ ┃ ┗ 📜UserInfoFeignRequestDto.java
+ ┃ ┣ 📂response
+ ┃ ┃ ┣ 📜AlarmListResponseDto.java
+ ┃ ┃ ┗ 📜CommentListResponseDto.java
+ ┃ ┣ 📜FCMCategory.java
+ ┃ ┗ 📜FCMRequestDto.java
+ ┣ 📂entity
+ ┃ ┣ 📜AlarmEntity.java
+ ┃ ┣ 📜AlarmTokenEntity.java
+ ┃ ┣ 📜BaseEntity.java
+ ┃ ┣ 📜CommentEntity.java
+ ┃ ┣ 📜ImageEntity.java
+ ┃ ┣ 📜LikeEntity.java
+ ┃ ┗ 📜SafetyAlertEntity.java
+ ┣ 📂feign
+ ┃ ┣ 📂service
+ ┃ ┃ ┗ 📜AuthServerService.java
+ ┃ ┣ 📜CommunityClient.java
+ ┃ ┣ 📜FeignResponseDto.java
+ ┃ ┣ 📜GuildClient.java
+ ┃ ┣ 📜JwtTokenFilter.java
+ ┃ ┣ 📜JwtTokenInterceptor.java
+ ┃ ┗ 📜UserInfoClient.java
+ ┣ 📂repository
+ ┃ ┣ 📜AlarmRepository.java
+ ┃ ┣ 📜AlarmTokenRepository.java
+ ┃ ┣ 📜CommentRepository.java
+ ┃ ┣ 📜ImageRepository.java
+ ┃ ┣ 📜LikeRepository.java
+ ┃ ┗ 📜SafetyAlertRepository.java
+ ┣ 📂service
+ ┃ ┣ 📜AlarmService.java
+ ┃ ┣ 📜AlarmTokenService.java
+ ┃ ┣ 📜CommentService.java
+ ┃ ┣ 📜ImageService.java
+ ┃ ┗ 📜LikeService.java
+ ┗ 📜CommonApplication.java
+
+```
 
 ```
 📦auth
@@ -522,7 +655,8 @@
  ┃ ┣ 📜ImageUtil.java
  ┃ ┗ 📜RegionUtil.java
  ┗ 📜GuildApplication.java
-```  
+```
+
 ```
 📦mountain
  ┣ 📂common
@@ -566,7 +700,8 @@
  ┃ ┣ 📜MountainService.java
  ┃ ┗ 📜MountainServiceImpl.java
  ┗ 📜MountainApplication.java
-```  
+```
+
 ```
 📦party
  ┣ 📂common
@@ -674,22 +809,25 @@
  ┣ 📂vo
  ┃ ┗ 📜Room.java
  ┗ 📜PartyApplication.java
-```  
+```
+
 </details>
 
 <br />
 
 ## 📑 프로젝트 산출물
-- [아키텍처](./documents/산뜻_아키텍처.png)
-- [ER Diagram](./documents/산뜻_ERD.png)
-- [UCC](https://youtu.be/j2zv7wjKVw4)
-- [포팅메뉴얼](./exec/)
+
+-   [아키텍처](./documents/산뜻_아키텍처.png)
+-   [ER Diagram](./documents/산뜻_ERD.png)
+-   [UCC](https://youtu.be/j2zv7wjKVw4)
+-   [포팅메뉴얼](./exec/)
 
 <br />
 
 ## 👨‍👨‍👧👨‍👨‍👧 팀원
-|FE/BE|BE/FE|BE|FE|BE|BE|FE|
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|**박나린**|**김가영**|**김동우**|**김영대**|**양윤모**|**주혜련**|**최용훈**|
-|<img src="./documents/member/박나린.jpg" style="height: 70px">|<img src="./documents/member/김가영.jpg" style="height: 70px">|<img src="./documents/member/김동우.jpg" style="height: 70px">|<img src="./documents/member/김영대.jpg" style="height: 70px">|<img src="./documents/member/양윤모.jpg" style="height: 70px">|<img src="./documents/member/주혜련.jpg" style="height: 70px">|<img src="./documents/member/최용훈.jpg" style="height: 70px">|
-| DevOps <br/> UI/UX <br/> MSA 설계 | BackEnd | BackEnd | FrontEnd | BackEnd | BackEnd | FrontEnd |
+
+|                             FE/BE                              |                             BE/FE                              |                               BE                               |                               FE                               |                               BE                               |                               BE                               |                               FE                               |
+| :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: |
+|                           **박나린**                           |                           **김가영**                           |                           **김동우**                           |                           **김영대**                           |                           **양윤모**                           |                           **주혜련**                           |                           **최용훈**                           |
+| <img src="./documents/member/박나린.jpg" style="height: 70px"> | <img src="./documents/member/김가영.jpg" style="height: 70px"> | <img src="./documents/member/김동우.jpg" style="height: 70px"> | <img src="./documents/member/김영대.jpg" style="height: 70px"> | <img src="./documents/member/양윤모.jpg" style="height: 70px"> | <img src="./documents/member/주혜련.jpg" style="height: 70px"> | <img src="./documents/member/최용훈.jpg" style="height: 70px"> |
+|               DevOps <br/> UI/UX <br/> MSA 설계                |                            BackEnd                             |                            BackEnd                             |                            FrontEnd                            |                            BackEnd                             |                            BackEnd                             |                            FrontEnd                            |
