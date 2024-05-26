@@ -2,9 +2,7 @@ package com.santeut.mountain.common.util;
 
 import com.santeut.mountain.common.response.BasicResponse;
 import com.santeut.mountain.common.response.ErrorResponse;
-import com.santeut.mountain.common.response.PagingDataResponse;
 import com.santeut.mountain.common.response.PagingResponse;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

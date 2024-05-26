@@ -95,14 +95,6 @@ public class CourseServiceImpl implements CourseService {
           Collections.reverse(coordList);
           allCoords.addAll(coordList);
         }
-        /*
-        if(distanceBetweenStartPoint<=distanceBetweenEndPoint) {
-          allCoords.addAll(coordList);
-        } else {
-          Collections.reverse(coordList);
-          allCoords.addAll(coordList);
-        }
-        */
       } else {
         allCoords.addAll(coordList);
       }
