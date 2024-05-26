@@ -1,6 +1,5 @@
 package com.santeut.party.dto.chatting;
 
-import com.santeut.party.common.util.CollectionIdGenerator;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

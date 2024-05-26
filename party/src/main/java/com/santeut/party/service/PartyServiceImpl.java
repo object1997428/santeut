@@ -8,7 +8,6 @@ import com.santeut.party.dto.request.CreatePartyRequestDto;
 import com.santeut.party.dto.request.LocationData;
 import com.santeut.party.dto.request.ModifyPartyRequestDto;
 import com.santeut.party.dto.response.GetPartyUserIdResponse;
-import com.santeut.party.dto.response.HikingStartResponse;
 import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.dto.response.PartyInfoResponseDto.PartyInfo;
 import com.santeut.party.dto.response.SelectedCourseResponse;
@@ -102,7 +101,6 @@ public class PartyServiceImpl implements PartyService {
     List<Party> parties = partyRepository.findPartyWithSearchConditions(userId, guildId, name,
         startDate, endDate);
 
-    // userInfoAccessUtil.getUserInfo(p.getUserId()).getUserNickname()
     return new PartyInfoResponseDto(parties.stream().map(p ->
             PartyInfo.of(p.getUserId()==userId,
                 null, p,
@@ -117,7 +115,6 @@ public class PartyServiceImpl implements PartyService {
     log.info("소모임 조회 요청: partyId=" + partyId);
     Party party = partyRepository.findById(partyId)
         .orElseThrow(() -> new DataNotFoundException("해당 소모임이 존재하지 않습니다"));
-//    String owner = userInfoAccessUtil.getUserInfo(party.getUserId()).getUserNickname();
     String guildName = (party.getGuildId() == null) ? ""
         : guildAccessUtil.getGuildInfo(party.getGuildId(), userId).getGuildName();
     boolean isMember = partyUserRepository.existsByUserIdAndPartyId(userId, partyId);

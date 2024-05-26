@@ -1,19 +1,12 @@
 package com.santeut.party.controller;
 
 import com.santeut.party.common.response.BasicResponse;
-import com.santeut.party.common.response.PagingResponse;
 import com.santeut.party.common.util.ResponseUtil;
-import com.santeut.party.dto.response.HikingRecordResponse;
-import com.santeut.party.dto.response.PartyInfoResponseDto;
 import com.santeut.party.service.PartyUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

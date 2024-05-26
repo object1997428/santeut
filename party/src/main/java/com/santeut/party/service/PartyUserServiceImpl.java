@@ -89,7 +89,7 @@ public class PartyUserServiceImpl implements PartyUserService {
     return new PartyInfoResponseDto(
         myParties.stream().map(
             p -> PartyInfo.of(
-                p.getParty().getUserId()==userId,//userInfoAccessUtil.getUserInfo(p.getParty().getUserId()).getUserNickname(),
+                p.getParty().getUserId()==userId,
                 p.getPartyUserId(),
                 p.getParty(),
                 null,
