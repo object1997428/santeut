@@ -566,7 +566,115 @@
  ┃ ┣ 📜MountainService.java
  ┃ ┗ 📜MountainServiceImpl.java
  ┗ 📜MountainApplication.java
+```  
 ```
+📦party
+ ┣ 📂common
+ ┃ ┣ 📂config
+ ┃ ┃ ┣ 📜ChattingHandshakeInterceptor.java
+ ┃ ┃ ┣ 📜FeignConfiguration.java
+ ┃ ┃ ┣ 📜MyWebSocketHandler.java
+ ┃ ┃ ┣ 📜QueryDslConfig.java
+ ┃ ┃ ┣ 📜RedisConfig.java
+ ┃ ┃ ┗ 📜WebSocketConfig.java
+ ┃ ┣ 📂exception
+ ┃ ┃ ┣ 📜AccessDeniedException.java
+ ┃ ┃ ┣ 📜AlreadyJoinedException.java
+ ┃ ┃ ┣ 📜ApiExceptionController.java
+ ┃ ┃ ┣ 📜DataMismatchException.java
+ ┃ ┃ ┣ 📜DataNotFoundException.java
+ ┃ ┃ ┣ 📜FeignException.java
+ ┃ ┃ ┣ 📜PartyExpiredException.java
+ ┃ ┃ ┗ 📜PartyNotStartedException.java
+ ┃ ┣ 📂response
+ ┃ ┃ ┣ 📜BasicResponse.java
+ ┃ ┃ ┣ 📜ErrorResponse.java
+ ┃ ┃ ┣ 📜PagingDataResponse.java
+ ┃ ┃ ┗ 📜PagingResponse.java
+ ┃ ┣ 📂util
+ ┃ ┃ ┣ 📜CollectionIdGenerator.java
+ ┃ ┃ ┣ 📜GeometryUtils.java
+ ┃ ┃ ┗ 📜ResponseUtil.java
+ ┃ ┗ 📜HealthCheckController.java
+ ┣ 📂controller
+ ┃ ┣ 📜ChatController.java
+ ┃ ┣ 📜HikingController.java
+ ┃ ┣ 📜PartyController.java
+ ┃ ┗ 📜PartyUserController.java
+ ┣ 📂dto
+ ┃ ┣ 📂chatting
+ ┃ ┃ ┣ 📜ChatMessage.java
+ ┃ ┃ ┣ 📜ChatMessageRequest.java
+ ┃ ┃ ┣ 📜ChatMessageResponse.java
+ ┃ ┃ ┗ 📜SocketDto.java
+ ┃ ┣ 📂request
+ ┃ ┃ ┣ 📜CreatePartyRequestDto.java
+ ┃ ┃ ┣ 📜HikingEnterRequest.java
+ ┃ ┃ ┣ 📜HikingExitRequest.java
+ ┃ ┃ ┣ 📜HikingRecordRequest.java
+ ┃ ┃ ┣ 📜HikingRecordRequestInterface.java
+ ┃ ┃ ┣ 📜HikingSafetyRequest.java
+ ┃ ┃ ┣ 📜LocationData.java
+ ┃ ┃ ┣ 📜ModifyPartyRequestDto.java
+ ┃ ┃ ┗ 📜TrackData.java
+ ┃ ┗ 📂response
+ ┃ ┃ ┣ 📜ChatMessageListResponse.java
+ ┃ ┃ ┣ 📜ChatRoomListResponse.java
+ ┃ ┃ ┣ 📜GetPartyUserIdResponse.java
+ ┃ ┃ ┣ 📜HikingRecordResponse.java
+ ┃ ┃ ┣ 📜HikingStartResponse.java
+ ┃ ┃ ┣ 📜PartyByYearMonthResponse.java
+ ┃ ┃ ┣ 📜PartyInfoResponseDto.java
+ ┃ ┃ ┣ 📜PartyWithPartyUserIdResponse.java
+ ┃ ┃ ┗ 📜SelectedCourseResponse.java
+ ┣ 📂entity
+ ┃ ┣ 📜BaseEntity.java
+ ┃ ┣ 📜Party.java
+ ┃ ┗ 📜PartyUser.java
+ ┣ 📂feign
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂request
+ ┃ ┃ ┃ ┣ 📜CommonHikingStartFeignRequest.java
+ ┃ ┃ ┃ ┣ 📜GetPartyMemberInfoRequest.java
+ ┃ ┃ ┃ ┣ 📜HikingRecordRequest.java
+ ┃ ┃ ┃ ┣ 📜HikingTrackSaveFeignRequestDto.java
+ ┃ ┃ ┃ ┣ 📜MountainCourseFeignRequest.java
+ ┃ ┃ ┃ ┗ 📜PartyTrackDataFeginRequest.java
+ ┃ ┃ ┗ 📂response
+ ┃ ┃ ┃ ┣ 📜FeignResponseDto.java
+ ┃ ┃ ┃ ┣ 📜GetPartyMemberInfoResponse.java
+ ┃ ┃ ┃ ┣ 📜GuildInfoFeignResponseDto.java
+ ┃ ┃ ┃ ┣ 📜HikingTrackResponse.java
+ ┃ ┃ ┃ ┗ 📜UserInfoFeignResponseDto.java
+ ┃ ┣ 📜FeignResponseDto.java
+ ┃ ┣ 📜GuildAccessUtil.java
+ ┃ ┣ 📜GuildClient.java
+ ┃ ┣ 📜HikingAuthClient.java
+ ┃ ┣ 📜HikingCommonClient.java
+ ┃ ┣ 📜HikingMountainClient.java
+ ┃ ┣ 📜JwtTokenFilter.java
+ ┃ ┣ 📜JwtTokenInterceptor.java
+ ┃ ┣ 📜UserInfoAccessUtil.java
+ ┃ ┗ 📜UserInfoClient.java
+ ┣ 📂repository
+ ┃ ┣ 📜ChatMessageRepository.java
+ ┃ ┣ 📜PartyRepository.java
+ ┃ ┣ 📜PartyRepositoryCustom.java
+ ┃ ┣ 📜PartyRepositoryImpl.java
+ ┃ ┣ 📜PartyUserRepository.java
+ ┃ ┗ 📜RoomRepository.java
+ ┣ 📂service
+ ┃ ┣ 📜ChatService.java
+ ┃ ┣ 📜ChatServiceImpl.java
+ ┃ ┣ 📜HikingService.java
+ ┃ ┣ 📜PartyService.java
+ ┃ ┣ 📜PartyServiceImpl.java
+ ┃ ┣ 📜PartyUserService.java
+ ┃ ┗ 📜PartyUserServiceImpl.java
+ ┣ 📂vo
+ ┃ ┗ 📜Room.java
+ ┗ 📜PartyApplication.java
+```  
 </details>
 
 <br />
