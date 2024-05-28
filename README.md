@@ -93,6 +93,7 @@
    <td><img src="/uploads/c8bc100c91e6adc8fedc75ddcb12b583/party_create.gif"></td>
  </tr>
  <tr align="center">
+  <td>동호회</td>
   <td>소모임 검색</td>
   <td>소모임 생성</td>
  </tr>
