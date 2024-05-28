@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(name = "userFeign", url="${user-service.url}")
 public interface UserFeign {
 
-    @GetMapping(path = "/auth/user/login/info")
+    @GetMapping(path = "/user/login/info")
     ResponseEntity<?> userLoginInfo();
 
-    @GetMapping(path = "/auth/user/{userId}")
+    @GetMapping(path = "/user/{userId}")
     BasicResponse userInfo(@PathVariable int userId);
 
-    @PostMapping("/auth/user/party/profile")
+    @PostMapping("/user/party/profile")
     ResponseEntity<FeignResponseDto<PartyMemberInfoResponse>> getPartyMemberInfo(
             @RequestBody PartyMemberInfoRequest request
     );
