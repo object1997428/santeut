@@ -59,25 +59,65 @@
 
 ## 📱 서비스 화면
 
-0. 로그인, 회원가입
 
-1. 홈 화면
+<table>
+ <tr align="center">
+  <th>1. 로그인</th>
+  <th>1. 홈 화면</th>
+ </tr>
+ <tr align="center">
+  <td><img src="/uploads/26b67ae7dfcf35bca5f2be7da9cdb992/login.gif"></td>
+  <td><img src="/uploads/7fc861f5c90506ce0fce10cf86f368a1/home.gif"></td>
+ </tr>
+</table>
 
-2. 커뮤니티 (게시판 \* 4)
+<table>
+ <tr align="center">
+  <th colspan="2">3. 마이페이지</th>
+ </tr>
+ <tr align="center">
+  <td><img src="/uploads/0404fb4450e880ddee6ccee33812cbd3/mypage.gif"></td>
+  <td><img src="/uploads/5f596c1cd0dcdf31e3210055f3a79708/mypage_record.gif"></td>
+ </tr>
+</table>
 
-3. 마이 페이지 (\*3)
 
-4. 동호회 생성, 관리
+<table>
+ <tr align="center">
+  <th>4. 동호회</th>
+  <th colspan="2">5. 소모임</th>
+ </tr>
+ <tr align="center">
+ <td><img src="/uploads/c794bf0ec760cbb82907eb7dcc7481fc/guild_enter.gif"></td>
+  <td><img src="/uploads/307560c104428a2c5b43d7fea770212b/party_search.gif"></td>
+   <td><img src="/uploads/c8bc100c91e6adc8fedc75ddcb12b583/party_create.gif"></td>
+ </tr>
+ <tr align="center">
+  <td>소모임 검색</td>
+  <td>소모임 생성</td>
+ </tr>
+</table>
 
-5. 소모임 생성, 관리
-
-6. 등산
-
-7. 식물 검색
-
-8.
-
-9.
+<table>
+ <tr align="center">
+  <th colspan="2">6. 등산</th>
+ </tr>
+ <tr align="center">
+  <td><img src="/uploads/48caeeaa36c486b54da637bbad72c977/party_enter.gif"></td>
+  <td><img src="/uploads/656d2c5096aa13627943e7941c3ada3f/party_offcourse.gif"></td>
+ </tr>
+ <tr align="center">
+ <td>입장</td>
+ <td>경로 이탈</td>
+  </tr>
+  <tr align="center">
+  <th colspan="2">7. 식물 검색</td>
+ </tr>
+ <tr align="center">
+  <td><img src="/uploads/9e9fc97164c61607908c7d5352f3bc72/plant_loading.gif"></td>
+  <td><img src="/uploads/29902ceb1a948c18696f63e8f773bede/plant_result.gif"></td>
+ </tr>
+</table>
 
 <br />
 
