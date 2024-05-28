@@ -72,6 +72,7 @@
   <td><img src="/uploads/17f648d61dc32d439e976b3b3b33bed4/mountain.gif"></td>
  </tr>
 </table>
+<br /><br /><br />
 
 <table>
  <tr align="center">
@@ -82,7 +83,7 @@
   <td><img src="/uploads/5f596c1cd0dcdf31e3210055f3a79708/mypage_record.gif"></td>
  </tr>
 </table>
-
+<br /><br /><br />
 
 <table>
  <tr align="center">
@@ -100,26 +101,24 @@
   <td>소모임 생성</td>
  </tr>
 </table>
+<br /><br /><br />
 
 <table>
  <tr align="center">
   <th colspan="2">6. 등산</th>
+  <th colspan="2">7. 식물 검색</th>
  </tr>
  <tr align="center">
   <td><img src="/uploads/48caeeaa36c486b54da637bbad72c977/party_enter.gif"></td>
   <td><img src="/uploads/656d2c5096aa13627943e7941c3ada3f/party_offcourse.gif"></td>
- </tr>
+   <td><img src="/uploads/9e9fc97164c61607908c7d5352f3bc72/plant_loading.gif"></td>
+  <td><img src="/uploads/29902ceb1a948c18696f63e8f773bede/plant_result.gif"></td>
  <tr align="center">
  <td>입장</td>
  <td>경로 이탈</td>
+ <td>식물 촬영</td>
+ <td>식물 검색</td>
   </tr>
-  <tr align="center">
-  <th colspan="2">7. 식물 검색</td>
- </tr>
- <tr align="center">
-  <td><img src="/uploads/9e9fc97164c61607908c7d5352f3bc72/plant_loading.gif"></td>
-  <td><img src="/uploads/29902ceb1a948c18696f63e8f773bede/plant_result.gif"></td>
- </tr>
 </table>
 
 <br />
