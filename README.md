@@ -62,12 +62,14 @@
 
 <table>
  <tr align="center">
-  <th>1. 로그인</th>
+  <th>0. 로그인</th>
   <th>1. 홈 화면</th>
+  <th>2. 산</th>
  </tr>
  <tr align="center">
   <td><img src="/uploads/26b67ae7dfcf35bca5f2be7da9cdb992/login.gif"></td>
   <td><img src="/uploads/7fc861f5c90506ce0fce10cf86f368a1/home.gif"></td>
+  <td><img src="/uploads/17f648d61dc32d439e976b3b3b33bed4/mountain.gif"></td>
  </tr>
 </table>
 
