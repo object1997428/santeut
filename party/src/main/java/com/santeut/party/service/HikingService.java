@@ -201,10 +201,10 @@ public class HikingService {
             log.error("[Auth Server] Auth 한테 등산 기록 업데이트 요청 실패 authResp={}",authResp);
         }
 
-        //랭킹 갱신
+/*        //랭킹 갱신
         if(guildId!=null&&guildId>0){
             updateRank(userId, partyUser,guildId);
-        }
+        }*/
     }
 
     private void updateRank(int userId, PartyUser partyUser,int guildId) {
